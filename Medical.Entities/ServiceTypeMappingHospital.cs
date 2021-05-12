@@ -1,0 +1,33 @@
+﻿using Medical.Entities.DomainEntity;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text;
+
+namespace Medical.Entities
+{
+    /// <summary>
+    /// Dịch vụ của bệnh viện
+    /// </summary>
+    [Table("ServiceTypeMappingHospital")]
+    public class ServiceTypeMappingHospital : MedicalAppDomain
+    {
+        /// <summary>
+        /// Bệnh viện
+        /// </summary>
+        public int HospitalId { get; set; }
+        /// <summary>
+        /// Dịch vụ
+        /// </summary>
+        public int ServiceTypeId { get; set; }
+        /// <summary>
+        /// Giá khám theo từng dịch vụ
+        /// </summary>
+        public double? Price { get; set; }
+
+        /// <summary>
+        /// Tổng số lượt khám/ngày
+        /// </summary>
+        public int TotalVisitNo { get; set; }
+    }
+}

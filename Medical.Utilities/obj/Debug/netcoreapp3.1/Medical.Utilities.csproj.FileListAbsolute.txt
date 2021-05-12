@@ -1,0 +1,12 @@
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\bin\Debug\netcoreapp3.1\Medical.Utilities.deps.json
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\bin\Debug\netcoreapp3.1\Medical.Utilities.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\bin\Debug\netcoreapp3.1\Medical.Utilities.pdb
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\obj\Debug\netcoreapp3.1\Medical.Utilities.csprojAssemblyReference.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\obj\Debug\netcoreapp3.1\Medical.Utilities.AssemblyInfoInputs.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\obj\Debug\netcoreapp3.1\Medical.Utilities.AssemblyInfo.cs
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\obj\Debug\netcoreapp3.1\Medical.Utilities.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\obj\Debug\netcoreapp3.1\Medical.Utilities.pdb
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\bin\netcoreapp3.1\Medical.Utilities.deps.json
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\bin\netcoreapp3.1\Medical.Utilities.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\bin\netcoreapp3.1\Medical.Utilities.pdb
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Utilities\obj\Debug\netcoreapp3.1\Medical.Utilities.csproj.CoreCompileInputs.cache
