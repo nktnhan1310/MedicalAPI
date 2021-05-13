@@ -13,5 +13,9 @@ namespace Medical.Entities
     public class RoomExaminations : MedicalCatalogueAppDomain
     {
         public int HospitalId { get; set; }
+        /// <summary>
+        /// Số lượng bác sĩ khám ở phòng
+        /// </summary>
+        public int TotalDoctor { get; set; }
     }
 }

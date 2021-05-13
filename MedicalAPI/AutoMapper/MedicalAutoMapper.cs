@@ -32,6 +32,11 @@ namespace MedicalAPI.AutoMapper
             CreateMap<PagedList<ExaminationScheduleModel>, PagedList<ExaminationSchedules>>().ReverseMap();
             CreateMap<ExaminationScheduleDetailModel, ExaminationScheduleDetails>().ReverseMap();
 
+            CreateMap<MedicalRecordModel, MedicalRecords>().ReverseMap();
+            CreateMap<PagedList<MedicalRecordModel>, PagedList<MedicalRecords>>().ReverseMap();
+            CreateMap<MedicalRecordAdditionModel, MedicalRecordAdditions>().ReverseMap();
+            CreateMap<ConfigRoomExaminationModel, ConfigRoomExaminations>().ReverseMap();
+            CreateMap<PagedList<ConfigRoomExaminationModel>, PagedList<ConfigRoomExaminations>>().ReverseMap();
 
             #region Catalogue
 

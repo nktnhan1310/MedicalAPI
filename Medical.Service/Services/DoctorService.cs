@@ -58,6 +58,7 @@ namespace Medical.Service
                     foreach (var doctorDetail in item.DoctorDetails)
                     {
                         doctorDetail.DoctorId = item.Id;
+                        doctorDetail.Created = DateTime.Now;
                         await unitOfWork.Repository<DoctorDetails>().CreateAsync(doctorDetail);
                     }
                 }
@@ -97,10 +98,14 @@ namespace Medical.Service
                         if (existDoctorDetail != null)
                         {
                             existDoctorDetail = mapper.Map<DoctorDetails>(doctorDetail);
+                            existDoctorDetail.DoctorId = exists.Id;
+                            existDoctorDetail.Updated = DateTime.Now;
                             unitOfWork.Repository<DoctorDetails>().Update(existDoctorDetail);
                         }
                         else
                         {
+                            doctorDetail.DoctorId = exists.Id;
+                            doctorDetail.Created = DateTime.Now;
                             await unitOfWork.Repository<DoctorDetails>().CreateAsync(doctorDetail);
                         }
                     }

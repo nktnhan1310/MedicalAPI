@@ -12,6 +12,10 @@ namespace Medical.Entities
     [Table("SessionTypes")]
     public class SessionTypes : MedicalCatalogueAppDomain
     {
+        /// <summary>
+        /// Số thứ tự buổi
+        /// </summary>
+        public int Index { get; set; }
 
     }
 }

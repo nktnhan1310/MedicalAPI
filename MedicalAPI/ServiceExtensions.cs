@@ -63,7 +63,9 @@ namespace MedicalAPI
             services.AddScoped<IDoctorDetailService, DoctorDetailService>();
             services.AddScoped<IExaminationScheduleService, ExaminationScheduleService>();
             services.AddScoped<IExaminationScheduleDetailService, ExaminationScheduleDetailService>();
-
+            services.AddScoped<IMedicalRecordService, MedicalRecordService>();
+            services.AddScoped<IMedicalRecordAdditionService, MedicalRecordAdditionService>();
+            services.AddScoped<IConfigRoomExaminationService, ConfigRoomExaminationService>();
             
 
             #region Catalogue Service
@@ -75,7 +77,6 @@ namespace MedicalAPI
             services.AddScoped<IDegreeTypeService, DegreeTypeService>();
             services.AddScoped<ISessionTypeService, SessionTypeService>();
             services.AddScoped<IConfigTimeExaminationService, ConfigTimeExaminationService>();
-            
 
             #endregion
 

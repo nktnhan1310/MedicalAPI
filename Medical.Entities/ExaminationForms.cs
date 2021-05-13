@@ -31,19 +31,21 @@ namespace Medical.Entities
         /// <summary>
         /// Ngày khám
         /// </summary>
-        public DateTime? ExaminationDate { get; set; }
+        public DateTime ExaminationDate { get; set; }
+
+        /// <summary>
+        /// Ngày tái khám
+        /// </summary>
+        public DateTime? ReExaminationDate { get; set; }
+
         /// <summary>
         /// Bác sĩ
         /// </summary>
-        public int? DoctorId { get; set; }
+        public int DoctorId { get; set; }
         /// <summary>
         /// Có BHYT?
         /// </summary>
         public bool IsBHYT { get; set; }
-        /// <summary>
-        /// Chuyên khoa
-        /// </summary>
-        public int? SpecialistTypeId { get; set; }
         /// <summary>
         /// phòng khám
         /// </summary>
@@ -56,10 +58,20 @@ namespace Medical.Entities
         /// Ca khám
         /// </summary>
         public int? ExaminationScheduleDetailId { get; set; }
-        
+
+        /// <summary>
+        /// Trạng thái phiếu (Chờ xác nhận lịch hẹn/Đã xác nhận lịch hẹn/Chờ xác nhận hủy/Đã hủy/Chờ xác nhận tái khám/Đã xác nhận tái khám)
+        /// </summary>
+        public int Status { get; set; }
+
         /// <summary>
         /// Chi phí khám
         /// </summary>
         public double? Price { get; set; }
+
+        /// <summary>
+        /// Số thứ tự khám bệnh
+        /// </summary>
+        public int? ExaminationIndex { get; set; }
     }
 }

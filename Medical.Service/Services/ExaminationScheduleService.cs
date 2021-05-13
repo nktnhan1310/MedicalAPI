@@ -40,6 +40,74 @@ namespace Medical.Service
             return parameters;
         }
 
+        public override async Task<bool> CreateAsync(ExaminationSchedules item)
+        {
+            bool result = false;
+            if (item != null)
+            {
+                // Lưu thông tin bác sĩ
+                await unitOfWork.Repository<ExaminationSchedules>().CreateAsync(item);
+                await unitOfWork.SaveAsync();
+                // Cập nhật thông tin chi tiết ca
+                if (item.ExaminationScheduleDetails != null && item.ExaminationScheduleDetails.Any())
+                {
+                    foreach (var examinationScheduleDetail in item.ExaminationScheduleDetails)
+                    {
+                        examinationScheduleDetail.ScheduleId = item.Id;
+                        examinationScheduleDetail.Created = DateTime.Now;
+                        await unitOfWork.Repository<ExaminationScheduleDetails>().CreateAsync(examinationScheduleDetail);
+                    }
+                }
+                await unitOfWork.SaveAsync();
+                result = true;
+            }
+            return result;
+        }
+
+        public override async Task<bool> UpdateAsync(ExaminationSchedules item)
+        {
+            bool result = false;
+            var exists = await Queryable
+                 .AsNoTracking()
+                 .Where(e => e.Id == item.Id && !e.Deleted)
+                 .FirstOrDefaultAsync();
+
+            if (exists != null)
+            {
+                exists = mapper.Map<ExaminationSchedules>(item);
+                unitOfWork.Repository<ExaminationSchedules>().Update(exists);
+
+                // Cập nhật thông tin chi tiết ca
+                if (item.ExaminationScheduleDetails != null && item.ExaminationScheduleDetails.Any())
+                {
+                    foreach (var examinationScheduleDetail in item.ExaminationScheduleDetails)
+                    {
+                        var existExaminationScheduleDetail = await unitOfWork.Repository<ExaminationScheduleDetails>().GetQueryable()
+                                                             .AsNoTracking()
+                                                             .Where(e => e.Id == examinationScheduleDetail.Id && !e.Deleted)
+                                                             .FirstOrDefaultAsync();
+                        if (existExaminationScheduleDetail != null)
+                        {
+                            existExaminationScheduleDetail = mapper.Map<ExaminationScheduleDetails>(examinationScheduleDetail);
+                            existExaminationScheduleDetail.ScheduleId = exists.Id;
+                            existExaminationScheduleDetail.Updated = DateTime.Now;
+                            unitOfWork.Repository<ExaminationScheduleDetails>().Update(examinationScheduleDetail);
+                        }
+                        else
+                        {
+                            examinationScheduleDetail.ScheduleId = exists.Id;
+                            examinationScheduleDetail.Created = DateTime.Now;
+                            await unitOfWork.Repository<ExaminationScheduleDetails>().CreateAsync(examinationScheduleDetail);
+                        }
+                    }
+                }
+                await unitOfWork.SaveAsync();
+                result = true;
+            }
+            return result;
+        }
+
+
         public override async Task<string> GetExistItemMessage(ExaminationSchedules item)
         {
             List<string> messages = new List<string>();

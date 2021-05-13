@@ -23,7 +23,10 @@ namespace Medical.Entities
         /// </summary>
         [StringLength(1000)]
         public string Value { get; set; }
-
+        /// <summary>
+        /// Số thứ tự ca
+        /// </summary>
+        public int Index { get; set; }
         /// <summary>
         /// Bệnh viện
         /// </summary>

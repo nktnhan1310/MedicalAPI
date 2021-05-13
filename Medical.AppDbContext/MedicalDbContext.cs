@@ -52,6 +52,13 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<MedicalRecordAdditions>(x => x.ToTable("MedicalRecordAdditions"));
             modelBuilder.Entity<ServiceTypeMappingHospital>(x => x.ToTable("ServiceTypeMappingHospital"));
             modelBuilder.Entity<SMSConfigs>(x => x.ToTable("SMSConfigs"));
+
+            modelBuilder.Entity<ExaminationHistories>(x => x.ToTable("ExaminationHistories"));
+            modelBuilder.Entity<BankInfos>(x => x.ToTable("BankInfos"));
+            modelBuilder.Entity<PaymentHistories>(x => x.ToTable("PaymentHistories"));
+            modelBuilder.Entity<ConfigRoomExaminations>(x => x.ToTable("ConfigRoomExaminations"));
+            
+
             modelBuilder.Entity<Users>(x =>
             {
                 x.ToTable("Users");
@@ -63,6 +70,9 @@ namespace Medical.AppDbContext
 
         #region Catalogue
 
+        
+        public DbSet<ExaminationHistories> ExaminationHistories { get; set; }
+        public DbSet<BankInfos> BankInfos { get; set; }
         public DbSet<Channels> Channels { get; set; }
         public DbSet<Cities> Cities { get; set; }
         public DbSet<ConfigTimeExaminations> ConfigTimeExaminations { get; set; }
@@ -81,6 +91,9 @@ namespace Medical.AppDbContext
         public DbSet<Wards> Wards { get; set; }
 
         #endregion
+
+        public DbSet<ConfigRoomExaminations> ConfigRoomExaminations { get; set; }
+        public DbSet<PaymentHistories> PaymentHistories { get; set; }
 
         public DbSet<AppointmentSchedules> AppointmentSchedules { get; set; }
         public DbSet<ChannelMappingHospital> ChannelMappingHospital { get; set; }

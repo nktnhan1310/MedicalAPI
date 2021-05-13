@@ -1,17 +1,13 @@
-﻿using Medical.Entities.DomainEntity;
+﻿using MedicalAPI.Model.DomainModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Medical.Entities
+namespace MedicalAPI.Model
 {
-    /// <summary>
-    /// Thông tin người thân hồ sơ khám bệnh
-    /// </summary>
-    [Table("MedicalRecordAdditions")]
-    public class MedicalRecordAdditions : MedicalAppDomain
+    public class MedicalRecordAdditionModel : MedicalAppDomainModel
     {
         /// <summary>
         /// Mã hồ sơ
@@ -27,7 +23,7 @@ namespace Medical.Entities
         /// </summary>
         [StringLength(200)]
         public string LastName { get; set; }
-        
+
         /// <summary>
         /// Quan hệ (anh/chị/em)
         /// </summary>
@@ -42,14 +38,7 @@ namespace Medical.Entities
         /// <summary>
         /// Họ tên
         /// </summary>
-        [NotMapped]
-        public string FullName
-        {
-            get
-            {
-                return LastName + " " + FirstName;
-            }
-        }
+        public string FullName { get; set; }
 
         #endregion
 
