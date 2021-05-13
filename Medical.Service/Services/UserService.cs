@@ -4,6 +4,7 @@ using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -42,22 +43,23 @@ namespace Medical.Service
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
-        public override Task<string> GetExistItemMessage(Users item)
+        public override async Task<string> GetExistItemMessage(Users item)
         {
-            return Task.Run(() =>
-            {
-                List<string> messages = new List<string>();
-                string result = string.Empty;
-                if (!string.IsNullOrEmpty(item.Email) && Queryable.Any(x => !x.Deleted && x.Id != item.Id && x.Email == item.Email))
-                    messages.Add("Email đã tồn tại!");
-                if (!string.IsNullOrEmpty(item.Phone) && Queryable.Any(x => !x.Deleted && x.Id != item.Id && x.Phone == item.Phone))
-                    messages.Add("Số điện thoại đã tồn tại!");
-                if (!string.IsNullOrEmpty(item.UserName) && Queryable.Any(x => !x.Deleted && x.Id != item.Id && x.UserName == item.UserName))
-                    messages.Add("User name đã tồn tại!");
-                if (messages.Any())
-                    result = string.Join(" ", messages);
-                return result;
-            });
+            List<string> messages = new List<string>();
+            string result = string.Empty;
+            bool isExistEmail = !string.IsNullOrEmpty(item.Email) && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Email == item.Email);
+            bool isExistPhone = !string.IsNullOrEmpty(item.Email) && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Phone == item.Phone);
+            bool isExistUserName = !string.IsNullOrEmpty(item.Email) && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.UserName == item.UserName);
+
+            if (isExistEmail)
+                messages.Add("Email đã tồn tại!");
+            if (isExistPhone)
+                messages.Add("Số điện thoại đã tồn tại!");
+            if (isExistUserName)
+                messages.Add("User name đã tồn tại!");
+            if (messages.Any())
+                result = string.Join(" ", messages);
+            return result;
         }
 
     }

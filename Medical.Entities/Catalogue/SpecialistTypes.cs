@@ -20,5 +20,26 @@ namespace Medical.Entities
         /// Giá theo chuyên khoa
         /// </summary>
         public double? Price { get; set; }
+
+        /// <summary>
+        /// Chuyên khoa
+        /// </summary>
+        public int SpecialistTypeId { get; set; }
+
+        #region Extension Properties
+
+        /// <summary>
+        /// Số lượng bác sĩ
+        /// </summary>
+        [NotMapped]
+        public int TotalDoctors { get; set; }
+        /// <summary>
+        /// Số lượng phiếu khám bệnh trong ngày
+        /// </summary>
+        [NotMapped]
+        public int TotalExaminationForms { get; set; }
+
+        #endregion
+
     }
 }

@@ -27,7 +27,7 @@ namespace MedicalAPI.Model.DomainModel
         /// <summary>
         /// Ngày cập nhật
         /// </summary>
-        public DateTime Updated { get; set; }
+        public DateTime? Updated { get; set; }
         /// <summary>
         /// Người cập nhật
         /// </summary>

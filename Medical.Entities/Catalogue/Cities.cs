@@ -12,5 +12,9 @@ namespace Medical.Entities
     [Table("Cities")]
     public class Cities : MedicalCatalogueAppDomain
     {
+        /// <summary>
+        /// Mã quốc gia
+        /// </summary>
+        public int CountryId { get; set; }
     }
 }

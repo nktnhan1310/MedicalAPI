@@ -24,6 +24,15 @@ namespace MedicalAPI.AutoMapper
             CreateMap<ChannelMappingHospitalModel, ChannelMappingHospital>().ReverseMap();
             CreateMap<HospitalFileModel, HospitalFiles>().ReverseMap();
 
+            CreateMap<DoctorModel, Doctors>().ReverseMap();
+            CreateMap<PagedList<DoctorModel>, PagedList<Doctors>>().ReverseMap();
+            CreateMap<DoctorDetailModel, DoctorDetails>().ReverseMap();
+            CreateMap<PagedList<DoctorDetailModel>, PagedList<DoctorDetails>>().ReverseMap();
+            CreateMap<ExaminationScheduleModel, ExaminationSchedules>().ReverseMap();
+            CreateMap<PagedList<ExaminationScheduleModel>, PagedList<ExaminationSchedules>>().ReverseMap();
+            CreateMap<ExaminationScheduleDetailModel, ExaminationScheduleDetails>().ReverseMap();
+
+
             #region Catalogue
 
             CreateMap<ServiceTypeModel, ServiceTypes>().ReverseMap();
@@ -32,6 +41,15 @@ namespace MedicalAPI.AutoMapper
             CreateMap<PagedList<ChannelModel>, PagedList<Channels>>().ReverseMap();
             CreateMap<RoomExaminationModel, RoomExaminations>().ReverseMap();
             CreateMap<PagedList<RoomExaminationModel>, PagedList<RoomExaminations>>().ReverseMap();
+            CreateMap<SpecialistTypeModel, SpecialistTypes>().ReverseMap();
+            CreateMap<PagedList<SpecialistTypeModel>, PagedList<SpecialistTypes>>().ReverseMap();
+            CreateMap<DegreeTypeModel, DegreeTypes>().ReverseMap();
+            CreateMap<PagedList<DegreeTypeModel>, PagedList<DegreeTypes>>().ReverseMap();
+            CreateMap<SessionTypeModel, SessionTypes>().ReverseMap();
+            CreateMap<PagedList<SessionTypeModel>, PagedList<SessionTypes>>().ReverseMap();
+            CreateMap<ConfigTimeExamniationModel, ConfigTimeExaminations>().ReverseMap();
+            CreateMap<PagedList<ConfigTimeExamniationModel>, PagedList<ConfigTimeExaminations>>().ReverseMap();
+
 
             #endregion
         }

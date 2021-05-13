@@ -62,6 +62,21 @@ namespace Medical.Entities
         #region Extension Properties
 
         /// <summary>
+        /// Tên học vị
+        /// </summary>
+        [NotMapped]
+        public string DegreeTypeName { get; set; }
+        /// <summary>
+        /// Tên chuyên khoa
+        /// </summary>
+        [NotMapped]
+        public string SpecialistTypeName { get; set; }
+        /// <summary>
+        /// Tên bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalName { get; set; }
+        /// <summary>
         /// Chuyên khoa theo từng bác sĩ
         /// </summary>
         [NotMapped]
