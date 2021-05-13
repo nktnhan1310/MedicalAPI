@@ -72,13 +72,11 @@ namespace Medical.Service.Services.DomainService
         /// <returns></returns>
         public override async Task<string> GetExistItemMessage(E item)
         {
-            return await Task.Run(() =>
-            {
-                string result = string.Empty;
-                if (Queryable.Any(x => !x.Deleted && x.Id != item.Id && x.Code == item.Code))
-                    return "Mã đã tồn tại!";
-                return result;
-            });
+            string result = string.Empty;
+            bool isExistCode = await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Code == item.Code);
+            if (isExistCode)
+                return "Mã đã tồn tại!";
+            return result;
         }
 
         /// <summary>
@@ -86,9 +84,9 @@ namespace Medical.Service.Services.DomainService
         /// </summary>
         /// <param name="baseSearch"></param>
         /// <returns></returns>
-        public override Task<PagedList<E>> GetPagedListData(T baseSearch)
+        public override async Task<PagedList<E>> GetPagedListData(T baseSearch)
         {
-            return Task.Run(() =>
+            return await Task.Run(() =>
             {
                 PagedList<E> pagedList = new PagedList<E>();
                 int skip = (baseSearch.PageIndex - 1) * baseSearch.PageSize;

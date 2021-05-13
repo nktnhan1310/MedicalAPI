@@ -21,9 +21,25 @@ namespace Medical.Entities
         /// </summary>
         public DateTime ExaminationDate { get; set; }
 
+        #region Extension Properties
+
         /// <summary>
-        /// Bệnh viện
+        /// Tên bệnh viện
         /// </summary>
-        public int HospitalId { get; set; }
+        [NotMapped]
+        public string HospitalName { get; set; }
+        /// <summary>
+        /// Tên bác sĩ
+        /// </summary>
+        [NotMapped]
+        public string DoctorName { get; set; }
+
+        /// <summary>
+        /// Danh sách ca làm việc
+        /// </summary>
+        [NotMapped]
+        public IList<ExaminationScheduleDetails> ExaminationScheduleDetails { get; set; }
+
+        #endregion
     }
 }

@@ -126,6 +126,20 @@
             <param name="baseSearch"></param>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.DoctorController.GetDoctorDetails(System.Int32)">
+            <summary>
+            Lấy thông tin chuyên khoa của bác sĩ
+            </summary>
+            <param name="doctorId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetExaminatioNScheduleDetails(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết ca
+            </summary>
+            <param name="examinationScheduleId"></param>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.HospitalController.GetById(System.Int32)">
             <summary>
             Lấy thông tin bệnh viện
@@ -154,6 +168,26 @@
             Kênh đăng ký khám bệnh
             </summary>
         </member>
+        <member name="T:MedicalAPI.Model.ConfigTimeExamniationModel">
+            <summary>
+            Cấu hình ca khám
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ConfigTimeExamniationModel.SessionId">
+            <summary>
+            Buổi (sáng/chiều/tối)
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ConfigTimeExamniationModel.HospitalId">
+            <summary>
+            Bệnh viện
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.DegreeTypeModel">
+            <summary>
+            Học hàm/Học vị (GS/TS/Ths/TS...)
+            </summary>
+        </member>
         <member name="T:MedicalAPI.Model.RoomExaminationModel">
             <summary>
             Phòng khám bệnh
@@ -162,6 +196,36 @@
         <member name="T:MedicalAPI.Model.ServiceTypeModel">
             <summary>
             Dịch vụ đăng ký khám bệnh
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.SessionTypeModel">
+            <summary>
+            Buổi khám (Sáng/Chiều/Tối)
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.SpecialistTypeModel">
+            <summary>
+            Chuyên khoa
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.SpecialistTypeModel.HospitalId">
+            <summary>
+            bệnh viện
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.SpecialistTypeModel.Price">
+            <summary>
+            Giá theo chuyên khoa
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.SpecialistTypeModel.TotalDoctors">
+            <summary>
+            Số lượng bác sĩ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.SpecialistTypeModel.TotalExaminationForms">
+            <summary>
+            Số lượng phiếu khám bệnh trong ngày
             </summary>
         </member>
         <member name="T:MedicalAPI.Model.ChannelMappingHospitalModel">
@@ -177,6 +241,98 @@
         <member name="P:MedicalAPI.Model.ChannelMappingHospitalModel.ChannelId">
             <summary>
             Kênh
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.DoctorDetailModel">
+            <summary>
+            Chi tiết chuyên khoa từng bác sĩ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorDetailModel.DoctorId">
+            <summary>
+            Bác sĩ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorDetailModel.SpecialistTypeId">
+            <summary>
+            Chuyên khoa
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorDetailModel.Price">
+            <summary>
+            Chi phí khám theo bác sĩ
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.DoctorModel">
+            <summary>
+            Bác sĩ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.Code">
+            <summary>
+            Mã bác sĩ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.FirstName">
+            <summary>
+            Tên
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.LastName">
+            <summary>
+            Họ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.Gender">
+            <summary>
+            Giới tính
+            0 => Nam
+            1 => Nữ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.DegreeId">
+            <summary>
+            Trình độ (GS,PGS,ThS,...)
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.PracticingCertificate">
+            <summary>
+            Giấy chứng chỉ hành nghề bác sĩ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.TrainingPlace">
+            <summary>
+            Nơi đào tạo
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.HospitalId">
+            <summary>
+            Bệnh viện
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.Description">
+            <summary>
+            Mô tả thêm
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.DegreeTypeName">
+            <summary>
+            Tên học vị
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.SpecialistTypeName">
+            <summary>
+            Tên chuyên khoa
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.HospitalName">
+            <summary>
+            Tên bệnh viện
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.DoctorModel.DoctorDetails">
+            <summary>
+            Chuyên khoa theo từng bác sĩ
             </summary>
         </member>
         <member name="P:MedicalAPI.Model.DomainModel.MedicalAppDomainFileModel.FileName">
@@ -242,6 +398,56 @@
         <member name="P:MedicalAPI.Model.DomainModel.MedicalAppDomainModel.Active">
             <summary>
             Cờ active
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.ExaminationScheduleDetailModel">
+            <summary>
+            Chi tiết lịch khám
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ExaminationScheduleDetailModel.ScheduleId">
+            <summary>
+            Lịch khám
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ExaminationScheduleDetailModel.ConfigTimeExaminationId">
+            <summary>
+            Ca khám
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ExaminationScheduleDetailModel.RoomExaminationId">
+            <summary>
+            Phòng khám
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.ExaminationScheduleModel">
+            <summary>
+            Lịch khám theo từng bác sĩ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ExaminationScheduleModel.DoctorId">
+            <summary>
+            Bác sĩ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ExaminationScheduleModel.ExaminationDate">
+            <summary>
+            Ngày khám
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ExaminationScheduleModel.HospitalName">
+            <summary>
+            Tên bệnh viện
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ExaminationScheduleModel.DoctorName">
+            <summary>
+            Tên bác sĩ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ExaminationScheduleModel.ExaminationScheduleDetails">
+            <summary>
+            Danh sách ca làm việc
             </summary>
         </member>
         <member name="T:MedicalAPI.Model.HospitalFileModel">

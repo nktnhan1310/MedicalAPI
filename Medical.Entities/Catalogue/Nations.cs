@@ -12,5 +12,9 @@ namespace Medical.Entities
     [Table("Nations")]
     public class Nations : MedicalCatalogueAppDomain
     {
+        /// <summary>
+        /// Mã quốc gia
+        /// </summary>
+        public int CountryId { get; set; }
     }
 }

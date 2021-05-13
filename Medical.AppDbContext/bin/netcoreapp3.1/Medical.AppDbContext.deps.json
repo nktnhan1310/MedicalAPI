@@ -1189,6 +1189,14 @@
             "fileVersion": "1.0.0.0"
           }
         }
+      },
+      "Medical.Utilities/1.0.0.0": {
+        "runtime": {
+          "Medical.Utilities.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -1932,6 +1940,11 @@
       "sha512": ""
     },
     "Medical.Interface/1.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Medical.Utilities/1.0.0.0": {
       "type": "reference",
       "serviceable": false,
       "sha512": ""

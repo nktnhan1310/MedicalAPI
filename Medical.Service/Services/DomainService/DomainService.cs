@@ -501,9 +501,9 @@ namespace Medical.Service
             return await queryable.ToListAsync();
         }
 
-        public virtual Task<string> GetExistItemMessage(E item)
+        public virtual async Task<string> GetExistItemMessage(E item)
         {
-            return Task.Run(() =>
+            return await Task.Run(() =>
             {
                 List<string> messages = new List<string>();
                 string result = string.Empty;

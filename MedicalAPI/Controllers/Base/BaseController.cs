@@ -78,6 +78,13 @@ namespace MedicalAPI.Controllers
             AppDomainResult appDomainResult = new AppDomainResult();
             try
             {
+                if (id == 0)
+                {
+                    appDomainResult.ResultMessage = "id không tồn tại";
+                    this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "GetById", "id không tồn tại"));
+                    appDomainResult.Success = false;
+                    appDomainResult.ResultCode = (int)HttpStatusCode.BadRequest;
+                }
                 var item = await this.domainService.GetByIdAsync(id);
                 if (item != null)
                 {
@@ -94,7 +101,8 @@ namespace MedicalAPI.Controllers
                     appDomainResult = new AppDomainResult()
                     {
                         Success = false,
-                        ResultCode = (int)HttpStatusCode.InternalServerError
+                        ResultCode = (int)HttpStatusCode.InternalServerError,
+                        ResultMessage = "Item không tồn tại"
                     };
                 }
 
@@ -376,7 +384,7 @@ namespace MedicalAPI.Controllers
                         appDomainResult.Success = true;
                     }
                 });
-                
+
             }
             catch (Exception ex)
             {
@@ -416,7 +424,7 @@ namespace MedicalAPI.Controllers
                         appDomainResult.Success = true;
                     }
                 });
-                
+
             }
             catch (Exception ex)
             {

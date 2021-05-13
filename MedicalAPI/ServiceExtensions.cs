@@ -59,12 +59,23 @@ namespace MedicalAPI
             services.AddScoped<IHospitalFileService, HospitalFileService>();
             services.AddScoped<IChannelMappingHospitalService, ChannelMappingHospitalService>();
             services.AddScoped<IServiceTypeMappingHospitalService, ServiceTypeMappingHospitalService>();
+            services.AddScoped<IDoctorService, DoctorService>();
+            services.AddScoped<IDoctorDetailService, DoctorDetailService>();
+            services.AddScoped<IExaminationScheduleService, ExaminationScheduleService>();
+            services.AddScoped<IExaminationScheduleDetailService, ExaminationScheduleDetailService>();
+
+            
 
             #region Catalogue Service
 
             services.AddScoped<IChannelService, ChannelService>();
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
             services.AddScoped<IRoomExaminationService, RoomExaminationService>();
+            services.AddScoped<ISpecialListTypeService, SpecialListTypeService>();
+            services.AddScoped<IDegreeTypeService, DegreeTypeService>();
+            services.AddScoped<ISessionTypeService, SessionTypeService>();
+            services.AddScoped<IConfigTimeExaminationService, ConfigTimeExaminationService>();
+            
 
             #endregion
 

@@ -12,5 +12,9 @@ namespace Medical.Entities
     [Table("Wards")]
     public class Wards : MedicalCatalogueAppDomain
     {
+        /// <summary>
+        /// Mã quận
+        /// </summary>
+        public int DistricId { get; set; }
     }
 }
