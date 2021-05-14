@@ -1,6 +1,5 @@
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\appsettings.Development.json
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\appsettings.json
-E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Properties\launchSettings.json
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\MedicalAPI.exe
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.csprojAssemblyReference.cache
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.AssemblyInfoInputs.cache

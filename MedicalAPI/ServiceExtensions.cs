@@ -66,10 +66,13 @@ namespace MedicalAPI
             services.AddScoped<IMedicalRecordService, MedicalRecordService>();
             services.AddScoped<IMedicalRecordAdditionService, MedicalRecordAdditionService>();
             services.AddScoped<IConfigRoomExaminationService, ConfigRoomExaminationService>();
-            
+            services.AddScoped<IExaminationFormService, ExaminationFormService>();
+            services.AddScoped<IPaymentHistoryService, PaymentHistoryService>();
+            services.AddScoped<IExaminationHistoryService, ExaminationHistoryService>();
 
             #region Catalogue Service
 
+            services.AddScoped<IExaminationTypeService, ExaminationTypeService>();
             services.AddScoped<IChannelService, ChannelService>();
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
             services.AddScoped<IRoomExaminationService, RoomExaminationService>();

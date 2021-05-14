@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Medical.Entities;
+using Medical.Entities.Extensions;
 using Medical.Utilities;
 using MedicalAPI.Model;
 using MedicalAPI.Model.DomainModel;
@@ -38,8 +39,22 @@ namespace MedicalAPI.AutoMapper
             CreateMap<ConfigRoomExaminationModel, ConfigRoomExaminations>().ReverseMap();
             CreateMap<PagedList<ConfigRoomExaminationModel>, PagedList<ConfigRoomExaminations>>().ReverseMap();
 
+            CreateMap<ExaminationFormModel, ExaminationForms>().ReverseMap();
+            CreateMap<PagedList<ExaminationFormModel>, PagedList<ExaminationForms>>().ReverseMap();
+
+            CreateMap<ExaminationHistoryModel, ExaminationHistories>().ReverseMap();
+            CreateMap<PagedList<ExaminationHistoryModel>, PagedList<ExaminationHistories>>().ReverseMap();
+
+            CreateMap<PaymentHistoryModel, PaymentHistories>().ReverseMap();
+            CreateMap<PagedList<PaymentHistoryModel>, PagedList<PaymentHistories>>().ReverseMap();
+            CreateMap<UpdateExaminationStatusModel, UpdateExaminationStatus>().ReverseMap();
+
+            
+
             #region Catalogue
 
+            CreateMap<ExaminationTypeModel, ExaminationTypes>().ReverseMap();
+            CreateMap<PagedList<ExaminationTypeModel>, PagedList<ExaminationTypes>>().ReverseMap();
             CreateMap<ServiceTypeModel, ServiceTypes>().ReverseMap();
             CreateMap<PagedList<ServiceTypeModel>, PagedList<ServiceTypes>>().ReverseMap();
             CreateMap<ChannelModel, Channels>().ReverseMap();

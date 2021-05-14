@@ -1,0 +1,31 @@
+﻿using MedicalAPI.Model.DomainModel;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace MedicalAPI.Model
+{
+    /// <summary>
+    /// Lịch sử của lịch hẹn (phiếu khám)
+    /// </summary>
+    public class ExaminationHistoryModel : MedicalAppDomainModel
+    {
+        /// <summary>
+        /// Mã lịch hẹn
+        /// </summary>
+        public int ExaminationFormId { get; set; }
+        /// <summary>
+        /// Hành động (Tạo lịch hẹn,...)
+        /// </summary>
+        public int Action { get; set; }
+        /// <summary>
+        /// Trạng thái lịch hẹn (Chờ xác nhận,....)
+        /// </summary>
+        public int Status { get; set; }
+        /// <summary>
+        /// Comment khi duyệt phiếu khám
+        /// </summary>
+        public string Comment { get; set; }
+    }
+}

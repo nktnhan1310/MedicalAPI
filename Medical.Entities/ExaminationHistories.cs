@@ -22,5 +22,9 @@ namespace Medical.Entities
         /// Trạng thái lịch hẹn (Chờ xác nhận,....)
         /// </summary>
         public int Status { get; set; }
+        /// <summary>
+        /// Comment khi duyệt phiếu khám
+        /// </summary>
+        public string Comment { get; set; }
     }
 }
