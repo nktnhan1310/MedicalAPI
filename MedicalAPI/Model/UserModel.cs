@@ -51,5 +51,34 @@ namespace MedicalAPI.Model
         /// Phải là admin không
         /// </summary>
         public bool IsAdmin { get; set; }
+
+        /// <summary>
+        /// Mật khẩu người dùng
+        /// </summary>
+        [StringLength(255, ErrorMessage = "Must be between 8 and 255 characters", MinimumLength = 8)]
+        [DataType(DataType.Password)]
+        public string Password { get; set; }
+
+
+        #region Extension Properties
+
+        [Required(ErrorMessage = "Confirm Password is required")]
+        [StringLength(255, ErrorMessage = "Must be between 8 and 255 characters", MinimumLength = 8)]
+        [DataType(DataType.Password)]
+        [Compare("Password")]
+        public string ConfirmPassword { get; set; }
+
+        /// <summary>
+        /// Những nhóm người dùng thuộc
+        /// </summary>
+        public IList<UserInGroupModel> UserInGroups { get; set; }
+
+        /// <summary>
+        /// Danh mục quyền ứng với chức năng người dùng
+        /// </summary>
+        public IList<PermitObjectPermissionModel> PermitObjectPermissions { get; set; }
+
+
+        #endregion
     }
 }
