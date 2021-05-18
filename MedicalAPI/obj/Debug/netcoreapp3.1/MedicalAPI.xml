@@ -12,6 +12,72 @@
             <param name="itemModel"></param>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.AuthController.LoginAsync(MedicalAPI.Model.LoginModel)">
+            <summary>
+            Đăng nhập hệ thống
+            </summary>
+            <param name="loginModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.AuthController.Register(MedicalAPI.Model.RegisterModel)">
+            <summary>
+            Đăng ký
+            </summary>
+            <param name="register"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.AuthController.ChangePassword(System.Int32,MedicalAPI.Model.ChangePasswordModel)">
+            <summary>
+            Đổi mật khẩu
+            </summary>
+            <param name="userId"></param>
+            <param name="changePasswordModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.AuthController.ForgotPassword(System.String)">
+            <summary>
+            Quên mật khẩu
+            Gửi mật khẩu mới qua Email nếu username là email
+            Gửi mật khẩu mới qua SMS nếu username là phone
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.PermitObjectController.GetCatalogueController">
+            <summary>
+            Lấy thông tin những chức năng cần được phân quyền
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.PermitObjectController.GetById(System.Int32)">
+            <summary>
+            Lấy thông tin chức năng theo Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.PermitObjectController.AddItem(MedicalAPI.Model.PermitObjectModel)">
+            <summary>
+            Thêm mới chức năng
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.PermitObjectController.UpdateItem(System.Int32,MedicalAPI.Model.PermitObjectModel)">
+            <summary>
+            Cập nhật thông tin chức năng
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.UserGroupController.GetUserInGroups(Medical.Entities.SearchUserInGroup)">
+            <summary>
+            Lấy danh sách phân trang người dùng thuộc nhóm
+            </summary>
+            <param name="searchUserInGroup"></param>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.BaseController`3.Get">
             <summary>
             Lấy all thông tin danh sách item
@@ -190,6 +256,116 @@
             </summary>
             <param name="medicalRecordId"></param>
             <returns></returns>
+        </member>
+        <member name="T:MedicalAPI.Model.ChangePasswordModel">
+            <summary>
+            Model đổi mật khẩu
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ChangePasswordModel.OldPassword">
+            <summary>
+            Mật khẩu cũ
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ChangePasswordModel.NewPassword">
+            <summary>
+            Mật khẩu mới
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.ChangePasswordModel.ConfirmNewPassword">
+            <summary>
+            Xác nhận mật khẩu mới
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.PermissionModel">
+            <summary>
+            Quyền người dùng
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.PermitObjectModel">
+            <summary>
+            Chức năng người dùng
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.PermitObjectModel.ControllerNames">
+            <summary>
+            Tên controller
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.PermitObjectModel.Controllers">
+            <summary>
+            Danh sách tên controller
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.PermitObjectPermissionModel">
+            <summary>
+            Danh mục quyền ứng với chức năng người dùng
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.PermitObjectPermissionModel.PermitObjectId">
+            <summary>
+            Chức năng
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.PermitObjectPermissionModel.PermissionId">
+            <summary>
+            Quyền
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.PermitObjectPermissionModel.UserGroupId">
+            <summary>
+            Nhóm người dùng
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.PermitObjectPermissionModel.UserId">
+            <summary>
+            Người dùng
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.RegisterModel.UserName">
+            <summary>
+            Email hoặc số điện thoại
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.UserGroupModel">
+            <summary>
+            Nhóm người dùng
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.UserGroupModel.UserInGroups">
+            <summary>
+            Người dùng thuộc nhóm
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.UserGroupModel.PermitObjectPermissions">
+            <summary>
+            Chức năng + quyền của nhóm
+            </summary>
+        </member>
+        <member name="T:MedicalAPI.Model.UserInGroupModel">
+            <summary>
+            Người dùng thuộc nhóm
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.UserInGroupModel.UserId">
+            <summary>
+            Người dùng
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.UserInGroupModel.UserGroupId">
+            <summary>
+            Nhóm người dùng
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.UserInGroupModel.Users">
+            <summary>
+            Lấy thông tin Người dùng
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.UserInGroupModel.UserGroups">
+            <summary>
+            Lấy thông tin Nhóm người dùng
+            </summary>
         </member>
         <member name="T:MedicalAPI.Model.ChannelModel">
             <summary>
@@ -941,6 +1117,21 @@
         <member name="P:MedicalAPI.Model.UserModel.IsAdmin">
             <summary>
             Phải là admin không
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.UserModel.Password">
+            <summary>
+            Mật khẩu người dùng
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.UserModel.UserInGroups">
+            <summary>
+            Những nhóm người dùng thuộc
+            </summary>
+        </member>
+        <member name="P:MedicalAPI.Model.UserModel.PermitObjectPermissions">
+            <summary>
+            Danh mục quyền ứng với chức năng người dùng
             </summary>
         </member>
         <member name="M:MedicalAPI.Utils.ModelStateExtensions.GetErrorMessage(Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary)">

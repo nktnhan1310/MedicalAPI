@@ -1,0 +1,8 @@
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Extensions\bin\Debug\netcoreapp3.1\Medical.Extensions.deps.json
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Extensions\bin\Debug\netcoreapp3.1\Medical.Extensions.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Extensions\bin\Debug\netcoreapp3.1\Medical.Extensions.pdb
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Extensions\obj\Debug\netcoreapp3.1\Medical.Extensions.AssemblyInfoInputs.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Extensions\obj\Debug\netcoreapp3.1\Medical.Extensions.AssemblyInfo.cs
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Extensions\obj\Debug\netcoreapp3.1\Medical.Extensions.csproj.CoreCompileInputs.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Extensions\obj\Debug\netcoreapp3.1\Medical.Extensions.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Extensions\obj\Debug\netcoreapp3.1\Medical.Extensions.pdb

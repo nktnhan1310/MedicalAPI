@@ -180,3 +180,5 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\Me
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.csproj.CoreCompileInputs.cache
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.MvcApplicationPartsAssemblyInfo.cs
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.MvcApplicationPartsAssemblyInfo.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\System.Linq.Dynamic.Core.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Annotations.dll

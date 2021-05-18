@@ -50,8 +50,10 @@
           "Serilog.Extensions.Logging.File": "2.0.0",
           "Serilog.Settings.Configuration": "3.1.0",
           "Swashbuckle.AspNetCore": "6.1.4",
+          "Swashbuckle.AspNetCore.Annotations": "6.1.4",
           "Swashbuckle.Core": "5.6.0",
           "System.Data.SqlClient": "4.8.2",
+          "System.Linq.Dynamic.Core": "1.2.9",
           "Medical.AppDbContext": "1.0.0.0",
           "Medical.Entities": "1.0.0.0",
           "Medical.Interface": "1.0.0.0",
@@ -1992,6 +1994,20 @@
           "Swashbuckle.AspNetCore.SwaggerUI": "6.1.4"
         }
       },
+      "Swashbuckle.AspNetCore.Annotations/6.1.4": {
+        "dependencies": {
+          "Swashbuckle.AspNetCore.SwaggerGen": "6.1.4"
+        },
+        "runtime": {
+          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.Annotations.dll": {
+            "assemblyVersion": "6.1.4.0",
+            "fileVersion": "6.1.4.0"
+          }
+        },
+        "compile": {
+          "lib/netcoreapp3.0/Swashbuckle.AspNetCore.Annotations.dll": {}
+        }
+      },
       "Swashbuckle.AspNetCore.Swagger/6.1.4": {
         "dependencies": {
           "Microsoft.OpenApi": "1.2.3"
@@ -2498,6 +2514,17 @@
           "System.Resources.ResourceManager": "4.3.0",
           "System.Runtime": "4.3.0",
           "System.Runtime.Extensions": "4.3.0"
+        }
+      },
+      "System.Linq.Dynamic.Core/1.2.9": {
+        "runtime": {
+          "lib/netcoreapp2.1/System.Linq.Dynamic.Core.dll": {
+            "assemblyVersion": "1.2.9.0",
+            "fileVersion": "1.2.9.0"
+          }
+        },
+        "compile": {
+          "lib/netcoreapp2.1/System.Linq.Dynamic.Core.dll": {}
         }
       },
       "System.Linq.Expressions/4.3.0": {
@@ -5770,6 +5797,13 @@
       "path": "swashbuckle.aspnetcore/6.1.4",
       "hashPath": "swashbuckle.aspnetcore.6.1.4.nupkg.sha512"
     },
+    "Swashbuckle.AspNetCore.Annotations/6.1.4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-sEAPcJ3s0XigrDWcufXmDipCxuPayEhWYo15RfN9xiPOq3G2rmH9G+wSaJwLrDJ0+xMLe+Q41cRM3TKd5E8y1A==",
+      "path": "swashbuckle.aspnetcore.annotations/6.1.4",
+      "hashPath": "swashbuckle.aspnetcore.annotations.6.1.4.nupkg.sha512"
+    },
     "Swashbuckle.AspNetCore.Swagger/6.1.4": {
       "type": "package",
       "serviceable": true,
@@ -6056,6 +6090,13 @@
       "sha512": "sha512-5DbqIUpsDp0dFftytzuMmc0oeMdQwjcP/EWxsksIz/w1TcFRkZ3yKKz0PqiYFMmEwPSWw+qNVqD7PJ889JzHbw==",
       "path": "system.linq/4.3.0",
       "hashPath": "system.linq.4.3.0.nupkg.sha512"
+    },
+    "System.Linq.Dynamic.Core/1.2.9": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GjR4CCtIkiJSU6N8cidG4aa0ph+HBzFOq3uhLybuq4zjlKy3hjDrGbcEUeBiGpBmUrnUhTAJ5SCZGDoZS7d9SA==",
+      "path": "system.linq.dynamic.core/1.2.9",
+      "hashPath": "system.linq.dynamic.core.1.2.9.nupkg.sha512"
     },
     "System.Linq.Expressions/4.3.0": {
       "type": "package",

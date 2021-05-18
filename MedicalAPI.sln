@@ -11,9 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Medical.Interface", "Medica
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Medical.AppDbContext", "Medical.AppDbContext\Medical.AppDbContext.csproj", "{DD81E742-FB66-462B-96D3-E8A740169A03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medical.Utilities", "Medical.Utilities\Medical.Utilities.csproj", "{04B1A0AE-8E30-47D2-A64F-91183BF790BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Medical.Utilities", "Medical.Utilities\Medical.Utilities.csproj", "{04B1A0AE-8E30-47D2-A64F-91183BF790BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medical.Service", "Medical.Service\Medical.Service.csproj", "{BFADC83C-392B-43C0-B032-ECAC95235EBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Medical.Service", "Medical.Service\Medical.Service.csproj", "{BFADC83C-392B-43C0-B032-ECAC95235EBC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MrAPP.API", "MrAPP.API\MrAPP.API.csproj", "{454EB18E-DCC2-4595-BF9F-FFE53B2B7EF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medical.Extensions", "Medical.Extensions\Medical.Extensions.csproj", "{A2FFC9DB-6990-4143-A7C9-82EB6A6CF502}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,14 @@ Global
 		{BFADC83C-392B-43C0-B032-ECAC95235EBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFADC83C-392B-43C0-B032-ECAC95235EBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFADC83C-392B-43C0-B032-ECAC95235EBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{454EB18E-DCC2-4595-BF9F-FFE53B2B7EF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{454EB18E-DCC2-4595-BF9F-FFE53B2B7EF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{454EB18E-DCC2-4595-BF9F-FFE53B2B7EF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{454EB18E-DCC2-4595-BF9F-FFE53B2B7EF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2FFC9DB-6990-4143-A7C9-82EB6A6CF502}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2FFC9DB-6990-4143-A7C9-82EB6A6CF502}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2FFC9DB-6990-4143-A7C9-82EB6A6CF502}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2FFC9DB-6990-4143-A7C9-82EB6A6CF502}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
