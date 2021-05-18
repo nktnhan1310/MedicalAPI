@@ -46,5 +46,27 @@ namespace Medical.Entities
         /// </summary>
         public bool IsAdmin { get; set; }
 
+        /// <summary>
+        /// Mật khẩu người dùng
+        /// </summary>
+        [StringLength(4000)]
+        public string Password { get; set; }
+
+        #region Extension Properties
+
+        /// <summary>
+        /// Những nhóm người dùng thuộc
+        /// </summary>
+        [NotMapped]
+        public IList<UserInGroups> UserInGroups { get; set; }
+
+        /// <summary>
+        /// Danh mục quyền ứng với chức năng người dùng
+        /// </summary>
+        [NotMapped]
+        public IList<PermitObjectPermissions> PermitObjectPermissions { get; set; }
+
+        #endregion
+
     }
 }

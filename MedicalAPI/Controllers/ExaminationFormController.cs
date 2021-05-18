@@ -43,23 +43,14 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetExaminationHistory(int examinationFormId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
+            var examinationForms = await this.examinationHistoryService.GetAsync(x => !x.Deleted && x.ExaminationFormId == examinationFormId);
+            var examinationFormModels = mapper.Map<IList<ExaminationHistoryModel>>(examinationForms);
+            appDomainResult = new AppDomainResult()
             {
-                var examinationForms = await this.examinationHistoryService.GetAsync(x => !x.Deleted && x.ExaminationFormId == examinationFormId);
-                var examinationFormModels = mapper.Map<IList<ExaminationHistoryModel>>(examinationForms);
-                appDomainResult = new AppDomainResult()
-                {
-                    Success = true,
-                    ResultCode = (int)HttpStatusCode.OK,
-                    Data = examinationFormModels
-                };
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "GetExaminationHistory", ex.Message));
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-            }
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                Data = examinationFormModels
+            };
             return appDomainResult;
         }
 
@@ -72,23 +63,15 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetPaymentHistory(int examinationFormId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
+            var paymentHistories = await this.paymentHistoryService.GetAsync(x => !x.Deleted && x.ExaminationFormId == examinationFormId);
+            var paymentHistoryModels = mapper.Map<IList<PaymentHistoryModel>>(paymentHistories);
+            appDomainResult = new AppDomainResult()
             {
-                var paymentHistories = await this.paymentHistoryService.GetAsync(x => !x.Deleted && x.ExaminationFormId == examinationFormId);
-                var paymentHistoryModels = mapper.Map<IList<PaymentHistoryModel>>(paymentHistories);
-                appDomainResult = new AppDomainResult()
-                {
-                    Success = true,
-                    ResultCode = (int)HttpStatusCode.OK,
-                    Data = paymentHistoryModels
-                };
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "GetExaminationHistory", ex.Message));
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-            }
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                Data = paymentHistoryModels
+            };
+
             return appDomainResult;
         }
 
@@ -101,37 +84,21 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> UpdateExaminationStatus([FromBody] UpdateExaminationStatusModel updateExaminationStatusModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var updateExaminationStatus = mapper.Map<UpdateExaminationStatus>(updateExaminationStatusModel);
+                bool isSuccess = await this.examinationFormService.UpdateExaminationStatus(updateExaminationStatus);
+                if (isSuccess)
                 {
-                    var updateExaminationStatus = mapper.Map<UpdateExaminationStatus>(updateExaminationStatusModel);
-                    bool isSuccess = await this.examinationFormService.UpdateExaminationStatus(updateExaminationStatus);
-                    if (isSuccess)
-                    {
-                        appDomainResult.Success = isSuccess;
-                        appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                    }
-                    else
-                    {
-                        appDomainResult.Success = false;
-                        appDomainResult.ResultMessage = ModelState.GetErrorMessage();
-                        appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-                    }
+                    appDomainResult.Success = isSuccess;
+                    appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                 }
                 else
-                {
-                    appDomainResult.Success = false;
-                    appDomainResult.ResultMessage = ModelState.GetErrorMessage();
-                    appDomainResult.ResultCode = (int)HttpStatusCode.BadRequest;
-                }
+                    throw new Exception("Lỗi trong quá trình xử lý");
             }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "AddItem", ex.Message));
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-            }
+            else
+                throw new AppException(ModelState.GetErrorMessage());
+
             return appDomainResult;
         }
 

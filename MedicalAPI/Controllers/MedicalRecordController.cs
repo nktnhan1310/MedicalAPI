@@ -36,24 +36,14 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetMedicalAdditionInfos(int medicalRecordId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
+            var medicalRecordAdditionInfos = await this.medicalRecordAdditionService.GetAsync(e => !e.Deleted && e.MedicalRecordId == medicalRecordId);
+            var medicalRecordAdditionInfoModels = mapper.Map<IList<MedicalRecordAdditionModel>>(medicalRecordAdditionInfos);
+            appDomainResult = new AppDomainResult()
             {
-                var medicalRecordAdditionInfos = await this.medicalRecordAdditionService.GetAsync(e => !e.Deleted && e.MedicalRecordId == medicalRecordId);
-                var medicalRecordAdditionInfoModels = mapper.Map<IList<MedicalRecordAdditionModel>>(medicalRecordAdditionInfos);
-                appDomainResult = new AppDomainResult()
-                {
-                    ResultCode = (int)HttpStatusCode.OK,
-                    Success = true,
-                    Data = medicalRecordAdditionInfoModels,
-                };
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "GetMedicalAdditionInfos", ex.Message));
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-            }
-
+                ResultCode = (int)HttpStatusCode.OK,
+                Success = true,
+                Data = medicalRecordAdditionInfoModels,
+            };
             return appDomainResult;
         }
 

@@ -70,6 +70,16 @@ namespace MedicalAPI
             services.AddScoped<IPaymentHistoryService, PaymentHistoryService>();
             services.AddScoped<IExaminationHistoryService, ExaminationHistoryService>();
 
+            #region PERMISSION SERVICE
+
+            services.AddScoped<IPermitObjectPermissionService, PermitObjectPermissionService>();
+            services.AddScoped<IPermitObjectService, PermitObjectService>();
+            services.AddScoped<IUserGroupService, UserGroupService>();
+            services.AddScoped<IPermissionService, PermissionService>();
+            services.AddScoped<IUserInGroupService, UserInGroupService>();
+
+            #endregion
+
             #region Catalogue Service
 
             services.AddScoped<IExaminationTypeService, ExaminationTypeService>();
@@ -111,6 +121,7 @@ namespace MedicalAPI
 
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
+                c.EnableAnnotations();
             });
 
 

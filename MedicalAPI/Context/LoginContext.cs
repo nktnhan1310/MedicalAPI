@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using MedicalAPI.Model;
 
 namespace MedicalAPI.Context
 {
@@ -29,38 +30,40 @@ namespace MedicalAPI.Context
             }
         }
 
-        //public UserLoginModel CurrentUser
-        //{
-        //    get
-        //    {
-        //        if (Utils.HttpContext.Current.User.Identity.IsAuthenticated)
-        //        {
-        //            var claim = Utils.HttpContext.Current.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.UserData);
-        //            if (claim != null)
-        //            {
-        //                return JsonConvert.DeserializeObject<UserLoginModel>(claim.Value);
-        //            }
-        //        }
-        //        return null;
-        //    }
-        //}
+        public UserLoginModel CurrentUser
+        {
+            get
+            {
+                var user = (UserLoginModel)Utils.HttpContext.Current.Items["User"];
+                if (user != null)
+                {
+                    return user;
+                    //var claim = Utils.HttpContext.Current.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.UserData);
+                    //if (claim != null)
+                    //{
+                    //    return JsonConvert.DeserializeObject<UserLoginModel>(claim.Value);
+                    //}
+                }
+                return null;
+            }
+        }
 
         public void Clear()
         {
             instance = null;
         }
 
-        //public UserLoginModel GetCurrentUser(IHttpContextAccessor httpContext)
-        //{
-        //    if (httpContext != null && httpContext.HttpContext.User.Identity.IsAuthenticated)
-        //    {
-        //        var claim = httpContext.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.UserData);
-        //        if (claim != null)
-        //        {
-        //            return JsonConvert.DeserializeObject<UserLoginModel>(claim.Value);
-        //        }
-        //    }
-        //    return null;
-        //}
+        public UserLoginModel GetCurrentUser(IHttpContextAccessor httpContext)
+        {
+            if (httpContext != null && httpContext.HttpContext.User.Identity.IsAuthenticated)
+            {
+                var claim = httpContext.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.UserData);
+                if (claim != null)
+                {
+                    return JsonConvert.DeserializeObject<UserLoginModel>(claim.Value);
+                }
+            }
+            return null;
+        }
     }
 }

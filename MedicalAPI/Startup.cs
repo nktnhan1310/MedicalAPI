@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Medical.AppDbContext;
@@ -8,6 +9,7 @@ using MedicalAPI.AutoMapper;
 using MedicalAPI.Utils;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -126,6 +128,7 @@ namespace MedicalAPI
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
+                
             });
             //services.AddControllers();
         }
@@ -133,23 +136,26 @@ namespace MedicalAPI
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app , IWebHostEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
-            //loggerFactory.AddFile("Logs/medical-{Date}.txt");
             loggerFactory.AddSerilog();
-            serviceProvider.MigrationDatabase(Configuration);
+            //serviceProvider.MigrationDatabase(Configuration);
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/error-local-development");
             }
+            //app.ConfigureExceptionHandler();
             app.UseStaticFiles();
             app.UseStaticHttpContext();
             app.UseSession();
             app.UseCookiePolicy();
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);
-            app.UseAuthorization();
-            app.UseMiddleware<JwtMiddleware>();
             app.UseHttpsRedirection();
+            app.UseAuthentication();
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+            app.UseMiddleware<JwtMiddleware>();
+            app.UseAuthorization();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

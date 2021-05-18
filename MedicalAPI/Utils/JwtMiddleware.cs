@@ -1,11 +1,14 @@
 ﻿using Medical.Interface.Services;
+using MedicalAPI.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -49,10 +52,17 @@ namespace MedicalAPI.Utils
                 }, out SecurityToken validatedToken);
 
                 var jwtToken = (JwtSecurityToken)validatedToken;
-                var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+                var userModel = new UserLoginModel();
+                var claim = jwtToken.Claims.First(x => x.Type == ClaimTypes.UserData);
+                if (claim != null)
+                {
+                    userModel = JsonConvert.DeserializeObject<UserLoginModel>(claim.Value);
+                }
+
+                //var userInfo = int.Parse(jwtToken.Claims.First(x => x.Type == ClaimTypes.UserData).Value);
 
                 // attach user to context on successful jwt validation
-                context.Items["User"] = userService.GetById(userId);
+                context.Items["User"] = userModel;
             }
             catch
             {

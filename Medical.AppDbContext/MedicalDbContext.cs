@@ -57,9 +57,15 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<BankInfos>(x => x.ToTable("BankInfos"));
             modelBuilder.Entity<PaymentHistories>(x => x.ToTable("PaymentHistories"));
             modelBuilder.Entity<ConfigRoomExaminations>(x => x.ToTable("ConfigRoomExaminations"));
-            
 
-            modelBuilder.Entity<Users>(x =>
+            modelBuilder.Entity<PermitObjects>(x => x.ToTable("PermitObjects"));
+            modelBuilder.Entity<Permissions>(x => x.ToTable("Permissions"));
+            modelBuilder.Entity<UserGroups>(x => x.ToTable("UserGroups"));
+            modelBuilder.Entity<PermitObjectPermissions>(x => x.ToTable("PermitObjectPermissions"));
+            modelBuilder.Entity<UserInGroups>(x => x.ToTable("UserInGroups"));
+
+
+        modelBuilder.Entity<Users>(x =>
             {
                 x.ToTable("Users");
             });
@@ -70,7 +76,12 @@ namespace Medical.AppDbContext
 
         #region Catalogue
 
-        
+        public DbSet<UserInGroups> UserInGroups { get; set; }
+        public DbSet<PermitObjects> PermitObjects { get; set; }
+        public DbSet<Permissions> Permissions { get; set; }
+        public DbSet<UserGroups> UserGroups { get; set; }
+        public DbSet<PermitObjectPermissions> PermitObjectPermissions { get; set; }
+
         public DbSet<ExaminationHistories> ExaminationHistories { get; set; }
         public DbSet<BankInfos> BankInfos { get; set; }
         public DbSet<Channels> Channels { get; set; }

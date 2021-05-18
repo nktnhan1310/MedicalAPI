@@ -36,24 +36,15 @@ namespace MedicalAPI.Controllers
         public override async Task<AppDomainResult> Get()
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
-            {
-                var items = await this.catalogueService.GetAllAsync();
-                var itemModels = mapper.Map<IList<T>>(items);
-                appDomainResult = new AppDomainResult()
-                {
-                    Success = true,
-                    Data = itemModels,
-                    ResultCode = (int)HttpStatusCode.OK
-                };
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "Get", ex.Message));
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-            }
 
+            var items = await this.catalogueService.GetAllAsync();
+            var itemModels = mapper.Map<IList<T>>(items);
+            appDomainResult = new AppDomainResult()
+            {
+                Success = true,
+                Data = itemModels,
+                ResultCode = (int)HttpStatusCode.OK
+            };
             return appDomainResult;
         }
 
@@ -66,35 +57,20 @@ namespace MedicalAPI.Controllers
         public override async Task<AppDomainResult> GetById(int id)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
-            {
-                var item = await this.domainService.GetByIdAsync(id);
-                if (item != null)
-                {
-                    var itemModel = mapper.Map<T>(item);
-                    appDomainResult = new AppDomainResult()
-                    {
-                        Success = true,
-                        Data = itemModel,
-                        ResultCode = (int)HttpStatusCode.OK
-                    };
-                }
-                else
-                {
-                    appDomainResult = new AppDomainResult()
-                    {
-                        Success = false,
-                        ResultCode = (int)HttpStatusCode.InternalServerError
-                    };
-                }
 
-            }
-            catch (Exception ex)
+            var item = await this.domainService.GetByIdAsync(id);
+            if (item != null)
             {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "GetById", ex.Message));
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
+                var itemModel = mapper.Map<T>(item);
+                appDomainResult = new AppDomainResult()
+                {
+                    Success = true,
+                    Data = itemModel,
+                    ResultCode = (int)HttpStatusCode.OK
+                };
             }
+            else
+                throw new KeyNotFoundException("Item không tồn tại");
 
             return appDomainResult;
         }
@@ -108,51 +84,31 @@ namespace MedicalAPI.Controllers
         public override async Task<AppDomainResult> AddItem([FromBody] T itemModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
+
+            bool success = false;
+            if (ModelState.IsValid)
             {
-                bool success = false;
-                if (ModelState.IsValid)
+                var item = mapper.Map<E>(itemModel);
+                if (item != null)
                 {
-                    var item = mapper.Map<E>(itemModel);
-                    if (item != null)
-                    {
-                        // Kiểm tra item có tồn tại chưa?
-                        var messageUserCheck = await this.catalogueService.GetExistItemMessage(item);
-                        if (!string.IsNullOrEmpty(messageUserCheck))
-                        {
-                            appDomainResult.ResultCode = (int)HttpStatusCode.BadRequest;
-                            appDomainResult.Success = false;
-                            appDomainResult.ResultMessage = messageUserCheck;
-                            return appDomainResult;
-                        }
-                        success = await this.catalogueService.CreateAsync(item);
-                        if (success)
-                            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                        else
-                            appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-                        appDomainResult.Success = success;
-                    }
+                    // Kiểm tra item có tồn tại chưa?
+                    var messageUserCheck = await this.catalogueService.GetExistItemMessage(item);
+                    if (!string.IsNullOrEmpty(messageUserCheck))
+                        throw new AppException(messageUserCheck);
+                    success = await this.catalogueService.CreateAsync(item);
+                    if (success)
+                        appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     else
-                    {
-                        appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-                        appDomainResult.Success = false;
-                    }
+                        throw new Exception("Lỗi trong quá trình xử lý");
+                    appDomainResult.Success = success;
                 }
                 else
-                {
-                    appDomainResult.Success = false;
-                    appDomainResult.ResultMessage = ModelState.GetErrorMessage();
-                    appDomainResult.ResultCode = (int)HttpStatusCode.BadRequest;
-                }
+                    throw new KeyNotFoundException("Item không tồn tại");
 
             }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "AddItem", ex.Message));
+            else
+                throw new AppException(ModelState.GetErrorMessage());
 
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-            }
             return appDomainResult;
         }
 
@@ -166,52 +122,31 @@ namespace MedicalAPI.Controllers
         public override async Task<AppDomainResult> UpdateItem(int id, [FromBody] T itemModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
-            {
-                bool success = false;
-                if (ModelState.IsValid)
-                {
-                    var item = mapper.Map<E>(itemModel);
-                    if (item != null)
-                    {
-                        // Kiểm tra item có tồn tại chưa?
-                        var messageUserCheck = await this.catalogueService.GetExistItemMessage(item);
-                        if (!string.IsNullOrEmpty(messageUserCheck))
-                        {
-                            appDomainResult.ResultCode = (int)HttpStatusCode.BadRequest;
-                            appDomainResult.Success = false;
-                            appDomainResult.ResultMessage = messageUserCheck;
-                            return appDomainResult;
-                        }
-                        success = await this.catalogueService.UpdateAsync(item);
-                        if (success)
-                            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                        else
-                            appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
 
-                        appDomainResult.Success = success;
-                    }
+            bool success = false;
+            if (ModelState.IsValid)
+            {
+                var item = mapper.Map<E>(itemModel);
+                if (item != null)
+                {
+                    // Kiểm tra item có tồn tại chưa?
+                    var messageUserCheck = await this.catalogueService.GetExistItemMessage(item);
+                    if (!string.IsNullOrEmpty(messageUserCheck))
+                        throw new AppException(messageUserCheck);
+                    success = await this.catalogueService.UpdateAsync(item);
+                    if (success)
+                        appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     else
-                    {
-                        appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-                        appDomainResult.Success = false;
-                    }
+                        throw new Exception("Lỗi trong quá trình xử lý");
+
+                    appDomainResult.Success = success;
                 }
                 else
-                {
-                    appDomainResult.Success = false;
-                    appDomainResult.ResultMessage = ModelState.GetErrorMessage();
-                    appDomainResult.ResultCode = (int)HttpStatusCode.BadRequest;
-                }
-
+                    throw new KeyNotFoundException("Item không tồn tại");
             }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "UpdateItem", ex.Message));
+            else
+                throw new AppException(ModelState.GetErrorMessage());
 
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-            }
             return appDomainResult;
         }
 
@@ -225,35 +160,25 @@ namespace MedicalAPI.Controllers
         public override async Task<AppDomainResult> PatchItem(int id, [FromBody] T itemModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
+
+            bool success = false;
+            var item = mapper.Map<E>(itemModel);
+            if (item != null)
             {
-                bool success = false;
-                var item = mapper.Map<E>(itemModel);
-                if (item != null)
+                Expression<Func<E, object>>[] includeProperties = new Expression<Func<E, object>>[]
                 {
-                    Expression<Func<E, object>>[] includeProperties = new Expression<Func<E, object>>[]
-                    {
                         x => x.Active,
-                    };
-                    success = await this.catalogueService.UpdateFieldAsync(item, includeProperties);
-                    if (success)
-                        appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                    else
-                        appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-                    appDomainResult.Success = success;
-                }
+                };
+                success = await this.catalogueService.UpdateFieldAsync(item, includeProperties);
+                if (success)
+                    appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                 else
-                {
-                    appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-                    appDomainResult.Success = false;
-                }
+                    throw new Exception("Lỗi trong quá trình xử lý");
+                appDomainResult.Success = success;
             }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "PatchItem", ex.Message));
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-            }
+            else
+                throw new KeyNotFoundException("Item không tồn tại");
+
             return appDomainResult;
         }
 
@@ -267,27 +192,15 @@ namespace MedicalAPI.Controllers
         public override async Task<AppDomainResult> DeleteItem(int id)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
-            {
-                bool success = await this.catalogueService.DeleteAsync(id);
-                if (success)
-                {
-                    appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                    appDomainResult.Success = success;
-                }
-                else
-                {
-                    appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-                    appDomainResult.Success = false;
-                }
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "DeleteItem", ex.Message));
 
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
+            bool success = await this.catalogueService.DeleteAsync(id);
+            if (success)
+            {
+                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                appDomainResult.Success = success;
             }
+            else
+                throw new Exception("Lỗi trong quá trình xử lý");
             return appDomainResult;
         }
 
@@ -297,37 +210,26 @@ namespace MedicalAPI.Controllers
         /// <param name="baseSearch"></param>
         /// <returns></returns>
         [ActionName("GetPagedData")]
-        [HttpPost]
-        public override async Task<AppDomainResult> GetPagedData([FromBody] DomainSearch baseSearch)
+        [HttpGet]
+        public override async Task<AppDomainResult> GetPagedData([FromQuery] DomainSearch baseSearch)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
+
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                baseSearch.OrderBy = "Id";
+                PagedList<E> pagedData = await this.catalogueService.GetPagedListData(baseSearch);
+                PagedList<T> pagedDataModel = mapper.Map<PagedList<T>>(pagedData);
+                appDomainResult = new AppDomainResult
                 {
-                    baseSearch.OrderBy = "Id";
-                    PagedList<E> pagedData = await this.catalogueService.GetPagedListData(baseSearch);
-                    PagedList<T> pagedDataModel = mapper.Map<PagedList<T>>(pagedData);
-                    appDomainResult = new AppDomainResult
-                    {
-                        Data = pagedDataModel,
-                        Success = true,
-                        ResultCode = (int)HttpStatusCode.OK
-                    };
-                }
-                else
-                {
-                    appDomainResult.Success = false;
-                    appDomainResult.ResultMessage = ModelState.GetErrorMessage();
-                    appDomainResult.ResultCode = (int)HttpStatusCode.BadRequest;
-                }
+                    Data = pagedDataModel,
+                    Success = true,
+                    ResultCode = (int)HttpStatusCode.OK
+                };
             }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "GetPagedData", ex.Message));
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-            }
+            else
+                throw new AppException(ModelState.GetErrorMessage());
+
             return appDomainResult;
         }
 

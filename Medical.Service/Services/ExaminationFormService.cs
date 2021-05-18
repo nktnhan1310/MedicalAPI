@@ -71,7 +71,7 @@ namespace Medical.Service
                         case (int)CatalogueUtilities.ExaminationStatus.Confirmed:
                             {
                                 action = (int)CatalogueUtilities.ExaminationAction.Confirm;
-                                existExaminationFormInfo.Code = RandomString(6);
+                                existExaminationFormInfo.Code = RandomUtilities.RandomString(6);
                                 includeProperties = new Expression<Func<ExaminationForms, object>>[]
                                 {
                                     x => x.Status,
@@ -236,24 +236,6 @@ namespace Medical.Service
                 result = string.Join(" ", messages);
             return result;
         }
-
-        #region Private Methods
-
-        private static Random random = new Random();
-        /// <summary>
-        /// Khởi tạo chuỗi random theo độ dài chuỗi
-        /// </summary>
-        /// <param name="length"></param>
-        /// <returns></returns>
-        public static string RandomString(int length)
-        {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-            return new string(Enumerable.Repeat(chars, length)
-              .Select(s => s[random.Next(s.Length)]).ToArray());
-        }
-
-        #endregion
-
 
     }
 }

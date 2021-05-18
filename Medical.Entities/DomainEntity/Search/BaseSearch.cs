@@ -11,7 +11,6 @@ namespace Medical.Entities
         int PageSize { set; get; }
         string SearchContent { set; get; }
         string OrderBy { set; get; }
-        string FileName { set; get; }
     }
 
     public class BaseSearch: IBaseSearch
@@ -33,6 +32,5 @@ namespace Medical.Entities
         /// Cột sắp xếp
         /// </summary>
         public string OrderBy { set; get; }
-        public string FileName { set; get; }
     }
 }

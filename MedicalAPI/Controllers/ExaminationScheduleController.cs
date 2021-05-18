@@ -36,20 +36,11 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetExaminatioNScheduleDetails(int examinationScheduleId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
-            {
-                var examinationSchedules = await this.examinationScheduleDetailService.GetAsync(e => !e.Deleted && e.ScheduleId == examinationScheduleId);
-                var examinationScheduleModels = mapper.Map<IList<ExaminationScheduleDetails>>(examinationSchedules);
-                appDomainResult.Success = true;
-                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                appDomainResult.Data = examinationScheduleModels;
-            }
-            catch (Exception ex)
-            {
-                this.logger.LogError(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "GetExaminatioNScheduleDetails", ex.Message));
-                appDomainResult.Success = false;
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-            }
+            var examinationSchedules = await this.examinationScheduleDetailService.GetAsync(e => !e.Deleted && e.ScheduleId == examinationScheduleId);
+            var examinationScheduleModels = mapper.Map<IList<ExaminationScheduleDetails>>(examinationSchedules);
+            appDomainResult.Success = true;
+            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            appDomainResult.Data = examinationScheduleModels;
 
             return appDomainResult;
         }

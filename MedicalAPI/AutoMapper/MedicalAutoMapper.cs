@@ -49,7 +49,25 @@ namespace MedicalAPI.AutoMapper
             CreateMap<PagedList<PaymentHistoryModel>, PagedList<PaymentHistories>>().ReverseMap();
             CreateMap<UpdateExaminationStatusModel, UpdateExaminationStatus>().ReverseMap();
 
-            
+            #region Auth
+
+            CreateMap<UserGroupModel, UserGroups>().ReverseMap();
+            CreateMap<PagedList<UserGroupModel>, PagedList<UserGroups>>().ReverseMap();
+
+            CreateMap<PermissionModel, Permissions>().ReverseMap();
+            CreateMap<PagedList<PermissionModel>, PagedList<Permissions>>().ReverseMap();
+
+            CreateMap<UserInGroupModel, UserInGroups>().ReverseMap();
+            CreateMap<PagedList<UserInGroupModel>, PagedList<UserInGroups>>().ReverseMap();
+
+            CreateMap<PermitObjectModel, PermitObjects>().ReverseMap();
+            CreateMap<PagedList<PermitObjectModel>, PagedList<PermitObjects>>().ReverseMap();
+
+            CreateMap<PermitObjectPermissionModel, PermitObjectPermissions>().ReverseMap();
+            CreateMap<PagedList<PermitObjectPermissionModel>, PagedList<PermitObjectPermissions>>().ReverseMap();
+
+            #endregion
+
 
             #region Catalogue
 

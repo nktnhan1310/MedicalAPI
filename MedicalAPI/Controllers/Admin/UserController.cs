@@ -39,33 +39,25 @@ namespace MedicalAPI.Controllers
         public override async Task<AppDomainResult> PatchItem(int id, [FromBody] UserModel itemModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            try
+            bool success = false;
+            var item = mapper.Map<Users>(itemModel);
+            if (item != null)
             {
-                bool success = false;
-                var item = mapper.Map<Users>(itemModel);
-                if (item != null)
+                Expression<Func<Users, object>>[] includeProperties = new Expression<Func<Users, object>>[]
                 {
-                    Expression<Func<Users, object>>[] includeProperties = new Expression<Func<Users, object>>[]
-                    {
                         x => x.Active,
                         x => x.Status
-                    };
-                    success = await this.domainService.UpdateFieldAsync(item, includeProperties);
-                    appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                    appDomainResult.Success = success;
-                }
-                else
-                {
-                    appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-                    appDomainResult.Success = false;
-                }
+                };
+                success = await this.domainService.UpdateFieldAsync(item, includeProperties);
+                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                appDomainResult.Success = success;
             }
-            catch (Exception ex)
+            else
             {
-                this.logger.LogError(ex.Message);
-                appDomainResult.Success = false;
                 appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
+                appDomainResult.Success = false;
             }
+
             return appDomainResult;
         }
 
