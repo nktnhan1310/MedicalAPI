@@ -8,19 +8,22 @@ using System.Threading.Tasks;
 using Medical.Entities;
 using Medical.Interface.Services;
 using Medical.Utilities;
-using MedicalAPI.Model;
-using MedicalAPI.Utils;
+using Medical.Models;
+using Medical.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Medical.Core.App.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Description("Quản lý bệnh viện")]
+    [Authorize]
     public class HospitalController : BaseController<Hospitals, HospitalModel, SearchHospital>
     {
         private readonly IHospitalFileService hospitalFileService;
@@ -40,6 +43,7 @@ namespace MedicalAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public override async Task<AppDomainResult> GetById(int id)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -110,6 +114,7 @@ namespace MedicalAPI.Controllers
         /// <param name="files"></param>
         /// <returns></returns>
         [HttpPost]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
         public override async Task<AppDomainResult> AddItem([FromBody] HospitalModel itemModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -178,6 +183,7 @@ namespace MedicalAPI.Controllers
         /// <param name="itemModel"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Update })]
         public override async Task<AppDomainResult> UpdateItem(int id, [FromBody] HospitalModel itemModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -248,6 +254,7 @@ namespace MedicalAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Download })]
         public override async Task<ActionResult> DownloadFile(int id)
         {
             var fileInfo = await this.hospitalFileService.GetByIdAsync(id);

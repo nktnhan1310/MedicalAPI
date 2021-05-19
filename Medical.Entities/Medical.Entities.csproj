@@ -8,4 +8,10 @@
     <OutputPath>bin\</OutputPath>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="Medical.Utilities">
+      <HintPath>..\Medical.Utilities\bin\netcoreapp3.1\Medical.Utilities.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

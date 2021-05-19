@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+    <DocumentationFile>bin\Medical.Core.App.xml</DocumentationFile>
+    <NoWarn>1701;1702;1591</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.6" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.4" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.1.4" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Medical.AppDbContext">
+      <HintPath>..\Medical.AppDbContext\bin\netcoreapp3.1\Medical.AppDbContext.dll</HintPath>
+    </Reference>
+    <Reference Include="Medical.Entities">
+      <HintPath>..\Medical.Entities\bin\netcoreapp3.1\Medical.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="Medical.Extensions">
+      <HintPath>..\Medical.Extensions\bin\netcoreapp3.1\Medical.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="Medical.Interface">
+      <HintPath>..\Medical.Interface\bin\netcoreapp3.1\Medical.Interface.dll</HintPath>
+    </Reference>
+    <Reference Include="Medical.Models">
+      <HintPath>..\Medical.Models\bin\netcoreapp3.1\Medical.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="Medical.Service">
+      <HintPath>..\Medical.Service\bin\netcoreapp3.1\Medical.Service.dll</HintPath>
+    </Reference>
+    <Reference Include="Medical.Utilities">
+      <HintPath>..\Medical.Utilities\bin\netcoreapp3.1\Medical.Utilities.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+
+</Project>

@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>bin\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Medical.Entities">
+      <HintPath>..\Medical.Entities\bin\netcoreapp3.1\Medical.Entities.dll</HintPath>
+    </Reference>
+    <Reference Include="Medical.Utilities">
+      <HintPath>..\Medical.Utilities\bin\netcoreapp3.1\Medical.Utilities.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

@@ -50,14 +50,28 @@ namespace Medical.Service
             string result = string.Empty;
             bool isExistEmail = !string.IsNullOrEmpty(item.Email) && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Email == item.Email);
             bool isExistPhone = !string.IsNullOrEmpty(item.Phone) && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Phone == item.Phone);
-            bool isExistUserName = !string.IsNullOrEmpty(item.UserName) && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.UserName == item.UserName);
+            bool isExistUserName = !string.IsNullOrEmpty(item.UserName)
+                && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id
+                && (x.UserName.Contains(item.UserName)
+                || x.Email.Contains(item.UserName)
+                || x.Phone.Contains(item.UserName)
+                ));
+            bool isPhone = ValidateUserName.IsPhoneNumber(item.UserName);
+            bool isEmail = ValidateUserName.IsEmail(item.UserName);
 
             if (isExistEmail)
                 messages.Add("Email đã tồn tại!");
             if (isExistPhone)
                 messages.Add("Số điện thoại đã tồn tại!");
             if (isExistUserName)
-                messages.Add("User name đã tồn tại!");
+            {
+                if (isPhone)
+                    messages.Add("Số điện thoại đã tồn tại!");
+                else if (isEmail)
+                    messages.Add("Email đã tồn tại!");
+                else
+                    messages.Add("User name đã tồn tại!");
+            }
             if (messages.Any())
                 result = string.Join(" ", messages);
             return result;
@@ -184,7 +198,7 @@ namespace Medical.Service
         public async Task<bool> Verify(string userName, string password)
         {
             var user = await Queryable
-                .Where(e => !e.Deleted 
+                .Where(e => !e.Deleted
                 && (e.UserName.Contains(userName)
                 || e.Phone.Contains(userName)
                 || e.Email.Contains(userName)
@@ -207,6 +221,27 @@ namespace Medical.Service
             }
             else
                 return false;
+        }
+
+        /// <summary>
+        /// Kiểm tra pass word cũ đã giống chưa
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        public async Task<string> CheckCurrentUserPassword(int userId, string password, string newPasssword)
+        {
+            string message = string.Empty;
+            List<string> messages = new List<string>();
+            bool isCurrentPassword = await this.Queryable.AnyAsync(x => x.Id == userId && x.Password == SecurityUtils.HashSHA1(password));
+            bool isDuplicateNewPassword = await this.Queryable.AnyAsync(x => x.Id == userId && x.Password == SecurityUtils.HashSHA1(newPasssword));
+            if (!isCurrentPassword)
+                messages.Add("Mật khẩu cũ không chính xác");
+            else if (isDuplicateNewPassword)
+                messages.Add("Mật khẩu mới không được trùng mật khẩu cũ");
+            if (messages.Any())
+                message = string.Join("; ", messages);
+            return message;
         }
 
         /// <summary>
@@ -233,7 +268,7 @@ namespace Medical.Service
                 // Lấy ra những quyền user có trong chức năng cần kiểm tra
                 var permitObjectPermissions = await unitOfWork.Repository<PermitObjectPermissions>().GetQueryable()
                 .Where(e => e.UserGroupId.HasValue && userGroupIds.Contains(e.UserGroupId.Value)).ToListAsync();
-                if(permitObjectPermissions != null && permitObjectPermissions.Any())
+                if (permitObjectPermissions != null && permitObjectPermissions.Any())
                 {
                     // Lấy danh mục mã quyền user cần kiểm tra
                     permissionIds = permitObjectPermissions.Select(e => e.PermissionId).ToList();
@@ -246,9 +281,9 @@ namespace Medical.Service
                     var permitObjectControllers = await unitOfWork.Repository<PermitObjects>().GetQueryable().Where(e => permitObjectIds.Contains(e.Id))
                         .Select(e => e.ControllerNames.Split(";", StringSplitOptions.None))
                         .ToListAsync();
-                    
+
                     // Kiểm tra user có quyền trong chức năng không
-                    if(permissionCodes != null && permissionCodes.Any() && permitObjectControllers != null && permitObjectControllers.Any())
+                    if (permissionCodes != null && permissionCodes.Any() && permitObjectControllers != null && permitObjectControllers.Any())
                     {
                         hasPermit = permitObjectControllers.Any(x => x.Contains(controller)) && permissions.Any(x => permissionCodes.Contains(x));
                     }

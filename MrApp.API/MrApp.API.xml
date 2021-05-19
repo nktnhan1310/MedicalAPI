@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MrApp.API</name>
+    </assembly>
+    <members>
+        <member name="M:MrApp.API.Controllers.UserController.GetById(System.Int32)">
+            <summary>
+            Lấy thông tin user theo Id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.UserController.UpdateItem(System.Int32,Medical.Models.UserModel)">
+            <summary>
+            Cập nhật thông tin Profile
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.UserController.PatchItem(System.Int32,Medical.Models.UserModel)">
+            <summary>
+            Cập nhật 1 phần user
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

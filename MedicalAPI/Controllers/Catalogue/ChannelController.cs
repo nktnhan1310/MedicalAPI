@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using Medical.Entities;
 using Medical.Entities.DomainEntity;
 using Medical.Interface.Services;
-using MedicalAPI.Model;
-using MedicalAPI.Model.DomainModel;
+using Medical.Models;
+using Medical.Models.DomainModel;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {

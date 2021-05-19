@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using Medical.Entities;
 using Medical.Interface.Services;
 using Medical.Utilities;
-using MedicalAPI.Model;
-using MedicalAPI.Utils;
+using Medical.Models;
+using Medical.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
@@ -36,6 +37,7 @@ namespace MedicalAPI.Controllers
         /// <param name="doctorId"></param>
         /// <returns></returns>
         [HttpGet("{doctorId}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View, CoreContants.Update })]
         public async Task<AppDomainResult> GetDoctorDetails(int doctorId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();

@@ -37,6 +37,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.1.4" />
     <PackageReference Include="Swashbuckle.Core" Version="5.6.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.11.0" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.2.9" />
   </ItemGroup>
 
@@ -44,11 +45,20 @@
     <Reference Include="Medical.AppDbContext">
       <HintPath>..\Medical.AppDbContext\bin\netcoreapp3.1\Medical.AppDbContext.dll</HintPath>
     </Reference>
+    <Reference Include="Medical.Core.App">
+      <HintPath>..\Medical.Core.App\bin\netcoreapp3.1\Medical.Core.App.dll</HintPath>
+    </Reference>
     <Reference Include="Medical.Entities">
       <HintPath>..\Medical.Entities\bin\netcoreapp3.1\Medical.Entities.dll</HintPath>
     </Reference>
+    <Reference Include="Medical.Extensions">
+      <HintPath>..\Medical.Extensions\bin\netcoreapp3.1\Medical.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="Medical.Interface">
       <HintPath>..\Medical.Interface\bin\netcoreapp3.1\Medical.Interface.dll</HintPath>
+    </Reference>
+    <Reference Include="Medical.Models">
+      <HintPath>..\Medical.Models\bin\netcoreapp3.1\Medical.Models.dll</HintPath>
     </Reference>
     <Reference Include="Medical.Service">
       <HintPath>..\Medical.Service\bin\netcoreapp3.1\Medical.Service.dll</HintPath>

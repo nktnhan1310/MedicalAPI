@@ -23,7 +23,7 @@ namespace Medical.Utilities
         public MailPriority Priority { get; set; }
         public string ClientCredentialUserName { get; set; }
         public string ClientCredentialPassword { get; set; }
-        public IList<string> BCCs { get; internal set; }
+        public IList<string> BCCs { get; set; }
 
         public EmailSendConfigure()
         {

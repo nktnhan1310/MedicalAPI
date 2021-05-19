@@ -6,18 +6,22 @@ using System.Net;
 using System.Threading.Tasks;
 using Medical.Entities;
 using Medical.Interface.Services;
-using MedicalAPI.Model;
-using MedicalAPI.Utils;
+using Medical.Utilities;
+using Medical.Models;
+using Medical.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Medical.Core.App.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Description("Lịch khám")]
+    [Authorize]
     public class ExaminationScheduleController : BaseController<ExaminationSchedules, ExaminationScheduleModel, SearchExaminationSchedule>
     {
         private readonly IExaminationScheduleDetailService examinationScheduleDetailService;
@@ -33,6 +37,7 @@ namespace MedicalAPI.Controllers
         /// <param name="examinationScheduleId"></param>
         /// <returns></returns>
         [HttpGet("{examinationScheduleId}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetExaminatioNScheduleDetails(int examinationScheduleId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();

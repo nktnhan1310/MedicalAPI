@@ -6,18 +6,22 @@ using System.Net;
 using System.Threading.Tasks;
 using Medical.Entities;
 using Medical.Interface.Services;
-using MedicalAPI.Model;
-using MedicalAPI.Utils;
+using Medical.Utilities;
+using Medical.Models;
+using Medical.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Medical.Core.App.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Description("Quản lý hồ sơ khám bệnh")]
+    [Authorize]
     public class MedicalRecordController : BaseController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>
     {
         private readonly IMedicalRecordAdditionService medicalRecordAdditionService;
@@ -33,6 +37,7 @@ namespace MedicalAPI.Controllers
         /// <param name="medicalRecordId"></param>
         /// <returns></returns>
         [HttpGet("{medicalRecordId}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetMedicalAdditionInfos(int medicalRecordId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();

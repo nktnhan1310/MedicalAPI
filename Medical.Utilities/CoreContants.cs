@@ -6,6 +6,7 @@ namespace Medical.Utilities
 {
     public class CoreContants
     {
+        public const string ViewAll = "ViewAll";
         public const string Delete = "Delete";
         public const string AddNew = "AddNew";
         public const string View = "View";

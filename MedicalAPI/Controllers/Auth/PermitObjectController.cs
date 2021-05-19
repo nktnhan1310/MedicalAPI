@@ -1,8 +1,8 @@
 ﻿using Medical.Entities;
 using Medical.Interface.Services;
 using Medical.Utilities;
-using MedicalAPI.Model;
-using MedicalAPI.Utils;
+using Medical.Models;
+using Medical.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,12 +14,15 @@ using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Threading.Tasks;
+using Medical.Core.App.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Description("Quản lý chức năng người dùng")]
+    [Authorize]
     public class PermitObjectController : CatalogueController<PermitObjects, PermitObjectModel, BaseSearch>
     {
         public PermitObjectController(IServiceProvider serviceProvider, ILogger<BaseController<PermitObjects, PermitObjectModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
@@ -32,6 +35,7 @@ namespace MedicalAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetCatalogueController()
         {
             return await Task.Run(() =>
@@ -72,6 +76,7 @@ namespace MedicalAPI.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public override async Task<AppDomainResult> GetById(int id)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -107,6 +112,7 @@ namespace MedicalAPI.Controllers
         /// <param name="itemModel"></param>
         /// <returns></returns>
         [HttpPost]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
         public override Task<AppDomainResult> AddItem([FromBody] PermitObjectModel itemModel)
         {
             itemModel.ToModel();
@@ -120,6 +126,7 @@ namespace MedicalAPI.Controllers
         /// <param name="itemModel"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Update })]
         public override Task<AppDomainResult> UpdateItem(int id, [FromBody] PermitObjectModel itemModel)
         {
             itemModel.ToModel();

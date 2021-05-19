@@ -1,8 +1,9 @@
 ﻿using Medical.Entities;
 using Medical.Entities.Extensions;
 using Medical.Interface.Services;
-using MedicalAPI.Model;
-using MedicalAPI.Utils;
+using Medical.Utilities;
+using Medical.Models;
+using Medical.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,12 +14,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Medical.Core.App.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Description("Quản lý phiếu khám bệnh")]
+    [Authorize]
     public class ExaminationFormController : BaseController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>
     {
         private readonly IExaminationHistoryService examinationHistoryService;
@@ -40,6 +44,7 @@ namespace MedicalAPI.Controllers
         /// <param name="examinationFormId"></param>
         /// <returns></returns>
         [HttpGet("{examinationFormId}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetExaminationHistory(int examinationFormId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -60,6 +65,7 @@ namespace MedicalAPI.Controllers
         /// <param name="examinationFormId"></param>
         /// <returns></returns>
         [HttpGet("{examinationFormId}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetPaymentHistory(int examinationFormId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -81,6 +87,7 @@ namespace MedicalAPI.Controllers
         /// <param name="updateExaminationStatusModel"></param>
         /// <returns></returns>
         [HttpPost]
+        [MedicalAppAuthorize(new string[] { CoreContants.Update })]
         public async Task<AppDomainResult> UpdateExaminationStatus([FromBody] UpdateExaminationStatusModel updateExaminationStatusModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();

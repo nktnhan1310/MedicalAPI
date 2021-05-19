@@ -1,8 +1,8 @@
 ﻿using Medical.Entities;
 using Medical.Interface.Services;
 using Medical.Utilities;
-using MedicalAPI.Model;
-using MedicalAPI.Utils;
+using Medical.Models;
+using Medical.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,12 +13,15 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Medical.Core.App.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Description("Quản lý nhóm người dùng")]
+    [Authorize]
     public class UserGroupController : CatalogueController<UserGroups, UserGroupModel, BaseSearch>
     {
         private readonly IUserInGroupService userInGroupService;
@@ -36,6 +39,7 @@ namespace MedicalAPI.Controllers
         /// <param name="searchUserInGroup"></param>
         /// <returns></returns>
         [HttpGet("{userGroupId}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View, CoreContants.Update })]
         public async Task<AppDomainResult> GetUserInGroups([FromBody] SearchUserInGroup searchUserInGroup)
         {
             AppDomainResult appDomainResult = new AppDomainResult();

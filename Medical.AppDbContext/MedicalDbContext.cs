@@ -51,7 +51,6 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<MedicalRecords>(x => x.ToTable("MedicalRecords"));
             modelBuilder.Entity<MedicalRecordAdditions>(x => x.ToTable("MedicalRecordAdditions"));
             modelBuilder.Entity<ServiceTypeMappingHospital>(x => x.ToTable("ServiceTypeMappingHospital"));
-            modelBuilder.Entity<SMSConfigs>(x => x.ToTable("SMSConfigs"));
 
             modelBuilder.Entity<ExaminationHistories>(x => x.ToTable("ExaminationHistories"));
             modelBuilder.Entity<BankInfos>(x => x.ToTable("BankInfos"));
@@ -64,8 +63,15 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<PermitObjectPermissions>(x => x.ToTable("PermitObjectPermissions"));
             modelBuilder.Entity<UserInGroups>(x => x.ToTable("UserInGroups"));
 
+            #region Configs
 
-        modelBuilder.Entity<Users>(x =>
+            modelBuilder.Entity<EmailConfiguration>(x => x.ToTable("EmailConfiguration"));
+            modelBuilder.Entity<SMSConfiguration>(x => x.ToTable("SMSConfiguration"));
+
+            #endregion
+
+
+            modelBuilder.Entity<Users>(x =>
             {
                 x.ToTable("Users");
             });
@@ -73,6 +79,14 @@ namespace Medical.AppDbContext
 
             base.OnModelCreating(modelBuilder);
         }
+
+        #region Config
+
+        public DbSet<EmailConfiguration> EmailConfiguration { get; set; }
+        public DbSet<SMSConfiguration> SMSConfiguration { get; set; }
+
+
+        #endregion
 
         #region Catalogue
 
@@ -117,7 +131,6 @@ namespace Medical.AppDbContext
         public DbSet<MedicalRecords> MedicalRecords { get; set; }
         public DbSet<MedicalRecordAdditions> MedicalRecordAdditions { get; set; }
         public DbSet<ServiceTypeMappingHospital> ServiceTypeMappingHospital { get; set; }
-        public DbSet<SMSConfigs> SMSConfigs { get; set; }
         public DbSet<Users> Users { get; set; }
 
 

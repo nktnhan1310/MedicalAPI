@@ -7,19 +7,22 @@ using System.Net;
 using System.Threading.Tasks;
 using Medical.Entities;
 using Medical.Interface.Services;
-using MedicalAPI.Model;
-using MedicalAPI.Utils;
+using Medical.Utilities;
+using Medical.Models;
+using Medical.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Description("Quản lý thông tin người dùng")]
+    [Authorize]
     public class UserController : BaseController<Users, UserModel, SearchUser>
     {
         private readonly IUserService userService;
@@ -36,6 +39,7 @@ namespace MedicalAPI.Controllers
         /// <param name="itemModel"></param>
         /// <returns></returns>
         [HttpPatch("{id}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Update })]
         public override async Task<AppDomainResult> PatchItem(int id, [FromBody] UserModel itemModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();

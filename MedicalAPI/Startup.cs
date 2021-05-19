@@ -5,8 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Medical.AppDbContext;
-using MedicalAPI.AutoMapper;
-using MedicalAPI.Utils;
+using Medical.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -23,6 +22,8 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Serilog;
+using Medical.Models.AutoMapper;
+using Medical.Core.App;
 
 namespace MedicalAPI
 {
@@ -165,6 +166,7 @@ namespace MedicalAPI
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Medical V1");
+                c.RoutePrefix = "admin/swagger";
             });
 
             app.UseEndpoints(endpoints =>
