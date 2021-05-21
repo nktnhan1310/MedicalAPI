@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "QRjLcJaCGKBkx/cJGijWSlOrrkHoExldHyKS13f79o63/qLzy5jYrpz8evqW8U60/EGHHzMlaBCJDD2YiPzh2g==",
+  "dgSpecHash": "YYutA/s9uKMZYKVEoRLbulYTLBumLTdX9LtosC6iyjw9KkCwUOs4vIlbu5YQTJq2Vc5ol/4et5FgNIBj3TGr1w==",
   "success": true,
-  "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.AppDbContext\\Medical.AppDbContext.csproj",
+  "projectFilePath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.AppDbContext\\Medical.AppDbContext.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",

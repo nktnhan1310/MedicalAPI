@@ -8634,11 +8634,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Extensions\\Medical.Extensions.csproj",
+      "projectUniqueName": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Extensions\\Medical.Extensions.csproj",
       "projectName": "Medical.Extensions",
-      "projectPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Extensions\\Medical.Extensions.csproj",
+      "projectPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Extensions\\Medical.Extensions.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Extensions\\obj\\",
+      "outputPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Extensions\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",

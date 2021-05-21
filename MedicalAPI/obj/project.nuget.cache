@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "k1EQfAPCqK3IAeO4iyzPTiRWKL1Tnd548+DKij4HtCgicf5qxRnAadVjRVcls+fxcrfoiuGZ0zCZiFnzHGMr0g==",
+  "dgSpecHash": "mVh9rAKc+lRRGKMfcaXJaWvaledTwU9e9H62DZDdrhxD/pjeRQiZAuAj2cGDZERFduu/bgahzvrDM48NGJtenA==",
   "success": true,
-  "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\MedicalAPI\\MedicalAPI.csproj",
+  "projectFilePath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\MedicalAPI\\MedicalAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

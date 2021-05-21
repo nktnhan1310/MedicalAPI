@@ -74,7 +74,6 @@ namespace Medical.Models.AutoMapper
 
             #endregion
 
-
             #region Catalogue
 
             CreateMap<CountryModel, Countries>().ReverseMap();

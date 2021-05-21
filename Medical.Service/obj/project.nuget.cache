@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "I/4ndjn2et/TLMwm74KyNtkIezIuw5HWSBu1xVcD6vOCXhmOtJ4tATigJnaC1rLHQZP0XzgtHy23oOjCBnDH7g==",
+  "dgSpecHash": "r372e/8K1yrI9VdttrAfnJXSmlGpSVGIl5VglThttJp9C25ySTgzMI8xy0kYm4Thji5gI39p86KtA/Y8/lYTuA==",
   "success": true,
-  "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Service\\Medical.Service.csproj",
+  "projectFilePath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Service\\Medical.Service.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\epplus.core\\1.5.4\\epplus.core.1.5.4.nupkg.sha512",
