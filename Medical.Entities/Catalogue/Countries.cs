@@ -12,6 +12,5 @@ namespace Medical.Entities
     [Table("Countries")]
     public class Countries : MedicalCatalogueAppDomain
     {
-        public int NationId { get; set; }
     }
 }
