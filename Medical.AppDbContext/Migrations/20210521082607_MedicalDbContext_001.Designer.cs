@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical.AppDbContext.Migrations
 {
     [DbContext(typeof(MedicalDbContext))]
-    [Migration("20210521075320_MedicalDbContext_006")]
-    partial class MedicalDbContext_006
+    [Migration("20210521082607_MedicalDbContext_001")]
+    partial class MedicalDbContext_001
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -233,7 +233,7 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("CountryId")
+                    b.Property<int?>("CountryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
@@ -463,7 +463,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<int>("CityId")
+                    b.Property<int?>("CityId")
                         .HasColumnType("int");
 
                     b.Property<string>("Code")
@@ -2058,7 +2058,7 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int>("DistricId")
+                    b.Property<int?>("DistricId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")

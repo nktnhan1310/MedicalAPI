@@ -239,7 +239,7 @@ namespace Medical.Service.Services.DomainService
         /// <param name="dt"></param>
         /// <param name="item"></param>
         /// <returns></returns>
-        protected DataTable AddDataTableRow(DataTable dt, E item)
+        protected virtual DataTable AddDataTableRow(DataTable dt, E item)
         {
             dt.Rows.Add(item.Id, item.Created, item.CreatedBy, item.Updated, item.UpdatedBy, item.Deleted, item.Active, item.Code, item.Name, item.Description);
             return dt;
