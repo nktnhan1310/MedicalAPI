@@ -12,3 +12,17 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Models\bin\netcoreapp3.1\Medi
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Models\bin\netcoreapp3.1\Medical.Utilities.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Models\obj\Debug\netcoreapp3.1\Medical.Models.csprojAssemblyReference.cache
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Models\obj\Debug\netcoreapp3.1\Medical.Models.csproj.CopyComplete
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\bin\netcoreapp3.1\Medical.Models.deps.json
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\bin\netcoreapp3.1\Medical.Models.dll
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\bin\netcoreapp3.1\Medical.Models.pdb
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\bin\netcoreapp3.1\Medical.Entities.dll
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\bin\netcoreapp3.1\Medical.Utilities.dll
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\bin\netcoreapp3.1\Medical.Entities.pdb
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\bin\netcoreapp3.1\Medical.Utilities.pdb
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\obj\Debug\netcoreapp3.1\Medical.Models.csprojAssemblyReference.cache
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\obj\Debug\netcoreapp3.1\Medical.Models.AssemblyInfoInputs.cache
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\obj\Debug\netcoreapp3.1\Medical.Models.AssemblyInfo.cs
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\obj\Debug\netcoreapp3.1\Medical.Models.csproj.CoreCompileInputs.cache
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\obj\Debug\netcoreapp3.1\Medical.Models.csproj.CopyComplete
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\obj\Debug\netcoreapp3.1\Medical.Models.dll
+E:\MonaMedia\MedicalMaster\MedicalAPI\Medical.Models\obj\Debug\netcoreapp3.1\Medical.Models.pdb

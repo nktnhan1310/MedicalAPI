@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3FztXLBBanDTgrQZnx/xecgFRxK22neBW8IJXBTlaND67CdjrUM7hkwPOhB6y13AgwuRdvTWh37vzvlH7DW6Lw==",
+  "dgSpecHash": "rfdKXKUNt56lnGljEV4eLSJ0Kgr5wtAPq2+NeMifvs0qwQqOeBySFqGTycnpVrJVr3Iq1drbsZoIV4X+HEgSeA==",
   "success": true,
-  "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Utilities\\Medical.Utilities.csproj",
+  "projectFilePath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Utilities\\Medical.Utilities.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.aspnetcore.hosting.abstractions\\2.2.0\\microsoft.aspnetcore.hosting.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.aspnetcore.hosting.server.abstractions\\2.2.0\\microsoft.aspnetcore.hosting.server.abstractions.2.2.0.nupkg.sha512",
