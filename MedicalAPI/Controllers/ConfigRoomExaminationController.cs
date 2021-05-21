@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/config-room-examination")]
     [ApiController]
     [Description("Quản lý cấu hình số lượng bệnh nhân khám theo phòng")]
     [Authorize]

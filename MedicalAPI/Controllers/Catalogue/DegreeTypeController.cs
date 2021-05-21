@@ -14,7 +14,7 @@ using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/degree-type")]
     [ApiController]
     [Description("Học hàm/Học vị")]
     public class DegreeTypeController : CatalogueController<DegreeTypes, DegreeTypeModel, BaseSearch>

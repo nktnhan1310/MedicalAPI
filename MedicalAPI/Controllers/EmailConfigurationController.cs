@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/email-configuration")]
     [ApiController]
     [Description("Cấu hình email server")]
     [Authorize]

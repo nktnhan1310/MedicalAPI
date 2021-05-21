@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,6 +35,7 @@ namespace Medical.Models.DomainModel
         /// <summary>
         /// Cờ xóa
         /// </summary>
+        [DefaultValue(false)]
         public bool Deleted { get; set; }
         /// <summary>
         /// Cờ active

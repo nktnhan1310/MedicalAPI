@@ -10,5 +10,7 @@ namespace Medical.Entities
         /// Tổng hợp theo ngày khám bệnh
         /// </summary>
         public DateTime? ExaminationDate { get; set; }
+
+        public int? HospitalId { get; set; }
     }
 }

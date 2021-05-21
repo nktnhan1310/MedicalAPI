@@ -14,7 +14,7 @@ using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/specialist-type")]
     [ApiController]
     [Description("Chuyên khoa khám bệnh")]
     public class SpecialistTypeController : CatalogueController<SpecialistTypes, SpecialistTypeModel, SearchSpecialListType>

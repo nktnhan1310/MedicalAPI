@@ -38,7 +38,7 @@ namespace Medical.AppDbContext
             #endregion
 
             modelBuilder.Entity<AppointmentSchedules>(x => x.ToTable("AppointmentSchedules"));
-            modelBuilder.Entity<ChannelMappingHospital>(x => x.ToTable("ChannelMappingHospital"));
+            //modelBuilder.Entity<ChannelMappingHospital>(x => x.ToTable("ChannelMappingHospital"));
 
             modelBuilder.Entity<Doctors>(x => x.ToTable("Doctors"));
             modelBuilder.Entity<DoctorDetails>(x => x.ToTable("DoctorDetails"));
@@ -50,7 +50,7 @@ namespace Medical.AppDbContext
 
             modelBuilder.Entity<MedicalRecords>(x => x.ToTable("MedicalRecords"));
             modelBuilder.Entity<MedicalRecordAdditions>(x => x.ToTable("MedicalRecordAdditions"));
-            modelBuilder.Entity<ServiceTypeMappingHospital>(x => x.ToTable("ServiceTypeMappingHospital"));
+            //modelBuilder.Entity<ServiceTypeMappingHospital>(x => x.ToTable("ServiceTypeMappingHospital"));
 
             modelBuilder.Entity<ExaminationHistories>(x => x.ToTable("ExaminationHistories"));
             modelBuilder.Entity<BankInfos>(x => x.ToTable("BankInfos"));

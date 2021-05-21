@@ -12,6 +12,10 @@ namespace Medical.Entities
     public class BankInfos : MedicalCatalogueAppDomain
     {
         /// <summary>
+        /// Mã bệnh viện
+        /// </summary>
+        public int HospitalId { get; set; }
+        /// <summary>
         /// Số tài khoản ngân hàng
         /// </summary>
         [StringLength(50)]
@@ -21,6 +25,7 @@ namespace Medical.Entities
         /// </summary>
         [StringLength(1000)]
         public string BankBranch { get; set; }
+
         /// <summary>
         /// Tên chủ sở hữu tài khoản
         /// </summary>

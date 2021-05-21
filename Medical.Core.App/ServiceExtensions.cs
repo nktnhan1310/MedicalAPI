@@ -69,6 +69,9 @@ namespace Medical.Core.App
             services.AddScoped<IExaminationFormService, ExaminationFormService>();
             services.AddScoped<IPaymentHistoryService, PaymentHistoryService>();
             services.AddScoped<IExaminationHistoryService, ExaminationHistoryService>();
+            services.AddScoped<IBankInfoService, BankInfoService>();
+
+            
 
             #region PERMISSION SERVICE
 
@@ -82,6 +85,7 @@ namespace Medical.Core.App
 
             #region Catalogue Service
 
+            
             services.AddScoped<IExaminationTypeService, ExaminationTypeService>();
             services.AddScoped<IChannelService, ChannelService>();
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
@@ -90,9 +94,9 @@ namespace Medical.Core.App
             services.AddScoped<IDegreeTypeService, DegreeTypeService>();
             services.AddScoped<ISessionTypeService, SessionTypeService>();
             services.AddScoped<IConfigTimeExaminationService, ConfigTimeExaminationService>();
-
-
-
+            services.AddScoped<IJobService, JobService>();
+            services.AddScoped<ICountryService, CountryService>();
+            services.AddScoped<INationService, NationService>();
 
             #endregion
 

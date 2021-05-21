@@ -21,13 +21,14 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Medical.Core.App.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/v1/authenticate")]
     [ApiController]
     public abstract class AuthCoreController : ControllerBase
     {
@@ -57,7 +58,7 @@ namespace Medical.Core.App.Controllers
         /// <param name="loginModel"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost]
+        [HttpPost("login")]
         public virtual async Task<AppDomainResult> LoginAsync([FromBody] LoginModel loginModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -71,8 +72,7 @@ namespace Medical.Core.App.Controllers
                     if (userInfos != null && userInfos.Any())
                     {
                         var userModel = mapper.Map<UserModel>(userInfos.FirstOrDefault());
-                        var token = GenerateJwtToken(userModel);
-
+                        var token = await GenerateJwtToken(userModel);
                         appDomainResult = new AppDomainResult()
                         {
                             Success = true,
@@ -99,8 +99,7 @@ namespace Medical.Core.App.Controllers
         /// <param name="register"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost]
-        [ActionName("Register")]
+        [HttpPost("register")]
         public virtual async Task<AppDomainResult> Register([FromBody] RegisterModel register)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -116,6 +115,7 @@ namespace Medical.Core.App.Controllers
                     UserName = register.UserName,
                     Password = register.Password,
                     Created = DateTime.Now,
+                    CreatedBy = register.UserName,
                     Active = true,
                     Phone = ValidateUserName.IsPhoneNumber(register.UserName) ? register.UserName : string.Empty,
                     Email = ValidateUserName.IsEmail(register.UserName) ? register.UserName : string.Empty,
@@ -143,7 +143,7 @@ namespace Medical.Core.App.Controllers
         /// <param name="changePasswordModel"></param>
         /// <returns></returns>
         [Authorize]
-        [HttpPut("{userId}")]
+        [HttpPut("changePassword/{userId}")]
         public virtual async Task<AppDomainResult> ChangePassword(int userId, [FromBody] ChangePasswordModel changePasswordModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -175,7 +175,7 @@ namespace Medical.Core.App.Controllers
         /// <param name="userName"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPut("userName")]
+        [HttpPut("forgot-password/{userName}")]
         public virtual async Task<AppDomainResult> ForgotPassword(string userName)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -207,7 +207,7 @@ namespace Medical.Core.App.Controllers
                 if (isValidEmail)
                 {
                     string emailBody = string.Format("<p>Your new password: {0}</p>", newPasswordRandom);
-                    emailConfigurationService.Send("Change Password" , new string[] { userInfo.Email }, null, null, new EmailContent()
+                    emailConfigurationService.Send("Change Password", new string[] { userInfo.Email }, null, null, new EmailContent()
                     {
                         Content = emailBody,
                         IsHtml = true,
@@ -227,7 +227,7 @@ namespace Medical.Core.App.Controllers
         /// </summary>
         /// <returns></returns>
         [Authorize]
-        [HttpPost()]
+        [HttpPost("logout")]
         public virtual async Task<AppDomainResult> Logout()
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -242,7 +242,7 @@ namespace Medical.Core.App.Controllers
 
         #region Private methods
 
-        private string GenerateJwtToken(UserModel user)
+        private async Task<string> GenerateJwtToken(UserModel user)
         {
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -259,6 +259,34 @@ namespace Medical.Core.App.Controllers
                 Email = user.Email,
                 Phone = user.Phone
             };
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            Assembly[] assems = currentDomain.GetAssemblies();
+            var controllers = new List<ControllerModel>();
+            var roles = new List<RoleModel>();
+            foreach (Assembly assem in assems)
+            {
+                var controller = assem.GetTypes().Where(type => typeof(Controller).IsAssignableFrom(type) && !type.IsAbstract)
+              .Select(e => new ControllerModel()
+              {
+                  Id = e.Name.Replace("Controller", string.Empty),
+                  Name = string.Format("{0}", ReflectionUtils.GetClassDescription(e)).Replace("Controller", string.Empty)
+              }).OrderBy(e => e.Name)
+                  .Distinct();
+                controllers.AddRange(controller);
+            }
+            if (controllers.Any())
+            {
+                foreach (var controller in controllers)
+                {
+                    roles.Add(new RoleModel()
+                    {
+                        RoleName = controller.Id,
+                        IsView = await this.userService.HasPermission(userLoginModel.UserId, controller.Id, new string[] { CoreContants.View })
+                    });
+                }
+            }
+            userLoginModel.Roles = roles;
+
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 //Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
@@ -266,7 +294,7 @@ namespace Medical.Core.App.Controllers
                             {
                                 new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(userLoginModel))
                             }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

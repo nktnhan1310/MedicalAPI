@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Medical.Entities.DomainEntity
@@ -15,6 +16,7 @@ namespace Medical.Entities.DomainEntity
         /// <summary>
         /// Nội dung file
         /// </summary>
+        [NotMapped]
         public byte[] FileContent { get; set; }
         /// <summary>
         /// Loại file
@@ -32,5 +34,15 @@ namespace Medical.Entities.DomainEntity
         /// </summary>
         [StringLength(1000)]
         public string Description { get; set; }
+
+        /// <summary>
+        /// Tên lưu trong thư mục
+        /// </summary>
+        public string FileRandomName { get; set; }
+
+        /// <summary>
+        /// Link download File
+        /// </summary>
+        public string FileUrl { get; set; }
     }
 }

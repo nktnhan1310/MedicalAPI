@@ -16,7 +16,7 @@ using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/channel")]
     [ApiController]
     [Description("Kênh đăng ký khám bệnh")]
     public class ChannelController : CatalogueController<Channels, ChannelModel, BaseSearch>

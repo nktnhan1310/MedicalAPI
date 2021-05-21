@@ -4,6 +4,7 @@ using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
 using Medical.Service.Services.DomainService;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace Medical.Service
 {
     public class RoomExaminationService : CatalogueService<RoomExaminations, SearchHopitalExtension>, IRoomExaminationService
     {
-        public RoomExaminationService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        public RoomExaminationService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
         }
 

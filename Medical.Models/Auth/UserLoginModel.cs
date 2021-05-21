@@ -21,5 +21,6 @@ namespace Medical.Models
         }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public IList<RoleModel> Roles { get; set; }
     }
 }

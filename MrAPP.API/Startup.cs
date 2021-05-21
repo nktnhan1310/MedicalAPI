@@ -166,8 +166,9 @@ namespace MrApp.API
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Medical V1");
-                c.RoutePrefix = "mrapp/swagger";
+                c.SwaggerEndpoint("../swagger/v1/swagger.json", "Medical V1");
+                c.InjectStylesheet("../css/swagger.min.css");
+                //c.RoutePrefix = "mrapp";
             });
 
             app.UseEndpoints(endpoints =>

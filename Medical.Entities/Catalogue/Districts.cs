@@ -15,6 +15,6 @@ namespace Medical.Entities
         /// <summary>
         /// Mã thành phố
         /// </summary>
-        public int CityId { get; set; }
+        public int? CityId { get; set; }
     }
 }

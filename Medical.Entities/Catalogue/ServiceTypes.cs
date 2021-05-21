@@ -12,6 +12,6 @@ namespace Medical.Entities
     [Table("ServiceTypes")]
     public class ServiceTypes : MedicalCatalogueAppDomain
     {
-        
+
     }
 }

@@ -27,7 +27,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/authenticate")]
     [ApiController]
     public class AuthController : AuthCoreController
     {

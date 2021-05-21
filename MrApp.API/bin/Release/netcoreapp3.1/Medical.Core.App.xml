@@ -1,0 +1,180 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Medical.Core.App</name>
+    </assembly>
+    <members>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.LoginAsync(Medical.Models.LoginModel)">
+            <summary>
+            Đăng nhập hệ thống
+            </summary>
+            <param name="loginModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.Register(Medical.Models.RegisterModel)">
+            <summary>
+            Đăng ký
+            </summary>
+            <param name="register"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.ChangePassword(System.Int32,Medical.Models.ChangePasswordModel)">
+            <summary>
+            Đổi mật khẩu
+            </summary>
+            <param name="userId"></param>
+            <param name="changePasswordModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.ForgotPassword(System.String)">
+            <summary>
+            Quên mật khẩu
+            <para>Gửi mật khẩu mới qua Email nếu username là email</para>
+            <para>Gửi mật khẩu mới qua SMS nếu username là phone</para>
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.Logout">
+            <summary>
+            Đăng xuất
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.Get">
+            <summary>
+            Lấy all thông tin danh sách item
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.GetById(System.Int32)">
+            <summary>
+            Lấy thông tin theo id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.AddItem(`1)">
+            <summary>
+            Thêm mới item
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.UpdateItem(System.Int32,`1)">
+            <summary>
+            Cập nhật thông tin item
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.PatchItem(System.Int32,`1)">
+            <summary>
+            Cập nhật 1 phần item
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.DeleteItem(System.Int32)">
+            <summary>
+            Xóa item
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.GetPagedData(`2)">
+            <summary>
+            Lấy danh sách item phân trang
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.UploadFile(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Upload Single File
+            </summary>
+            <param name="file"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.UploadFiles(System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
+            <summary>
+            Upload Multiple File
+            </summary>
+            <param name="files"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.Get">
+            <summary>
+            Lấy all thông tin danh sách item
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.GetById(System.Int32)">
+            <summary>
+            Lấy thông tin theo id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.AddItem(`1)">
+            <summary>
+            Thêm mới item
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.UpdateItem(System.Int32,`1)">
+            <summary>
+            Cập nhật thông tin item
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.PatchItem(System.Int32,`1)">
+            <summary>
+            Cập nhật 1 phần item
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DeleteItem(System.Int32)">
+            <summary>
+            Xóa item
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.GetPagedData(`2)">
+            <summary>
+            Lấy danh sách item phân trang
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DownloadTemplateImport(System.String)">
+            <summary>
+            Down load template file import
+            </summary>
+            <param name="fileName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DownloadImportFileResult(System.String)">
+            <summary>
+            Tải về file kết quả sau khi import
+            </summary>
+            <param name="fileName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.ImportTemplateFile(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Import file danh mục
+            </summary>
+            <param name="file"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>

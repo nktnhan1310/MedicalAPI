@@ -46,6 +46,9 @@ namespace Medical.Models.AutoMapper
             CreateMap<PagedList<PaymentHistoryModel>, PagedList<PaymentHistories>>().ReverseMap();
             CreateMap<UpdateExaminationStatusModel, UpdateExaminationStatus>().ReverseMap();
 
+            CreateMap<BankInfoModel, BankInfos>().ReverseMap();
+            CreateMap<PagedList<BankInfoModel>, PagedList<BankInfos>>().ReverseMap();
+
             #region Configuration
 
             CreateMap<EmailConfigurationModel, EmailConfiguration>().ReverseMap();
@@ -74,6 +77,24 @@ namespace Medical.Models.AutoMapper
 
             #region Catalogue
 
+            CreateMap<CountryModel, Countries>().ReverseMap();
+            CreateMap<PagedList<CountryModel>, PagedList<Countries>>().ReverseMap();
+
+            CreateMap<NationModel, Nations>().ReverseMap();
+            CreateMap<PagedList<NationModel>, PagedList<Nations>>().ReverseMap();
+
+            CreateMap<DistrictModel, Districts>().ReverseMap();
+            CreateMap<PagedList<DistrictModel>, PagedList<Districts>>().ReverseMap();
+
+            CreateMap<CityModel, Cities>().ReverseMap();
+            CreateMap<PagedList<CityModel>, PagedList<Cities>>().ReverseMap();
+
+            CreateMap<WardModel, Wards>().ReverseMap();
+            CreateMap<PagedList<WardModel>, PagedList<Wards>>().ReverseMap();
+            
+
+            CreateMap<JobModel, Jobs>().ReverseMap();
+            CreateMap<PagedList<JobModel>, PagedList<Jobs>>().ReverseMap();
             CreateMap<ExaminationTypeModel, ExaminationTypes>().ReverseMap();
             CreateMap<PagedList<ExaminationTypeModel>, PagedList<ExaminationTypes>>().ReverseMap();
             CreateMap<ServiceTypeModel, ServiceTypes>().ReverseMap();

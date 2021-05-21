@@ -15,6 +15,6 @@ namespace Medical.Entities
         /// <summary>
         /// Mã quận
         /// </summary>
-        public int DistricId { get; set; }
+        public int? DistricId { get; set; }
     }
 }

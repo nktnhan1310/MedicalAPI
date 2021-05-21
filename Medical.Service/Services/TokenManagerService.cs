@@ -38,17 +38,18 @@ namespace Medical.Service
                 " ", new DistributedCacheEntryOptions
                 {
                     AbsoluteExpirationRelativeToNow =
-                        TimeSpan.FromMinutes(5)
+                        TimeSpan.FromHours(24)
                 });
 
         private string GetCurrentAsync()
         {
+            StringValues result = string.Empty;
             var authorizationHeader = _httpContextAccessor
                 .HttpContext.Request.Headers["authorization"];
-
-            return authorizationHeader == StringValues.Empty
+            result = authorizationHeader == StringValues.Empty
                 ? string.Empty
                 : authorizationHeader.Single().Split(" ").Last();
+            return result;
         }
 
         private static string GetKey(string token)

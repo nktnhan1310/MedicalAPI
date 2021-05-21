@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/examination-form")]
     [ApiController]
     [Description("Quản lý phiếu khám bệnh")]
     [Authorize]
@@ -43,7 +43,7 @@ namespace MedicalAPI.Controllers
         /// </summary>
         /// <param name="examinationFormId"></param>
         /// <returns></returns>
-        [HttpGet("{examinationFormId}")]
+        [HttpGet("get-examination-form-history/{examinationFormId}")]
         [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetExaminationHistory(int examinationFormId)
         {
@@ -64,7 +64,7 @@ namespace MedicalAPI.Controllers
         /// </summary>
         /// <param name="examinationFormId"></param>
         /// <returns></returns>
-        [HttpGet("{examinationFormId}")]
+        [HttpGet("get-payment-history/{examinationFormId}")]
         [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetPaymentHistory(int examinationFormId)
         {
@@ -86,7 +86,7 @@ namespace MedicalAPI.Controllers
         /// </summary>
         /// <param name="updateExaminationStatusModel"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("update-examination-status")]
         [MedicalAppAuthorize(new string[] { CoreContants.Update })]
         public async Task<AppDomainResult> UpdateExaminationStatus([FromBody] UpdateExaminationStatusModel updateExaminationStatusModel)
         {

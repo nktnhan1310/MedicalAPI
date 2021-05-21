@@ -18,7 +18,7 @@ using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/doctor")]
     [ApiController]
     [Description("Quản lý thông tin bác sĩ")]
     [Authorize]
@@ -36,7 +36,7 @@ namespace MedicalAPI.Controllers
         /// </summary>
         /// <param name="doctorId"></param>
         /// <returns></returns>
-        [HttpGet("{doctorId}")]
+        [HttpGet("get-doctor-details/{doctorId}")]
         [MedicalAppAuthorize(new string[] { CoreContants.View, CoreContants.Update })]
         public async Task<AppDomainResult> GetDoctorDetails(int doctorId)
         {

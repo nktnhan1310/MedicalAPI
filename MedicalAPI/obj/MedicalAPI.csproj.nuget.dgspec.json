@@ -50,9 +50,17 @@
               "target": "Package",
               "version": "[8.1.1, )"
             },
+            "EPPlus.Core": {
+              "target": "Package",
+              "version": "[1.5.4, )"
+            },
             "EntityFramework": {
               "target": "Package",
               "version": "[6.4.4, )"
+            },
+            "ExcelMapper": {
+              "target": "Package",
+              "version": "[5.2.298, )"
             },
             "LazyCache.AspNetCore": {
               "target": "Package",
@@ -91,6 +99,10 @@
               "suppressParent": "All",
               "target": "Package",
               "version": "[5.0.5, )"
+            },
+            "Microsoft.Extensions.Configuration.Binder": {
+              "target": "Package",
+              "version": "[5.0.0, )"
             },
             "Microsoft.Extensions.DependencyInjection": {
               "target": "Package",
@@ -131,6 +143,10 @@
             "System.Data.SqlClient": {
               "target": "Package",
               "version": "[4.8.2, )"
+            },
+            "System.IdentityModel.Tokens.Jwt": {
+              "target": "Package",
+              "version": "[6.11.0, )"
             },
             "System.Linq.Dynamic.Core": {
               "target": "Package",

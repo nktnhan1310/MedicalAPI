@@ -14,7 +14,7 @@ using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/examination-type")]
     [ApiController]
     [Description("Kênh đăng ký khám bệnh")]
     public class ExaminationTypeController : CatalogueController<ExaminationTypes, ExaminationTypeModel, BaseSearch>

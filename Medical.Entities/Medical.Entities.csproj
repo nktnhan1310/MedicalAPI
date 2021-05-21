@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ExcelMapper" Version="5.2.298" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Medical.Utilities">
       <HintPath>..\Medical.Utilities\bin\netcoreapp3.1\Medical.Utilities.dll</HintPath>
     </Reference>

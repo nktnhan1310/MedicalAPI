@@ -19,7 +19,7 @@ using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/user")]
     [ApiController]
     [Description("Quản lý thông tin người dùng")]
     [Authorize]

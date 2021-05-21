@@ -17,6 +17,8 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Cryptography;
 
 namespace Medical.Core.App.Controllers
 {
@@ -102,6 +104,9 @@ namespace Medical.Core.App.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
+                itemModel.Created = DateTime.Now;
+                itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+
                 var item = mapper.Map<E>(itemModel);
                 if (item != null)
                 {
@@ -140,6 +145,8 @@ namespace Medical.Core.App.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
+                itemModel.Updated = DateTime.Now;
+                itemModel.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
                 var item = mapper.Map<E>(itemModel);
                 if (item != null)
                 {
@@ -175,6 +182,8 @@ namespace Medical.Core.App.Controllers
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             bool success = false;
+            itemModel.Updated = DateTime.Now;
+            itemModel.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
             var item = mapper.Map<E>(itemModel);
             if (item != null)
             {
@@ -224,8 +233,7 @@ namespace Medical.Core.App.Controllers
         /// </summary>
         /// <param name="baseSearch"></param>
         /// <returns></returns>
-        [ActionName("GetPagedData")]
-        [HttpGet]
+        [HttpGet("get-paged-data")]
         [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public virtual async Task<AppDomainResult> GetPagedData([FromQuery] F baseSearch)
         {
@@ -250,14 +258,14 @@ namespace Medical.Core.App.Controllers
 
         #region Files
 
-        [HttpGet("{id}")]
+        [HttpGet("download-file/{fileId}")]
         [MedicalAppAuthorize(new string[] { CoreContants.Download })]
-        public virtual async Task<ActionResult> DownloadFile(int id)
+        public virtual async Task<ActionResult> DownloadFile(int fileId)
         {
             await Task.Run(() =>
             {
             });
-            throw new Exception(string.Format("{0} {1}: {2}", this.ControllerContext.RouteData.Values["controller"].ToString(), "DownloadFile", "Error Download"));
+            throw new Exception("Error Download");
         }
 
         /// <summary>
@@ -265,7 +273,7 @@ namespace Medical.Core.App.Controllers
         /// </summary>
         /// <param name="file"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("upload-file")]
         [MedicalAppAuthorize(new string[] { CoreContants.Upload })]
         public virtual async Task<AppDomainResult> UploadFile(IFormFile file)
         {
@@ -275,13 +283,17 @@ namespace Medical.Core.App.Controllers
             {
                 if (file != null && file.Length > 0)
                 {
-                    string fileName = file.FileName;
+                    string fileName = string.Format("{0}-{1}", Guid.NewGuid().ToString(), file.FileName);
                     string fileUploadPath = Path.Combine(env.ContentRootPath, "temp");
                     string path = Path.Combine(fileUploadPath, fileName);
                     FileUtils.CreateDirectory(fileUploadPath);
                     var fileByte = FileUtils.StreamToByte(file.OpenReadStream());
                     FileUtils.SaveToPath(path, fileByte);
-                    appDomainResult.Success = true;
+                    appDomainResult = new AppDomainResult()
+                    {
+                        Success = true,
+                        Data = fileName
+                    };
                 }
             });
             return appDomainResult;
@@ -292,7 +304,7 @@ namespace Medical.Core.App.Controllers
         /// </summary>
         /// <param name="files"></param>
         /// <returns></returns>
-        [HttpPost("multiple-files")]
+        [HttpPost("upload-multiple-files")]
         [MedicalAppAuthorize(new string[] { CoreContants.Upload })]
         public virtual async Task<AppDomainResult> UploadFiles(List<IFormFile> files)
         {
@@ -318,5 +330,13 @@ namespace Medical.Core.App.Controllers
         }
 
         #endregion
+
+        #region Contants
+
+        public const string TEMP_FOLDER_NAME = "Temp";
+        public const string UPLOAD_FOLDER_NAME = "upload";
+
+        #endregion
+
     }
 }

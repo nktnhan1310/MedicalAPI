@@ -1,5 +1,6 @@
 ﻿using Medical.Interface.Services;
 using Medical.Models;
+using Medical.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -34,10 +35,20 @@ namespace Medical.Extensions
 
             if (await tokenManagerService.IsCurrentActiveToken())
             {
-                attachUserToContext(context, userService, token);
+                if (token != null)
+                    attachUserToContext(context, userService, token);
                 await _next(context);
             }
-            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            else
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                var result = System.Text.Json.JsonSerializer.Serialize(new AppDomainResult()
+                {
+                    ResultCode = context.Response.StatusCode,
+                    Success = false
+                });
+                await context.Response.WriteAsync(result);
+            }
         }
 
         private void attachUserToContext(Microsoft.AspNetCore.Http.HttpContext context, IUserService userService, string token)

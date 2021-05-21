@@ -14,7 +14,7 @@ using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/session-type")]
     [ApiController]
     [Description("Buổi khám bệnh")]
     public class SessionTypeController : CatalogueController<SessionTypes, SessionTypeModel, BaseSearch>

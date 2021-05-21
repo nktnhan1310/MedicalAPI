@@ -17,10 +17,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Medical.Core.App.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/hospital")]
     [ApiController]
     [Description("Quản lý bệnh viện")]
     [Authorize]
@@ -29,12 +30,20 @@ namespace MedicalAPI.Controllers
         private readonly IHospitalFileService hospitalFileService;
         private readonly IServiceTypeMappingHospitalService serviceTypeMappingHospitalService;
         private readonly IChannelMappingHospitalService channelMappingHospitalService;
-        public HospitalController(IServiceProvider serviceProvider, ILogger<BaseController<Hospitals, HospitalModel, SearchHospital>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        private readonly IBankInfoService bankInfoService;
+        private readonly IConfiguration configuration;
+        public HospitalController(IServiceProvider serviceProvider
+            , ILogger<BaseController<Hospitals, HospitalModel, SearchHospital>> logger
+            , IWebHostEnvironment env
+            , IConfiguration configuration
+            ) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IHospitalService>();
             hospitalFileService = serviceProvider.GetRequiredService<IHospitalFileService>();
             serviceTypeMappingHospitalService = serviceProvider.GetRequiredService<IServiceTypeMappingHospitalService>();
             channelMappingHospitalService = serviceProvider.GetRequiredService<IChannelMappingHospitalService>();
+            bankInfoService = serviceProvider.GetRequiredService<IBankInfoService>();
+            this.configuration = configuration;
         }
 
         /// <summary>
@@ -55,8 +64,8 @@ namespace MedicalAPI.Controllers
                 Deleted = e.Deleted,
                 Active = e.Active,
                 Address = e.Address,
-                BankInfo = e.BankInfo,
-                BankNo = e.BankNo,
+                IsProvideInformation = e.IsProvideInformation,
+                TotalVisitNo = e.TotalVisitNo,
                 CallPortDescription = e.CallPortDescription,
                 IsHasCallPort = e.IsHasCallPort,
                 ChannelMappingHospitals = new List<ChannelMappingHospital>(),
@@ -72,7 +81,8 @@ namespace MedicalAPI.Controllers
                 Phone = e.Phone,
                 ServiceTypeMappingHospitals = new List<ServiceTypeMappingHospital>(),
                 Slogan = e.Slogan,
-                WebSiteUrl = e.WebSiteUrl
+                WebSiteUrl = e.WebSiteUrl,
+                BankInfos = new List<BankInfos>()
             });
             if (item != null)
             {
@@ -94,8 +104,11 @@ namespace MedicalAPI.Controllers
                         FileName = e.FileName,
                         FileExtension = e.FileExtension,
                         HospitalId = e.HospitalId,
-                        FileType = e.FileType
+                        FileType = e.FileType,
+                        FileUrl = e.FileUrl,
                     });
+                // Lấy thông tin ngân hàng liên kết của bệnh viện
+                item.BankInfos = await this.bankInfoService.GetAsync(e => !e.Deleted && e.HospitalId == item.Id);
             }
             else
                 throw new KeyNotFoundException("Item không tồn tại");
@@ -121,6 +134,9 @@ namespace MedicalAPI.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
+                itemModel.Deleted = false;
+                itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+                itemModel.Created = DateTime.Now;
                 var item = mapper.Map<Hospitals>(itemModel);
                 if (item != null)
                 {
@@ -129,14 +145,32 @@ namespace MedicalAPI.Controllers
                     if (!string.IsNullOrEmpty(messageUserCheck))
                         throw new AppException(messageUserCheck);
                     List<string> filePaths = new List<string>();
+                    List<string> folderUploadPaths = new List<string>();
                     if (item.HospitalFiles != null && item.HospitalFiles.Any())
                     {
                         foreach (var file in item.HospitalFiles)
                         {
                             string filePath = Path.Combine(env.ContentRootPath, "temp", file.FileName);
+
+                            
+
                             // Kiểm tra có tồn tại file trong temp chưa?
                             if (System.IO.File.Exists(filePath))
                             {
+                                string folderUploadPath = string.Empty;
+                                var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
+
+                                if (isProduct)
+                                    folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
+                                else
+                                    folderUploadPath = Path.Combine(Directory.GetCurrentDirectory(), "upload");
+                                string fileUploadPath = Path.Combine(folderUploadPath, Path.GetFileName(filePath));
+                                FileUtils.CreateDirectory(folderUploadPath);
+                                FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
+                                folderUploadPaths.Add(folderUploadPath);
+                                var currentLinkSite = $"{Medical.Extensions.HttpContext.Current.Request.Scheme}://{Medical.Extensions.HttpContext.Current.Request.Host}/{UPLOAD_FOLDER_NAME}/";
+                                string fileUrl = Path.Combine(currentLinkSite, Path.GetFileName(filePath));
+
                                 filePaths.Add(filePath);
                                 file.Created = DateTime.Now;
                                 file.CreatedBy = "admin";
@@ -146,7 +180,7 @@ namespace MedicalAPI.Controllers
                                 file.FileName = Path.GetFileName(filePath);
                                 file.FileExtension = Path.GetExtension(filePath);
                                 file.HospitalId = item.Id;
-                                file.ContentType = ContentFileTypeUtilities.GetMimeType(filePath);
+                                file.FileUrl = fileUrl;
                             }
                         }
                     }
@@ -164,7 +198,16 @@ namespace MedicalAPI.Controllers
                         }
                     }
                     else
+                    {
+                        if (folderUploadPaths.Any())
+                        {
+                            foreach (var folderUploadPath in folderUploadPaths)
+                            {
+                                System.IO.File.Delete(folderUploadPath);
+                            }
+                        }
                         throw new Exception("Lỗi trong quá trình xử lý");
+                    }
                     appDomainResult.Success = success;
                 }
                 else
@@ -191,6 +234,8 @@ namespace MedicalAPI.Controllers
             if (ModelState.IsValid)
             {
                 itemModel.Id = id;
+                itemModel.Updated = DateTime.Now;
+                itemModel.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
                 var item = mapper.Map<Hospitals>(itemModel);
                 if (item != null)
                 {
@@ -200,17 +245,35 @@ namespace MedicalAPI.Controllers
                         throw new AppException(messageUserCheck);
 
                     List<string> filePaths = new List<string>();
+                    List<string> folderUploadPaths = new List<string>();
                     if (item.HospitalFiles != null && item.HospitalFiles.Any())
                     {
                         foreach (var file in item.HospitalFiles)
                         {
                             string filePath = Path.Combine(env.ContentRootPath, "temp", file.FileName);
+
                             // Kiểm tra có tồn tại file trong temp chưa?
                             if (System.IO.File.Exists(filePath))
                             {
+                                // ------- START GET URL FOR FILE
+                                string folderUploadPath = string.Empty;
+                                var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
+                                if (isProduct)
+                                    folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
+                                else
+                                    folderUploadPath = Path.Combine(Directory.GetCurrentDirectory(), "upload");
+                                string fileUploadPath = Path.Combine(folderUploadPath, Path.GetFileName(filePath));
+                                FileUtils.CreateDirectory(folderUploadPath);
+                                FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
+                                folderUploadPaths.Add(folderUploadPath);
+                                var currentLinkSite = $"{Medical.Extensions.HttpContext.Current.Request.Scheme}://{Medical.Extensions.HttpContext.Current.Request.Host}/{UPLOAD_FOLDER_NAME}/";
+                                string fileUrl = Path.Combine(currentLinkSite, Path.GetFileName(filePath));
+
+                                // ------- END GET URL FOR FILE
+
                                 filePaths.Add(filePath);
                                 file.Created = DateTime.Now;
-                                file.CreatedBy = "admin";
+                                file.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
                                 file.Active = true;
                                 file.Deleted = false;
                                 file.FileContent = System.IO.File.ReadAllBytes(filePath);
@@ -218,12 +281,12 @@ namespace MedicalAPI.Controllers
                                 file.FileExtension = Path.GetExtension(filePath);
                                 file.HospitalId = item.Id;
                                 file.ContentType = ContentFileTypeUtilities.GetMimeType(filePath);
+                                file.FileUrl = fileUrl;
                             }
                             else
                             {
                                 file.Updated = DateTime.Now;
-                                //---------- Người update
-                                //file.UpdatedBy = ...
+                                file.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
                             }
                         }
                     }
@@ -241,7 +304,16 @@ namespace MedicalAPI.Controllers
                         }
                     }
                     else
+                    {
+                        if (folderUploadPaths.Any())
+                        {
+                            foreach (var folderUploadPath in folderUploadPaths)
+                            {
+                                System.IO.File.Delete(folderUploadPath);
+                            }
+                        }
                         throw new Exception("Lỗi trong quá trình xử lý");
+                    }
                     appDomainResult.Success = success;
                 }
                 else
@@ -253,7 +325,7 @@ namespace MedicalAPI.Controllers
             return appDomainResult;
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("download-file/{id}")]
         [MedicalAppAuthorize(new string[] { CoreContants.Download })]
         public override async Task<ActionResult> DownloadFile(int id)
         {

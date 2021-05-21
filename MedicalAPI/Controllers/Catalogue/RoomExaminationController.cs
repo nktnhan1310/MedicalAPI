@@ -14,7 +14,7 @@ using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/room-examination")]
     [ApiController]
     [Description("Phòng khám bệnh")]
     public class RoomExaminationController : CatalogueController<RoomExaminations, RoomExaminationModel, SearchHopitalExtension>

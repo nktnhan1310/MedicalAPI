@@ -39,16 +39,17 @@ namespace Medical.Entities
         /// </summary>
         [StringLength(500)]
         public string Slogan { get; set; }
+        
         /// <summary>
-        /// Số liên kết ngân hàng
+        /// Cung cấp thông tin bệnh viện
         /// </summary>
-        [StringLength(50)]
-        public string BankNo { get; set; }
+        public bool IsProvideInformation { get; set; }
+
         /// <summary>
-        /// Thông tin ngân hàng
+        /// Ngày cung cấp thông tin
         /// </summary>
-        [StringLength(1000)]
-        public string BankInfo { get; set; }
+        public DateTime? ProvideDate { get; set; }
+
         /// <summary>
         /// Số phút trung bình khám mỗi ca
         /// </summary>
@@ -102,6 +103,12 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public IList<HospitalFiles> HospitalFiles { get; set; }
+
+        /// <summary>
+        /// Thông tin ngân hàng liên kết bệnh viện
+        /// </summary>
+        [NotMapped]
+        public IList<BankInfos> BankInfos { get; set; }
 
 
         #endregion

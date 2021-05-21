@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "dgSpecHash": "7mFc1kxGpbPp1AMbqQ7kIBBb/8kLR8+HDmIdDIolFS3XtwpOngdjO5711DVaS3GOrsS1e09kh4VhTocQQQM/1g==",
+  "success": true,
+  "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Models\\Medical.Models.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Admin\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\system.reflection.emit\\4.7.0\\system.reflection.emit.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}

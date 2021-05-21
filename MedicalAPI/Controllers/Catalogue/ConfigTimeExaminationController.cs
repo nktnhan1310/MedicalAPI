@@ -13,7 +13,7 @@ using Medical.Core.App.Controllers;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/config-time-examination")]
     [ApiController]
     [Description("Cấu hình ca khám")]
     public class ConfigTimeExaminationController : CatalogueController<ConfigTimeExaminations, ConfigTimeExamniationModel, BaseSearch>

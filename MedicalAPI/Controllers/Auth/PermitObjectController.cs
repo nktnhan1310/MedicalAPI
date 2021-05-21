@@ -19,7 +19,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/permit-object")]
     [ApiController]
     [Description("Quản lý chức năng người dùng")]
     [Authorize]
@@ -34,7 +34,7 @@ namespace MedicalAPI.Controllers
         /// Lấy thông tin những chức năng cần được phân quyền
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("get-catalogue-controller")]
         [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetCatalogueController()
         {
@@ -43,11 +43,11 @@ namespace MedicalAPI.Controllers
                 AppDomainResult appDomainResult = new AppDomainResult();
                 AppDomain currentDomain = AppDomain.CurrentDomain;
                 Assembly[] assems = currentDomain.GetAssemblies();
-                var controllers = new List<object>();
+                var controllers = new List<ControllerModel>();
                 foreach (Assembly assem in assems)
                 {
                     var controller = assem.GetTypes().Where(type => typeof(Controller).IsAssignableFrom(type) && !type.IsAbstract)
-                  .Select(e => new
+                  .Select(e => new ControllerModel()
                   {
                       Id = e.Name.Replace("Controller", string.Empty),
                       Name = string.Format("{0}", ReflectionUtils.GetClassDescription(e)).Replace("Controller", string.Empty)
@@ -62,12 +62,8 @@ namespace MedicalAPI.Controllers
                     Success = true,
                     ResultCode = (int)HttpStatusCode.OK
                 };
-
-
                 return appDomainResult;
             });
-
-
         }
 
         /// <summary>

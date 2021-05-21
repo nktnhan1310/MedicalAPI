@@ -18,5 +18,9 @@ namespace Medical.Utilities
         public const string Download = "Download";
         public const string DeleteFile = "DeleteFile";
         public const string Export = "Export";
+
+        public const string USER_GROUP = "USER";
+        public const string ADMIN_GROUP = "ADMIN";
+
     }
 }

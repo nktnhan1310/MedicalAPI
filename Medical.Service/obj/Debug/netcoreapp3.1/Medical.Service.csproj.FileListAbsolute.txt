@@ -20,3 +20,7 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\obj\Debug\netcoreapp3
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Utilities.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Utilities.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\obj\Debug\netcoreapp3.1\Medical.Service.csproj.CoreCompileInputs.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Extensions.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Models.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Extensions.pdb
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Models.pdb

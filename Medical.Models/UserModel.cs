@@ -62,12 +62,6 @@ namespace Medical.Models
 
         #region Extension Properties
 
-        [Required(ErrorMessage = "Confirm Password is required")]
-        [StringLength(255, ErrorMessage = "Must be between 8 and 255 characters", MinimumLength = 8)]
-        [DataType(DataType.Password)]
-        [Compare("Password")]
-        public string ConfirmPassword { get; set; }
-
         /// <summary>
         /// Những nhóm người dùng thuộc
         /// </summary>

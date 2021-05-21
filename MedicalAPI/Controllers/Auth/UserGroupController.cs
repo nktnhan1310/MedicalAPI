@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/user-group")]
     [ApiController]
     [Description("Quản lý nhóm người dùng")]
     [Authorize]
@@ -38,9 +38,9 @@ namespace MedicalAPI.Controllers
         /// </summary>
         /// <param name="searchUserInGroup"></param>
         /// <returns></returns>
-        [HttpGet("{userGroupId}")]
+        [HttpGet("get-user-in-groups")]
         [MedicalAppAuthorize(new string[] { CoreContants.View, CoreContants.Update })]
-        public async Task<AppDomainResult> GetUserInGroups([FromBody] SearchUserInGroup searchUserInGroup)
+        public async Task<AppDomainResult> GetUserInGroups([FromQuery] SearchUserInGroup searchUserInGroup)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             var pagedList = await this.userInGroupService.GetPagedListData(searchUserInGroup);
@@ -51,7 +51,6 @@ namespace MedicalAPI.Controllers
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK
             };
-
             return appDomainResult;
         }
 

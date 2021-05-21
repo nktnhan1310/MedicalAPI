@@ -1,6 +1,7 @@
 ﻿using Medical.Models.DomainModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -48,15 +49,14 @@ namespace Medical.Models
         [StringLength(500, ErrorMessage = "Slogan tối đa 500 kí tự")]
         public string Slogan { get; set; }
         /// <summary>
-        /// Số liên kết ngân hàng
+        /// Cung cấp thông tin bệnh viện
         /// </summary>
-        [StringLength(50, ErrorMessage = "Số liên kết ngân hàng tối đa 50 kí tự")]
-        public string BankNo { get; set; }
+        [DefaultValue(false)]
+        public bool IsProvideInformation { get; set; }
         /// <summary>
-        /// Thông tin ngân hàng
+        /// Ngày cung cấp thông tin
         /// </summary>
-        [StringLength(1000, ErrorMessage = "Thông tin ngân hàng tối đa 1000 kí tự")]
-        public string BankInfo { get; set; }
+        public DateTime? ProvideDate { get; set; }
         /// <summary>
         /// Số phút trung bình khám mỗi ca
         /// </summary>
@@ -65,6 +65,8 @@ namespace Medical.Models
         /// <summary>
         /// Có bộ phận IT ko?
         /// </summary>
+        [DefaultValue(false)]
+
         public bool IsHasItExpert { get; set; }
         /// <summary>
         /// Tên chuyên gia
@@ -78,6 +80,7 @@ namespace Medical.Models
         public string ExpertPhone { get; set; }
 
         //-------------------------------------------- THÔNG TIN PHẦN MỀM GỌI SỐ
+        [DefaultValue(false)]
         public bool IsHasCallPort { get; set; }
         /// <summary>
         /// Mô tả cổng thông tin nếu có phần mệm gọi số
@@ -105,6 +108,11 @@ namespace Medical.Models
         /// File của thông tin bệnh viện (logo/sơ đồ bệnh viện/ danh sách chuyên khoa)
         /// </summary>
         public IList<HospitalFileModel> HospitalFiles { get; set; }
+
+        /// <summary>
+        /// Thông tin ngân hàng liên kết bệnh viện
+        /// </summary>
+        public IList<BankInfoModel> BankInfos { get; set; }
 
         #endregion
 

@@ -12,5 +12,6 @@ namespace Medical.Entities
     [Table("Channels")]
     public class Channels : MedicalCatalogueAppDomain
     {
+       
     }
 }

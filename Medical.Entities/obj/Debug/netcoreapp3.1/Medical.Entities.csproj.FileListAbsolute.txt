@@ -7,3 +7,6 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Entities\obj\Debug\netcoreapp
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Entities\obj\Debug\netcoreapp3.1\Medical.Entities.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Entities\obj\Debug\netcoreapp3.1\Medical.Entities.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Entities\obj\Debug\netcoreapp3.1\Medical.Entities.csprojAssemblyReference.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Entities\bin\netcoreapp3.1\Medical.Utilities.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Entities\bin\netcoreapp3.1\Medical.Utilities.pdb
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Entities\obj\Debug\netcoreapp3.1\Medical.Entities.csproj.CopyComplete

@@ -5,10 +5,12 @@ using Medical.Interface.Services.Base;
 using Medical.Models.DomainModel;
 using Medical.Utilities;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -88,6 +90,8 @@ namespace Medical.Core.App.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
+                itemModel.Created = DateTime.Now;
+                itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
                 var item = mapper.Map<E>(itemModel);
                 if (item != null)
                 {
@@ -127,6 +131,8 @@ namespace Medical.Core.App.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
+                itemModel.Updated = DateTime.Now;
+                itemModel.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
                 var item = mapper.Map<E>(itemModel);
                 if (item != null)
                 {
@@ -164,6 +170,8 @@ namespace Medical.Core.App.Controllers
             AppDomainResult appDomainResult = new AppDomainResult();
 
             bool success = false;
+            itemModel.Updated = DateTime.Now;
+            itemModel.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
             var item = mapper.Map<E>(itemModel);
             if (item != null)
             {
@@ -212,8 +220,7 @@ namespace Medical.Core.App.Controllers
         /// </summary>
         /// <param name="baseSearch"></param>
         /// <returns></returns>
-        [ActionName("GetPagedData")]
-        [HttpGet]
+        [HttpGet("get-paged-data")]
         [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public override async Task<AppDomainResult> GetPagedData([FromQuery] DomainSearch baseSearch)
         {
@@ -235,6 +242,81 @@ namespace Medical.Core.App.Controllers
 
             return appDomainResult;
         }
+
+        /// <summary>
+        /// Down load template file import
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        [HttpGet("download-template-import/{fileName}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Download })]
+        public virtual async Task<ActionResult> DownloadTemplateImport(string fileName = CATALOGUE_TEMPLATE_NAME)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                throw new AppException("Please input file name");
+            var currentDirectory = System.IO.Directory.GetCurrentDirectory();
+            string path = System.IO.Path.Combine(currentDirectory, TEMPLATE_FOLDER_NAME, fileName);
+            if (!System.IO.File.Exists(path))
+                throw new AppException("File template không tồn tại!");
+            var file = await System.IO.File.ReadAllBytesAsync(path);
+            return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "TemplateImport.xlsx");
+        }
+
+        /// <summary>
+        /// Tải về file kết quả sau khi import
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        [HttpGet("download-import-result-file/{fileName}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Download })]
+        public virtual async Task<ActionResult> DownloadImportFileResult(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                throw new Exception("File name không tồn tại!");
+            if (env == null)
+                throw new Exception("IHostingEnvironment is null => inject to constructor");
+            var webRoot = env.ContentRootPath;
+            string path = Path.Combine(webRoot, TEMP_FOLDER_NAME, fileName);
+            var file = await System.IO.File.ReadAllBytesAsync(path);
+            // Xóa file thư mục temp
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
+            return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", string.Format("KetQuaCD-{0:dd-MM-yyyy_HH_mm_ss}{1}", DateTime.Now, Path.GetExtension(fileName)));
+        }
+
+        /// <summary>
+        /// Import file danh mục
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [HttpPost("import-template-file")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Import })]
+        public virtual async Task<AppDomainImportResult> ImportTemplateFile(IFormFile file)
+        {
+            AppDomainImportResult appDomainImportResult = new AppDomainImportResult();
+            var fileStream = file.OpenReadStream();
+            appDomainImportResult = await this.catalogueService.ImportTemplateFile(fileStream, LoginContext.Instance.CurrentUser.UserName);
+            if (appDomainImportResult.ResultFile != null)
+            {
+                var webRoot = env.ContentRootPath;
+                string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+                string path = Path.Combine(webRoot, TEMP_FOLDER_NAME, fileName);
+                FileUtils.CreateDirectory(Path.Combine(webRoot, TEMP_FOLDER_NAME));
+                FileUtils.SaveToPath(path, appDomainImportResult.ResultFile);
+                appDomainImportResult.ResultFile = null;
+                appDomainImportResult.DownloadFileName = fileName;
+            }
+            return appDomainImportResult;
+        }
+
+
+        #region Contants
+
+        public const string TEMPLATE_FOLDER_NAME = "Template";
+        public const string CATALOGUE_TEMPLATE_NAME = "CatalogueTemplate.xlsx";
+
+
+        #endregion
 
     }
 }

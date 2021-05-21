@@ -18,7 +18,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace MedicalAPI.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/examination-schedule")]
     [ApiController]
     [Description("Lịch khám")]
     [Authorize]
@@ -36,7 +36,7 @@ namespace MedicalAPI.Controllers
         /// </summary>
         /// <param name="examinationScheduleId"></param>
         /// <returns></returns>
-        [HttpGet("{examinationScheduleId}")]
+        [HttpGet("get-examination-schedule-details/{examinationScheduleId}")]
         [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetExaminatioNScheduleDetails(int examinationScheduleId)
         {

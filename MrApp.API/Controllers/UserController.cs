@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 
 namespace MrApp.API.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/user")]
     [ApiController]
     [Description("Quản lý thông tin người dùng")]
     [MedicalAppAuthorize(new string[] { CoreContants.View, CoreContants.Update })]
@@ -61,7 +61,7 @@ namespace MrApp.API.Controllers
                 Phone = e.Phone,
                 UserName = e.UserName,
                 Updated = e.Updated,
-                UpdatedBy = e.UpdatedBy
+                UpdatedBy = e.UpdatedBy,
             });
             if (item != null)
             {
@@ -86,11 +86,50 @@ namespace MrApp.API.Controllers
         /// <returns></returns>
         [HttpPut("{id}")]
         [MedicalAppAuthorize(new string[] { CoreContants.Update })]
-        public override Task<AppDomainResult> UpdateItem(int id, [FromBody] UserModel itemModel)
+        public override async Task<AppDomainResult> UpdateItem(int id, [FromBody] UserModel itemModel)
         {
             if (LoginContext.Instance.CurrentUser.UserId != id)
                 throw new UnauthorizedAccessException("Không có quyền truy cập");
-            return base.UpdateItem(id, itemModel);
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (ModelState.IsValid)
+            {
+                var item = mapper.Map<Users>(itemModel);
+                if (item != null)
+                {
+                    // Kiểm tra item có tồn tại chưa?
+                    var messageUserCheck = await this.domainService.GetExistItemMessage(item);
+                    if (!string.IsNullOrEmpty(messageUserCheck))
+                        throw new AppException(messageUserCheck);
+
+                    item.Updated = DateTime.Now;
+                    item.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+                    Expression<Func<Users, object>>[] includeProperties = new Expression<Func<Users, object>>[]
+                    {
+                    x => x.FirstName,
+                    x => x.LastName,
+                    x => x.Email,
+                    x => x.Phone,
+                    x => x.Updated,
+                    x => x.UpdatedBy,
+                    x => x.UserName,
+                    x => x.Age,
+                    x => x.Address,
+                    };
+                    success = await this.domainService.UpdateFieldAsync(item, includeProperties);
+                    if (success)
+                        appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                    else
+                        throw new Exception("Lỗi trong quá trình xử lý");
+                    appDomainResult.Success = success;
+                }
+                else
+                    throw new KeyNotFoundException("Item không tồn tại");
+            }
+            else
+                throw new AppException(ModelState.GetErrorMessage());
+
+            return appDomainResult;
         }
 
         /// <summary>
@@ -110,10 +149,19 @@ namespace MrApp.API.Controllers
             var item = mapper.Map<Users>(itemModel);
             if (item != null)
             {
+                item.Updated = DateTime.Now;
+                item.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
                 Expression<Func<Users, object>>[] includeProperties = new Expression<Func<Users, object>>[]
                 {
-                        x => x.Active,
-                        x => x.Status
+                    x => x.FirstName,
+                    x => x.LastName,
+                    x => x.Email,
+                    x => x.Phone,
+                    x => x.Updated,
+                    x => x.UpdatedBy,
+                    x => x.UserName,
+                    x => x.Age,
+                    x => x.Address,
                 };
                 success = await this.domainService.UpdateFieldAsync(item, includeProperties);
                 appDomainResult.ResultCode = (int)HttpStatusCode.OK;

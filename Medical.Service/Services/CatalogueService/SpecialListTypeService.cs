@@ -5,6 +5,7 @@ using Medical.Interface.UnitOfWork;
 using Medical.Service.Services.DomainService;
 using Medical.Utilities;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,7 +18,7 @@ namespace Medical.Service.Services
 {
     public class SpecialListTypeService : CatalogueService<SpecialistTypes, SearchSpecialListType>, ISpecialListTypeService
     {
-        public SpecialListTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        public SpecialListTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
         }
 
@@ -32,11 +33,11 @@ namespace Medical.Service.Services
             {
                 new SqlParameter("@PageIndex", baseSearch.PageIndex),
                 new SqlParameter("@PageSize", baseSearch.PageSize),
+                new SqlParameter("@HospitalId", baseSearch.HospitalId),
                 new SqlParameter("@ExaminationDate", baseSearch.ExaminationDate),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("OrderBy", baseSearch.OrderBy),
                 new SqlParameter("@TotalPage", SqlDbType.Int, 0),
-                //new SqlParameter("SearchContent", baseSearch.SearchContent),
             };
             return parameters;
         }

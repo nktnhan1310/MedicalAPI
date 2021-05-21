@@ -35,14 +35,7 @@ namespace Medical.Extensions
             {
                 var user = (UserLoginModel)Medical.Extensions.HttpContext.Current.Items["User"];
                 if (user != null)
-                {
                     return user;
-                    //var claim = Utils.HttpContext.Current.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.UserData);
-                    //if (claim != null)
-                    //{
-                    //    return JsonConvert.DeserializeObject<UserLoginModel>(claim.Value);
-                    //}
-                }
                 return null;
             }
         }
@@ -58,9 +51,7 @@ namespace Medical.Extensions
             {
                 var claim = httpContext.HttpContext.User.Claims.FirstOrDefault(e => e.Type == ClaimTypes.UserData);
                 if (claim != null)
-                {
                     return JsonConvert.DeserializeObject<UserLoginModel>(claim.Value);
-                }
             }
             return null;
         }
