@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "jwyDJ2AdEKOFHOkawMgOWf70Fl0t67FuEqwpsbcEzcTFSTEHSpl7rtXB5zfnt8VLggkhwweev6DevBFlNIUwlA==",
+  "dgSpecHash": "Wy7MCksGMKBjHNcTxHc7Fcu23zZde6nObqkEz1H5rBZu8rTJm6D1mFPbSxRwhG007kiubs+Onwm5apqlw4rBew==",
   "success": true,
-  "projectFilePath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Interface\\Medical.Interface.csproj",
+  "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Interface\\Medical.Interface.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",

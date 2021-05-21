@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "RkwKFU1qNS5lSMaqKN/PEXKpq0efGcl0gT5LMjUT2R6JpmSwf2VigYIl7e2kU//IiZ2kfqVmwaztGRfpahMzFw==",
+  "dgSpecHash": "+8ZL4mBrxAbPvI83WF//LbEyuuuEaLeANTokvCJYG/Mo1SQX8T5yDrX4KGSrCILAS6/LzAPS5l9zqv1fvvWOSA==",
   "success": true,
-  "projectFilePath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Entities\\Medical.Entities.csproj",
+  "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Entities\\Medical.Entities.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\excelmapper\\5.2.298\\excelmapper.5.2.298.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",

@@ -7603,11 +7603,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Service\\Medical.Service.csproj",
+      "projectUniqueName": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Service\\Medical.Service.csproj",
       "projectName": "Medical.Service",
-      "projectPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Service\\Medical.Service.csproj",
+      "projectPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Service\\Medical.Service.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Service\\obj\\",
+      "outputPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Service\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
