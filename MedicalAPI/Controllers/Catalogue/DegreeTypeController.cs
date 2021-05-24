@@ -19,7 +19,7 @@ namespace MedicalAPI.Controllers
     [Description("Học hàm/Học vị")]
     public class DegreeTypeController : CatalogueController<DegreeTypes, DegreeTypeModel, BaseSearch>
     {
-        public DegreeTypeController(IServiceProvider serviceProvider, ILogger<CatalogueController<DegreeTypes, DegreeTypeModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public DegreeTypeController(IServiceProvider serviceProvider, ILogger<BaseController<DegreeTypes, DegreeTypeModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<IDegreeTypeService>();
         }

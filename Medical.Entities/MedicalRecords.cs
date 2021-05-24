@@ -103,6 +103,7 @@ namespace Medical.Entities
         [NotMapped]
         public IList<MedicalRecordAdditions> MedicalRecordAdditions { get; set; }
 
+
         #endregion
 
 

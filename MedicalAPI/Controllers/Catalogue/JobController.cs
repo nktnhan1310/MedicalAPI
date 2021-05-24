@@ -20,7 +20,7 @@ namespace MedicalAPI.Controllers.Catalogue
     [Description("Quản lý chức danh/nghề nghiệp")]
     public class JobController : CatalogueController<Jobs, JobModel, BaseSearch>
     {
-        public JobController(IServiceProvider serviceProvider, ILogger<CatalogueController<Jobs, JobModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public JobController(IServiceProvider serviceProvider, ILogger<BaseController<Jobs, JobModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<IJobService>();
         }
