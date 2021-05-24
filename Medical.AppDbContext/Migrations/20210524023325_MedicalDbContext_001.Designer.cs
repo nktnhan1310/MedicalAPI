@@ -10,7 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical.AppDbContext.Migrations
 {
     [DbContext(typeof(MedicalDbContext))]
+<<<<<<< HEAD:Medical.AppDbContext/Migrations/20210524023325_MedicalDbContext_001.Designer.cs
     [Migration("20210524023325_MedicalDbContext_001")]
+=======
+    [Migration("20210521082149_MedicalDbContext_001")]
+>>>>>>> master:Medical.AppDbContext/Migrations/20210521082149_MedicalDbContext_001.Designer.cs
     partial class MedicalDbContext_001
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
