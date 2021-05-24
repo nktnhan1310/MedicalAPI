@@ -929,11 +929,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Utilities\\Medical.Utilities.csproj",
+      "projectUniqueName": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Utilities\\Medical.Utilities.csproj",
       "projectName": "Medical.Utilities",
-      "projectPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Utilities\\Medical.Utilities.csproj",
+      "projectPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Utilities\\Medical.Utilities.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Utilities\\obj\\",
+      "outputPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Utilities\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",

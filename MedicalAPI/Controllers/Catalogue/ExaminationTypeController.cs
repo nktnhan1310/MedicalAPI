@@ -19,7 +19,7 @@ namespace MedicalAPI.Controllers
     [Description("Kênh đăng ký khám bệnh")]
     public class ExaminationTypeController : CatalogueController<ExaminationTypes, ExaminationTypeModel, BaseSearch>
     {
-        public ExaminationTypeController(IServiceProvider serviceProvider, ILogger<BaseController<ExaminationTypes, ExaminationTypeModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public ExaminationTypeController(IServiceProvider serviceProvider, ILogger<CatalogueController<ExaminationTypes, ExaminationTypeModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<IExaminationTypeService>();
         }

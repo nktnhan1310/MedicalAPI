@@ -85,7 +85,9 @@ namespace Medical.Core.App
 
             #region Catalogue Service
 
-            
+            services.AddScoped<IWardService, WardService>();
+            services.AddScoped<ICityService, CityService>();
+            services.AddScoped<IDistrictService, DistrictService>();
             services.AddScoped<IExaminationTypeService, ExaminationTypeService>();
             services.AddScoped<IChannelService, ChannelService>();
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
@@ -97,6 +99,7 @@ namespace Medical.Core.App
             services.AddScoped<IJobService, JobService>();
             services.AddScoped<ICountryService, CountryService>();
             services.AddScoped<INationService, NationService>();
+            services.AddScoped<IRelationService, RelationService>();
 
             #endregion
 

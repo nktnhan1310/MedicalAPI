@@ -47,6 +47,27 @@
             <param name="searchUserInGroup"></param>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.DistrictController.GetByCityId(System.Int32)">
+            <summary>
+            Lấy thông tin quận huyện theo mã thành phố
+            </summary>
+            <param name="cityId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.WardController.GetByCityId(System.Int32)">
+            <summary>
+            Lấy thông tin phường/xã theo mã thành phố
+            </summary>
+            <param name="cityId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.WardController.GetByDistrictId(System.Int32)">
+            <summary>
+            Lấy thông tin phường/xã theo mã quận/huyện
+            </summary>
+            <param name="districtId"></param>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.DoctorController.GetDoctorDetails(System.Int32)">
             <summary>
             Lấy thông tin chuyên khoa của bác sĩ
@@ -122,6 +143,12 @@
             Lấy thông tin thông tin người thân của hồ sơ
             </summary>
             <param name="medicalRecordId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.MedicalRecordController.GetListRelation">
+            <summary>
+            Lấy thông tin danh sách quan hệ của hồ sơ bệnh án
+            </summary>
             <returns></returns>
         </member>
     </members>

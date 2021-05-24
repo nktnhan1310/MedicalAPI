@@ -34,6 +34,8 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<SessionTypes>(x => x.ToTable("SessionTypes"));
             modelBuilder.Entity<SpecialistTypes>(x => x.ToTable("SpecialistTypes"));
             modelBuilder.Entity<Wards>(x => x.ToTable("Wards"));
+            modelBuilder.Entity<Relations>(x => x.ToTable("Relations"));
+
 
             #endregion
 
@@ -90,6 +92,7 @@ namespace Medical.AppDbContext
 
         #region Catalogue
 
+        public DbSet<Relations> Relations { get; set; }
         public DbSet<UserInGroups> UserInGroups { get; set; }
         public DbSet<PermitObjects> PermitObjects { get; set; }
         public DbSet<Permissions> Permissions { get; set; }

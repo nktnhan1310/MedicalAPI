@@ -25,10 +25,12 @@ namespace MedicalAPI.Controllers
     public class MedicalRecordController : BaseController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>
     {
         private readonly IMedicalRecordAdditionService medicalRecordAdditionService;
+        private readonly IRelationService relationService;
         public MedicalRecordController(IServiceProvider serviceProvider, ILogger<BaseController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IMedicalRecordService>();
             medicalRecordAdditionService = serviceProvider.GetRequiredService<IMedicalRecordAdditionService>();
+            relationService = serviceProvider.GetRequiredService<IRelationService>();
         }
 
         /// <summary>
@@ -52,6 +54,23 @@ namespace MedicalAPI.Controllers
             return appDomainResult;
         }
 
+        /// <summary>
+        /// Lấy thông tin danh sách quan hệ của hồ sơ bệnh án
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-list-relation")]
+        public async Task<AppDomainResult> GetListRelation()
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            var relations = await this.relationService.GetAsync(e => !e.Deleted && e.Active);
+            var relationModels = mapper.Map<IList<RelationModel>>(relations);
+            appDomainResult = new AppDomainResult()
+            {
+                Success = true,
+                Data = relationModels
+            };
+            return appDomainResult;
+        }
 
     }
 }
