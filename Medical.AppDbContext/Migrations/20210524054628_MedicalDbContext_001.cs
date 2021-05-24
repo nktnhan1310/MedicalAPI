@@ -717,6 +717,27 @@ namespace Medical.AppDbContext.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Relations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Updated = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UpdatedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Deleted = table.Column<bool>(type: "bit", nullable: false),
+                    Active = table.Column<bool>(type: "bit", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Relations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RoomExaminations",
                 columns: table => new
                 {
@@ -836,7 +857,6 @@ namespace Medical.AppDbContext.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     HospitalId = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<double>(type: "float", nullable: true),
-                    SpecialistTypeId = table.Column<int>(type: "int", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Updated = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -927,7 +947,7 @@ namespace Medical.AppDbContext.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DistricId = table.Column<int>(type: "int", nullable: true),
+                    DistrictId = table.Column<int>(type: "int", nullable: true),
                     CityId = table.Column<int>(type: "int", nullable: true),
                     CityName = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
                     DistrictName = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: true),
@@ -1038,6 +1058,9 @@ namespace Medical.AppDbContext.Migrations
 
             migrationBuilder.DropTable(
                 name: "PermitObjects");
+
+            migrationBuilder.DropTable(
+                name: "Relations");
 
             migrationBuilder.DropTable(
                 name: "RoomExaminations");
