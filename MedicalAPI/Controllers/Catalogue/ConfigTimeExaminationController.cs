@@ -18,7 +18,7 @@ namespace MedicalAPI.Controllers
     [Description("Cấu hình ca khám")]
     public class ConfigTimeExaminationController : CatalogueController<ConfigTimeExaminations, ConfigTimeExamniationModel, BaseSearch>
     {
-        public ConfigTimeExaminationController(IServiceProvider serviceProvider, Microsoft.Extensions.Logging.ILogger<BaseController<ConfigTimeExaminations, ConfigTimeExamniationModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public ConfigTimeExaminationController(IServiceProvider serviceProvider, Microsoft.Extensions.Logging.ILogger<CatalogueController<ConfigTimeExaminations, ConfigTimeExamniationModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<IConfigTimeExaminationService>();
         }

@@ -10,12 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical.AppDbContext.Migrations
 {
     [DbContext(typeof(MedicalDbContext))]
-<<<<<<< HEAD:Medical.AppDbContext/Migrations/20210521082607_MedicalDbContext_001.Designer.cs
-    [Migration("20210521082607_MedicalDbContext_001")]
-=======
-    [Migration("20210521082149_MedicalDbContext_001")]
->>>>>>> 1c2c291b5cba53c3e1cae071a20055a319550192:Medical.AppDbContext/Migrations/20210521082149_MedicalDbContext_001.Designer.cs
-    partial class MedicalDbContext_001
+    [Migration("20210524030011_MedicalDbContext_003")]
+    partial class MedicalDbContext_003
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -239,6 +235,10 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<int?>("CountryId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CountryName")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -469,6 +469,10 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<int?>("CityId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CityName")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Code")
                         .HasMaxLength(50)
@@ -2044,6 +2048,13 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CityName")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("Code")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -2062,8 +2073,12 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int?>("DistricId")
+                    b.Property<int?>("DistrictId")
                         .HasColumnType("int");
+
+                    b.Property<string>("DistrictName")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Name")
                         .IsRequired()

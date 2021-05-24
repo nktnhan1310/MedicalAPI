@@ -76,6 +76,10 @@ namespace Medical.Models.AutoMapper
 
             #region Catalogue
 
+            
+            CreateMap<RelationModel, Relations>().ReverseMap();
+            CreateMap<PagedList<RelationModel>, PagedList<Relations>>().ReverseMap();
+
             CreateMap<CountryModel, Countries>().ReverseMap();
             CreateMap<PagedList<CountryModel>, PagedList<Countries>>().ReverseMap();
 

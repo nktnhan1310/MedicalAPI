@@ -19,7 +19,7 @@ namespace MedicalAPI.Controllers
     [Description("Chuyên khoa khám bệnh")]
     public class SpecialistTypeController : CatalogueController<SpecialistTypes, SpecialistTypeModel, SearchSpecialListType>
     {
-        public SpecialistTypeController(IServiceProvider serviceProvider, ILogger<BaseController<SpecialistTypes, SpecialistTypeModel, SearchSpecialListType>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public SpecialistTypeController(IServiceProvider serviceProvider, ILogger<CatalogueController<SpecialistTypes, SpecialistTypeModel, SearchSpecialListType>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<ISpecialListTypeService>();
         }
