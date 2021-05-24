@@ -11,10 +11,5 @@ namespace Medical.Models
         /// Mã thành phố
         /// </summary>
         public int? CityId { get; set; }
-
-        /// <summary>
-        /// Tên thành phố
-        /// </summary>
-        public string CityName { get; set; }
     }
 }

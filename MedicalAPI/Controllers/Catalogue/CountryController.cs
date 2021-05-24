@@ -19,7 +19,7 @@ namespace MedicalAPI.Controllers
     [Description("Quản lý quốc gia")]
     public class CountryController : CatalogueController<Countries, CountryModel, BaseSearch>
     {
-        public CountryController(IServiceProvider serviceProvider, ILogger<CatalogueController<Countries, CountryModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public CountryController(IServiceProvider serviceProvider, ILogger<BaseController<Countries, CountryModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<ICountryService>();
         }

@@ -21,6 +21,11 @@ namespace Medical.Entities
         /// </summary>
         public double? Price { get; set; }
 
+        /// <summary>
+        /// Chuyên khoa
+        /// </summary>
+        public int SpecialistTypeId { get; set; }
+
         #region Extension Properties
 
         /// <summary>
