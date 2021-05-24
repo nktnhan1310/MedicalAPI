@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\MrApp.API\\MrApp.API.csproj": {}
+    "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\MrApp.API\\MrApp.API.csproj": {}
   },
   "projects": {
-    "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\MrApp.API\\MrApp.API.csproj": {
+    "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\MrApp.API\\MrApp.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\MrApp.API\\MrApp.API.csproj",
+        "projectUniqueName": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\MrApp.API\\MrApp.API.csproj",
         "projectName": "MrApp.API",
-        "projectPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\MrApp.API\\MrApp.API.csproj",
+        "projectPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\MrApp.API\\MrApp.API.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\MrApp.API\\obj\\",
+        "outputPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\MrApp.API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",

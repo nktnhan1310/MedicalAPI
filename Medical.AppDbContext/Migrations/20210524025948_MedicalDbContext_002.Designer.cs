@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Medical.AppDbContext.Migrations
 {
     [DbContext(typeof(MedicalDbContext))]
-    [Migration("20210521082149_MedicalDbContext_001")]
-    partial class MedicalDbContext_001
+    [Migration("20210524025948_MedicalDbContext_002")]
+    partial class MedicalDbContext_002
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -235,6 +235,10 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<int?>("CountryId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CountryName")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -465,6 +469,10 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<int?>("CityId")
                         .HasColumnType("int");
+
+                    b.Property<string>("CityName")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Code")
                         .HasMaxLength(50)
@@ -2040,6 +2048,13 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CityName")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
                     b.Property<string>("Code")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -2060,6 +2075,10 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<int?>("DistricId")
                         .HasColumnType("int");
+
+                    b.Property<string>("DistrictName")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("Name")
                         .IsRequired()

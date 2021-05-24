@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Models\\Medical.Models.csproj": {}
+    "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Models\\Medical.Models.csproj": {}
   },
   "projects": {
-    "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Models\\Medical.Models.csproj": {
+    "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Models\\Medical.Models.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Models\\Medical.Models.csproj",
+        "projectUniqueName": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Models\\Medical.Models.csproj",
         "projectName": "Medical.Models",
-        "projectPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Models\\Medical.Models.csproj",
+        "projectPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Models\\Medical.Models.csproj",
         "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Models\\obj\\",
+        "outputPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Models\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",

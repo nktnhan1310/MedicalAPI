@@ -5560,11 +5560,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Core.App\\Medical.Core.App.csproj",
+      "projectUniqueName": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Core.App\\Medical.Core.App.csproj",
       "projectName": "Medical.Core.App",
-      "projectPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Core.App\\Medical.Core.App.csproj",
+      "projectPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Core.App\\Medical.Core.App.csproj",
       "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-      "outputPath": "E:\\MonaMedia\\MedicalMaster\\MedicalAPI\\Medical.Core.App\\obj\\",
+      "outputPath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Core.App\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
