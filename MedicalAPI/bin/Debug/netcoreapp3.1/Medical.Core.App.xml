@@ -155,11 +155,10 @@
             <param name="baseSearch"></param>
             <returns></returns>
         </member>
-        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DownloadTemplateImport(System.String)">
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DownloadTemplateImport">
             <summary>
             Down load template file import
             </summary>
-            <param name="fileName"></param>
             <returns></returns>
         </member>
         <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DownloadImportFileResult(System.String)">

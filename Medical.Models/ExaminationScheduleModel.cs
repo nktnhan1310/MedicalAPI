@@ -1,6 +1,7 @@
 ﻿using Medical.Models.DomainModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -14,11 +15,25 @@ namespace Medical.Models
         /// <summary>
         /// Bác sĩ
         /// </summary>
+        [Required]
         public int DoctorId { get; set; }
         /// <summary>
         /// Ngày khám
         /// </summary>
+        [Required]
         public DateTime ExaminationDate { get; set; }
+
+        /// <summary>
+        /// Chuyên khoa
+        /// </summary>
+        [Required]
+        public int SpecialistTypeId { get; set; }
+
+        /// <summary>
+        /// Bác sĩ
+        /// </summary>
+        [Required]
+        public int HospitalId { get; set; }
 
         #region Extension Properties
 
@@ -30,7 +45,10 @@ namespace Medical.Models
         /// Tên bác sĩ
         /// </summary>
         public string DoctorName { get; set; }
-
+        /// <summary>
+        /// Tên chuyên khoa
+        /// </summary>
+        public string SpecialistTypeName { get; set; }
         /// <summary>
         /// Danh sách ca làm việc
         /// </summary>

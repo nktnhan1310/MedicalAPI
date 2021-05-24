@@ -113,9 +113,11 @@ namespace Medical.Service
             List<string> messages = new List<string>();
             string result = string.Empty;
             bool isExistSchedule = await Queryable.AnyAsync(x => !x.Deleted
-            && x.DoctorId == item.Id
+            && x.DoctorId == item.DoctorId
             && x.Id != item.Id
-            && x.ExaminationDate.Date == item.ExaminationDate.Date);
+            && x.ExaminationDate.Date == item.ExaminationDate.Date
+            && x.HospitalId == item.HospitalId
+            );
             if (isExistSchedule)
                 messages.Add(string.Format("Bác sĩ đã có lịch tại ngày {0}", item.ExaminationDate.ToString("dd/MM/yyyy")));
             // Kiểm tra có dk trùng ca khám không?

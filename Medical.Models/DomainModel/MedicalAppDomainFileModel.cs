@@ -34,5 +34,14 @@ namespace Medical.Models.DomainModel
         [StringLength(1000, ErrorMessage = "Tên file không được dài quá 1000 kí tự")]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Tên lưu trong thư mục
+        /// </summary>
+        public string FileRandomName { get; set; }
+
+        /// <summary>
+        /// Link download File
+        /// </summary>
+        public string FileUrl { get; set; }
     }
 }

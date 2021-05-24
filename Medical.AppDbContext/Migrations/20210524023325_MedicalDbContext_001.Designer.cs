@@ -4,14 +4,17 @@ using Medical.AppDbContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Medical.AppDbContext.Migrations
 {
     [DbContext(typeof(MedicalDbContext))]
-    partial class MedicalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210524023325_MedicalDbContext_001")]
+
+    partial class MedicalDbContext_001
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -870,12 +873,6 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<DateTime>("ExaminationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("HospitalId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SpecialistTypeId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
 
@@ -1596,51 +1593,6 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("PermitObjects");
                 });
 
-            modelBuilder.Entity("Medical.Entities.Relations", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Code")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<bool>("Deleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTime?>("Updated")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Relations");
-                });
-
             modelBuilder.Entity("Medical.Entities.RoomExaminations", b =>
                 {
                     b.Property<int>("Id")
@@ -1919,6 +1871,9 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<double?>("Price")
                         .HasColumnType("float");
 
+                    b.Property<int>("SpecialistTypeId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
 
@@ -2119,7 +2074,7 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int?>("DistrictId")
+                    b.Property<int?>("DistricId")
                         .HasColumnType("int");
 
                     b.Property<string>("DistrictName")
