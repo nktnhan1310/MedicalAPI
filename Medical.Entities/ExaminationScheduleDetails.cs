@@ -25,5 +25,33 @@ namespace Medical.Entities
         /// </summary>
         public int RoomExaminationId { get; set; }
 
+        #region Extension Properties
+
+        /// <summary>
+        /// Ca khám
+        /// </summary>
+        [NotMapped]
+        public string ConfigTimeExaminationValue { get; set; }
+
+        /// <summary>
+        /// Tên chuyên khoa
+        /// </summary>
+        [NotMapped]
+        public string SpecialistTypeName { get; set; }
+
+        /// <summary>
+        /// Chức danh + tên bác sĩ
+        /// </summary>
+        [NotMapped]
+        public string DoctorDisplayName { get; set; }
+
+        /// <summary>
+        /// Phòng khám
+        /// </summary>
+        [NotMapped]
+        public string RoomExaminationName { get; set; }
+
+        #endregion
+
     }
 }

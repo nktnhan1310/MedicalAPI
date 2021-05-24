@@ -68,6 +68,12 @@
             <param name="districtId"></param>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.SpecialistTypeController.DownloadTemplateImport">
+            <summary>
+            Download file import chuyên khoa khám
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.DoctorController.GetDoctorDetails(System.Int32)">
             <summary>
             Lấy thông tin chuyên khoa của bác sĩ
@@ -85,6 +91,28 @@
             <summary>
             Cập nhật cấu hình email
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetListDateExaminationByHospital(System.Int32)">
+            <summary>
+            Lấy danh sách ngày khám theo bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetSpecialistTypeByExaminationDate(System.Int32,System.Nullable{System.DateTime})">
+            <summary>
+            Lấy thông tin danh sách chuyên khoa theo ngày khám được chọn
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="examinationDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetMedicalRecordByHospital(System.Nullable{System.Int32})">
+            <summary>
+            Lấy danh sách hồ sơ bệnh án theo bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetExaminationHistory(System.Int32)">
@@ -108,7 +136,48 @@
             <param name="updateExaminationStatusModel"></param>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetExaminatioNScheduleDetails(System.Int32)">
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetSpecialistTypeByHospital(System.Int32)">
+            <summary>
+            Lấy thông tin chuyên khoa theo bệnh viện được chọn
+            </summary>
+            <param name="hospitalId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetDoctorByHospital(System.Int32)">
+            <summary>
+            Lấy thông tin danh sách bác sĩ theo bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetSpecialistTypeByDoctor(System.Int32)">
+            <summary>
+            Lấy thông tin chuyên khoa của bác sĩ được chọn
+            </summary>
+            <param name="doctorId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetDoctorBySpecialistType(System.Int32)">
+            <summary>
+            Lấy thông tin bác sĩ theo chuyên khoa được chọn
+            </summary>
+            <param name="specialistTypeId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetSessionType">
+            <summary>
+            Lấy danh sách buổi khám
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetConfigTimeExamination(System.Int32)">
+            <summary>
+            Lấy thông tin cấu hình ca khám theo buổi khám
+            </summary>
+            <param name="sesstionTypeId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetExaminationScheduleDetails(System.Int32)">
             <summary>
             Lấy thông tin chi tiết ca
             </summary>

@@ -21,6 +21,16 @@ namespace Medical.Entities
         /// </summary>
         public DateTime ExaminationDate { get; set; }
 
+        /// <summary>
+        /// Chuyên khoa
+        /// </summary>
+        public int SpecialistTypeId { get; set; }
+
+        /// <summary>
+        /// Bác sĩ
+        /// </summary>
+        public int HospitalId { get; set; }
+
         #region Extension Properties
 
         /// <summary>
@@ -33,6 +43,12 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public string DoctorName { get; set; }
+
+        /// <summary>
+        /// Chuyên khoa
+        /// </summary>
+        [NotMapped]
+        public string SpecialistTypeName { get; set; }
 
         /// <summary>
         /// Danh sách ca làm việc

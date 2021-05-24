@@ -17,5 +17,6 @@ namespace Medical.Entities
         /// Số lượng bác sĩ khám ở phòng
         /// </summary>
         public int TotalDoctor { get; set; }
+
     }
 }

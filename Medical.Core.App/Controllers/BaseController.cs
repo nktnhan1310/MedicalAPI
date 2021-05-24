@@ -314,16 +314,22 @@ namespace Medical.Core.App.Controllers
             {
                 if (files != null && files.Any())
                 {
+                    List<string> fileNames = new List<string>();
                     foreach (var file in files)
                     {
-                        string fileName = file.FileName;
+                        string fileName = string.Format("{0}-{1}", Guid.NewGuid().ToString(), file.FileName);
                         string fileUploadPath = Path.Combine(env.ContentRootPath, "temp");
                         string path = Path.Combine(fileUploadPath, fileName);
                         FileUtils.CreateDirectory(fileUploadPath);
                         var fileByte = FileUtils.StreamToByte(file.OpenReadStream());
                         FileUtils.SaveToPath(path, fileByte);
+                        fileNames.Add(fileName);
                     }
-                    appDomainResult.Success = true;
+                    appDomainResult = new AppDomainResult()
+                    {
+                        Success = true,
+                        Data = fileNames
+                    };
                 }
             });
             return appDomainResult;

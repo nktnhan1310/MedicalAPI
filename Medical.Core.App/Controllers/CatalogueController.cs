@@ -246,16 +246,13 @@ namespace Medical.Core.App.Controllers
         /// <summary>
         /// Down load template file import
         /// </summary>
-        /// <param name="fileName"></param>
         /// <returns></returns>
         [HttpGet("download-template-import/{fileName}")]
         [MedicalAppAuthorize(new string[] { CoreContants.Download })]
-        public virtual async Task<ActionResult> DownloadTemplateImport(string fileName = CATALOGUE_TEMPLATE_NAME)
+        public virtual async Task<ActionResult> DownloadTemplateImport()
         {
-            if (string.IsNullOrEmpty(fileName))
-                throw new AppException("Please input file name");
             var currentDirectory = System.IO.Directory.GetCurrentDirectory();
-            string path = System.IO.Path.Combine(currentDirectory, TEMPLATE_FOLDER_NAME, fileName);
+            string path = System.IO.Path.Combine(currentDirectory, TEMPLATE_FOLDER_NAME, CATALOGUE_TEMPLATE_NAME);
             if (!System.IO.File.Exists(path))
                 throw new AppException("File template không tồn tại!");
             var file = await System.IO.File.ReadAllBytesAsync(path);

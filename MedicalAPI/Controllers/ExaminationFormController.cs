@@ -28,14 +28,126 @@ namespace MedicalAPI.Controllers
         private readonly IExaminationHistoryService examinationHistoryService;
         private readonly IPaymentHistoryService paymentHistoryService;
         private readonly IExaminationFormService examinationFormService;
-
-
+        private readonly IMedicalRecordService medicalRecordService;
+        private readonly IExaminationScheduleService examinationScheduleService;
+        private readonly IExaminationScheduleDetailService examinationScheduleDetailService;
+        private readonly ISpecialListTypeService specialListTypeService;
         public ExaminationFormController(IServiceProvider serviceProvider, ILogger<BaseController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IExaminationFormService>();
             paymentHistoryService = serviceProvider.GetRequiredService<IPaymentHistoryService>();
             examinationHistoryService = serviceProvider.GetRequiredService<IExaminationHistoryService>();
             examinationFormService = serviceProvider.GetRequiredService<IExaminationFormService>();
+            medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
+            examinationScheduleService = serviceProvider.GetRequiredService<IExaminationScheduleService>();
+            examinationScheduleDetailService = serviceProvider.GetRequiredService<IExaminationScheduleDetailService>();
+            specialListTypeService = serviceProvider.GetRequiredService<ISpecialListTypeService>();
+        }
+
+        /// <summary>
+        /// Lấy thông tin danh sách ca khám theo bệnh viện và chuyên khoa được chọn
+        /// </summary>
+        /// <param name="hospitalId"></param>
+        /// <param name="specialistTypeId"></param>
+        /// <returns></returns>
+        [HttpGet("get-config-time-examination-by-specialist-type/{hospitalId}/{specialistTypeId}")]
+        public async Task<AppDomainResult> GetConfigTimeExaminationBySpecialistType(int hospitalId, int specialistTypeId)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            var scheduleSelecteds = await this.examinationScheduleService.GetAsync(e => !e.Deleted && e.Active && e.HospitalId == hospitalId && e.SpecialistTypeId == specialistTypeId);
+            if (scheduleSelecteds != null && scheduleSelecteds.Any())
+            {
+                var scheduleIds = scheduleSelecteds.Select(e => e.Id).ToList();
+                var scheduleDetails = await this.examinationScheduleDetailService.GetAsync(e => !e.Deleted && e.Active && scheduleIds.Contains(e.ScheduleId));
+
+                var scheduleDetailModels = mapper.Map<IList<ExaminationScheduleDetailModel>>(scheduleDetails);
+
+
+                appDomainResult = new AppDomainResult()
+                {
+                    Success = true,
+                    Data = scheduleDetailModels
+                };
+
+            }
+            return appDomainResult;
+        }
+
+        /// <summary>
+        /// Lấy danh sách ngày khám theo bệnh viện
+        /// </summary>
+        /// <param name="hospitalId"></param>
+        /// <returns></returns>
+        [HttpGet("get-list-examination-date-by-hospital/{hospitalId}")]
+        public async Task<AppDomainResult> GetListDateExaminationByHospital(int hospitalId)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            var schedules = await this.examinationScheduleService.GetAsync(e => !e.Deleted && e.Active
+            && e.HospitalId == hospitalId
+            && e.ExaminationDate.Date >= DateTime.Now.Date
+            );
+            appDomainResult = new AppDomainResult()
+            {
+                Success = true,
+                Data = mapper.Map<IList<ExaminationScheduleModel>>(schedules)
+            };
+            return appDomainResult;
+        }
+
+        /// <summary>
+        /// Lấy thông tin danh sách chuyên khoa theo ngày khám được chọn
+        /// </summary>
+        /// <param name="hospitalId"></param>
+        /// <param name="examinationDate"></param>
+        /// <returns></returns>
+        [HttpGet("get-specialist-type-by-date/{hospitalId}")]
+        public async Task<AppDomainResult> GetSpecialistTypeByExaminationDate(int hospitalId, [FromQuery] DateTime? examinationDate)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            var specialistTypeByExaminationDates = await this.examinationScheduleService.GetAsync(e => !e.Deleted && e.Active
+            && e.HospitalId == hospitalId
+            && (!examinationDate.HasValue || e.ExaminationDate.Date == examinationDate.Value.Date)
+            , e => new ExaminationSchedules()
+            {
+                SpecialistTypeId = e.SpecialistTypeId
+            });
+            var specialistTypeIds = specialistTypeByExaminationDates.Select(e => e.SpecialistTypeId).ToList();
+            var specialistTypes = await this.specialListTypeService.GetAsync(e => !e.Deleted && e.Active && specialistTypeIds.Contains(e.Id));
+            appDomainResult = new AppDomainResult()
+            {
+                Success = true,
+                Data = mapper.Map<IList<SpecialistTypeModel>>(specialistTypes),
+            };
+            return appDomainResult;
+        }
+
+        /// <summary>
+        /// Lấy danh sách hồ sơ bệnh án theo bệnh viện
+        /// </summary>
+        /// <param name="hospitalId"></param>
+        /// <returns></returns>
+        [HttpGet("get-medical-record-by-hospital/hospitalId")]
+        public async Task<AppDomainResult> GetMedicalRecordByHospital(int? hospitalId)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            var medicalRecords = await this.medicalRecordService.GetAsync(e => !e.Deleted && e.Active && (!hospitalId.HasValue || e.HospitalId == hospitalId.Value),
+                e => new MedicalRecords()
+                {
+                    Id = e.Id,
+                    Code = e.Code,
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                    Address = e.Address,
+                    Email = e.Email,
+                    Phone = e.Phone,
+                    CertificateNo = e.CertificateNo,
+                });
+            appDomainResult = new AppDomainResult()
+            {
+                Success = true,
+                Data = mapper.Map<IList<MedicalRecordModel>>(medicalRecords)
+            };
+            return appDomainResult;
         }
 
         /// <summary>
