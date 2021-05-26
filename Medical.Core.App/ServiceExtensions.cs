@@ -100,12 +100,14 @@ namespace Medical.Core.App
             services.AddScoped<ICountryService, CountryService>();
             services.AddScoped<INationService, NationService>();
             services.AddScoped<IRelationService, RelationService>();
-
+            services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+            
             #endregion
 
             #region Configuration
 
             services.AddScoped<IEmailConfigurationService, EmailConfigurationService>();
+            services.AddScoped<IHospitalConfigFeeService, HospitalConfigFeeService>();
 
             #endregion
 

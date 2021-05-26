@@ -16,6 +16,16 @@ namespace Medical.Entities.Extensions
         public int ExaminationFormId { get; set; }
 
         /// <summary>
+        /// Mã thanh toán
+        /// </summary>
+        public int? PaymentMethodId { get; set; }
+
+        /// <summary>
+        /// Mã ngân hàng
+        /// </summary>
+        public int? BankInfoId { get; set; }
+
+        /// <summary>
         /// Trạng thái
         /// </summary>
         public int? Status { get; set; }

@@ -91,6 +91,26 @@ namespace Medical.Service
             Context.SaveChanges();
             return true;
         }
+        /// <summary>
+        /// Update Field entity
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="includeProperties"></param>
+        /// <returns></returns>
+        public virtual async Task<bool> UpdateFieldsSaveAsync(T entity, params Expression<Func<T, object>>[] includeProperties)
+        {
+            return await Task.Run(() =>
+            {
+                var dbEntry = Context.Entry(entity);
+
+                foreach (var includeProperty in includeProperties)
+                {
+                    dbEntry.Property(includeProperty).IsModified = true;
+                }
+                Context.SaveChanges();
+                return true;
+            });
+        }
 
         public virtual void Detach(T entity)
         {
@@ -120,7 +140,7 @@ namespace Medical.Service
             }
         }
 
-        
+
         public virtual void LoadCollection(T item, params string[] property)
         {
             foreach (var prop in property)
@@ -157,6 +177,74 @@ namespace Medical.Service
                     pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
                     pagedList.Items = MappingDataTable.ConvertToList<T>(dataTable);
                     return pagedList;
+                }
+                finally
+                {
+                    if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                        connection.Close();
+
+                    if (command != null)
+                        command.Dispose();
+                }
+            });
+        }
+
+        public async Task<object> ExcuteStoreGetValue(string commandText, SqlParameter[] sqlParameters, string outputName)
+        {
+            return await Task.Run(() =>
+            {
+                object obj = new object();
+                DataTable dataTable = new DataTable();
+                SqlConnection connection = null;
+                SqlCommand command = null;
+                try
+                {
+                    connection = (SqlConnection)Context.Database.GetDbConnection();
+                    command = connection.CreateCommand();
+                    connection.Open();
+                    command.CommandText = commandText;
+                    command.Parameters.AddRange(sqlParameters);
+                    command.Parameters[outputName].Direction = ParameterDirection.Output;
+                    command.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
+                    sqlDataAdapter.Fill(dataTable);
+                    var objectValue = command.Parameters[outputName].Value;
+                    if (objectValue != null)
+                        obj = objectValue.ToString();
+                    return obj;
+                }
+                finally
+                {
+                    if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                        connection.Close();
+
+                    if (command != null)
+                        command.Dispose();
+                }
+            });
+        }
+
+
+        public async Task<IList<T>> ExcuteStoreAsync(string commandText, SqlParameter[] sqlParameters)
+        {
+            return await Task.Run(() =>
+            {
+                IList<T> listData = new List<T>();
+                DataTable dataTable = new DataTable();
+                SqlConnection connection = null;
+                SqlCommand command = null;
+                try
+                {
+                    connection = (SqlConnection)Context.Database.GetDbConnection();
+                    command = connection.CreateCommand();
+                    connection.Open();
+                    command.CommandText = commandText;
+                    command.Parameters.AddRange(sqlParameters);
+                    command.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
+                    sqlDataAdapter.Fill(dataTable);
+                    listData = MappingDataTable.ConvertToList<T>(dataTable);
+                    return listData;
                 }
                 finally
                 {

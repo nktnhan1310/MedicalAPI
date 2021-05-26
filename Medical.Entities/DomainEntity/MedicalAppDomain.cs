@@ -18,7 +18,7 @@ namespace Medical.Entities.DomainEntity
         /// STT
         /// </summary>
         [NotMapped]
-        public int RowNumber { get; set; }
+        public long RowNumber { get; set; }
 
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

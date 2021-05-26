@@ -1,4 +1,5 @@
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Template\CatalogueTemplate.xlsx
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Template\SpecialListTypeTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\MedicalAPI.exe
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\appsettings.Development.json
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\appsettings.json

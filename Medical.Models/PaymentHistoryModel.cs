@@ -12,7 +12,11 @@ namespace Medical.Models
     public class PaymentHistoryModel : MedicalAppDomainModel
     {
         /// <summary>
-        /// Thông tin phương thức thanh toán
+        /// Theo phương thức thanh toán
+        /// </summary>
+        public int PaymentMethodId { get; set; }
+        /// <summary>
+        /// Thông tin ngân hàng thanh toán
         /// </summary>
         public int BankInfoId { get; set; }
         /// <summary>
@@ -29,5 +33,18 @@ namespace Medical.Models
         /// Phí dịch vụ
         /// </summary>
         public double? ServiceFee { get; set; }
+
+        #region Extension Properties
+
+        /// <summary>
+        /// Tên phương thức thanh toán
+        /// </summary>
+        public string PaymentMethodName { get; set; }
+        /// <summary>
+        /// Thông tin ngân hàng thanh toán
+        /// </summary>
+        public string BankInfo { get; set; }
+
+        #endregion
     }
 }

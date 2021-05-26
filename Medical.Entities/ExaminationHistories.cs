@@ -26,5 +26,10 @@ namespace Medical.Entities
         /// Comment khi duyệt phiếu khám
         /// </summary>
         public string Comment { get; set; }
+
+        /// <summary>
+        /// Mô tả lịch hẹn
+        /// </summary>
+        public string Note { get; set; }
     }
 }

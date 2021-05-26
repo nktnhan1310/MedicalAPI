@@ -714,17 +714,26 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<DateTime>("ExaminationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("ExaminationIndex")
-                        .HasColumnType("int");
+                    b.Property<string>("ExaminationIndex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExaminationPaymentIndex")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("ExaminationScheduleDetailId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ExaminationTypeId")
+                    b.Property<int>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsBHYT")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PaymentMethodId")
+                        .HasColumnType("int");
 
                     b.Property<double?>("Price")
                         .HasColumnType("float");
@@ -738,7 +747,10 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<int?>("RoomExaminationId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SpecialistTypeId")
+                    b.Property<int>("ServiceTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SpecialistTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
@@ -787,6 +799,9 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<int>("ExaminationFormId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -934,6 +949,59 @@ namespace Medical.AppDbContext.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ExaminationTypes");
+                });
+
+            modelBuilder.Entity("Medical.Entities.HospitalConfigFees", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<double>("Fee")
+                        .HasColumnType("float");
+
+                    b.Property<double>("FeeRate")
+                        .HasColumnType("float");
+
+                    b.Property<int>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRate")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SpecialistTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HospitalConfigFee");
                 });
 
             modelBuilder.Entity("Medical.Entities.HospitalFiles", b =>
@@ -1425,7 +1493,10 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<int>("BankInfoId")
+                    b.Property<string>("BankInfo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("BankInfoId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
@@ -1444,6 +1515,12 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<int>("ExaminationFormId")
                         .HasColumnType("int");
 
+                    b.Property<int>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethodName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double?>("ServiceFee")
                         .HasColumnType("float");
 
@@ -1457,6 +1534,51 @@ namespace Medical.AppDbContext.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PaymentHistories");
+                });
+
+            modelBuilder.Entity("Medical.Entities.PaymentMethods", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentMethods");
                 });
 
             modelBuilder.Entity("Medical.Entities.Permissions", b =>
@@ -2045,6 +2167,9 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<DateTime?>("ExpiredDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("FirstName")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -2066,6 +2191,9 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<int?>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("Token")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");

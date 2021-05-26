@@ -31,5 +31,15 @@ namespace Medical.Models
         /// Người thao tác
         /// </summary>
         public string CreatedBy { get; set; }
+
+        /// <summary>
+        /// Mã thanh toán
+        /// </summary>
+        public int? PaymentMethodId { get; set; }
+
+        /// <summary>
+        /// Mã ngân hàng
+        /// </summary>
+        public int? BankInfoId { get; set; }
     }
 }

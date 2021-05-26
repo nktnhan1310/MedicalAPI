@@ -73,6 +73,8 @@ namespace Medical.Core.App.Controllers
                     {
                         var userModel = mapper.Map<UserModel>(userInfos.FirstOrDefault());
                         var token = await GenerateJwtToken(userModel);
+                        // Lưu giá trị token
+                        await this.userService.UpdateUserToken(userModel.Id, token, true);
                         appDomainResult = new AppDomainResult()
                         {
                             Success = true,
@@ -231,6 +233,8 @@ namespace Medical.Core.App.Controllers
         public virtual async Task<AppDomainResult> Logout()
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            if (LoginContext.Instance.CurrentUser != null)
+                await this.userService.UpdateUserToken(LoginContext.Instance.CurrentUser.UserId, string.Empty, false);
             await this.tokenManagerService.DeactivateCurrentAsync();
             appDomainResult = new AppDomainResult()
             {

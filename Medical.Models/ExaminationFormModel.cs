@@ -1,4 +1,5 @@
 ﻿using Medical.Models.DomainModel;
+using Medical.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -56,7 +57,7 @@ namespace Medical.Models
         /// <summary>
         /// (Tái khám/Dịch vụ/...)
         /// </summary>
-        public int? ExaminationTypeId { get; set; }
+        public int ServiceTypeId { get; set; }
         /// <summary>
         /// Ca khám
         /// </summary>
@@ -68,6 +69,11 @@ namespace Medical.Models
         public int Status { get; set; }
 
         /// <summary>
+        /// Phương thức thanh toán
+        /// </summary>
+        public int? PaymentMethodId { get; set; }
+
+        /// <summary>
         /// Chi phí khám
         /// </summary>
         public double? Price { get; set; }
@@ -75,14 +81,91 @@ namespace Medical.Models
         /// <summary>
         /// Số thứ tự khám bệnh
         /// </summary>
-        public int? ExaminationIndex { get; set; }
+        public string ExaminationIndex { get; set; }
+
+        /// <summary>
+        /// Mã bệnh viện
+        /// </summary>
+        public int HospitalId { get; set; }
+
+        /// <summary>
+        /// Mô tả lịch hẹn
+        /// </summary>
+        public string Note { get; set; }
 
         #region Extension Properties
+
+        /// <summary>
+        /// Phí khám bệnh nếu có
+        /// </summary>
+        public double? FeeExamination { get; set; }
+
+        /// <summary>
+        /// Thông tin chi nhánh ngân hàng thanh toán
+        /// </summary>
+        public int? BankInfoId { get; set; }
+
+        /// <summary>
+        /// Tên trạng thái
+        /// </summary>
+        public string StatusName
+        {
+            get
+            {
+                switch (Status)
+                {
+                    case (int)CatalogueUtilities.ExaminationStatus.New:
+                        return "Lưu nháp";
+                    case (int)CatalogueUtilities.ExaminationStatus.WaitConfirm:
+                        return "Chờ xác nhận";
+                    case (int)CatalogueUtilities.ExaminationStatus.WaitReExamination:
+                        return "Chờ xác nhận tái khám";
+                    case (int)CatalogueUtilities.ExaminationStatus.Canceled:
+                        return "Đã hủy";
+                    case (int)CatalogueUtilities.ExaminationStatus.Confirmed:
+                        return "Đã xác nhận";
+                    case (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination:
+                        return "Đã xác nhận tái khám";
+                    default:
+                        return string.Empty;
+                }
+            }
+        }
 
         /// <summary>
         /// Comment khi duyệt phiếu khám
         /// </summary>
         public string Comment { get; set; }
+
+        /// <summary>
+        /// Tên dịch vụ khám
+        /// </summary>
+        public string ServiceTypeName { get; set; }
+
+        /// <summary>
+        /// Mã hồ sơ
+        /// </summary>
+        public string MedicalRecordCode { get; set; }
+
+        /// <summary>
+        /// Tên bệnh nhân
+        /// </summary>
+        public string ClientName { get; set; }
+
+        /// <summary>
+        /// Phòng khám
+        /// </summary>
+        public string RoomExaminationName { get; set; }
+
+        /// <summary>
+        /// Chuyên khoa
+        /// </summary>
+        public string SpecialistTypeName { get; set; }
+
+        /// <summary>
+        /// Tên học vị + tên bác sĩ
+        /// </summary>
+        public string DoctorDisplayName { get; set; }
 
         /// <summary>
         /// Lịch sử tạo phiếu khám bệnh (lịch hẹn)

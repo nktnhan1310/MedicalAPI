@@ -36,6 +36,9 @@ namespace Medical.Interface.Repository
         Task<PagedList<T>> ExcuteQueryPagingAsync(string commandText, SqlParameter[] sqlParameters);
         Task<DataTable> ExcuteQueryAsync(string commandText, SqlParameter[] sqlParameters);
         bool UpdateFieldsSave(T entity, params Expression<Func<T, object>>[] includeProperties);
+        Task<IList<T>> ExcuteStoreAsync(string commandText, SqlParameter[] sqlParameters);
 
+        Task<object> ExcuteStoreGetValue(string commandText, SqlParameter[] sqlParameters, string outputName);
+        Task<bool> UpdateFieldsSaveAsync(T entity, params Expression<Func<T, object>>[] includeProperties);
     }
 }

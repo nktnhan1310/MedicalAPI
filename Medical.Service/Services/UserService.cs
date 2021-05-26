@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -291,6 +292,42 @@ namespace Medical.Service
                 }
             }
             return hasPermit;
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin user token
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="token"></param>
+        /// <param name="isLogin"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateUserToken(int userId, string token, bool isLogin = false)
+        {
+            bool result = false;
+            var userInfo = await this.unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == userId).FirstOrDefaultAsync();
+            if (userInfo != null)
+            {
+                if (isLogin)
+                {
+                    userInfo.Token = token;
+                    userInfo.ExpiredDate = DateTime.UtcNow.AddDays(1);
+                }
+                else
+                {
+                    userInfo.Token = string.Empty;
+                    userInfo.ExpiredDate = null;
+                }
+                Expression<Func<Users, object>>[] includeProperties = new Expression<Func<Users, object>>[]
+                {
+                    e => e.Token,
+                    e => e.ExpiredDate
+                };
+                this.unitOfWork.Repository<Users>().UpdateFieldsSave(userInfo, includeProperties);
+                await this.unitOfWork.SaveAsync();
+                result = true;
+            }
+
+            return result;
         }
     }
 }

@@ -7,6 +7,21 @@ namespace Medical.Utilities
     public class CatalogueUtilities
     {
         /// <summary>
+        /// Phương thức thanh toán
+        /// </summary>
+        public enum PaymentMethod
+        {
+            /// <summary>
+            /// Thanh toán COD (trực tiếp)
+            /// </summary>
+            COD = 0,
+            /// <summary>
+            /// Thanh toán qua APP
+            /// </summary>
+            APP = 1,
+        }
+
+        /// <summary>
         /// Trạng thái của phiếu khám bệnh
         /// </summary>
         public enum ExaminationStatus

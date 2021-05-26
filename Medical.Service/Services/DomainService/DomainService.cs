@@ -152,9 +152,9 @@ namespace Medical.Service
             {
                 new SqlParameter("@PageIndex", baseSearch.PageIndex),
                 new SqlParameter("@PageSize", baseSearch.PageSize),
+                new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
                 new SqlParameter("@TotalPage", SqlDbType.Int, 0),
-                //new SqlParameter("SearchContent", baseSearch.SearchContent),
             };
             return parameters;
         }

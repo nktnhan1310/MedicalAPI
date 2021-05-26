@@ -28,6 +28,7 @@ namespace Medical.Models.AutoMapper
             CreateMap<PagedList<DoctorDetailModel>, PagedList<DoctorDetails>>().ReverseMap();
             CreateMap<ExaminationScheduleModel, ExaminationSchedules>().ReverseMap();
             CreateMap<PagedList<ExaminationScheduleModel>, PagedList<ExaminationSchedules>>().ReverseMap();
+            CreateMap<ConfigTimeExaminationDayOfWeekModel, ConfigTimeExaminationDayOfWeek>().ReverseMap();
             CreateMap<ExaminationScheduleDetailModel, ExaminationScheduleDetails>().ReverseMap();
 
             CreateMap<MedicalRecordModel, MedicalRecords>().ReverseMap();
@@ -53,6 +54,9 @@ namespace Medical.Models.AutoMapper
 
             CreateMap<EmailConfigurationModel, EmailConfiguration>().ReverseMap();
 
+            CreateMap<HospitalConfigFeeModel, HospitalConfigFees>().ReverseMap();
+            CreateMap<PagedList<HospitalConfigFeeModel>, PagedList<HospitalConfigFees>>().ReverseMap();
+
             #endregion
 
             #region Auth
@@ -76,7 +80,9 @@ namespace Medical.Models.AutoMapper
 
             #region Catalogue
 
-            
+            CreateMap<PaymentMethodModel, PaymentMethods>().ReverseMap();
+            CreateMap<PagedList<PaymentMethodModel>, PagedList<PaymentMethods>>().ReverseMap();
+
             CreateMap<RelationModel, Relations>().ReverseMap();
             CreateMap<PagedList<RelationModel>, PagedList<Relations>>().ReverseMap();
 

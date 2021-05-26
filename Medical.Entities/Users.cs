@@ -52,6 +52,16 @@ namespace Medical.Entities
         [StringLength(4000)]
         public string Password { get; set; }
 
+        /// <summary>
+        /// Token đăng nhập
+        /// </summary>
+        public string Token { get; set; }
+
+        /// <summary>
+        /// Thời gian hết hạn token
+        /// </summary>
+        public DateTime? ExpiredDate { get; set; }
+
         #region Extension Properties
 
         /// <summary>

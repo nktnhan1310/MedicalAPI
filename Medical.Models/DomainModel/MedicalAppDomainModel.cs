@@ -11,7 +11,7 @@ namespace Medical.Models.DomainModel
         /// <summary>
         /// Số thứ tự
         /// </summary>
-        public int RowNumber { get; set; }
+        public long RowNumber { get; set; }
         /// <summary>
         /// Khóa chính
         /// </summary>

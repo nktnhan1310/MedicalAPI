@@ -32,6 +32,9 @@ namespace MedicalAPI.Controllers
         private readonly IExaminationScheduleService examinationScheduleService;
         private readonly IExaminationScheduleDetailService examinationScheduleDetailService;
         private readonly ISpecialListTypeService specialListTypeService;
+        private readonly IPaymentMethodService paymentMethodService;
+        private readonly IBankInfoService bankInfoService;
+        private readonly IHospitalConfigFeeService hospitalConfigFeeService;
         public ExaminationFormController(IServiceProvider serviceProvider, ILogger<BaseController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IExaminationFormService>();
@@ -42,34 +45,45 @@ namespace MedicalAPI.Controllers
             examinationScheduleService = serviceProvider.GetRequiredService<IExaminationScheduleService>();
             examinationScheduleDetailService = serviceProvider.GetRequiredService<IExaminationScheduleDetailService>();
             specialListTypeService = serviceProvider.GetRequiredService<ISpecialListTypeService>();
+            paymentMethodService = serviceProvider.GetRequiredService<IPaymentMethodService>();
+            bankInfoService = serviceProvider.GetRequiredService<IBankInfoService>();
+            hospitalConfigFeeService = serviceProvider.GetRequiredService<IHospitalConfigFeeService>();
+        }
+        
+        /// <summary>
+        /// Lấy tất cả thông tin chuyên khoa khám bệnh
+        /// </summary>
+        /// <param name="searchExaminationScheduleDetailV2"></param>
+        /// <returns></returns>
+        [HttpGet("get-all-examination-schedules")]
+        public async Task<AppDomainResult> GetAllExaminationSchedules([FromQuery] SearchExaminationScheduleDetailV2 searchExaminationScheduleDetailV2)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            var examinationSchedules = await this.examinationScheduleService.GetAllExaminationSchedules(searchExaminationScheduleDetailV2);
+            var examinationScheduleModels = mapper.Map<PagedList<ExaminationScheduleModel>>(examinationSchedules);
+            appDomainResult = new AppDomainResult()
+            {
+                Success = true,
+                Data = examinationScheduleModels
+            };
+            return appDomainResult;
         }
 
         /// <summary>
         /// Lấy thông tin danh sách ca khám theo bệnh viện và chuyên khoa được chọn
         /// </summary>
-        /// <param name="hospitalId"></param>
-        /// <param name="specialistTypeId"></param>
+        /// <param name="searchExaminationScheduleForm"></param>
         /// <returns></returns>
-        [HttpGet("get-config-time-examination-by-specialist-type/{hospitalId}/{specialistTypeId}")]
-        public async Task<AppDomainResult> GetConfigTimeExaminationBySpecialistType(int hospitalId, int specialistTypeId)
+        [HttpGet("get-config-time-examination-by-specialist-type")]
+        public async Task<AppDomainResult> GetConfigTimeExaminationBySpecialistType([FromQuery] SearchExaminationScheduleForm searchExaminationScheduleForm)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            var scheduleSelecteds = await this.examinationScheduleService.GetAsync(e => !e.Deleted && e.Active && e.HospitalId == hospitalId && e.SpecialistTypeId == specialistTypeId);
-            if (scheduleSelecteds != null && scheduleSelecteds.Any())
+            var examinationSchedules = await this.examinationScheduleService.GetExaminationSchedules(searchExaminationScheduleForm);
+            appDomainResult = new AppDomainResult()
             {
-                var scheduleIds = scheduleSelecteds.Select(e => e.Id).ToList();
-                var scheduleDetails = await this.examinationScheduleDetailService.GetAsync(e => !e.Deleted && e.Active && scheduleIds.Contains(e.ScheduleId));
-
-                var scheduleDetailModels = mapper.Map<IList<ExaminationScheduleDetailModel>>(scheduleDetails);
-
-
-                appDomainResult = new AppDomainResult()
-                {
-                    Success = true,
-                    Data = scheduleDetailModels
-                };
-
-            }
+                Success = true,
+                Data = examinationSchedules
+            };
             return appDomainResult;
         }
 
@@ -77,14 +91,17 @@ namespace MedicalAPI.Controllers
         /// Lấy danh sách ngày khám theo bệnh viện
         /// </summary>
         /// <param name="hospitalId"></param>
+        /// <param name="searchExaminationDate"></param>
         /// <returns></returns>
         [HttpGet("get-list-examination-date-by-hospital/{hospitalId}")]
-        public async Task<AppDomainResult> GetListDateExaminationByHospital(int hospitalId)
+        public async Task<AppDomainResult> GetListDateExaminationByHospital(int hospitalId, [FromQuery] SearchExaminationDate searchExaminationDate)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             var schedules = await this.examinationScheduleService.GetAsync(e => !e.Deleted && e.Active
             && e.HospitalId == hospitalId
             && e.ExaminationDate.Date >= DateTime.Now.Date
+            && (!searchExaminationDate.DoctorId.HasValue || e.DoctorId == searchExaminationDate.DoctorId.Value)
+            && (!searchExaminationDate.SpecialistTypeId.HasValue || e.SpecialistTypeId == searchExaminationDate.SpecialistTypeId.Value)
             );
             appDomainResult = new AppDomainResult()
             {
@@ -220,6 +237,61 @@ namespace MedicalAPI.Controllers
 
             return appDomainResult;
         }
+
+        #region FEE EXAMINATION (PHÍ KHÁM BỆNH)
+
+        /// <summary>
+        /// Lấy thông tin chi phí khám bệnh
+        /// </summary>
+        /// <param name="feeCaculateExaminationRequest"></param>
+        /// <returns></returns>
+        [HttpGet("get-caculate-fee-response")]
+        public async Task<AppDomainResult> GetFeeResponseExamination([FromQuery] FeeCaculateExaminationRequest feeCaculateExaminationRequest)
+        {
+            var feeCaculateExaminationResponse = await this.hospitalConfigFeeService.GetFeeExamination(feeCaculateExaminationRequest);
+            return new AppDomainResult()
+            {
+                Success = true,
+                Data = feeCaculateExaminationResponse
+            };
+        }
+
+        #endregion
+
+        #region Catalogue
+
+        /// <summary>
+        /// Lấy danh sách phương thức thanh toán
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-list-payment-method")]
+        public async Task<AppDomainResult> GetPaymentMethods()
+        {
+            var paymentMethods = await this.paymentMethodService.GetAsync(e => !e.Deleted);
+            return new AppDomainResult()
+            {
+                Success = true,
+                Data = mapper.Map<IList<PaymentMethodModel>>(paymentMethods)
+            };
+        }
+
+        /// <summary>
+        /// Lấy thông tin danh sách ngân hàng theo bệnh viện
+        /// </summary>
+        /// <param name="hospitalId"></param>
+        /// <returns></returns>
+        [HttpGet("get-hospital-bank-info/{hospitalId}")]
+        public async Task<AppDomainResult> GetHospitalBankInfos(int hospitalId)
+        {
+            var bankInfos = await this.bankInfoService.GetAsync(e => !e.Deleted && e.HospitalId == hospitalId);
+            return new AppDomainResult()
+            {
+                Success = true,
+                Data = mapper.Map<IList<BankInfoModel>>(bankInfos)
+            };
+        }
+
+        #endregion
 
     }
 }

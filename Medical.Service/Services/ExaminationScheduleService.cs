@@ -2,6 +2,7 @@
 using Medical.Entities;
 using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
+using Medical.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -107,7 +108,6 @@ namespace Medical.Service
             return result;
         }
 
-
         public override async Task<string> GetExistItemMessage(ExaminationSchedules item)
         {
             List<string> messages = new List<string>();
@@ -146,5 +146,68 @@ namespace Medical.Service
             return result;
         }
 
+        /// <summary>
+        /// Danh sách lịch theo chuyên khoa và bệnh viện
+        /// </summary>
+        /// <param name="searchExaminationScheduleDetail"></param>
+        /// <returns></returns>
+        public async Task<IList<ExaminationSchedules>> GetExaminationSchedules(SearchExaminationScheduleForm searchExaminationScheduleDetail)
+        {
+            IList<ExaminationSchedules> examinationSchedules = new List<ExaminationSchedules>();
+            IList<ExaminationScheduleDetails> examinationScheduleDetails = new List<ExaminationScheduleDetails>();
+            var examinationDate = searchExaminationScheduleDetail.ExaminationDate.HasValue ? searchExaminationScheduleDetail.ExaminationDate.Value : DateTime.Now;
+            SqlParameter[] sqlParameters = new SqlParameter[]
+            {
+                new SqlParameter("@HospitalId", searchExaminationScheduleDetail.HospitalId),
+                new SqlParameter("@SpecialistTypeId", searchExaminationScheduleDetail.SpecialistTypeId),
+                new SqlParameter("@ExaminationDate", examinationDate),
+                new SqlParameter("@DoctorId", searchExaminationScheduleDetail.DoctorId),
+
+            };
+            examinationScheduleDetails = await unitOfWork.Repository<ExaminationScheduleDetails>().ExcuteStoreAsync("ExaminationScheduleDetail_GetInfo", sqlParameters);
+            examinationSchedules = examinationScheduleDetails
+                .GroupBy(e => e.ScheduleId)
+                .Select(e => new ExaminationSchedules()
+                {
+                    Id = e.Key,
+                    DoctorName = e.FirstOrDefault().DoctorDisplayName,
+                    SpecialistTypeName = e.FirstOrDefault().SpecialistTypeName,
+                    SpecialistTypeId = searchExaminationScheduleDetail.SpecialistTypeId,
+                    HospitalId = searchExaminationScheduleDetail.HospitalId,
+                    DoctorId = searchExaminationScheduleDetail.DoctorId ?? 0,
+                    ExaminationDate = examinationDate,
+                    ExaminationScheduleDetails = e.ToList()
+                }).ToList();
+            return examinationSchedules;
+        }
+
+        /// <summary>
+        /// Lấy danh sách tất cả lịch + chuyên khoa khám bệnh
+        /// </summary>
+        /// <param name="searchExaminationScheduleDetailV2"></param>
+        /// <returns></returns>
+        public async Task<PagedList<ExaminationSchedules>> GetAllExaminationSchedules(SearchExaminationScheduleDetailV2 searchExaminationScheduleDetailV2)
+        {
+            PagedList<ExaminationSchedules> pagedList = new PagedList<ExaminationSchedules>();
+            SqlParameter[] sqlParameters = new SqlParameter[]
+            {
+                new SqlParameter("@PageIndex", searchExaminationScheduleDetailV2.PageIndex),
+                new SqlParameter("@PageSize", searchExaminationScheduleDetailV2.PageSize),
+                new SqlParameter("@HospitalId", searchExaminationScheduleDetailV2.HospitalId),
+                new SqlParameter("@DoctorId", searchExaminationScheduleDetailV2.DoctorId),
+                new SqlParameter("@SpecialistTypeId", searchExaminationScheduleDetailV2.SpecialistTypeId),
+                new SqlParameter("@Gender", searchExaminationScheduleDetailV2.Gender),
+                new SqlParameter("@DegreeTypeId", searchExaminationScheduleDetailV2.DegreeTypeId),
+                new SqlParameter("@SessionId", searchExaminationScheduleDetailV2.SessionId),
+                new SqlParameter("@ExaminationDate", searchExaminationScheduleDetailV2.ExaminationDate),
+                new SqlParameter("@OrderBy", searchExaminationScheduleDetailV2.OrderBy),
+                new SqlParameter("@SearchContent", searchExaminationScheduleDetailV2.SearchContent),
+                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+            };
+            pagedList = await unitOfWork.Repository<ExaminationSchedules>().ExcuteQueryPagingAsync("ExaminationScheduleDetailV2_GetInfo", sqlParameters);
+            pagedList.PageSize = searchExaminationScheduleDetailV2.PageSize;
+            pagedList.PageIndex = searchExaminationScheduleDetailV2.PageIndex;
+            return pagedList;
+        }
     }
 }

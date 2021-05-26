@@ -203,3 +203,4 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Medical.Models.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Template\CatalogueTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Template\SpecialListTypeTemplate.xlsx
