@@ -15,7 +15,7 @@ namespace Medical.Service
 {
     public class UserGroupService : CatalogueService<UserGroups, BaseSearch>, IUserGroupService
     {
-        public UserGroupService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
+        public UserGroupService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
         }
 

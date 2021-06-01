@@ -106,7 +106,7 @@ namespace Medical.Core.App.Controllers
             {
                 itemModel.Created = DateTime.Now;
                 itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
-
+                itemModel.Active = true;
                 var item = mapper.Map<E>(itemModel);
                 if (item != null)
                 {
@@ -284,7 +284,7 @@ namespace Medical.Core.App.Controllers
                 if (file != null && file.Length > 0)
                 {
                     string fileName = string.Format("{0}-{1}", Guid.NewGuid().ToString(), file.FileName);
-                    string fileUploadPath = Path.Combine(env.ContentRootPath, "temp");
+                    string fileUploadPath = Path.Combine(env.ContentRootPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME);
                     string path = Path.Combine(fileUploadPath, fileName);
                     FileUtils.CreateDirectory(fileUploadPath);
                     var fileByte = FileUtils.StreamToByte(file.OpenReadStream());
@@ -318,7 +318,7 @@ namespace Medical.Core.App.Controllers
                     foreach (var file in files)
                     {
                         string fileName = string.Format("{0}-{1}", Guid.NewGuid().ToString(), file.FileName);
-                        string fileUploadPath = Path.Combine(env.ContentRootPath, "temp");
+                        string fileUploadPath = Path.Combine(env.ContentRootPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME);
                         string path = Path.Combine(fileUploadPath, fileName);
                         FileUtils.CreateDirectory(fileUploadPath);
                         var fileByte = FileUtils.StreamToByte(file.OpenReadStream());

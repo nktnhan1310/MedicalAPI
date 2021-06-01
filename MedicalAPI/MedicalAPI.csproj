@@ -72,11 +72,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Temp\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <None Update="certificates\0ABCF9D817DF8B74941816E88D833A06.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Template\CatalogueTemplate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Template\ReportExaminationFormTemplate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Template\ReportRevenueTemplate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Template\ReportUserExaminationFormTemplate.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Template\SpecialListTypeTemplate.xlsx">

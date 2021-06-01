@@ -11,7 +11,8 @@ namespace Medical.Models
         public string UserName { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
-
+        public int? HospitalId { get; set; }
+        public string HospitalName { get; set; }
         public string FullName
         {
             get

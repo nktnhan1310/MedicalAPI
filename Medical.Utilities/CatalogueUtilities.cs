@@ -7,6 +7,41 @@ namespace Medical.Utilities
     public class CatalogueUtilities
     {
         /// <summary>
+        /// Loại dịch vụ
+        /// </summary>
+        public enum ServiceType
+        {
+            /// <summary>
+            /// Khám thường
+            /// </summary>
+            KT = 1,
+            /// <summary>
+            /// Khám bảo hiểm
+            /// </summary>
+            KBH = 2,
+            /// <summary>
+            /// Khám dịch vụ
+            /// </summary>
+            KDV = 3,
+            /// <summary>
+            /// Khám theo yêu cầu
+            /// </summary>
+            KTYC = 4,
+            /// <summary>
+            /// Khám ngoài giờ
+            /// </summary>
+            KNG = 5,
+            /// <summary>
+            /// Chích ngừa
+            /// </summary>
+            CN = 6,
+            /// <summary>
+            /// Khám chuyên khoa
+            /// </summary>
+            KCK = 7
+        }
+
+        /// <summary>
         /// Phương thức thanh toán
         /// </summary>
         public enum PaymentMethod

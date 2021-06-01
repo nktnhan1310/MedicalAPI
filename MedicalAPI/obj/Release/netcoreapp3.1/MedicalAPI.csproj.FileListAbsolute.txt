@@ -204,3 +204,7 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Template\CatalogueTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Template\SpecialListTypeTemplate.xlsx
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Template\ReportRevenueTemplate.xlsx
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\certificates\0ABCF9D817DF8B74941816E88D833A06.txt
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Template\ReportExaminationFormTemplate.xlsx
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Template\ReportUserExaminationFormTemplate.xlsx

@@ -150,9 +150,9 @@ namespace MedicalAPI.Controllers
                     {
                         foreach (var file in item.HospitalFiles)
                         {
-                            string filePath = Path.Combine(env.ContentRootPath, "temp", file.FileName);
+                            string filePath = Path.Combine(env.ContentRootPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, file.FileName);
 
-                            
+
 
                             // Kiểm tra có tồn tại file trong temp chưa?
                             if (System.IO.File.Exists(filePath))
@@ -163,13 +163,13 @@ namespace MedicalAPI.Controllers
                                 if (isProduct)
                                     folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
                                 else
-                                    folderUploadPath = Path.Combine(Directory.GetCurrentDirectory(), "upload");
+                                    folderUploadPath = Path.Combine(Directory.GetCurrentDirectory(), UPLOAD_FOLDER_NAME);
                                 string fileUploadPath = Path.Combine(folderUploadPath, Path.GetFileName(filePath));
                                 FileUtils.CreateDirectory(folderUploadPath);
                                 FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
                                 folderUploadPaths.Add(folderUploadPath);
-                                var currentLinkSite = $"{Medical.Extensions.HttpContext.Current.Request.Scheme}://{Medical.Extensions.HttpContext.Current.Request.Host}/{UPLOAD_FOLDER_NAME}/";
-                                string fileUrl = Path.Combine(currentLinkSite, Path.GetFileName(filePath));
+                                //var currentLinkSite = $"{Medical.Extensions.HttpContext.Current.Request.Scheme}://{Medical.Extensions.HttpContext.Current.Request.Host}/{UPLOAD_FOLDER_NAME}/";
+                                string fileUrl = Path.Combine(UPLOAD_FOLDER_NAME, Path.GetFileName(filePath));
 
                                 filePaths.Add(filePath);
                                 file.Created = DateTime.Now;
@@ -250,7 +250,7 @@ namespace MedicalAPI.Controllers
                     {
                         foreach (var file in item.HospitalFiles)
                         {
-                            string filePath = Path.Combine(env.ContentRootPath, "temp", file.FileName);
+                            string filePath = Path.Combine(env.ContentRootPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, file.FileName);
 
                             // Kiểm tra có tồn tại file trong temp chưa?
                             if (System.IO.File.Exists(filePath))
@@ -261,13 +261,13 @@ namespace MedicalAPI.Controllers
                                 if (isProduct)
                                     folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
                                 else
-                                    folderUploadPath = Path.Combine(Directory.GetCurrentDirectory(), "upload");
+                                    folderUploadPath = Path.Combine(Directory.GetCurrentDirectory(), UPLOAD_FOLDER_NAME);
                                 string fileUploadPath = Path.Combine(folderUploadPath, Path.GetFileName(filePath));
                                 FileUtils.CreateDirectory(folderUploadPath);
                                 FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
                                 folderUploadPaths.Add(folderUploadPath);
-                                var currentLinkSite = $"{Medical.Extensions.HttpContext.Current.Request.Scheme}://{Medical.Extensions.HttpContext.Current.Request.Host}/{UPLOAD_FOLDER_NAME}/";
-                                string fileUrl = Path.Combine(currentLinkSite, Path.GetFileName(filePath));
+                                //var currentLinkSite = $"{Medical.Extensions.HttpContext.Current.Request.Scheme}://{Medical.Extensions.HttpContext.Current.Request.Host}/{UPLOAD_FOLDER_NAME}/";
+                                string fileUrl = Path.Combine(UPLOAD_FOLDER_NAME, Path.GetFileName(filePath));
 
                                 // ------- END GET URL FOR FILE
 

@@ -273,7 +273,7 @@ namespace Medical.Core.App.Controllers
             if (env == null)
                 throw new Exception("IHostingEnvironment is null => inject to constructor");
             var webRoot = env.ContentRootPath;
-            string path = Path.Combine(webRoot, TEMP_FOLDER_NAME, fileName);
+            string path = Path.Combine(webRoot, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, fileName);
             var file = await System.IO.File.ReadAllBytesAsync(path);
             // Xóa file thư mục temp
             if (System.IO.File.Exists(path))
@@ -297,7 +297,7 @@ namespace Medical.Core.App.Controllers
             {
                 var webRoot = env.ContentRootPath;
                 string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
-                string path = Path.Combine(webRoot, TEMP_FOLDER_NAME, fileName);
+                string path = Path.Combine(webRoot, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, fileName);
                 FileUtils.CreateDirectory(Path.Combine(webRoot, TEMP_FOLDER_NAME));
                 FileUtils.SaveToPath(path, appDomainImportResult.ResultFile);
                 appDomainImportResult.ResultFile = null;

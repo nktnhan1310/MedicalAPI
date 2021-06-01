@@ -40,12 +40,12 @@ namespace Medical.Models
         /// <summary>
         /// Chuyên khoa
         /// </summary>
-        public int SpecialistTypeId { get; set; }
+        public int? SpecialistTypeId { get; set; }
 
         /// <summary>
         /// Bác sĩ
         /// </summary>
-        public int DoctorId { get; set; }
+        public int? DoctorId { get; set; }
         /// <summary>
         /// Có BHYT?
         /// </summary>

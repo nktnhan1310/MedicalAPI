@@ -70,8 +70,16 @@ namespace Medical.Core.App
             services.AddScoped<IPaymentHistoryService, PaymentHistoryService>();
             services.AddScoped<IExaminationHistoryService, ExaminationHistoryService>();
             services.AddScoped<IBankInfoService, BankInfoService>();
-
+            services.AddScoped<IDashBoardService, DashBoardService>();
             
+
+            #region REPORT
+
+            services.AddScoped<IReportRevenueService, ReportRevenueService>();
+            services.AddScoped<IReportExaminationFormService, ReportExaminationFormService>();
+            services.AddScoped<IReportUserExaminationService, ReportUserExaminationService>();
+
+            #endregion
 
             #region PERMISSION SERVICE
 
@@ -120,7 +128,8 @@ namespace Medical.Core.App
                     In = ParameterLocation.Header,
                     Description = "Please insert JWT with Bearer into field",
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "bearer"
                 });
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement {
                    {

@@ -24,6 +24,9 @@ using Newtonsoft.Json.Serialization;
 using Serilog;
 using Medical.Models.AutoMapper;
 using Medical.Core.App;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
+using Microsoft.AspNetCore.Http.Extensions;
 
 namespace MedicalAPI
 {
@@ -124,29 +127,50 @@ namespace MedicalAPI
                     ValidateAudience = false
                 };
             });
-
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
-                
+
             });
             //services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app , IWebHostEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             loggerFactory.AddSerilog();
             //serviceProvider.MigrationDatabase(Configuration);
-
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/error-local-development");
             }
+
             //app.ConfigureExceptionHandler();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                     Path.Combine(env.ContentRootPath, "upload")),
+                RequestPath = "/upload"
+            });
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                     Path.Combine(env.ContentRootPath, "Template")),
+                RequestPath = "/Template",
+            });
+
+
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                FileProvider = new PhysicalFileProvider(
+                     Path.Combine(env.ContentRootPath, "certificates")),
+                RequestPath = "/.well-known/pki-validation"
+            });
+
             app.UseStaticHttpContext();
+
             app.UseSession();
             app.UseCookiePolicy();
             app.UseRouting();
@@ -167,7 +191,7 @@ namespace MedicalAPI
             {
                 c.SwaggerEndpoint("../swagger/v1/swagger.json", "Medical V1");
                 c.InjectStylesheet("../css/swagger.min.css");
-                //c.RoutePrefix = "admin/swagger";
+                c.RoutePrefix = "admin";
             });
 
             app.UseEndpoints(endpoints =>

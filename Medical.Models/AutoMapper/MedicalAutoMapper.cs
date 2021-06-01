@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Medical.Entities;
 using Medical.Entities.Extensions;
+using Medical.Entities.Reports;
 using Medical.Utilities;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,20 @@ namespace Medical.Models.AutoMapper
 
             CreateMap<BankInfoModel, BankInfos>().ReverseMap();
             CreateMap<PagedList<BankInfoModel>, PagedList<BankInfos>>().ReverseMap();
+
+            #region REPORT
+
+            CreateMap<ReportRevenueModel, ReportRevenue>().ReverseMap();
+            CreateMap<PagedListReport<ReportRevenueModel>, PagedListReport<ReportRevenue>>().ReverseMap();
+
+            CreateMap<ReportExaminationFormModel, ReportExaminationForm>().ReverseMap();
+            CreateMap<PagedListReport<ReportExaminationFormModel>, PagedListReport<ReportExaminationForm>>().ReverseMap();
+
+            CreateMap<ReportUserExaminationFormModel, ReportUserExaminationForm>().ReverseMap();
+            CreateMap<PagedListReport<ReportUserExaminationFormModel>, PagedListReport<ReportUserExaminationForm>>().ReverseMap();
+            
+
+            #endregion
 
             #region Configuration
 

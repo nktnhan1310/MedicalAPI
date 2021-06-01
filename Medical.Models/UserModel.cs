@@ -59,8 +59,17 @@ namespace Medical.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        /// <summary>
+        /// Thông tin bệnh viện user nếu có
+        /// </summary>
+        public int? HospitalId { get; set; }
 
         #region Extension Properties
+
+        /// <summary>
+        /// Tên bệnh viện
+        /// </summary>
+        public string HospitalName { get; set; }
 
         /// <summary>
         /// Những nhóm người dùng thuộc

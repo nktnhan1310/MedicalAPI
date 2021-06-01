@@ -175,5 +175,34 @@
             <param name="file"></param>
             <returns></returns>
         </member>
+        <member name="M:Medical.Core.App.Controllers.ReportCoreController`3.GetPagedListReport(`2)">
+            <summary>
+            Lấy danh sách phân trang báo cáo
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.ReportCoreController`3.ExportReport(`2)">
+            <summary>
+            Xuất báo cáo
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.ReportCoreController`3.GetTemplateFilePath(System.String)">
+            <summary>
+            Lấy đường dẫn file template
+            </summary>
+            <param name="fileTemplateName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.ReportCoreController`3.GetParameterReport(Medical.Utilities.PagedListReport{`1},`2)">
+            <summary>
+            Lấy thông số parameter truyền vào
+            </summary>
+            <param name="pagedList"></param>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

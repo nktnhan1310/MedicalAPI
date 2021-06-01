@@ -189,6 +189,8 @@ namespace Medical.Service
             });
         }
 
+
+
         public async Task<object> ExcuteStoreGetValue(string commandText, SqlParameter[] sqlParameters, string outputName)
         {
             return await Task.Run(() =>

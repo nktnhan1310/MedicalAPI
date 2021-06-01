@@ -130,5 +130,14 @@ namespace Medical.Service
                 result = string.Join(" ", messages);
             return result;
         }
+
+        public async Task<int> GetMedicalRecordIdByUser(int hospitalId, int userId)
+        {
+            int medicalRecordId = 0;
+            var medicalRecordInfo = await this.Queryable.Where(e => !e.Deleted && e.HospitalId == hospitalId && e.UserId == userId).FirstOrDefaultAsync();
+            if (medicalRecordInfo != null)
+                medicalRecordId = medicalRecordInfo.Id;
+            return medicalRecordId;
+        }
     }
 }

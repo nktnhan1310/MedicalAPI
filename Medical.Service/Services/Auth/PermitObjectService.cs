@@ -12,7 +12,7 @@ namespace Medical.Service
 {
     public class PermitObjectService : CatalogueService<PermitObjects, BaseSearch>, IPermitObjectService
     {
-        public PermitObjectService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
+        public PermitObjectService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
         }
     }

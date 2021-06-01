@@ -45,7 +45,7 @@ namespace Medical.Entities
         /// <summary>
         /// Bác sĩ
         /// </summary>
-        public int DoctorId { get; set; }
+        public int? DoctorId { get; set; }
         /// <summary>
         /// Có BHYT?
         /// </summary>

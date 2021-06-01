@@ -26,11 +26,21 @@ namespace MedicalAPI.Controllers
     {
         private readonly IMedicalRecordAdditionService medicalRecordAdditionService;
         private readonly IRelationService relationService;
+        private readonly IMedicalRecordService medicalRecordService;
         public MedicalRecordController(IServiceProvider serviceProvider, ILogger<BaseController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IMedicalRecordService>();
             medicalRecordAdditionService = serviceProvider.GetRequiredService<IMedicalRecordAdditionService>();
             relationService = serviceProvider.GetRequiredService<IRelationService>();
+            medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
+        }
+
+
+        [HttpPost]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public override Task<AppDomainResult> AddItem([FromBody] MedicalRecordModel itemModel)
+        {
+            return base.AddItem(itemModel);
         }
 
         /// <summary>

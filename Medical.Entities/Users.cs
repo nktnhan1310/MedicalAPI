@@ -62,7 +62,19 @@ namespace Medical.Entities
         /// </summary>
         public DateTime? ExpiredDate { get; set; }
 
+        /// <summary>
+        /// Thông tin bệnh viện user nếu có
+        /// </summary>
+        public int? HospitalId { get; set; }
+
+
         #region Extension Properties
+
+        /// <summary>
+        /// Tên bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalName { get; set; }
 
         /// <summary>
         /// Những nhóm người dùng thuộc

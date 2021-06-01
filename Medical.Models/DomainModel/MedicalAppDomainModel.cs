@@ -40,6 +40,7 @@ namespace Medical.Models.DomainModel
         /// <summary>
         /// Cờ active
         /// </summary>
+        [DefaultValue(true)]
         public bool Active { get; set; }
 
     }

@@ -80,7 +80,7 @@ namespace Medical.Core.App.Controllers
                             Success = true,
                             Data = new
                             {
-                                token = token
+                                token = token,
                             },
                             ResultCode = (int)HttpStatusCode.OK
                         };
@@ -261,7 +261,9 @@ namespace Medical.Core.App.Controllers
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Phone = user.Phone
+                Phone = user.Phone,
+                HospitalId = user.HospitalId,
+                HospitalName = user.HospitalName
             };
             AppDomain currentDomain = AppDomain.CurrentDomain;
             Assembly[] assems = currentDomain.GetAssemblies();

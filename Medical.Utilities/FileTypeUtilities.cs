@@ -17,6 +17,10 @@ namespace Medical.Utilities
         /// <summary>
         /// Danh sách chuyên khoa
         /// </summary>
-        ListSpecificType = 2
+        ListSpecificType = 2,
+        /// <summary>
+        /// Báo cáo đã thanh toán 
+        /// </summary>
+        PaymentReport = 3
     }
 }

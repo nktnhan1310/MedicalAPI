@@ -74,6 +74,54 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetExaminationNew">
+            <summary>
+            Lấy tổng lịch hẹn mới theo ngày/tháng/năm
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetReExamination">
+            <summary>
+            Lấy tổng lịch tái khám mới theo ngày/tháng/năm
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetCanceledExamination">
+            <summary>
+            Lấy tổng lịch hủy theo ngày/tháng/năm
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetTotalUserExamination">
+            <summary>
+            Lấy tổng số người đã đến khám bệnh viện ngày/tháng/năm
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetExaminationByService">
+            <summary>
+            Lấy tổng lịch khám theo chuyên khoa ngày/tháng/năm
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetTotalUserSystem">
+            <summary>
+            Lấy tổng số user của hệ thống
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetTotalUserActive">
+            <summary>
+            Lấy tổng số người active cùng 1 thời gian
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetTotalPayment">
+            <summary>
+            Tổng tiền thanh toán qua App/COD theo ngày tháng năm
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.DoctorController.GetDoctorDetails(System.Int32)">
             <summary>
             Lấy thông tin chuyên khoa của bác sĩ
@@ -151,6 +199,26 @@
             <param name="updateExaminationStatusModel"></param>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetFeeResponseExamination(Medical.Entities.Extensions.FeeCaculateExaminationRequest)">
+            <summary>
+            Lấy thông tin chi phí khám bệnh
+            </summary>
+            <param name="feeCaculateExaminationRequest"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetPaymentMethods">
+            <summary>
+            Lấy danh sách phương thức thanh toán
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetHospitalBankInfos(System.Int32)">
+            <summary>
+            Lấy thông tin danh sách ngân hàng theo bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetSpecialistTypeByHospital(System.Int32)">
             <summary>
             Lấy thông tin chuyên khoa theo bệnh viện được chọn
@@ -226,6 +294,13 @@
             <summary>
             Lấy thông tin stt đóng tiền khám bệnh/thông tin stt khám bệnh
             </summary>
+        </member>
+        <member name="M:MedicalAPI.Controllers.IndexController.GetCurrentExaminationIndex(Medical.Entities.SearchExaminationIndex)">
+            <summary>
+            Lấy STT hiện tại của dịch vụ
+            </summary>
+            <param name="searchExaminationIndex"></param>
+            <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.MedicalRecordController.GetMedicalAdditionInfos(System.Int32)">
             <summary>

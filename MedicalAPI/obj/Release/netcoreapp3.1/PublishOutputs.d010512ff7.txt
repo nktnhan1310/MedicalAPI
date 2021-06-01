@@ -1,4 +1,8 @@
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\certificates\0ABCF9D817DF8B74941816E88D833A06.txt
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Template\CatalogueTemplate.xlsx
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Template\ReportExaminationFormTemplate.xlsx
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Template\ReportRevenueTemplate.xlsx
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Template\ReportUserExaminationFormTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Template\SpecialListTypeTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\MedicalAPI.exe
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\appsettings.Development.json

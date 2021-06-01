@@ -238,6 +238,13 @@ namespace MedicalAPI.Controllers
             return appDomainResult;
         }
 
+        [HttpPost]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public override Task<AppDomainResult> AddItem([FromBody] ExaminationFormModel itemModel)
+        {
+            return base.AddItem(itemModel);
+        }
+
         #region FEE EXAMINATION (PHÍ KHÁM BỆNH)
 
         /// <summary>
