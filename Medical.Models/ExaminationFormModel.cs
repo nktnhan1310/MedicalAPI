@@ -11,7 +11,7 @@ namespace Medical.Models
     /// <summary>
     /// Phiếu khám bệnh
     /// </summary>
-    public class ExaminationFormModel : MedicalAppDomainModel
+    public class ExaminationFormModel : MedicalAppDomainHospitalModel
     {
         /// <summary>
         /// Mã phiếu khám bệnh
@@ -82,11 +82,6 @@ namespace Medical.Models
         /// Số thứ tự khám bệnh
         /// </summary>
         public string ExaminationIndex { get; set; }
-
-        /// <summary>
-        /// Mã bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
 
         /// <summary>
         /// Mô tả lịch hẹn

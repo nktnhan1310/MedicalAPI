@@ -10,9 +10,8 @@ namespace Medical.Entities
     /// Phòng khám
     /// </summary>
     [Table("RoomExaminations")]
-    public class RoomExaminations : MedicalCatalogueAppDomain
+    public class RoomExaminations : MedicalCatalogueAppDomainHospital
     {
-        public int HospitalId { get; set; }
         /// <summary>
         /// Số lượng bác sĩ khám ở phòng
         /// </summary>

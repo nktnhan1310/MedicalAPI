@@ -9,8 +9,7 @@ namespace Medical.Models
     /// <summary>
     /// Phòng khám bệnh
     /// </summary>
-    public class RoomExaminationModel : MedicalCatalogueAppDomainModel
+    public class RoomExaminationModel : MedicalCatalogueAppDomainHospitalModel
     {
-        public int HospitalId { get; set; }
     }
 }

@@ -9,7 +9,7 @@ namespace Medical.Entities
     /// <summary>
     /// Nhóm người dùng
     /// </summary>
-    public class UserGroups : MedicalCatalogueAppDomain
+    public class UserGroups : MedicalCatalogueAppDomainHospital
     {
 
         #region Extension Properties

@@ -5,12 +5,12 @@ using System.Text;
 
 namespace Medical.Models
 {
-    public class HospitalConfigFeeModel : MedicalAppDomainModel
+    public class HospitalConfigFeeModel : MedicalAppDomainHospitalModel
     {
         /// <summary>
         /// Mã bệnh viện
         /// </summary>
-        public int HospitalId { get; set; }
+        public new int HospitalId { get; set; }
         /// <summary>
         /// Theo phương thức thanh toán
         /// </summary>

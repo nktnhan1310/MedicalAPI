@@ -9,12 +9,8 @@ namespace Medical.Models
     /// <summary>
     /// Mapping dữ liệu kênh đăng ký bệnh viện
     /// </summary>
-    public class ChannelMappingHospitalModel : MedicalAppDomainModel
+    public class ChannelMappingHospitalModel : MedicalAppDomainHospitalModel
     {
-        /// <summary>
-        /// Bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
         /// <summary>
         /// Kênh
         /// </summary>

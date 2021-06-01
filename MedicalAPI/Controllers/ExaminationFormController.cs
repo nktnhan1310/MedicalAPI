@@ -23,7 +23,7 @@ namespace MedicalAPI.Controllers
     [ApiController]
     [Description("Quản lý phiếu khám bệnh")]
     [Authorize]
-    public class ExaminationFormController : BaseController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>
+    public class ExaminationFormController : CoreHospitalController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>
     {
         private readonly IExaminationHistoryService examinationHistoryService;
         private readonly IPaymentHistoryService paymentHistoryService;
@@ -35,7 +35,7 @@ namespace MedicalAPI.Controllers
         private readonly IPaymentMethodService paymentMethodService;
         private readonly IBankInfoService bankInfoService;
         private readonly IHospitalConfigFeeService hospitalConfigFeeService;
-        public ExaminationFormController(IServiceProvider serviceProvider, ILogger<BaseController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public ExaminationFormController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IExaminationFormService>();
             paymentHistoryService = serviceProvider.GetRequiredService<IPaymentHistoryService>();
@@ -59,6 +59,8 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetAllExaminationSchedules([FromQuery] SearchExaminationScheduleDetailV2 searchExaminationScheduleDetailV2)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                searchExaminationScheduleDetailV2.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
             var examinationSchedules = await this.examinationScheduleService.GetAllExaminationSchedules(searchExaminationScheduleDetailV2);
             var examinationScheduleModels = mapper.Map<PagedList<ExaminationScheduleModel>>(examinationSchedules);
             appDomainResult = new AppDomainResult()
@@ -78,6 +80,8 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetConfigTimeExaminationBySpecialistType([FromQuery] SearchExaminationScheduleForm searchExaminationScheduleForm)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                searchExaminationScheduleForm.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             var examinationSchedules = await this.examinationScheduleService.GetExaminationSchedules(searchExaminationScheduleForm);
             appDomainResult = new AppDomainResult()
             {
@@ -97,6 +101,8 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetListDateExaminationByHospital(int hospitalId, [FromQuery] SearchExaminationDate searchExaminationDate)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             var schedules = await this.examinationScheduleService.GetAsync(e => !e.Deleted && e.Active
             && e.HospitalId == hospitalId
             && e.ExaminationDate.Date >= DateTime.Now.Date
@@ -121,6 +127,8 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetSpecialistTypeByExaminationDate(int hospitalId, [FromQuery] DateTime? examinationDate)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             var specialistTypeByExaminationDates = await this.examinationScheduleService.GetAsync(e => !e.Deleted && e.Active
             && e.HospitalId == hospitalId
             && (!examinationDate.HasValue || e.ExaminationDate.Date == examinationDate.Value.Date)
@@ -147,6 +155,8 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetMedicalRecordByHospital(int? hospitalId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                hospitalId = LoginContext.Instance.CurrentUser.HospitalId;
             var medicalRecords = await this.medicalRecordService.GetAsync(e => !e.Deleted && e.Active && (!hospitalId.HasValue || e.HospitalId == hospitalId.Value),
                 e => new MedicalRecords()
                 {
@@ -255,6 +265,8 @@ namespace MedicalAPI.Controllers
         [HttpGet("get-caculate-fee-response")]
         public async Task<AppDomainResult> GetFeeResponseExamination([FromQuery] FeeCaculateExaminationRequest feeCaculateExaminationRequest)
         {
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                feeCaculateExaminationRequest.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             var feeCaculateExaminationResponse = await this.hospitalConfigFeeService.GetFeeExamination(feeCaculateExaminationRequest);
             return new AppDomainResult()
             {
@@ -290,6 +302,8 @@ namespace MedicalAPI.Controllers
         [HttpGet("get-hospital-bank-info/{hospitalId}")]
         public async Task<AppDomainResult> GetHospitalBankInfos(int hospitalId)
         {
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             var bankInfos = await this.bankInfoService.GetAsync(e => !e.Deleted && e.HospitalId == hospitalId);
             return new AppDomainResult()
             {

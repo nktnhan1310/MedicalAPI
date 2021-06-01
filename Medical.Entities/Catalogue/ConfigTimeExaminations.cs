@@ -11,7 +11,7 @@ namespace Medical.Entities
     /// Cấu hình ca khám
     /// </summary>
     [Table("ConfigTimeExaminations")]
-    public class ConfigTimeExaminations : MedicalCatalogueAppDomain
+    public class ConfigTimeExaminations : MedicalCatalogueAppDomainHospital
     {
         /// <summary>
         /// Buổi (sáng/chiều/tối)
@@ -27,9 +27,6 @@ namespace Medical.Entities
         /// Số thứ tự ca
         /// </summary>
         public int Index { get; set; }
-        /// <summary>
-        /// Bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
+        
     }
 }

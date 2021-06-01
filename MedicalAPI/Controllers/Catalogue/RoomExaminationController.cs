@@ -11,15 +11,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Medical.Core.App.Controllers;
+using MedicalAPI.Controllers.BaseHospital;
 
 namespace MedicalAPI.Controllers
 {
     [Route("api/room-examination")]
     [ApiController]
     [Description("Phòng khám bệnh")]
-    public class RoomExaminationController : CatalogueController<RoomExaminations, RoomExaminationModel, SearchHopitalExtension>
+    public class RoomExaminationController : CatalogueCoreHospitalController<RoomExaminations, RoomExaminationModel, SearchHopitalExtension>
     {
-        public RoomExaminationController(IServiceProvider serviceProvider, ILogger<CatalogueController<RoomExaminations, RoomExaminationModel, SearchHopitalExtension>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public RoomExaminationController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<RoomExaminations, RoomExaminationModel, SearchHopitalExtension>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<IRoomExaminationService>();
         }

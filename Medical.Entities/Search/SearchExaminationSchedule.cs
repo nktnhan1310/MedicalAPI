@@ -7,12 +7,8 @@ namespace Medical.Entities
     /// <summary>
     /// Tìm kiếm lịch khám
     /// </summary>
-    public class SearchExaminationSchedule : BaseSearch
+    public class SearchExaminationSchedule : BaseHospitalSearch
     {
-        /// <summary>
-        /// Mã bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
         /// <summary>
         /// Mã bác sĩ
         /// </summary>

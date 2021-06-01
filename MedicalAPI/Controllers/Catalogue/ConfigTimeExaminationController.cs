@@ -10,15 +10,17 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Medical.Core.App.Controllers;
+using MedicalAPI.Controllers.BaseHospital;
+using Microsoft.Extensions.Logging;
 
 namespace MedicalAPI.Controllers
 {
     [Route("api/config-time-examination")]
     [ApiController]
     [Description("Cấu hình ca khám")]
-    public class ConfigTimeExaminationController : CatalogueController<ConfigTimeExaminations, ConfigTimeExamniationModel, BaseSearch>
+    public class ConfigTimeExaminationController : CatalogueCoreHospitalController<ConfigTimeExaminations, ConfigTimeExamniationModel, BaseHospitalSearch>
     {
-        public ConfigTimeExaminationController(IServiceProvider serviceProvider, Microsoft.Extensions.Logging.ILogger<CatalogueController<ConfigTimeExaminations, ConfigTimeExamniationModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public ConfigTimeExaminationController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<ConfigTimeExaminations, ConfigTimeExamniationModel, BaseHospitalSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<IConfigTimeExaminationService>();
         }

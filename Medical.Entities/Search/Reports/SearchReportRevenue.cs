@@ -7,9 +7,6 @@ namespace Medical.Entities
 {
     public class SearchReportRevenue : ReportBaseSearch
     {
-        /// <summary>
-        /// Tìm theo mã bệnh viện
-        /// </summary>
-        public int? HospitalId { get; set; }
+        
     }
 }

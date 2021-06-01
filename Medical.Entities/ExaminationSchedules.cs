@@ -11,7 +11,7 @@ namespace Medical.Entities
     /// Lịch khám theo từng bác sĩ
     /// </summary>
     [Table("ExaminationSchedules")]
-    public class ExaminationSchedules : MedicalAppDomain
+    public class ExaminationSchedules : MedicalAppDomainHospital
     {
         /// <summary>
         /// Bác sĩ
@@ -26,11 +26,6 @@ namespace Medical.Entities
         /// Chuyên khoa
         /// </summary>
         public int SpecialistTypeId { get; set; }
-
-        /// <summary>
-        /// Bác sĩ
-        /// </summary>
-        public int HospitalId { get; set; }
 
         #region Extension Properties
 

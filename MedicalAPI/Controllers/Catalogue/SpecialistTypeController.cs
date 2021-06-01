@@ -12,15 +12,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Medical.Core.App.Controllers;
 using Medical.Extensions;
+using MedicalAPI.Controllers.BaseHospital;
 
 namespace MedicalAPI.Controllers
 {
     [Route("api/specialist-type")]
     [ApiController]
     [Description("Chuyên khoa khám bệnh")]
-    public class SpecialistTypeController : CatalogueController<SpecialistTypes, SpecialistTypeModel, SearchSpecialListType>
+    public class SpecialistTypeController : CatalogueCoreHospitalController<SpecialistTypes, SpecialistTypeModel, SearchSpecialListType>
     {
-        public SpecialistTypeController(IServiceProvider serviceProvider, ILogger<CatalogueController<SpecialistTypes, SpecialistTypeModel, SearchSpecialListType>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public SpecialistTypeController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<SpecialistTypes, SpecialistTypeModel, SearchSpecialListType>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<ISpecialListTypeService>();
         }
@@ -45,6 +46,8 @@ namespace MedicalAPI.Controllers
         #region Contants
 
         public const string SPECIAL_LIST_TEMPLATE_NAME = "SpecialListTypeTemplate.xlsx";
+
+        
 
         #endregion
 

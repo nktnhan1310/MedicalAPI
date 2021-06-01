@@ -9,11 +9,8 @@ namespace Medical.Models
     /// <summary>
     /// Loại khám
     /// </summary>
-    public class ExaminationTypeModel : MedicalCatalogueAppDomainModel
+    public class ExaminationTypeModel : MedicalCatalogueAppDomainHospitalModel
     {
-        /// <summary>
-        /// Theo bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
+        
     }
 }

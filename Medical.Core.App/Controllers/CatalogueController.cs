@@ -59,7 +59,7 @@ namespace Medical.Core.App.Controllers
         {
             AppDomainResult appDomainResult = new AppDomainResult();
 
-            var item = await this.domainService.GetByIdAsync(id);
+            var item = await this.catalogueService.GetByIdAsync(id);
             if (item != null)
             {
                 var itemModel = mapper.Map<T>(item);

@@ -9,12 +9,9 @@ namespace Medical.Entities
     /// <summary>
     /// Thông tin ngân hàng thanh toán
     /// </summary>
-    public class BankInfos : MedicalCatalogueAppDomain
+    public class BankInfos : MedicalCatalogueAppDomainHospital
     {
-        /// <summary>
-        /// Mã bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
+       
         /// <summary>
         /// Số tài khoản ngân hàng
         /// </summary>

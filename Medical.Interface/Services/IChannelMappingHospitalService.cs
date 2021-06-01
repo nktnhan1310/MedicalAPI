@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Medical.Interface.Services
 {
-    public interface IChannelMappingHospitalService : IDomainService<ChannelMappingHospital, BaseSearch>
+    public interface IChannelMappingHospitalService : IDomainService<ChannelMappingHospital, BaseHospitalSearch>
     {
     }
 }

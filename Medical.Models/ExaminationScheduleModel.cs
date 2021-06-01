@@ -10,7 +10,7 @@ namespace Medical.Models
     /// <summary>
     /// Lịch khám theo từng bác sĩ
     /// </summary>
-    public class ExaminationScheduleModel : MedicalAppDomainModel
+    public class ExaminationScheduleModel : MedicalAppDomainHospitalModel
     {
         /// <summary>
         /// Bác sĩ
@@ -33,7 +33,7 @@ namespace Medical.Models
         /// Bác sĩ
         /// </summary>
         [Required]
-        public int HospitalId { get; set; }
+        public new int HospitalId { get; set; }
 
         #region Extension Properties
 

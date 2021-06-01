@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Medical.Interface.Services
 {
-    public interface IServiceTypeMappingHospitalService : IDomainService<ServiceTypeMappingHospital, BaseSearch>
+    public interface IServiceTypeMappingHospitalService : IDomainService<ServiceTypeMappingHospital, BaseHospitalSearch>
     {
     }
 }

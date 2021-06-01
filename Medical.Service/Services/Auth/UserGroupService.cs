@@ -13,11 +13,12 @@ using System.Threading.Tasks;
 
 namespace Medical.Service
 {
-    public class UserGroupService : CatalogueService<UserGroups, BaseSearch>, IUserGroupService
+    public class UserGroupService : CatalogueHospitalService<UserGroups, BaseHospitalSearch>, IUserGroupService
     {
-        public UserGroupService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
+        public UserGroupService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
         }
+
 
 
         /// <summary>

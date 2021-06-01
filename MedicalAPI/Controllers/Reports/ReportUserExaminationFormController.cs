@@ -46,9 +46,9 @@ namespace MedicalAPI.Controllers.Reports
         {
             IDictionary<string, object> parameter = new Dictionary<string, object>();
             string hospitalName = "Tất cả";
-            if (baseSearch.HospitalId > 0)
+            if (baseSearch.HospitalId.HasValue && baseSearch.HospitalId .Value > 0)
             {
-                var hospitalInfo = await this.hospitalService.GetByIdAsync(baseSearch.HospitalId);
+                var hospitalInfo = await this.hospitalService.GetByIdAsync(baseSearch.HospitalId.Value);
                 if (hospitalInfo != null)
                     hospitalName = hospitalInfo.Name;
             }
@@ -101,11 +101,7 @@ namespace MedicalAPI.Controllers.Reports
                 {
                     excelToValue += (totalItem - 1);
                     excelToTitle += (totalItem - 1);
-
-                    // Set again position chart for excel
-
                 }
-
                 using (ExcelPackage excelPackage = new ExcelPackage())
                 {
                     //Open Excel + Get WorkSheet

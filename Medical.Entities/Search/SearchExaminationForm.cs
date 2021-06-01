@@ -7,7 +7,7 @@ namespace Medical.Entities
     /// <summary>
     /// Model Search cho phiếu khám bệnh (lịch hẹn)
     /// </summary>
-    public class SearchExaminationForm : BaseSearch
+    public class SearchExaminationForm : BaseHospitalSearch
     {
         /// <summary>
         /// Tìm theo user

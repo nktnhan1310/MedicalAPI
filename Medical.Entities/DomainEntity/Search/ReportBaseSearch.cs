@@ -39,5 +39,10 @@ namespace Medical.Entities.DomainEntity.Search
         /// </summary>
         [DefaultValue(false)]
         public bool IsExport { get; set; }
+
+        /// <summary>
+        /// Theo bệnh viện
+        /// </summary>
+        public int? HospitalId { get; set; }
     }
 }

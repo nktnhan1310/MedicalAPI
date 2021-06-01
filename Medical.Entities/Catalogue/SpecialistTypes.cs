@@ -10,12 +10,8 @@ namespace Medical.Entities
     /// Chuyên khoa
     /// </summary>
     [Table("SpecialistTypes")]
-    public class SpecialistTypes : MedicalCatalogueAppDomain
+    public class SpecialistTypes : MedicalCatalogueAppDomainHospital
     {
-        /// <summary>
-        /// bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
         /// <summary>
         /// Giá theo chuyên khoa
         /// </summary>

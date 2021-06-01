@@ -19,17 +19,19 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Cryptography;
+using Medical.Interface.Services;
 
 namespace Medical.Core.App.Controllers
 {
     [ApiController]
-    public abstract class BaseController<E, T, F> : Controller where E : MedicalAppDomain where T : MedicalAppDomainModel where F : BaseSearch
+    public abstract class BaseController<E, T, F> : ControllerBase where E : MedicalAppDomain where T : MedicalAppDomainModel where F : BaseSearch
     {
         protected readonly ILogger<BaseController<E, T, F>> logger;
         protected readonly IServiceProvider serviceProvider;
         protected readonly IMapper mapper;
         protected IDomainService<E, F> domainService;
         protected IWebHostEnvironment env;
+        private readonly IUserService userService;
 
         public BaseController(IServiceProvider serviceProvider, ILogger<BaseController<E, T, F>> logger, IWebHostEnvironment env)
         {
@@ -37,6 +39,7 @@ namespace Medical.Core.App.Controllers
             this.logger = logger;
             this.mapper = serviceProvider.GetService<IMapper>();
             this.serviceProvider = serviceProvider;
+            userService = serviceProvider.GetRequiredService<IUserService>();
         }
 
         /// <summary>
@@ -333,6 +336,62 @@ namespace Medical.Core.App.Controllers
                 }
             });
             return appDomainResult;
+        }
+
+        /// <summary>
+        /// Lấy thông tin quyền của chức năng
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-permission-detail")]
+        public virtual async Task<AppDomainResult> GetPermission()
+        {
+            List<int> permissionIds = new List<int>();
+            bool isViewAll = await this.userService.HasPermission(LoginContext.Instance.CurrentUser.UserId, ControllerContext.ActionDescriptor.ControllerName
+                    , new List<string>() { CoreContants.ViewAll });
+            if (isViewAll) permissionIds.Add((int)CoreContants.PermissionContants.ViewAll);
+
+            bool isView = await this.userService.HasPermission(LoginContext.Instance.CurrentUser.UserId, ControllerContext.ActionDescriptor.ControllerName
+                    , new List<string>() { CoreContants.View });
+            if (isView) permissionIds.Add((int)CoreContants.PermissionContants.View);
+
+            bool isAddNew = await this.userService.HasPermission(LoginContext.Instance.CurrentUser.UserId, ControllerContext.ActionDescriptor.ControllerName
+                    , new List<string>() { CoreContants.AddNew });
+            if (isAddNew) permissionIds.Add((int)CoreContants.PermissionContants.AddNew);
+
+            bool isUpdate = await this.userService.HasPermission(LoginContext.Instance.CurrentUser.UserId, ControllerContext.ActionDescriptor.ControllerName
+                    , new List<string>() { CoreContants.Update });
+            if (isUpdate) permissionIds.Add((int)CoreContants.PermissionContants.Update);
+
+            bool isDelete = await this.userService.HasPermission(LoginContext.Instance.CurrentUser.UserId, ControllerContext.ActionDescriptor.ControllerName
+                    , new List<string>() { CoreContants.Delete });
+            if (isDelete) permissionIds.Add((int)CoreContants.PermissionContants.Delete);
+
+
+            bool isDownload = await this.userService.HasPermission(LoginContext.Instance.CurrentUser.UserId, ControllerContext.ActionDescriptor.ControllerName
+                    , new List<string>() { CoreContants.Download });
+            if (isDownload) permissionIds.Add((int)CoreContants.PermissionContants.Download);
+
+
+            bool isExport = await this.userService.HasPermission(LoginContext.Instance.CurrentUser.UserId, ControllerContext.ActionDescriptor.ControllerName
+                    , new List<string>() { CoreContants.Export });
+            if (isExport) permissionIds.Add((int)CoreContants.PermissionContants.Export);
+
+
+            bool isImport = await this.userService.HasPermission(LoginContext.Instance.CurrentUser.UserId, ControllerContext.ActionDescriptor.ControllerName
+                   , new List<string>() { CoreContants.Import });
+            if (isImport) permissionIds.Add((int)CoreContants.PermissionContants.Import);
+
+
+            bool isUpload = await this.userService.HasPermission(LoginContext.Instance.CurrentUser.UserId, ControllerContext.ActionDescriptor.ControllerName
+                   , new List<string>() { CoreContants.Upload });
+            if (isUpload) permissionIds.Add((int)CoreContants.PermissionContants.Upload);
+
+            return new AppDomainResult()
+            {
+                Data = permissionIds,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
         }
 
         #endregion

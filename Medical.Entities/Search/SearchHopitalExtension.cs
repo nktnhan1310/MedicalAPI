@@ -4,8 +4,7 @@ using System.Text;
 
 namespace Medical.Entities
 {
-    public class SearchHopitalExtension : BaseSearch
+    public class SearchHopitalExtension : BaseHospitalSearch
     {
-        public int? HospitalId { get; set; }
     }
 }

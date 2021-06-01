@@ -32,13 +32,6 @@ namespace Medical.Interface
 
         Task<PagedList<E>> GetPagedListData(T baseSearch);
 
-        //PagedList<E> Get(Expression<Func<E, bool>> expression, Expression<Func<E, E>> select, int pageIndex, int pageSize, string orderBy);
-        //PagedList<E> Get(Expression<Func<E, bool>>[] expression, Expression<Func<E, E>> select, int pageIndex, int pageSize, string orderBy);
-        //PagedList<E> Get(Expression<Func<E, bool>> expression, int pageIndex, int pageSize, string orderBy);
-        //PagedList<E> Get(Expression<Func<E, bool>>[] expression, int pageIndex, int pageSize, string orderBy);
-        //PagedList<E> Get(Expression<Func<E, bool>> expression, int pageIndex, int pageSize, string orderBy, IConfigurationProvider mapperConfiguration);
-        //PagedList<E> Get(Expression<Func<E, bool>>[] expression, int pageIndex, int pageSize, string orderBy, IConfigurationProvider mapperConfiguration);
-
         Task<bool> SaveAsync(E item);
         Task<bool> SaveAsync(IList<E> items);
         Task<bool> DeleteAsync(int id);
@@ -66,11 +59,6 @@ namespace Medical.Interface
         /// <param name="item"></param>
         /// <returns></returns>
         Task<string> GetExistItemMessage(E item);
-        //Task<PagedList<E>> GetAsync(Expression<Func<E, bool>> expression, Expression<Func<E, E>> select, int pageIndex, int pageSize, string orderBy);
-        //Task<PagedList<E>> GetAsync(Expression<Func<E, bool>>[] expression, Expression<Func<E, E>> select, int pageIndex, int pageSize, string orderBy);
-        //Task<PagedList<E>> GetAsync(Expression<Func<E, bool>> expression, int pageIndex, int pageSize, string orderBy);
-        //Task<PagedList<E>> GetAsync(Expression<Func<E, bool>>[] expression, int pageIndex, int pageSize, string orderBy);
-        //Task<PagedList<E>> GetAsync(Expression<Func<E, bool>> expression, int pageIndex, int pageSize, string orderBy, IConfigurationProvider mapperConfiguration);
-        //Task<PagedList<E>> GetAsync(Expression<Func<E, bool>>[] expression, int pageIndex, int pageSize, string orderBy, IConfigurationProvider mapperConfiguration);
+       
     }
 }

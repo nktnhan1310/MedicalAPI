@@ -29,6 +29,7 @@ namespace MedicalAPI.Controllers
 {
     [Route("api/authenticate")]
     [ApiController]
+    [Description("Authenticate")]
     public class AuthController : AuthCoreController
     {
         public AuthController(IServiceProvider serviceProvider, IConfiguration configuration, IMapper mapper, ILogger<AuthCoreController> logger) : base(serviceProvider, configuration, mapper, logger)

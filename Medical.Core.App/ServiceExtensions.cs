@@ -96,7 +96,6 @@ namespace Medical.Core.App
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IDistrictService, DistrictService>();
-            services.AddScoped<IExaminationTypeService, ExaminationTypeService>();
             services.AddScoped<IChannelService, ChannelService>();
             services.AddScoped<IServiceTypeService, ServiceTypeService>();
             services.AddScoped<IRoomExaminationService, RoomExaminationService>();

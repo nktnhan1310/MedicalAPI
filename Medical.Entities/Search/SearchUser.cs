@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Medical.Entities
 {
-    public class SearchUser : BaseSearch, IBaseSearch
+    public class SearchUser : BaseHospitalSearch
     {
         /// <summary>
         /// Tìm kiếm theo Email

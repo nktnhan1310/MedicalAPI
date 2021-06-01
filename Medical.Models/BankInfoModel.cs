@@ -9,12 +9,8 @@ namespace Medical.Models
     /// <summary>
     /// Thông tin ngân hàng thanh toán
     /// </summary>
-    public class BankInfoModel : MedicalCatalogueAppDomainModel
+    public class BankInfoModel : MedicalCatalogueAppDomainHospitalModel
     {
-        /// <summary>
-        /// Mã bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
         /// <summary>
         /// Số tài khoản ngân hàng
         /// </summary>

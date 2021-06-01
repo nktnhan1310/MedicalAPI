@@ -8,7 +8,7 @@ using System.Text;
 namespace Medical.Entities
 {
     [Table("Users")]
-    public class Users : MedicalAppDomain
+    public class Users : MedicalAppDomainHospital
     {
         [Required]
         [StringLength(50)]
@@ -61,12 +61,6 @@ namespace Medical.Entities
         /// Thời gian hết hạn token
         /// </summary>
         public DateTime? ExpiredDate { get; set; }
-
-        /// <summary>
-        /// Thông tin bệnh viện user nếu có
-        /// </summary>
-        public int? HospitalId { get; set; }
-
 
         #region Extension Properties
 

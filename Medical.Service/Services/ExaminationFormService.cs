@@ -211,7 +211,7 @@ namespace Medical.Service
                         // Lấy STT khám tại BV
                         SearchExaminationIndex searchExaminationIndex = new SearchExaminationIndex()
                         {
-                            HospitalId = item.HospitalId,
+                            HospitalId = item.HospitalId ?? 0,
                             ServiceTypeId = item.ServiceTypeId,
                             ExaminationDate = item.ExaminationDate
                         };
@@ -230,7 +230,7 @@ namespace Medical.Service
                         // Lấy STT đóng tiền tại BV
                         SearchExaminationIndex searchExaminationIndex = new SearchExaminationIndex()
                         {
-                            HospitalId = item.HospitalId,
+                            HospitalId = item.HospitalId ?? 0,
                             ServiceTypeId = item.ServiceTypeId,
                             ExaminationDate = item.ExaminationDate
                         };

@@ -10,9 +10,9 @@ using System.Text;
 
 namespace Medical.Service
 {
-    public class ConfigTimeExaminationService : CatalogueService<ConfigTimeExaminations, BaseSearch>, IConfigTimeExaminationService
+    public class ConfigTimeExaminationService : CatalogueHospitalService<ConfigTimeExaminations, BaseHospitalSearch>, IConfigTimeExaminationService
     {
-        public ConfigTimeExaminationService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
+        public ConfigTimeExaminationService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
         }
     }

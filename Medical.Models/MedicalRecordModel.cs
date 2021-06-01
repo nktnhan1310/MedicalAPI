@@ -10,7 +10,7 @@ namespace Medical.Models
     /// <summary>
     /// Hồ sơ khám bệnh
     /// </summary>
-    public class MedicalRecordModel : MedicalAppDomainModel
+    public class MedicalRecordModel : MedicalAppDomainHospitalModel
     {
         /// <summary>
         /// Mã bệnh nhân
@@ -83,7 +83,7 @@ namespace Medical.Models
         /// <summary>
         /// Id bệnh viện
         /// </summary>
-        public int HospitalId { get; set; }
+        public new int HospitalId { get; set; }
 
 
         #region Extension Properties

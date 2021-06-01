@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Medical.Interface.Services
 {
-    public interface IConfigTimeExaminationService : ICatalogueService<ConfigTimeExaminations, BaseSearch>
+    public interface IConfigTimeExaminationService : ICatalogueHospitalService<ConfigTimeExaminations, BaseHospitalSearch>
     {
     }
 }

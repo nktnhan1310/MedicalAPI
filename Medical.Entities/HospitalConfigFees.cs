@@ -6,13 +6,8 @@ using System.Text;
 
 namespace Medical.Entities
 {
-    public class HospitalConfigFees : MedicalAppDomain
+    public class HospitalConfigFees : MedicalAppDomainHospital
     {
-        /// <summary>
-        /// Mã bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
-
         /// <summary>
         /// Theo phương thức thanh toán
         /// </summary>

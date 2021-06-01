@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Medical.Interface.Services
 {
-    public interface ISpecialListTypeService : ICatalogueService<SpecialistTypes, SearchSpecialListType>
+    public interface ISpecialListTypeService : ICatalogueHospitalService<SpecialistTypes, SearchSpecialListType>
     {
     }
 }

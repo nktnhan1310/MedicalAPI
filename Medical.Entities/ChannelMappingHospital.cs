@@ -10,12 +10,8 @@ namespace Medical.Entities
     /// Kênh đăng ký khám bệnh của bệnh viện
     /// </summary>
     [Table("ChannelMappingHospital")]
-    public class ChannelMappingHospital : MedicalAppDomain
+    public class ChannelMappingHospital : MedicalAppDomainHospital
     {
-        /// <summary>
-        /// Bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
         /// <summary>
         /// Kênh
         /// </summary>

@@ -7,10 +7,7 @@ namespace Medical.Entities
 {
     public class SearchUserExaminationForm : ReportBaseSearch
     {
-        /// <summary>
-        /// Theo bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
+        
         /// <summary>
         /// Theo phân loại
         /// <para>0 => Ngày</para>

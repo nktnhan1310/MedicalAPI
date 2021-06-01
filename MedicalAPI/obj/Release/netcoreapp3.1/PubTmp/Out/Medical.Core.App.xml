@@ -105,6 +105,12 @@
             <param name="files"></param>
             <returns></returns>
         </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.GetPermission">
+            <summary>
+            Lấy thông tin quyền của chức năng
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Medical.Core.App.Controllers.CatalogueController`3.Get">
             <summary>
             Lấy all thông tin danh sách item

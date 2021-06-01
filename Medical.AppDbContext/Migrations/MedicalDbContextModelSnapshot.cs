@@ -110,7 +110,7 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -157,7 +157,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
@@ -335,7 +335,7 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<int>("Index")
@@ -586,7 +586,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
@@ -723,7 +723,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<int?>("ExaminationScheduleDetailId")
                         .HasColumnType("int");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsBHYT")
@@ -885,7 +885,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<DateTime>("ExaminationDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<int>("SpecialistTypeId")
@@ -931,7 +931,7 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -977,7 +977,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<double>("FeeRate")
                         .HasColumnType("float");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsRate")
@@ -1307,7 +1307,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<int>("Gender")
                         .HasColumnType("int");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<int?>("JobId")
@@ -1791,7 +1791,7 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -1885,7 +1885,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<double?>("Price")
@@ -2030,7 +2030,7 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<int>("HospitalId")
+                    b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -2080,6 +2080,9 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()

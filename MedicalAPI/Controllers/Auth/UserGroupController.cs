@@ -15,6 +15,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Medical.Core.App.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using MedicalAPI.Controllers.BaseHospital;
 
 namespace MedicalAPI.Controllers
 {
@@ -22,11 +23,12 @@ namespace MedicalAPI.Controllers
     [ApiController]
     [Description("Quản lý nhóm người dùng")]
     [Authorize]
-    public class UserGroupController : CatalogueController<UserGroups, UserGroupModel, BaseSearch>
+    public class UserGroupController : CatalogueCoreHospitalController<UserGroups, UserGroupModel, BaseHospitalSearch>
     {
         private readonly IUserInGroupService userInGroupService;
         private readonly IUserService userService;
-        public UserGroupController(IServiceProvider serviceProvider, ILogger<CatalogueController<UserGroups, UserGroupModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+
+        public UserGroupController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<UserGroups, UserGroupModel, BaseHospitalSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<IUserGroupService>();
             userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
@@ -53,6 +55,5 @@ namespace MedicalAPI.Controllers
             };
             return appDomainResult;
         }
-
     }
 }

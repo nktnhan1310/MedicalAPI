@@ -14,9 +14,9 @@ using System.Threading.Tasks;
 
 namespace Medical.Service
 {
-    public class RoomExaminationService : CatalogueService<RoomExaminations, SearchHopitalExtension>, IRoomExaminationService
+    public class RoomExaminationService : CatalogueHospitalService<RoomExaminations, SearchHopitalExtension>, IRoomExaminationService
     {
-        public RoomExaminationService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
+        public RoomExaminationService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
         }
 

@@ -9,15 +9,11 @@ namespace Medical.Models
     /// <summary>
     /// Cấu hình ca khám
     /// </summary>
-    public class ConfigTimeExamniationModel : MedicalCatalogueAppDomainModel
+    public class ConfigTimeExamniationModel : MedicalCatalogueAppDomainHospitalModel
     {
         /// <summary>
         /// Buổi (sáng/chiều/tối)
         /// </summary>
         public int SessionId { get; set; }
-        /// <summary>
-        /// Bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
     }
 }

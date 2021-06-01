@@ -9,12 +9,12 @@ namespace Medical.Models
     /// <summary>
     /// Mapping dữ liệu dịch vụ đăng ký bệnh viện
     /// </summary>
-    public class ServiceTypeMappingHospitalModel : MedicalAppDomainModel
+    public class ServiceTypeMappingHospitalModel : MedicalAppDomainHospitalModel
     {
         /// <summary>
         /// Bệnh viện
         /// </summary>
-        public int HospitalId { get; set; }
+        public new int HospitalId { get; set; }
         /// <summary>
         /// Dịch vụ
         /// </summary>

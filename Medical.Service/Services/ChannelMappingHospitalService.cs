@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Medical.Service
 {
-    public class ChannelMappingHospitalService : DomainService<ChannelMappingHospital, BaseSearch>, IChannelMappingHospitalService
+    public class ChannelMappingHospitalService : DomainService<ChannelMappingHospital, BaseHospitalSearch>, IChannelMappingHospitalService
     {
         public ChannelMappingHospitalService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {

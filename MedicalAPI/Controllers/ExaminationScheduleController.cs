@@ -22,7 +22,7 @@ namespace MedicalAPI.Controllers
     [ApiController]
     [Description("Lịch khám")]
     [Authorize]
-    public class ExaminationScheduleController : BaseController<ExaminationSchedules, ExaminationScheduleModel, SearchExaminationSchedule>
+    public class ExaminationScheduleController : CoreHospitalController<ExaminationSchedules, ExaminationScheduleModel, SearchExaminationSchedule>
     {
         private readonly IExaminationScheduleDetailService examinationScheduleDetailService;
         private readonly IHospitalService hospitalService;
@@ -32,7 +32,7 @@ namespace MedicalAPI.Controllers
         private readonly ISessionTypeService sessionTypeService;
         private readonly IConfigTimeExaminationService configTimeExaminationService;
 
-        public ExaminationScheduleController(IServiceProvider serviceProvider, ILogger<BaseController<ExaminationSchedules, ExaminationScheduleModel, SearchExaminationSchedule>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public ExaminationScheduleController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<ExaminationSchedules, ExaminationScheduleModel, SearchExaminationSchedule>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IExaminationScheduleService>();
             this.examinationScheduleDetailService = serviceProvider.GetRequiredService<IExaminationScheduleDetailService>();
@@ -53,6 +53,8 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetSpecialistTypeByHospital(int hospitalId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             var specialistTypes = await this.specialListTypeService.GetAsync(e => !e.Deleted && e.Active && e.HospitalId == hospitalId);
             var specialistTypeModels = mapper.Map<IList<SpecialistTypeModel>>(specialistTypes);
             appDomainResult = new AppDomainResult()
@@ -72,6 +74,8 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetDoctorByHospital(int hospitalId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             var doctorByHospitals = await this.doctorService.GetAsync(e => !e.Deleted && e.Active && e.HospitalId == hospitalId);
             var doctorModels = mapper.Map<IList<DoctorModel>>(doctorByHospitals);
             appDomainResult = new AppDomainResult()
@@ -161,7 +165,9 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetConfigTimeExamination(int sesstionTypeId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            var configTimeExaminations = await this.configTimeExaminationService.GetAsync(e => !e.Deleted && e.Active && e.SessionId == sesstionTypeId);
+            var configTimeExaminations = await this.configTimeExaminationService.GetAsync(e => !e.Deleted && e.Active && e.SessionId == sesstionTypeId
+            && !LoginContext.Instance.CurrentUser.HospitalId.HasValue || e.HospitalId == LoginContext.Instance.CurrentUser.HospitalId
+            );
             appDomainResult = new AppDomainResult()
             {
                 Success = true,

@@ -11,7 +11,7 @@ namespace Medical.Entities
     /// Phiếu khám bệnh
     /// </summary>
     [Table("ExaminationForm")]
-    public class ExaminationForms : MedicalAppDomain
+    public class ExaminationForms : MedicalAppDomainHospital
     {
         /// <summary>
         /// Mã phiếu khám bệnh
@@ -87,11 +87,6 @@ namespace Medical.Entities
         /// Số thứ tự đóng tiền khám bệnh nếu thanh toán qua app
         /// </summary>
         public string ExaminationPaymentIndex { get; set; }
-
-        /// <summary>
-        /// Mã bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
 
         /// <summary>
         /// Mô tả lịch hẹn

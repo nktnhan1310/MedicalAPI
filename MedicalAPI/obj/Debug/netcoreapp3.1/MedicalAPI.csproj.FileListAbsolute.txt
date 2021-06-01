@@ -406,10 +406,10 @@ E:\MonaMedia\MedicalMaster\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\Medical
 E:\MonaMedia\MedicalMaster\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.xml
 E:\MonaMedia\MedicalMaster\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.pdb
 E:\MonaMedia\MedicalMaster\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.genruntimeconfig.cache
-E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.csprojAssemblyReference.cache
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Template\CatalogueTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Template\ReportRevenueTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Template\SpecialListTypeTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\certificates\0ABCF9D817DF8B74941816E88D833A06.txt
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Template\ReportExaminationFormTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Template\ReportUserExaminationFormTemplate.xlsx
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.csprojAssemblyReference.cache

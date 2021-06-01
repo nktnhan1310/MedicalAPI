@@ -9,7 +9,7 @@ namespace Medical.Models
     /// <summary>
     /// Nhóm người dùng
     /// </summary>
-    public class UserGroupModel : MedicalCatalogueAppDomainModel
+    public class UserGroupModel : MedicalCatalogueAppDomainHospitalModel
     {
 
         #region Extension Properties

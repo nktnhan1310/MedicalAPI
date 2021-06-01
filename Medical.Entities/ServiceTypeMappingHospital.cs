@@ -10,12 +10,8 @@ namespace Medical.Entities
     /// Dịch vụ của bệnh viện
     /// </summary>
     [Table("ServiceTypeMappingHospital")]
-    public class ServiceTypeMappingHospital : MedicalAppDomain
+    public class ServiceTypeMappingHospital : MedicalAppDomainHospital
     {
-        /// <summary>
-        /// Bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
         /// <summary>
         /// Dịch vụ
         /// </summary>

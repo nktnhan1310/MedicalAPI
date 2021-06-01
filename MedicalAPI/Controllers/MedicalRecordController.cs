@@ -22,12 +22,12 @@ namespace MedicalAPI.Controllers
     [ApiController]
     [Description("Quản lý hồ sơ khám bệnh")]
     [Authorize]
-    public class MedicalRecordController : BaseController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>
+    public class MedicalRecordController : CoreHospitalController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>
     {
         private readonly IMedicalRecordAdditionService medicalRecordAdditionService;
         private readonly IRelationService relationService;
         private readonly IMedicalRecordService medicalRecordService;
-        public MedicalRecordController(IServiceProvider serviceProvider, ILogger<BaseController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public MedicalRecordController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IMedicalRecordService>();
             medicalRecordAdditionService = serviceProvider.GetRequiredService<IMedicalRecordAdditionService>();

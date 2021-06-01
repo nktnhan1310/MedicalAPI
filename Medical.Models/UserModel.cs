@@ -10,7 +10,7 @@ namespace Medical.Models
     /// <summary>
     /// Người dùng
     /// </summary>
-    public class UserModel : MedicalAppDomainModel
+    public class UserModel : MedicalAppDomainHospitalModel
     {
         [Required(ErrorMessage = "Vui lòng nhập User Name!")]
         public string UserName { get; set; }
@@ -59,12 +59,19 @@ namespace Medical.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        /// <summary>
-        /// Thông tin bệnh viện user nếu có
-        /// </summary>
-        public int? HospitalId { get; set; }
-
         #region Extension Properties
+
+        //[StringLength(255, ErrorMessage = "Must be between 8 and 255 characters", MinimumLength = 8)]
+        //[DataType(DataType.Password)]
+        //[Compare("Password", ErrorMessage = "Mật khẩu xác nhận không giống mật khẩu cũ")]
+        //public string ConfirmPassword { get; set; }
+
+        /// <summary>
+        /// Mật khẩu mới
+        /// </summary>
+        [StringLength(255, ErrorMessage = "Must be between 8 and 255 characters", MinimumLength = 8)]
+        [DataType(DataType.Password)]
+        public string NewPassWord { get; set; }
 
         /// <summary>
         /// Tên bệnh viện

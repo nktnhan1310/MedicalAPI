@@ -10,11 +10,8 @@ namespace Medical.Entities
     /// Loại khám
     /// </summary>
     [Table("ExaminationTypes")]
-    public class ExaminationTypes : MedicalCatalogueAppDomain
+    public class ExaminationTypes : MedicalCatalogueAppDomainHospital
     {
-        /// <summary>
-        /// Theo bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
+        
     }
 }

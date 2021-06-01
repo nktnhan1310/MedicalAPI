@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
@@ -266,30 +267,47 @@ namespace Medical.Service
 
             if (userGroupIds != null && userGroupIds.Any())
             {
-                // Lấy ra những quyền user có trong chức năng cần kiểm tra
-                var permitObjectPermissions = await unitOfWork.Repository<PermitObjectPermissions>().GetQueryable()
-                .Where(e => e.UserGroupId.HasValue && userGroupIds.Contains(e.UserGroupId.Value)).ToListAsync();
-                if (permitObjectPermissions != null && permitObjectPermissions.Any())
+                var permitObjectChecks = await unitOfWork.Repository<PermitObjects>().GetQueryable().Where(e => !e.Deleted 
+                && !string.IsNullOrEmpty(e.ControllerNames) 
+                && e.ControllerNames.Contains(controller)
+                ).ToListAsync();
+                permitObjectChecks = permitObjectChecks.Where(e => e.ControllerNames.Split(";", StringSplitOptions.None).Contains(controller)).ToList();
+                if (permitObjectChecks != null && permitObjectChecks.Any())
                 {
-                    // Lấy danh mục mã quyền user cần kiểm tra
-                    permissionIds = permitObjectPermissions.Select(e => e.PermissionId).ToList();
-                    var permissionCodes = await unitOfWork.Repository<Permissions>().GetQueryable().Where(e => permissionIds.Contains(e.Id))
-                        .Select(e => e.Code)
-                        .ToListAsync();
-
-                    permitObjectIds = permitObjectPermissions.Select(e => e.PermitObjectId).ToList();
-                    // Lấy danh chức năng cần kiểm tra
-                    var permitObjectControllers = await unitOfWork.Repository<PermitObjects>().GetQueryable().Where(e => permitObjectIds.Contains(e.Id))
-                        .Select(e => e.ControllerNames.Split(";", StringSplitOptions.None))
-                        .ToListAsync();
-
-                    // Kiểm tra user có quyền trong chức năng không
-                    if (permissionCodes != null && permissionCodes.Any() && permitObjectControllers != null && permitObjectControllers.Any())
+                    var permitObjectCheckIds = permitObjectChecks.Select(e => e.Id).ToList();
+                    // Lấy ra những quyền user có trong chức năng cần kiểm tra
+                    var permitObjectPermissions = await unitOfWork.Repository<PermitObjectPermissions>().GetQueryable()
+                    .Where(e => e.UserGroupId.HasValue 
+                    && userGroupIds.Contains(e.UserGroupId.Value)
+                    && permitObjectCheckIds.Contains(e.PermitObjectId)
+                    )
+                    .ToListAsync();
+                    if (permitObjectPermissions != null && permitObjectPermissions.Any())
                     {
-                        hasPermit = permitObjectControllers.Any(x => x.Contains(controller)) && permissions.Any(x => permissionCodes.Contains(x));
-                    }
+                        permitObjectIds = permitObjectPermissions.Select(e => e.PermitObjectId).Distinct().ToList();
 
+                        foreach (var permitObjectId in permitObjectIds)
+                        {
+                            // Lấy danh mục mã quyền user cần kiểm tra
+                            permissionIds = permitObjectPermissions.Where(e => e.PermitObjectId == permitObjectId).Select(e => e.PermissionId).ToList();
+                            var permissionCodes = await unitOfWork.Repository<Permissions>().GetQueryable().Where(e => permissionIds.Contains(e.Id))
+                                .Select(e => e.Code)
+                                .ToListAsync();
+
+                            // Lấy danh chức năng cần kiểm tra
+                            var permitObjectControllers = await unitOfWork.Repository<PermitObjects>().GetQueryable().Where(e => permitObjectIds.Contains(e.Id))
+                                .Select(e => e.ControllerNames.Split(";", StringSplitOptions.None))
+                                .ToListAsync();
+
+                            // Kiểm tra user có quyền trong chức năng không
+                            if (permissionCodes != null && permissionCodes.Any() && permitObjectControllers != null && permitObjectControllers.Any())
+                            {
+                                hasPermit = permitObjectControllers.Any(x => x.Contains(controller)) && permissions.Any(x => permissionCodes.Contains(x));
+                            }
+                        }
+                    }
                 }
+                
             }
             return hasPermit;
         }

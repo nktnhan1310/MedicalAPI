@@ -11,7 +11,7 @@ namespace Medical.Entities
     /// Hồ sơ khám bệnh
     /// </summary>
     [Table("MedicalRecords")]
-    public class MedicalRecords : MedicalAppDomain
+    public class MedicalRecords : MedicalAppDomainHospital
     {
         /// <summary>
         /// Mã bệnh nhân
@@ -78,10 +78,6 @@ namespace Medical.Entities
         /// Id bệnh nhân
         /// </summary>
         public int UserId { get; set; }
-        /// <summary>
-        /// Id bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
 
         #region Extension Properties
 

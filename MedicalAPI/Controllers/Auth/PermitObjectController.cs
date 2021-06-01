@@ -46,7 +46,8 @@ namespace MedicalAPI.Controllers
                 var controllers = new List<ControllerModel>();
                 foreach (Assembly assem in assems)
                 {
-                    var controller = assem.GetTypes().Where(type => typeof(Controller).IsAssignableFrom(type) && !type.IsAbstract)
+                    var controller = assem.GetTypes().Where(type => 
+                    typeof(ControllerBase).IsAssignableFrom(type) && !type.IsAbstract)
                   .Select(e => new ControllerModel()
                   {
                       Id = e.Name.Replace("Controller", string.Empty),

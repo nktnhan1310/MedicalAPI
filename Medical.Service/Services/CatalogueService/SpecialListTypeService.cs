@@ -20,9 +20,9 @@ using System.Threading.Tasks;
 
 namespace Medical.Service.Services
 {
-    public class SpecialListTypeService : CatalogueService<SpecialistTypes, SearchSpecialListType>, ISpecialListTypeService
+    public class SpecialListTypeService : CatalogueHospitalService<SpecialistTypes, SearchSpecialListType>, ISpecialListTypeService
     {
-        public SpecialListTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
+        public SpecialListTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
         }
 

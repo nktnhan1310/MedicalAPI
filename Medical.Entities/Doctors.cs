@@ -8,7 +8,7 @@ using System.Text;
 namespace Medical.Entities
 {
     [Table("Doctors")]
-    public class Doctors : MedicalAppDomain
+    public class Doctors : MedicalAppDomainHospital
     {
         /// <summary>
         /// Mã bác sĩ
@@ -47,11 +47,6 @@ namespace Medical.Entities
         /// </summary>
         [StringLength(500)]
         public string TrainingPlace { get; set; }
-
-        /// <summary>
-        /// Bệnh viện
-        /// </summary>
-        public int HospitalId { get; set; }
 
         /// <summary>
         /// Mô tả thêm

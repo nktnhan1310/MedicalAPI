@@ -18,9 +18,9 @@ namespace MedicalAPI.Controllers
     [Route("api/hospital-config-fee")]
     [ApiController]
     [Description("Quản lý danh mục cấu hình phí thanh toán theo từng bệnh viện")]
-    public class HospitalConfigFeeController : BaseController<HospitalConfigFees, HospitalConfigFeeModel, SearchHospitalConfigFee>
+    public class HospitalConfigFeeController : CoreHospitalController<HospitalConfigFees, HospitalConfigFeeModel, SearchHospitalConfigFee>
     {
-        public HospitalConfigFeeController(IServiceProvider serviceProvider, ILogger<BaseController<HospitalConfigFees, HospitalConfigFeeModel, SearchHospitalConfigFee>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public HospitalConfigFeeController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<HospitalConfigFees, HospitalConfigFeeModel, SearchHospitalConfigFee>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IHospitalConfigFeeService>();
         }

@@ -69,7 +69,6 @@ namespace MedicalAPI
             services.ConfigureRepositoryWrapper();
             services.ConfigureService();
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.AddLazyCache();
             services
                 .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
@@ -79,6 +78,10 @@ namespace MedicalAPI
                  options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                  options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
              });
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            });
             services.AddCors(options =>
             {
                 options.AddPolicy(MyAllowSpecificOrigins,

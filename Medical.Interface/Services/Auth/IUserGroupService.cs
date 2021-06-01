@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Medical.Interface.Services
 {
-    public interface IUserGroupService : ICatalogueService<UserGroups, BaseSearch>
+    public interface IUserGroupService : ICatalogueHospitalService<UserGroups, BaseHospitalSearch>
     {
     }
 }

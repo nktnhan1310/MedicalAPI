@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Medical.Entities
 {
-    public class SearchDoctor : BaseSearch
+    public class SearchDoctor : BaseHospitalSearch
     {
         /// <summary>
         /// Mã chuyên khoa

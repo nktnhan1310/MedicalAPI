@@ -4,13 +4,12 @@ using System.Text;
 
 namespace Medical.Entities
 {
-    public class SearchSpecialListType : BaseSearch
+    public class SearchSpecialListType : BaseHospitalSearch
     {
         /// <summary>
         /// Tổng hợp theo ngày khám bệnh
         /// </summary>
         public DateTime? ExaminationDate { get; set; }
 
-        public int? HospitalId { get; set; }
     }
 }
