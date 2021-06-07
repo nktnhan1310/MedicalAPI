@@ -33,6 +33,52 @@ namespace MedicalAPI.Controllers
         }
 
         /// <summary>
+        /// Lấy thông tin danh sách user
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <returns></returns>
+        [HttpGet("get-list-user")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetUserInfos([FromQuery] string userName)
+        {
+            var users = await this.userService.GetAsync(e => !e.Deleted
+            && (!LoginContext.Instance.CurrentUser.HospitalId.HasValue || e.Id == LoginContext.Instance.CurrentUser.HospitalId)
+            && (string.IsNullOrEmpty(userName) || (e.UserName.Contains(userName) || e.LastName.Contains(userName) || e.FirstName.Contains(userName)))
+            , e => new Users()
+            {
+                Id = e.Id,
+                UserName = e.UserName,
+                FirstName = e.FirstName,
+                LastName = e.LastName,
+            });
+            return new AppDomainResult()
+            {
+                Data = mapper.Map<IList<UserModel>>(users),
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
+        /// Lấy thông tin all user
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
+        public override async Task<AppDomainResult> Get()
+        {
+            var items = await this.domainService.GetAsync(e =>
+            !LoginContext.Instance.CurrentUser.HospitalId.HasValue || e.HospitalId == LoginContext.Instance.CurrentUser.HospitalId.Value);
+            var itemModels = mapper.Map<IList<UserModel>>(items);
+            return new AppDomainResult()
+            {
+                Success = true,
+                Data = itemModels,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
         /// Lấy thông tin theo id
         /// </summary>
         /// <param name="id"></param>

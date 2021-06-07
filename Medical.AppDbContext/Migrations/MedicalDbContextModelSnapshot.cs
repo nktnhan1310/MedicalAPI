@@ -1137,6 +1137,9 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+                    b.Property<long?>("TickEndReceiveExamination")
+                        .HasColumnType("bigint");
+
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
 
@@ -1390,6 +1393,53 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("Nations");
                 });
 
+            modelBuilder.Entity("Medical.Entities.NotificationApplicationUser", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("NotificationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ToUserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("UserGroupId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NotificationApplicationUser");
+                });
+
             modelBuilder.Entity("Medical.Entities.NotificationTypes", b =>
                 {
                     b.Property<int>("Id")
@@ -1445,9 +1495,8 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Code")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -1459,17 +1508,20 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("NoficationTypeId")
+                    b.Property<int?>("FromUserId")
                         .HasColumnType("int");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsSendNotify")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("NotificationTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -1821,11 +1873,13 @@ namespace Medical.AppDbContext.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("APIKey")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
                     b.Property<string>("BrandName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
@@ -1838,17 +1892,14 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("ItemSendCount")
+                    b.Property<int>("SMSType")
                         .HasColumnType("int");
 
-                    b.Property<int>("MessageTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Password")
+                    b.Property<string>("SecretKey")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TimeSend")
-                        .HasColumnType("int");
+                    b.Property<string>("TemplateText")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -1857,7 +1908,7 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("UserName")
+                    b.Property<string>("WebServiceUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

@@ -32,6 +32,19 @@
             <param name="itemModel"></param>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.UserController.GetUserInfos(System.String)">
+            <summary>
+            Lấy thông tin danh sách user
+            </summary>
+            <param name="userName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.UserController.Get">
+            <summary>
+            Lấy thông tin all user
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.UserController.GetById(System.Int32)">
             <summary>
             Lấy thông tin theo id
@@ -60,6 +73,12 @@
             </summary>
             <param name="id"></param>
             <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.UserGroupController.GetPermissionCatalogue">
+            <summary>
+            Lấy danh sách quyền
+            </summary>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.UserGroupController.GetUserInGroups(Medical.Entities.SearchUserInGroup)">
@@ -284,11 +303,11 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.DoctorController.GetDoctorDetails(System.Int32)">
+        <member name="M:MedicalAPI.Controllers.DoctorController.GetById(System.Int32)">
             <summary>
-            Lấy thông tin chuyên khoa của bác sĩ
+            Lấy thông tin theo bác sĩ
             </summary>
-            <param name="doctorId"></param>
+            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.EmailConfigurationController.GetEmailConfiguration">
@@ -469,6 +488,71 @@
         <member name="M:MedicalAPI.Controllers.MedicalRecordController.GetListRelation">
             <summary>
             Lấy thông tin danh sách quan hệ của hồ sơ bệnh án
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.NotificationController.GetById(System.Int32)">
+            <summary>
+            Lấy thông tin theo id thông báo
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.NotificationController.GetListHospitals">
+            <summary>
+            Lấy danh sách bệnh viện hiện tại
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.NotificationController.GetUserGroupInfos">
+            <summary>
+            Lấy thông tin danh sách nhóm user
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.NotificationController.AddItem(Medical.Models.NotificationModel)">
+            <summary>
+            Thêm mới thông báo
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.NotificationController.UpdateItem(System.Int32,Medical.Models.NotificationModel)">
+            <summary>
+            Cập nhật thông tin notification
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.NotificationController.GetTotalNotificationCount">
+            <summary>
+            Lấy ra tổng số notification chưa đọc
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.NotificationController.GetNotifications">
+            <summary>
+            Lấy thông tin thông báo của user
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.NotificationController.ReadNotification(System.Nullable{System.Int32})">
+            <summary>
+            Kiểm tra user đọc thông báo chưa
+            </summary>
+            <param name="notificationId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.SMSConfigurationController.GetSMSConfiguration">
+            <summary>
+            Lấy thông tin cấu hình SMS
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.SMSConfigurationController.UpdateEmailConfiguration(Medical.Models.SMSConfiguartionModel)">
+            <summary>
+            Cập nhật cấu hình SMS
             </summary>
             <returns></returns>
         </member>

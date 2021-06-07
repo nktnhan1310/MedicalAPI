@@ -51,6 +51,9 @@ namespace Medical.Models.AutoMapper
             CreateMap<BankInfoModel, BankInfos>().ReverseMap();
             CreateMap<PagedList<BankInfoModel>, PagedList<BankInfos>>().ReverseMap();
 
+            CreateMap<NotificationModel, Notifications>().ReverseMap();
+            CreateMap<PagedList<NotificationModel>, PagedList<Notifications>>().ReverseMap();
+
             #region REPORT
 
             CreateMap<ReportRevenueModel, ReportRevenue>().ReverseMap();
@@ -68,7 +71,7 @@ namespace Medical.Models.AutoMapper
             #region Configuration
 
             CreateMap<EmailConfigurationModel, EmailConfiguration>().ReverseMap();
-
+            CreateMap<SMSConfiguartionModel, SMSConfiguration>().ReverseMap();
             CreateMap<HospitalConfigFeeModel, HospitalConfigFees>().ReverseMap();
             CreateMap<PagedList<HospitalConfigFeeModel>, PagedList<HospitalConfigFees>>().ReverseMap();
 
@@ -94,6 +97,9 @@ namespace Medical.Models.AutoMapper
             #endregion
 
             #region Catalogue
+
+            CreateMap<NotificationTypeModel, NotificationTypes>().ReverseMap();
+            CreateMap<PagedList<NotificationTypeModel>, PagedList<NotificationTypes>>().ReverseMap();
 
             CreateMap<PaymentMethodModel, PaymentMethods>().ReverseMap();
             CreateMap<PagedList<PaymentMethodModel>, PagedList<PaymentMethods>>().ReverseMap();

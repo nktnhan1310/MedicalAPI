@@ -92,7 +92,34 @@ namespace Medical.Models
         /// </summary>
         public string NoCallPortDescription { get; set; }
 
+        /// <summary>
+        /// Thời gian đóng nhận bệnh
+        /// </summary>
+        public long? TickEndReceiveExamination
+        {
+            get
+            {
+                TimeSpan ts = new TimeSpan(0, 0, 0, 0);
+                var dateTimeCheck = DateTime.Now.Date + ts;
+                if(!string.IsNullOrEmpty(TickEndReceiveExaminationValue) && TimeSpan.TryParse(TickEndReceiveExaminationValue, out ts))
+                {
+                    dateTimeCheck = dateTimeCheck.Date + ts;
+                    return dateTimeCheck.Ticks;
+                }
+                return null;
+            }
+            set
+            {
+                
+            }
+        }
+
         #region Extension Properties
+
+        /// <summary>
+        /// Giá trị thời gian kết thúc khám bệnh (00:00:00)
+        /// </summary>
+        public string TickEndReceiveExaminationValue { get; set; }
 
         /// <summary>
         /// Bảng mapping dịch vụ khám của bệnh viện

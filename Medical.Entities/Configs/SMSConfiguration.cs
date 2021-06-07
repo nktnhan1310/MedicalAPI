@@ -9,55 +9,17 @@ namespace Medical.Entities
 {
     public class SMSConfiguration : MedicalAppDomain
     {
-        public string UserName { get; set; }
-        public string Password { get; set; }
-        [Required]
+        public string APIKey { get; set; }
+        public string SecretKey { get; set; }
         public string BrandName { get; set; }
-        [Required]
-        public int MessageTypeId { get; set; }
-        public int ItemSendCount { get; set; }
-        public int TimeSend { get; set; }
+        public int SMSType { get; set; }
         /// <summary>
-        /// Mã access token
+        /// Cú pháp tin nhắn mẫu
         /// </summary>
-        [NotMapped]
-        public string AuthorizationCode { get; set; }
-        [NotMapped]
-        public bool IsAuthorization { get; set; }
-        /// <summary>
-        /// Template tin nhắn mobifone
-        /// </summary>
-        [NotMapped]
-        public string TemplateTextMobi { get; set; }
-        /// <summary>
-        /// Template tin nhắn vina
-        /// </summary>
-        [NotMapped]
-        public string TemplateTextVina { get; set; }
-        /// <summary>
-        /// Template tin nhắn viettel
-        /// </summary>
-        [NotMapped]
-        public string TemplateTextViettel { get; set; }
-        /// <summary>
-        /// Template tin nhắn khác
-        /// </summary>
-        [NotMapped]
-        public string TemplateTextOther { get; set; }
-        /// <summary>
-        /// Mã unicode
-        /// </summary>
-        [NotMapped]
-        public bool IsUniCode { get; set; }
-        /// <summary>
-        /// Có được mã hóa không
-        /// </summary>
-        [NotMapped]
-        public bool IsEncrypted { get; set; }
+        public string TemplateText { get; set; }
         /// <summary>
         /// Url web service
         /// </summary>
-        [NotMapped]
         public string WebServiceUrl { get; set; }
 
     }

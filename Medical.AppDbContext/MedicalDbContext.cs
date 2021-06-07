@@ -65,6 +65,7 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<UserGroups>(x => x.ToTable("UserGroups"));
             modelBuilder.Entity<PermitObjectPermissions>(x => x.ToTable("PermitObjectPermissions"));
             modelBuilder.Entity<UserInGroups>(x => x.ToTable("UserInGroups"));
+            modelBuilder.Entity<NotificationApplicationUser>(x => x.ToTable("NotificationApplicationUser"));
 
             #region Configs
 
@@ -125,6 +126,7 @@ namespace Medical.AppDbContext
 
         #endregion
 
+        public DbSet<NotificationApplicationUser> NotificationApplicationUser { get; set; }
         public DbSet<ConfigRoomExaminations> ConfigRoomExaminations { get; set; }
         public DbSet<PaymentHistories> PaymentHistories { get; set; }
 

@@ -71,6 +71,8 @@ namespace Medical.Core.App
             services.AddScoped<IExaminationHistoryService, ExaminationHistoryService>();
             services.AddScoped<IBankInfoService, BankInfoService>();
             services.AddScoped<IDashBoardService, DashBoardService>();
+            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<INotificationApplicationUserService, NotificationApplicationUserService>();
             
 
             #region REPORT
@@ -93,6 +95,7 @@ namespace Medical.Core.App
 
             #region Catalogue Service
 
+            services.AddScoped<INotificationTypeService, NotificationTypeService>();
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IDistrictService, DistrictService>();
@@ -115,6 +118,7 @@ namespace Medical.Core.App
 
             services.AddScoped<IEmailConfigurationService, EmailConfigurationService>();
             services.AddScoped<IHospitalConfigFeeService, HospitalConfigFeeService>();
+            services.AddScoped<ISMSConfigurationService, SMSConfigurationService>();
 
             #endregion
 

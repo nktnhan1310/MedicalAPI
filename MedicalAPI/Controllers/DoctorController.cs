@@ -32,22 +32,46 @@ namespace MedicalAPI.Controllers
         }
 
         /// <summary>
-        /// Lấy thông tin chuyên khoa của bác sĩ
+        /// Lấy thông tin theo bác sĩ
         /// </summary>
-        /// <param name="doctorId"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("get-doctor-details/{doctorId}")]
-        [MedicalAppAuthorize(new string[] { CoreContants.View, CoreContants.Update })]
-        public async Task<AppDomainResult> GetDoctorDetails(int doctorId)
+        [HttpGet("{id}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public override async Task<AppDomainResult> GetById(int id)
         {
+
             AppDomainResult appDomainResult = new AppDomainResult();
-            var doctorDetails = await this.doctorDetailService.GetAsync(e => !e.Deleted && e.DoctorId == doctorId);
-            var doctorDetailModels = mapper.Map<IList<DoctorDetailModel>>(doctorDetails);
-            appDomainResult.Success = true;
-            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-            appDomainResult.Data = doctorDetailModels;
+            if (id == 0)
+            {
+                throw new KeyNotFoundException("id không tồn tại");
+            }
+            var item = await this.domainService.GetByIdAsync(id);
+
+            if (item != null)
+            {
+                if (LoginContext.Instance.CurrentUser != null
+                    && (!LoginContext.Instance.CurrentUser.HospitalId.HasValue
+                    || (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId == item.HospitalId)))
+                {
+                    var itemModel = mapper.Map<DoctorModel>(item);
+                    var doctorDetails = await this.doctorDetailService.GetAsync(e => !e.Deleted && e.DoctorId == id);
+                    var doctorDetailModels = mapper.Map<IList<DoctorDetailModel>>(doctorDetails);
+                    itemModel.DoctorDetails = doctorDetailModels;
+                    appDomainResult = new AppDomainResult()
+                    {
+                        Success = true,
+                        Data = itemModel,
+                        ResultCode = (int)HttpStatusCode.OK
+                    };
+                }
+                else throw new KeyNotFoundException("Item không tồn tại");
+            }
+            else
+            {
+                throw new KeyNotFoundException("Item không tồn tại");
+            }
             return appDomainResult;
         }
-
     }
 }

@@ -82,7 +82,19 @@ namespace Medical.Entities
         /// </summary>
         public string NoCallPortDescription { get; set; }
 
+        /// <summary>
+        /// Thời gian đóng nhận bệnh
+        /// </summary>
+        public long? TickEndReceiveExamination { get; set; }
+
+
         #region Extension Properties
+
+        /// <summary>
+        /// Giá trị thời gian kết thúc khám bệnh (00:00:00)
+        /// </summary>
+        [NotMapped]
+        public string TickEndReceiveExaminationValue { get; set; }
 
         [NotMapped]
         public int TotalVisitNo { get; set; }

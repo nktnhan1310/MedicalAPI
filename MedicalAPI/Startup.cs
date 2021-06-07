@@ -27,6 +27,8 @@ using Medical.Core.App;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.AspNetCore.SignalR;
+using Medical.Utilities;
 
 namespace MedicalAPI
 {
@@ -136,6 +138,7 @@ namespace MedicalAPI
                 options.SuppressModelStateInvalidFilter = true;
 
             });
+            services.AddSignalR();
             //services.AddControllers();
         }
 
@@ -172,6 +175,9 @@ namespace MedicalAPI
                 RequestPath = "/.well-known/pki-validation"
             });
 
+
+
+
             app.UseStaticHttpContext();
 
             app.UseSession();
@@ -200,8 +206,9 @@ namespace MedicalAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>("/hubs/notifications");
             });
-
+            
 
 
         }

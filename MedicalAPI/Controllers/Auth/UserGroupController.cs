@@ -26,13 +26,36 @@ namespace MedicalAPI.Controllers
     public class UserGroupController : CatalogueCoreHospitalController<UserGroups, UserGroupModel, BaseHospitalSearch>
     {
         private readonly IUserInGroupService userInGroupService;
-        private readonly IUserService userService;
+        private readonly IPermissionService permissionService;
+        
+
 
         public UserGroupController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<UserGroups, UserGroupModel, BaseHospitalSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<IUserGroupService>();
             userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
-            userService = serviceProvider.GetRequiredService<IUserService>();
+            permissionService = serviceProvider.GetRequiredService<IPermissionService>();
+            
+        }
+
+        
+
+        /// <summary>
+        /// Lấy danh sách quyền
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-permissions")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetPermissionCatalogue()
+        {
+            var listPermissions = await this.permissionService.GetAsync(e => !e.Deleted);
+            var listPermissionModels = mapper.Map<List<PermissionModel>>(listPermissions);
+            return new AppDomainResult()
+            {
+                Data = listPermissionModels,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            }; ;
         }
 
         /// <summary>
@@ -41,7 +64,7 @@ namespace MedicalAPI.Controllers
         /// <param name="searchUserInGroup"></param>
         /// <returns></returns>
         [HttpGet("get-user-in-groups")]
-        [MedicalAppAuthorize(new string[] { CoreContants.View, CoreContants.Update })]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetUserInGroups([FromQuery] SearchUserInGroup searchUserInGroup)
         {
             AppDomainResult appDomainResult = new AppDomainResult();

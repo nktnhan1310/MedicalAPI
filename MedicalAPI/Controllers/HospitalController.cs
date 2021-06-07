@@ -82,6 +82,7 @@ namespace MedicalAPI.Controllers
                 ServiceTypeMappingHospitals = new List<ServiceTypeMappingHospital>(),
                 Slogan = e.Slogan,
                 WebSiteUrl = e.WebSiteUrl,
+                TickEndReceiveExamination = e.TickEndReceiveExamination,
                 BankInfos = new List<BankInfos>()
             });
             if (item != null)
@@ -109,6 +110,11 @@ namespace MedicalAPI.Controllers
                     });
                 // Lấy thông tin ngân hàng liên kết của bệnh viện
                 item.BankInfos = await this.bankInfoService.GetAsync(e => !e.Deleted && e.HospitalId == item.Id);
+                if (item.TickEndReceiveExamination.HasValue)
+                {
+                    TimeSpan ts = TimeSpan.FromTicks(item.TickEndReceiveExamination.Value);
+                    item.TickEndReceiveExaminationValue = ts.ToString("hh':'mm':'ss");
+                }
             }
             else
                 throw new KeyNotFoundException("Item không tồn tại");
@@ -137,6 +143,7 @@ namespace MedicalAPI.Controllers
                 itemModel.Deleted = false;
                 itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
                 itemModel.Created = DateTime.Now;
+                
                 var item = mapper.Map<Hospitals>(itemModel);
                 if (item != null)
                 {
