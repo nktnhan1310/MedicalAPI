@@ -15,6 +15,11 @@ namespace Medical.Entities
         /// Tìm kiếm theo số điện thoại
         /// </summary>
         public string Phone { get; set; }
+
+        /// <summary>
+        /// Theo nhom người dùng
+        /// </summary>
+        public int? UserGroupId { get; set; }
     }
 
 }

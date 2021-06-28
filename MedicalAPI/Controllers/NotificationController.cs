@@ -1,4 +1,5 @@
-﻿using Medical.Entities;
+﻿using Medical.Core.App.Controllers;
+using Medical.Entities;
 using Medical.Extensions;
 using Medical.Interface.Services;
 using Medical.Models;
@@ -269,12 +270,40 @@ namespace MedicalAPI.Controllers
             );
             if (userNotificationApplications != null && userNotificationApplications.Any())
             {
-                var notificationIds = userNotificationApplications.Select(e => e.NotificationId).Distinct().ToList();
-                if(notificationIds != null && notificationIds.Any())
+                List<Notifications> notifications = new List<Notifications>();
+                var notificationReadIds = userNotificationApplications.Where(e => e.IsRead).Select(e => e.NotificationId).Distinct().ToList();
+                var notificationUnReadIds = userNotificationApplications.Where(e => !e.IsRead).Select(e => e.NotificationId).Distinct().ToList();
+                if (notificationReadIds != null && notificationReadIds.Any())
                 {
-                    var notifications = await this.domainService.GetAsync(e => !e.Deleted && notificationIds.Contains(e.Id));
-                    notificationModels = mapper.Map<IList<NotificationModel>>(notifications);
+                    Expression<Func<Notifications, Notifications>> select = e => new Notifications()
+                    {
+                        Id = e.Id,
+                        Active = e.Active,
+                        IsRead = true,
+                        Content = e.Content,
+                        Created = e.Created,
+                        CreatedBy = e.CreatedBy,
+                        Title = e.Title,
+                    };
+                    var notificationReadInfos = await this.domainService.GetAsync(e => !e.Deleted && notificationReadIds.Contains(e.Id), select);
+                    notifications.AddRange(notificationReadInfos);
                 }
+                if (notificationUnReadIds != null && notificationUnReadIds.Any())
+                {
+                    Expression<Func<Notifications, Notifications>> select = e => new Notifications()
+                    {
+                        Id = e.Id,
+                        Active = e.Active,
+                        IsRead = false,
+                        Content = e.Content,
+                        Created = e.Created,
+                        CreatedBy = e.CreatedBy,
+                        Title = e.Title,
+                    };
+                    var notificationUnReadInfos = await this.domainService.GetAsync(e => !e.Deleted && notificationUnReadIds.Contains(e.Id), select);
+                    notifications.AddRange(notificationUnReadInfos);
+                }
+                notificationModels = mapper.Map<List<NotificationModel>>(notifications);
             }
             else throw new AppException("Người dùng hiện tại không có thông báo");
             return new AppDomainResult()

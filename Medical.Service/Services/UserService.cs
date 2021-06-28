@@ -32,8 +32,10 @@ namespace Medical.Service
             {
                 new SqlParameter("@PageIndex", baseSearch.PageIndex),
                 new SqlParameter("@PageSize", baseSearch.PageSize),
+                new SqlParameter("@HospitalId", baseSearch.HospitalId),
                 new SqlParameter("@Email", string.IsNullOrEmpty(baseSearch.Email) ? DBNull.Value : (object)baseSearch.Email),
                 new SqlParameter("@Phone", baseSearch.Phone),
+                new SqlParameter("@UserGroupId", baseSearch.UserGroupId),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
                 new SqlParameter("@TotalPage", SqlDbType.Int, 0),
@@ -54,9 +56,9 @@ namespace Medical.Service
             bool isExistPhone = !string.IsNullOrEmpty(item.Phone) && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Phone == item.Phone);
             bool isExistUserName = !string.IsNullOrEmpty(item.UserName)
                 && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id
-                && (x.UserName.Contains(item.UserName)
-                || x.Email.Contains(item.UserName)
-                || x.Phone.Contains(item.UserName)
+                && (x.UserName == item.UserName
+                || x.Email == item.UserName
+                || x.Phone == item.UserName
                 ));
             bool isPhone = ValidateUserName.IsPhoneNumber(item.UserName);
             bool isEmail = ValidateUserName.IsEmail(item.UserName);
@@ -113,6 +115,17 @@ namespace Medical.Service
                             permitObjectPermission.Created = DateTime.Now;
                             permitObjectPermission.UserId = item.Id;
                             await this.unitOfWork.Repository<PermitObjectPermissions>().CreateAsync(permitObjectPermission);
+                        }
+                    }
+
+                    // Lưu thông file của user
+                    if (item.UserFiles != null && item.UserFiles.Any())
+                    {
+                        foreach (var userFile in item.UserFiles)
+                        {
+                            userFile.Created = DateTime.Now;
+                            userFile.UserId = item.Id;
+                            await this.unitOfWork.Repository<UserFiles>().CreateAsync(userFile);
                         }
                     }
                     await this.unitOfWork.SaveAsync();
@@ -184,6 +197,28 @@ namespace Medical.Service
                         }
                     }
                 }
+                // Cập nhật thông tin file người dùng
+                if (item.UserFiles != null && item.UserFiles.Any())
+                {
+                    foreach (var userFile in item.UserFiles)
+                    {
+                        var existUserFile = await this.unitOfWork.Repository<UserFiles>().GetQueryable().Where(e => e.Id == userFile.Id).FirstOrDefaultAsync();
+                        if (existUserFile != null)
+                        {
+                            existUserFile = mapper.Map<UserFiles>(userFile);
+                            existUserFile.UserId = item.Id;
+                            existUserFile.Updated = DateTime.Now;
+                            this.unitOfWork.Repository<UserFiles>().Update(existUserFile);
+                        }
+                        else
+                        {
+                            userFile.Created = DateTime.Now;
+                            userFile.UserId = item.Id;
+                            await this.unitOfWork.Repository<UserFiles>().CreateAsync(userFile);
+
+                        }
+                    }
+                }
                 await this.unitOfWork.SaveAsync();
                 result = true;
             }
@@ -197,21 +232,28 @@ namespace Medical.Service
         /// <param name="userName"></param>
         /// <param name="password"></param>
         /// <returns></returns>
-        public async Task<bool> Verify(string userName, string password)
+        public async Task<bool> Verify(string userName, string password, bool isMrApp = false)
         {
             var user = await Queryable
                 .Where(e => !e.Deleted
-                && (e.UserName.Contains(userName)
-                || e.Phone.Contains(userName)
-                || e.Email.Contains(userName)
+                && (e.UserName == userName
+                || e.Phone == userName
+                || e.Email == userName
                 )
+                && ((!isMrApp && (e.IsAdmin || e.HospitalId.HasValue)) || (isMrApp && !e.IsAdmin && !e.HospitalId.HasValue))
                 )
                 .FirstOrDefaultAsync();
             if (user != null)
             {
+                if (user.IsLocked && isMrApp)
+                {
+                    if (user.LockedDate.HasValue)
+                        throw new Exception(string.Format("Account is Locked! Unlock date: {0}", user.LockedDate.Value.ToString("dd/MM/yyyy")));
+                    else throw new Exception("Account is Locked");
+                }
                 if (!user.Active)
                 {
-                    throw new Exception("Account is locked");
+                    throw new Exception("Account is UnActive");
                 }
                 if (user.Password == SecurityUtils.HashSHA1(password))
                 {
@@ -267,8 +309,8 @@ namespace Medical.Service
 
             if (userGroupIds != null && userGroupIds.Any())
             {
-                var permitObjectChecks = await unitOfWork.Repository<PermitObjects>().GetQueryable().Where(e => !e.Deleted 
-                && !string.IsNullOrEmpty(e.ControllerNames) 
+                var permitObjectChecks = await unitOfWork.Repository<PermitObjects>().GetQueryable().Where(e => !e.Deleted
+                && !string.IsNullOrEmpty(e.ControllerNames)
                 && e.ControllerNames.Contains(controller)
                 ).ToListAsync();
                 permitObjectChecks = permitObjectChecks.Where(e => e.ControllerNames.Split(";", StringSplitOptions.None).Contains(controller)).ToList();
@@ -277,7 +319,7 @@ namespace Medical.Service
                     var permitObjectCheckIds = permitObjectChecks.Select(e => e.Id).ToList();
                     // Lấy ra những quyền user có trong chức năng cần kiểm tra
                     var permitObjectPermissions = await unitOfWork.Repository<PermitObjectPermissions>().GetQueryable()
-                    .Where(e => e.UserGroupId.HasValue 
+                    .Where(e => e.UserGroupId.HasValue
                     && userGroupIds.Contains(e.UserGroupId.Value)
                     && permitObjectCheckIds.Contains(e.PermitObjectId)
                     )
@@ -307,7 +349,7 @@ namespace Medical.Service
                         }
                     }
                 }
-                
+
             }
             return hasPermit;
         }

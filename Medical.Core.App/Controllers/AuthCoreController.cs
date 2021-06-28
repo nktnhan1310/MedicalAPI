@@ -33,11 +33,12 @@ namespace Medical.Core.App.Controllers
     public abstract class AuthCoreController : ControllerBase
     {
         protected readonly ILogger<AuthCoreController> logger;
-        private readonly IUserService userService;
-        private IConfiguration configuration;
-        private IMapper mapper;
+        protected IUserService userService;
+        protected IConfiguration configuration;
+        protected IMapper mapper;
         private IEmailConfigurationService emailConfigurationService;
         private readonly ITokenManagerService tokenManagerService;
+        private readonly ISMSConfigurationService sMSConfigurationService;
         public AuthCoreController(IServiceProvider serviceProvider
             , IConfiguration configuration
             , IMapper mapper, ILogger<AuthCoreController> logger
@@ -50,6 +51,7 @@ namespace Medical.Core.App.Controllers
             userService = serviceProvider.GetRequiredService<IUserService>();
             emailConfigurationService = serviceProvider.GetRequiredService<IEmailConfigurationService>();
             tokenManagerService = serviceProvider.GetRequiredService<ITokenManagerService>();
+            sMSConfigurationService = serviceProvider.GetRequiredService<ISMSConfigurationService>();
         }
 
         /// <summary>
@@ -68,7 +70,11 @@ namespace Medical.Core.App.Controllers
                 success = await this.userService.Verify(loginModel.UserName, loginModel.Password);
                 if (success)
                 {
-                    var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.UserName == loginModel.UserName);
+                    var userInfos = await this.userService.GetAsync(e => !e.Deleted
+                    && (e.UserName == loginModel.UserName
+                    || e.Phone == loginModel.UserName
+                    || e.Email == loginModel.UserName
+                    ));
                     if (userInfos != null && userInfos.Any())
                     {
                         var userModel = mapper.Map<UserModel>(userInfos.FirstOrDefault());
@@ -184,14 +190,15 @@ namespace Medical.Core.App.Controllers
             bool isValidEmail = ValidateUserName.IsEmail(userName);
             bool isValidPhone = ValidateUserName.IsPhoneNumber(userName);
             // Kiểm tra đúng định dạng email và số điện thoại chưa
-            if (!isValidEmail && !isValidPhone)
-                throw new AppException("Vui lòng nhập email hoặc số điện thoại!");
+            //if (!isValidEmail && !isValidPhone)
+            //    throw new AppException("Vui lòng nhập email hoặc số điện thoại!");
             // Tạo mật khẩu mới
             // Kiểm tra email/phone đã tồn tại chưa?
             var userInfos = await this.userService.GetAsync(e => !e.Deleted
-            && (e.UserName == userName
-            || e.Email == userName
-            || e.Phone == userName
+            && (
+            (isValidEmail == true && e.Email == userName)
+            || (isValidPhone && e.Phone == userName)
+            || e.UserName == userName
             )
             );
             Users userInfo = null;
@@ -205,10 +212,10 @@ namespace Medical.Core.App.Controllers
             bool success = await this.userService.UpdateAsync(userInfo);
             if (success)
             {
+                string emailBody = string.Format("<p>Mật khẩu mới của bạn là: {0}</p>", newPasswordRandom);
                 // Gửi mã qua Email
-                if (isValidEmail)
+                if (isValidEmail && !string.IsNullOrEmpty(userInfo.Email))
                 {
-                    string emailBody = string.Format("<p>Your new password: {0}</p>", newPasswordRandom);
                     emailConfigurationService.Send("Change Password", new string[] { userInfo.Email }, null, null, new EmailContent()
                     {
                         Content = emailBody,
@@ -216,12 +223,29 @@ namespace Medical.Core.App.Controllers
                     });
                 }
                 // Gửi SMS
-                else if (isValidPhone)
+                else if (isValidPhone && !string.IsNullOrEmpty(userInfo.Phone))
                 {
-
+                    await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", newPasswordRandom));
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(userInfo.Email))
+                    {
+                        emailConfigurationService.Send("Change Password", new string[] { userInfo.Email }, null, null, new EmailContent()
+                        {
+                            Content = emailBody,
+                            IsHtml = true,
+                        });
+                    }
+                    else if (!string.IsNullOrEmpty(userInfo.Phone))
+                        await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", newPasswordRandom));
                 }
             }
-            return appDomainResult;
+            return new AppDomainResult()
+            {
+                Success = success,
+                ResultCode = (int)HttpStatusCode.OK
+            };
         }
 
         /// <summary>
@@ -246,7 +270,12 @@ namespace Medical.Core.App.Controllers
 
         #region Private methods
 
-        private async Task<string> GenerateJwtToken(UserModel user)
+        /// <summary>
+        /// Tạo token từ thông tin user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        protected async Task<string> GenerateJwtToken(UserModel user)
         {
             // generate token that is valid for 7 days
             var tokenHandler = new JwtSecurityTokenHandler();

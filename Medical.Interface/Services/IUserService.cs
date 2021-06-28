@@ -8,7 +8,7 @@ namespace Medical.Interface.Services
 {
     public interface IUserService : IDomainService<Users, SearchUser>
     {
-        Task<bool> Verify(string userName, string password);
+        Task<bool> Verify(string userName, string password, bool isMrApp = false);
 
         Task<bool> HasPermission(int userId, string controller, IList<string> permissions);
         Task<string> CheckCurrentUserPassword(int userId, string password, string newPasssword);

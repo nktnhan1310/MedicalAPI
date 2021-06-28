@@ -22,6 +22,12 @@ namespace Medical.Utilities
         public const string USER_GROUP = "USER";
         public const string ADMIN_GROUP = "ADMIN";
 
+        public const string UPLOAD_FOLDER_NAME = "upload";
+        public const string TEMP_FOLDER_NAME = "Temp";
+        public const string MEDICAL_RECORD_FOLDER_NAME = "medicalrecord";
+        public const string QR_CODE_FOLDER_NAME = "qrcode";
+        public const string USER_FOLDER_NAME = "user";
+
         /// <summary>
         /// Danh mục quyền
         /// </summary>
@@ -38,5 +44,53 @@ namespace Medical.Utilities
             Export = 9
         }
 
+        #region Catalogue Name
+
+        /// <summary>
+        /// Phường
+        /// </summary>
+        public const string WARD_CATALOGUE_NAME = "Ward";
+
+        /// <summary>
+        /// QUÔC GIA
+        /// </summary>
+        public const string COUNTRY_CATALOGUE_NAME = "Country";
+
+        /// <summary>
+        /// QUẬN
+        /// </summary>
+        public const string DISTRICT_CATALOGUE_NAME = "District";
+
+        /// <summary>
+        /// THÀNH PHỐ
+        /// </summary>
+        public const string CITY_CATALOGUE_NAME = "City";
+
+        /// <summary>
+        /// DÂN TỘC
+        /// </summary>
+        public const string NATION_CATALOGUE_NAME = "Nation";
+
+        /// <summary>
+        /// CHUYÊN KHOA
+        /// </summary>
+        public const string SPECIALIST_TYPE_CATALOGUE_NAME = "SpecialistType";
+
+        /// <summary>
+        /// CÔNG VIỆC
+        /// </summary>
+        public const string JOB_CATALOGUE_NAME = "Job";
+
+        /// <summary>
+        /// LOẠI DỊCH VỤ
+        /// </summary>
+        public const string SERVICE_TYPE_CATALOGUE_NAME = "ServiceType";
+
+        /// <summary>
+        /// Buổi khám bệnh
+        /// </summary>
+        public const string SESSION_TYPE_CATALOGUE_NAME = "SessionType";
+
+        #endregion
     }
 }

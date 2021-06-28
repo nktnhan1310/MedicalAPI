@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DevExpress.Xpo" Version="19.2.6" />
     <PackageReference Include="ExcelMapper" Version="5.2.298" />
   </ItemGroup>
 

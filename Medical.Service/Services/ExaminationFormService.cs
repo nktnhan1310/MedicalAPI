@@ -13,13 +13,25 @@ using System.Threading.Tasks;
 using Medical.Utilities;
 using Medical.Entities.Extensions;
 using System.Linq.Expressions;
+using Medical.Interface;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Medical.Interface.DbContext;
 
 namespace Medical.Service
 {
     public class ExaminationFormService : DomainService<ExaminationForms, SearchExaminationForm>, IExaminationFormService
     {
-        public ExaminationFormService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        private readonly ISMSConfigurationService sMSConfigurationService;
+        private IHttpContextAccessor httpContextAccessor;
+        private IConfiguration configuration;
+        private IMedicalDbContext medicalDbContext;
+        public ExaminationFormService(IMedicalUnitOfWork unitOfWork, IMapper mapper, ISMSConfigurationService sMSConfigurationService, IHttpContextAccessor httpContextAccessor, IConfiguration configuration, IMedicalDbContext medicalDbContext) : base(unitOfWork, mapper)
         {
+            this.sMSConfigurationService = sMSConfigurationService;
+            this.httpContextAccessor = httpContextAccessor;
+            this.configuration = configuration;
+            this.medicalDbContext = medicalDbContext;
         }
 
         protected override string GetStoreProcName()
@@ -64,10 +76,32 @@ namespace Medical.Service
                     existExaminationFormInfo.Status = updateExaminationStatus.Status.Value;
                     existExaminationFormInfo.Updated = DateTime.Now;
                     existExaminationFormInfo.UpdatedBy = updateExaminationStatus.CreatedBy;
-                    existExaminationFormInfo.PaymentMethodId = updateExaminationStatus.PaymentMethodId;
+                    if (updateExaminationStatus.PaymentMethodId.HasValue)
+                        existExaminationFormInfo.PaymentMethodId = updateExaminationStatus.PaymentMethodId;
                     existExaminationFormInfo.BankInfoId = updateExaminationStatus.BankInfoId;
+                    if (updateExaminationStatus.ReExaminationDate.HasValue)
+                    {
+                        if (updateExaminationStatus.ReExaminationDate.Value.Date < existExaminationFormInfo.ExaminationDate.Date)
+                            throw new Exception("Ngày tái khám phải lớn hơn ngày khám hiện tại");
+                        existExaminationFormInfo.ReExaminationDate = updateExaminationStatus.ReExaminationDate;
+                    }
                     switch (updateExaminationStatus.Status)
                     {
+                        // Nếu trạng thái: đã xác nhận => lưu lại thông tin mã phiếu khám + lịch sử phiếu
+                        case (int)CatalogueUtilities.ExaminationStatus.WaitConfirm:
+                            {
+                                action = (int)CatalogueUtilities.ExaminationAction.Update;
+                                includeProperties = new Expression<Func<ExaminationForms, object>>[]
+                                {
+                                    x => x.Status,
+                                    x => x.Updated,
+                                    x => x.UpdatedBy,
+                                    x => x.PaymentMethodId,
+                                };
+
+                            }
+                            break;
+
                         // Nếu trạng thái: đã xác nhận => lưu lại thông tin mã phiếu khám + lịch sử phiếu
                         case (int)CatalogueUtilities.ExaminationStatus.Confirmed:
                             {
@@ -99,11 +133,45 @@ namespace Medical.Service
                                 };
                             }
                             break;
+                        // Nếu trạng thái: Chờ xác nhận tái khám => lưu lại ngày tái khám trong phiếu khám + lịch sử phiếu
+                        case (int)CatalogueUtilities.ExaminationStatus.WaitReExamination:
+                            {
+                                action = (int)CatalogueUtilities.ExaminationAction.Update;
+                                includeProperties = new Expression<Func<ExaminationForms, object>>[]
+                                {
+                                    x => x.Status,
+                                    x => x.Updated,
+                                    x => x.UpdatedBy,
+                                    x => x.ReExaminationDate
+                                };
+                            }
+                            break;
                         // Nếu trạng thái: đã xác nhận tái khám => lưu lại ngày tái khám trong phiếu khám + lịch sử phiếu
                         case (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination:
                             {
                                 action = (int)CatalogueUtilities.ExaminationAction.ConfirmReExamination;
-                                existExaminationFormInfo.ReExaminationDate = DateTime.Now;
+                                existExaminationFormInfo = await this.GetExaminationIndex(existExaminationFormInfo);
+                                if (existExaminationFormInfo.ReExaminationDate.HasValue)
+                                {
+                                    existExaminationFormInfo.ExaminationDate = existExaminationFormInfo.ReExaminationDate.Value;
+                                    existExaminationFormInfo.ReExaminationDate = null;
+                                }
+                                else throw new Exception("Vui lòng chọn ngày tái khám");
+                                includeProperties = new Expression<Func<ExaminationForms, object>>[]
+                                {
+                                    x => x.Status,
+                                    x => x.Updated,
+                                    x => x.UpdatedBy,
+                                    x => x.ExaminationDate,
+                                    x => x.ReExaminationDate,
+                                };
+                            }
+                            break;
+                        // Nếu trạng thái: Hoàn thành khám => lưu lại ngày tái khám trong phiếu khám + lịch sử phiếu
+                        case (int)CatalogueUtilities.ExaminationStatus.FinishExamination:
+                            {
+                                action = (int)CatalogueUtilities.ExaminationAction.FinishExamination;
+                                existExaminationFormInfo.ReExaminationDate = null;
                                 includeProperties = new Expression<Func<ExaminationForms, object>>[]
                                 {
                                     x => x.Status,
@@ -117,7 +185,6 @@ namespace Medical.Service
                             break;
                     }
                 }
-
             }
             // Thêm lịch sử phiếu khám/lịch hẹn
             if (action.HasValue && updateExaminationStatus.Status.HasValue)
@@ -125,9 +192,184 @@ namespace Medical.Service
                 unitOfWork.Repository<ExaminationForms>().UpdateFieldsSave(existExaminationFormInfo, includeProperties);
                 await unitOfWork.SaveAsync();
                 existExaminationFormInfo.Comment = updateExaminationStatus.Comment;
+
+                switch (updateExaminationStatus.Status)
+                {
+                    // Nếu trạng thái là chờ xác nhận tái khám hoặc hoàn thành khám bệnh => lưu lại thông tin vào chi tiết hồ sơ bệnh án của bệnh nhân
+                    case (int)CatalogueUtilities.ExaminationStatus.WaitReExamination:
+                    case (int)CatalogueUtilities.ExaminationStatus.FinishExamination:
+                        {
+
+                            MedicalRecordDetails medicalRecordDetails = new MedicalRecordDetails()
+                            {
+                                Created = DateTime.Now,
+                                CreatedBy = updateExaminationStatus.CreatedBy,
+                                Active = true,
+                                Deleted = false,
+                                ExaminationDate = existExaminationFormInfo.ExaminationDate,
+                                ReExaminationDate = existExaminationFormInfo.ReExaminationDate,
+                                ExaminationFormId = existExaminationFormInfo.Id,
+                                HospitalId = existExaminationFormInfo.HospitalId,
+                                MedicalRecordId = existExaminationFormInfo.RecordId,
+                                Price = existExaminationFormInfo.Price,
+                                ServiceTypeId = existExaminationFormInfo.ServiceTypeId,
+                                SpecialistTypeId = existExaminationFormInfo.SpecialistTypeId,
+                                HasMedicalBills = updateExaminationStatus.HasMedicalBill
+                            };
+
+                            await unitOfWork.Repository<MedicalRecordDetails>().CreateAsync(medicalRecordDetails);
+
+                            await unitOfWork.SaveAsync();
+                            await this.medicalDbContext.SaveChangesAsync();
+
+                            // Lấy thông tin qrcode hình
+                            this.medicalDbContext.Entry<MedicalRecordDetails>(medicalRecordDetails).State = EntityState.Detached;
+                            var medicalRecordInfo = await this.medicalDbContext.Set<MedicalRecords>()
+                                .Where(e => !e.Deleted && e.Id == existExaminationFormInfo.RecordId)
+                                .AsNoTracking().FirstOrDefaultAsync();
+                            QRCodeUtils qRCodeUtils = new QRCodeUtils(configuration, httpContextAccessor);
+                            if (medicalRecordInfo != null)
+                            {
+                                var filePathUrl = qRCodeUtils.GetQrImagePath(medicalRecordInfo.UserId, medicalRecordDetails.Id);
+                                var medicalRecordDetailInfo = await this.unitOfWork.Repository<MedicalRecordDetails>()
+                                    .GetQueryable()
+                                    .Where(e => e.Id == medicalRecordDetails.Id)
+                                    .AsNoTracking().FirstOrDefaultAsync();
+                                if (medicalRecordDetailInfo != null)
+                                {
+                                    medicalRecordDetailInfo.QrCodeUrlFile = filePathUrl;
+                                    Expression<Func<MedicalRecordDetails, object>>[] expressions = new Expression<Func<MedicalRecordDetails, object>>[]
+                                    {
+                                e => e.QrCodeUrlFile
+                                    };
+                                    await this.unitOfWork.Repository<MedicalRecordDetails>().UpdateFieldsSaveAsync(medicalRecordDetailInfo, expressions);
+                                }
+                            }
+
+                            // Thêm hóa đơn toa thuốc
+                            if (updateExaminationStatus.HasMedicalBill && updateExaminationStatus.MedicalBills != null)
+                            {
+                                var existMedicalBill = await this.unitOfWork.Repository<MedicalBills>().GetQueryable()
+                                    .Where(e => e.Id == updateExaminationStatus.MedicalBills.Id).FirstOrDefaultAsync();
+                                if (existMedicalBill != null)
+                                {
+                                    existMedicalBill = mapper.Map<MedicalBills>(updateExaminationStatus.MedicalBills);
+                                    existMedicalBill.Updated = DateTime.Now;
+                                    existMedicalBill.UpdatedBy = updateExaminationStatus.CreatedBy;
+                                    this.unitOfWork.Repository<MedicalBills>().Update(existMedicalBill);
+                                }
+                                else
+                                {
+                                    updateExaminationStatus.MedicalBills.Deleted = false;
+                                    updateExaminationStatus.MedicalBills.Active = true;
+                                    updateExaminationStatus.MedicalBills.Created = DateTime.Now;
+                                    updateExaminationStatus.MedicalBills.Status = (int)CatalogueUtilities.MedicalBillStatus.New;
+                                    updateExaminationStatus.MedicalBills.MedicalRecordDetailId = medicalRecordDetails.Id;
+                                    updateExaminationStatus.MedicalBills.HospitalId = medicalRecordDetails.HospitalId;
+                                    updateExaminationStatus.MedicalBills.ExaminationFormId = medicalRecordDetails.ExaminationFormId;
+                                    updateExaminationStatus.MedicalBills.CreatedBy = updateExaminationStatus.CreatedBy;
+                                    updateExaminationStatus.MedicalBills.MedicalRecordId = existExaminationFormInfo.RecordId;
+                                    // TH1: Tạo mã toa thuốc tự động
+                                    updateExaminationStatus.MedicalBills.Code = RandomUtilities.RandomString(8);
+                                    // Th2: Lấy mã toa thuốc từ API bệnh viện
+                                    //..............................
+                                    await this.unitOfWork.Repository<MedicalBills>().CreateAsync(updateExaminationStatus.MedicalBills);
+                                }
+                                await this.unitOfWork.SaveAsync();
+                                // Thêm thông tin chi tiết toa thuốc
+                                if (updateExaminationStatus.MedicalBills.Medicines != null && updateExaminationStatus.MedicalBills.Medicines.Any())
+                                {
+                                    foreach (var medicine in updateExaminationStatus.MedicalBills.Medicines)
+                                    {
+                                        var existMedicine = await this.unitOfWork.Repository<Medicines>().GetQueryable().Where(e => e.Id == medicine.Id).FirstOrDefaultAsync();
+                                        if (existMedicine != null)
+                                        {
+                                            medicine.MedicalBillId = updateExaminationStatus.MedicalBills.Id;
+                                            existMedicine = mapper.Map<Medicines>(medicine);
+                                            existMedicine.Updated = DateTime.Now;
+                                            existMedicine.UpdatedBy = updateExaminationStatus.CreatedBy;
+                                            await this.unitOfWork.Repository<Medicines>().CreateAsync(medicine);
+                                        }
+                                        else
+                                        {
+                                            medicine.MedicalBillId = updateExaminationStatus.MedicalBills.Id;
+                                            medicine.Created = DateTime.Now;
+                                            medicine.Active = true;
+                                            medicine.Deleted = false;
+                                            medicine.CreatedBy = updateExaminationStatus.CreatedBy;
+                                            await this.unitOfWork.Repository<Medicines>().CreateAsync(medicine);
+                                        }
+                                    }
+                                    await this.unitOfWork.SaveAsync();
+                                }
+
+                            }
+
+                            // Lưu thông tin file toa thuốc/ xét nghiệm/ siêu âm/ ....
+                            if (updateExaminationStatus.MedicalRecordDetailFiles != null && updateExaminationStatus.MedicalRecordDetailFiles.Any())
+                            {
+                                foreach (var item in updateExaminationStatus.MedicalRecordDetailFiles)
+                                {
+                                    item.Created = DateTime.Now;
+                                    item.CreatedBy = updateExaminationStatus.CreatedBy;
+                                    item.MedicalRecordDetailId = medicalRecordDetails.Id;
+                                    await unitOfWork.Repository<MedicalRecordDetailFiles>().CreateAsync(item);
+                                    await unitOfWork.SaveAsync();
+                                }
+                            }
+                        }
+                        break;
+                    // Nếu trường hợp hủy => check lại account user
+                    case (int)CatalogueUtilities.ExaminationStatus.Canceled:
+                        {
+                            await UpdateUserInfo(existExaminationFormInfo.RecordId);
+                        }
+                        break;
+                    //--------------------------- GỬI SMS STT CHO USER
+                    //--------------------------- idnex string
+                    //......................................................
+                    case (int)CatalogueUtilities.ExaminationStatus.Confirmed:
+                    case (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination:
+                        {
+                            var medicalRecordInfo = await unitOfWork.Repository<MedicalRecords>().GetQueryable().Where(e => e.Id == existExaminationFormInfo.RecordId).FirstOrDefaultAsync();
+                            if (medicalRecordInfo != null)
+                            {
+                                var userInfo = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == medicalRecordInfo.UserId).FirstOrDefaultAsync();
+                                if (userInfo != null)
+                                {
+                                    if (!string.IsNullOrEmpty(existExaminationFormInfo.ExaminationIndex))
+                                        await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", existExaminationFormInfo.ExaminationIndex));
+                                    else if (!string.IsNullOrEmpty(existExaminationFormInfo.ExaminationPaymentIndex))
+                                        await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", existExaminationFormInfo.ExaminationPaymentIndex));
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
                 await CreateExaminationHistory(existExaminationFormInfo, updateExaminationStatus.CreatedBy);
                 result = true;
             }
+
+
+            //if (updateExaminationStatus.Status == (int)CatalogueUtilities.ExaminationStatus.Confirmed || updateExaminationStatus.Status == (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination)
+            //{
+            //    var medicalRecordInfo = await unitOfWork.Repository<MedicalRecords>().GetQueryable().Where(e => e.Id == existExaminationFormInfo.RecordId).FirstOrDefaultAsync();
+            //    if (medicalRecordInfo != null)
+            //    {
+            //        var userInfo = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == medicalRecordInfo.UserId).FirstOrDefaultAsync();
+            //        if (userInfo != null)
+            //        {
+            //            if (!string.IsNullOrEmpty(existExaminationFormInfo.ExaminationIndex))
+            //                await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", existExaminationFormInfo.ExaminationIndex));
+            //            else if (!string.IsNullOrEmpty(existExaminationFormInfo.ExaminationPaymentIndex))
+            //                await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", existExaminationFormInfo.ExaminationPaymentIndex));
+            //        }
+            //    }
+            //}
+
             return result;
         }
 
@@ -153,13 +395,26 @@ namespace Medical.Service
                 //--------------------------- GỬI SMS STT CHO USER
                 //--------------------------- idnex string
                 //......................................................
+                if (item.Status == (int)CatalogueUtilities.ExaminationStatus.Confirmed || item.Status == (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination)
+                {
+                    var medicalRecordInfo = await unitOfWork.Repository<MedicalRecords>().GetQueryable().Where(e => e.Id == item.RecordId).FirstOrDefaultAsync();
+                    if (medicalRecordInfo != null)
+                    {
+                        var userInfo = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == medicalRecordInfo.UserId).FirstOrDefaultAsync();
+                        if (userInfo != null)
+                        {
+                            if (!string.IsNullOrEmpty(item.ExaminationIndex))
+                                await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", item.ExaminationIndex));
+                            else if (!string.IsNullOrEmpty(item.ExaminationPaymentIndex))
+                                await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", item.ExaminationPaymentIndex));
+                        }
+                    }
 
+                }
                 result = true;
             }
             return result;
         }
-
-        
 
         /// <summary>
         /// Cập nhật thông tin phiếu khám bệnh (lịch khám)
@@ -183,10 +438,24 @@ namespace Medical.Service
 
                     // Tạo lịch sử tạo phiếu khám bệnh
                     await CreateExaminationHistory(item, item.UpdatedBy);
-
                     //--------------------------- GỬI SMS STT CHO USER
                     //--------------------------- idnex string
                     //......................................................
+                    if (item.Status == (int)CatalogueUtilities.ExaminationStatus.Confirmed || item.Status == (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination)
+                    {
+                        var medicalRecordInfo = await unitOfWork.Repository<MedicalRecords>().GetQueryable().Where(e => e.Id == item.RecordId).FirstOrDefaultAsync();
+                        if (medicalRecordInfo != null)
+                        {
+                            var userInfo = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == medicalRecordInfo.UserId).FirstOrDefaultAsync();
+                            if (userInfo != null)
+                            {
+                                if (!string.IsNullOrEmpty(item.ExaminationIndex))
+                                    await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", item.ExaminationIndex));
+                                else if (!string.IsNullOrEmpty(item.ExaminationPaymentIndex))
+                                    await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", item.ExaminationPaymentIndex));
+                            }
+                        }
+                    }
                 }
             }
 
@@ -284,6 +553,9 @@ namespace Medical.Service
                 case (int)CatalogueUtilities.ExaminationStatus.WaitReExamination:
                     action = (int)CatalogueUtilities.ExaminationAction.Update;
                     break;
+                case (int)CatalogueUtilities.ExaminationStatus.FinishExamination:
+                    action = (int)CatalogueUtilities.ExaminationAction.FinishExamination;
+                    break;
                 default:
                     break;
             }
@@ -300,10 +572,15 @@ namespace Medical.Service
                 Action = action,
                 Comment = item.Comment,
                 Note = item.Note,
+                ExaminationDate = item.ExaminationDate,
+                ReExaminationDate = item.ReExaminationDate,
+                ExaminationIndex = item.ExaminationIndex,
+                ExaminationPaymentIndex = item.ExaminationPaymentIndex
             };
             await unitOfWork.Repository<ExaminationHistories>().CreateAsync(examinationHistories);
             await unitOfWork.SaveAsync();
         }
+
 
         /// <summary>
         /// Lưu thông tin lịch sử thanh toán + cập nhật số thứ tự cho người dùng
@@ -448,6 +725,78 @@ namespace Medical.Service
             return indexString;
         }
 
+        /// <summary>
+        /// Job cập nhật trạng thái phiếu
+        /// </summary>
+        /// <returns></returns>
+        public async Task UpdateCurrentExaminationJob()
+        {
+            TimeSpan ts = new TimeSpan(0, 0, 0, 0);
+            DateTime dateCheck = DateTime.Now + ts;
+
+            var examinationFormChecks = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable()
+                .Where(e => !e.Deleted && e.Active
+                && ((!e.ReExaminationDate.HasValue && e.ExaminationDate < dateCheck) || (e.ReExaminationDate.Value < dateCheck))
+                && (e.Status == (int)CatalogueUtilities.ExaminationStatus.Confirmed
+                || e.Status == (int)CatalogueUtilities.ExaminationStatus.WaitReExamination)
+                ).ToListAsync();
+            if (examinationFormChecks == null || !examinationFormChecks.Any())
+                return;
+            foreach (var examinationFormCheck in examinationFormChecks)
+            {
+                // Cập nhật trạng thái phiếu thành Đã hủy
+                examinationFormCheck.Status = (int)CatalogueUtilities.ExaminationStatus.Canceled;
+                examinationFormCheck.Updated = DateTime.Now;
+                examinationFormCheck.UpdatedBy = "Job";
+                Expression<Func<ExaminationForms, object>>[] includeExaminationProperties = new Expression<Func<ExaminationForms, object>>[]
+                {
+                    e => e.Status,
+                    e => e.Updated,
+                    e => e.UpdatedBy
+                };
+                await this.unitOfWork.Repository<ExaminationForms>().UpdateFieldsSaveAsync(examinationFormCheck, includeExaminationProperties);
+                // Cập nhật lại số lần vi phạm của user
+                await UpdateUserInfo(examinationFormCheck.RecordId);
+            }
+        }
+
+        private async Task UpdateUserInfo(int recordId)
+        {
+            var medicalRecordInfo = await this.unitOfWork.Repository<MedicalRecords>().GetQueryable()
+                    .Where(e => !e.Deleted && e.Active
+                    && e.Id == recordId
+                    ).FirstOrDefaultAsync()
+                    ;
+            // Lấy thông tin account user từ hồ sơ bệnh án
+            if (medicalRecordInfo != null)
+            {
+                var userInfo = await this.unitOfWork.Repository<Users>().GetQueryable()
+                    .Where(e => !e.Deleted && e.Active && e.Id == medicalRecordInfo.UserId).FirstOrDefaultAsync()
+                    ;
+                if (userInfo != null)
+                {
+                    if (!userInfo.TotalViolations.HasValue || userInfo.TotalViolations.Value == 0)
+                        userInfo.TotalViolations = 1;
+                    else userInfo.TotalViolations += 1;
+                    if (userInfo.TotalViolations == 3)
+                    {
+                        userInfo.IsLocked = true;
+                        userInfo.TotalViolations = 0;
+                        userInfo.LockedDate = DateTime.Now.AddDays(30);
+                    }
+                    Expression<Func<Users, object>>[] includeUserProperties = new Expression<Func<Users, object>>[]
+                    {
+                                        e => e.TotalViolations,
+                                        e => e.IsLocked,
+                                        e => e.LockedDate
+                    };
+                    await this.unitOfWork.Repository<Users>().UpdateFieldsSaveAsync(userInfo, includeUserProperties);
+                    await unitOfWork.SaveAsync();
+                    await this.medicalDbContext.SaveChangesAsync();
+                    medicalDbContext.Entry(userInfo).State = EntityState.Detached;
+                }
+            }
+        }
 
     }
 }

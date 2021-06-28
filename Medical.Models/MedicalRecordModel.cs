@@ -69,9 +69,9 @@ namespace Medical.Models
         [StringLength(1000, ErrorMessage = "Số kí tự của Địa chỉ phải nhỏ hơn 1000!")]
         public string Address { get; set; }
 
-        [StringLength(20, ErrorMessage = "Số kí tự của Số điện thoại phải nhỏ hơn 20!")]
+        [StringLength(12, ErrorMessage = "Số kí tự của số điện thoại phải lớn hơn 8 và nhỏ hơn 12!", MinimumLength = 9)]
         [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Số điện thoại không hợp lệ")]
+        [RegularExpression(@"^[0-9]+${9,11}", ErrorMessage = "Số điện thoại không hợp lệ")]
         public string Phone { get; set; }
         [StringLength(50, ErrorMessage = "Số kí tự của Email phải nhỏ hơn 50!")]
         [EmailAddress(ErrorMessage = "Email có định dạng không hợp lệ!")]
@@ -85,8 +85,48 @@ namespace Medical.Models
         /// </summary>
         public new int HospitalId { get; set; }
 
+        /// <summary>
+        /// Tiểu sử bệnh
+        /// </summary>
+        public string MedicalHistory { get; set; }
+
+        /// <summary>
+        /// Thông tin dị ứng
+        /// </summary>
+        public string AllergyInformation { get; set; }
 
         #region Extension Properties
+
+        /// <summary>
+        /// Tên quận
+        /// </summary>
+        public string DistrictName { get; set; }
+
+        /// <summary>
+        /// Tên phường
+        /// </summary>
+        public string WardName { get; set; }
+
+        /// <summary>
+        /// Tên thành phố
+        /// </summary>
+        public string CityName { get; set; }
+
+        /// <summary>
+        /// Tên quốc gia
+        /// </summary>
+        public string CountryName { get; set; }
+
+        /// <summary>
+        /// Tên nghề nghiệp
+        /// </summary>
+        public string JobName { get; set; }
+
+        /// <summary>
+        /// Tên dân tộc
+        /// </summary>
+        public string NationName { get; set; }
+
 
         /// <summary>
         /// Tên đầy đủ
@@ -103,6 +143,16 @@ namespace Medical.Models
         /// Thông tin người thân (nếu có)
         /// </summary>
         public IList<MedicalRecordAdditionModel> MedicalRecordAdditions { get; set; }
+
+        /// <summary>
+        /// Thông tin file của hồ sơ bệnh án
+        /// </summary>
+        public IList<MedicalRecordFileModel> MedicalRecordFiles { get; set; }
+
+        /// <summary>
+        /// Lịch sử khám
+        /// </summary>
+        public IList<MedicalRecordDetailModel> MedicalRecordDetails { get; set; }
 
 
         #endregion

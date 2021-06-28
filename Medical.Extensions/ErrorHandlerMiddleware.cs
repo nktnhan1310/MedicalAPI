@@ -60,8 +60,13 @@ namespace Medical.Extensions
                     default:
                         {
                             var RouteData = context.Request.Path.Value.Split("/");
-                            var controllerName = RouteData[2];
-                            var actionName = RouteData[3];
+                            string apiName = string.Empty;
+                            string actionName = string.Empty;
+
+                            if (RouteData.Count() >= 2)
+                                apiName = RouteData[1];
+                            if (RouteData.Count() >= 3)
+                                actionName = RouteData[2];
 
                             //var controllerActionDescriptor = context
                             //.GetEndpoint()
@@ -71,7 +76,7 @@ namespace Medical.Extensions
                             //var controllerName = controllerActionDescriptor.ControllerName;
                             //var actionName = controllerActionDescriptor.ActionName;
                             // unhandled error
-                            _logger.LogError(string.Format("{0} {1}: {2}", controllerName
+                            _logger.LogError(string.Format("{0} {1}: {2}", apiName
                                 , actionName, error?.Message));
                             response.StatusCode = (int)HttpStatusCode.InternalServerError;
                         }

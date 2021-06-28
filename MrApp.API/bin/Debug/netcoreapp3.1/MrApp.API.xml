@@ -4,11 +4,260 @@
         <name>MrApp.API</name>
     </assembly>
     <members>
+        <member name="M:MrApp.API.Controllers.AuthController.LoginAsync(Medical.Models.LoginModel)">
+            <summary>
+            Đăng nhập hệ thống
+            </summary>
+            <param name="loginModel"></param>
+            <returns></returns>
+        </member>
         <member name="M:MrApp.API.Controllers.AuthController.Register(Medical.Models.RegisterModel)">
             <summary>
             Đăng ký
             </summary>
             <param name="register"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.BaseController.UploadFile(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Upload Single File
+            </summary>
+            <param name="file"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.BaseController.UploadFiles(System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
+            <summary>
+            Upload Multiple File
+            </summary>
+            <param name="files"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetCountryCatalogue(System.String)">
+            <summary>
+            Lấy danh sách quốc gia
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetCityCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách thành phố
+            </summary>
+            <param name="countryId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetDistrictCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách quận
+            </summary>
+            <param name="cityId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetWardCatalogue(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách phường
+            </summary>
+            <param name="cityId"></param>
+            <param name="districtid"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetNationCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách dân tộc
+            </summary>
+            <param name="countryId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetJobCatalogue(System.String)">
+            <summary>
+            Lấy danh sách công việc
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetServiceTypeCatalogue(System.String)">
+            <summary>
+            Lấy danh sách dịch vụ của bệnh viện
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetHospitalCatalogue(System.String)">
+            <summary>
+            Lấy danh sách bệnh viện
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetChannelCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách kênh đăng kí
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetDegreeTypeCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách chức vị của bác sĩ
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetNotificationTypeCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách loại thông báo
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetAdditionServiceTypeCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách dịch vụ phát sinh của bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.CatalogueController.GetSpecialistTypeCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách chuyên khoa của bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetDoctorByHospital(System.Int32)">
+            <summary>
+            Lấy thông tin danh sách bác sĩ theo bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetAllExaminationSchedules(Medical.Entities.SearchExaminationScheduleDetailV2)">
+            <summary>
+            Lấy tất cả thông tin chuyên khoa khám bệnh
+            </summary>
+            <param name="searchExaminationScheduleDetailV2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetConfigTimeExaminationBySpecialistType(Medical.Entities.SearchExaminationScheduleForm)">
+            <summary>
+            Lấy thông tin danh sách ca khám theo bệnh viện và chuyên khoa được chọn
+            </summary>
+            <param name="searchExaminationScheduleForm"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetListDateExaminationByHospital(System.Int32,Medical.Entities.SearchExaminationDate)">
+            <summary>
+            Lấy danh sách ngày khám theo bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="searchExaminationDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetSpecialistTypeByExaminationDate(System.Int32,System.Nullable{System.DateTime})">
+            <summary>
+            Lấy thông tin danh sách chuyên khoa theo ngày khám được chọn
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="examinationDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetExaminationHistory(System.Int32)">
+            <summary>
+            Lấy thông tin lịch sử phiếu khám (lịch hen)
+            </summary>
+            <param name="examinationFormId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetPaymentHistory(System.Int32)">
+            <summary>
+            Lấy thông tin lịch sử thanh toán
+            </summary>
+            <param name="examinationFormId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.UpdateExaminationStatus(Medical.Models.UpdateExaminationStatusModel)">
+            <summary>
+            Cập nhật trạng thái phiếu khám
+            </summary>
+            <param name="updateExaminationStatusModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetById(System.Int32)">
+            <summary>
+            Lấy thông tin theo id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.AddItem(Medical.Models.ExaminationFormModel)">
+            <summary>
+            Đăng kí lịch khám
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.UpdateItem(System.Int32,Medical.Models.ExaminationFormModel)">
+            <summary>
+            Cập nhật thông tin lịch
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.DeleteItem(System.Int32)">
+            <summary>
+            Xóa item
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetPagedData(Medical.Entities.SearchExaminationForm)">
+            <summary>
+            Lấy danh sách item phân trang
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetFeeResponseExamination(Medical.Entities.Extensions.FeeCaculateExaminationRequest)">
+            <summary>
+            Lấy thông tin chi phí khám bệnh
+            </summary>
+            <param name="feeCaculateExaminationRequest"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetPaymentMethods">
+            <summary>
+            Lấy danh sách phương thức thanh toán
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.ExaminationFormController.GetHospitalBankInfos(System.Int32)">
+            <summary>
+            Lấy thông tin danh sách ngân hàng theo bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.HospitalController.GetAllHospital">
+            <summary>
+            Lấy danh sách tất cả bệnh viện
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.MedicalRecordController.GetById(System.Int32)">
+            <summary>
+            Lấy thông tin theo id
+            </summary>
+            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="M:MrApp.API.Controllers.MedicalRecordController.UpdateItem(System.Int32,Medical.Models.MedicalRecordModel)">
@@ -40,18 +289,87 @@
             <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:MrApp.API.Controllers.UserController.GetById(System.Int32)">
+        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.GetPagedListRecordDetail(Medical.Entities.SearchMedicalRecordDetail)">
+            <summary>
+            Lấy danh sách phân trang chi tiết hồ sơ
+            </summary>
+            <param name="searchMedicalRecordDetail"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.GetAllRecordDetail(System.Nullable{System.Int32})">
+            <summary>
+            Lấy tất cả chi tiết của hồ sơ bệnh án của user
+            </summary>
+            <param name="medicalRecordId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.GetRecordDetailInfo(System.Int32)">
+            <summary>
+            Lấy thông tin chi tiết của chi tiết hồ sơ bệnh án
+            </summary>
+            <param name="recordDetailId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.UpdateMedicalRecordDetailFile(System.Int32,Medical.Entities.UpdateMedicalRecordDetail)">
+            <summary>
+            Cập nhật thông tin file chi tiết hồ sơ bệnh án
+            </summary>
+            <param name="medicalRecordDetailId"></param>
+            <param name="updateMedicalRecordDetail"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.UpdateMedicalRecordDetailFile(System.Int32,Medical.Models.MedicalRecordDetailFileModel)">
+            <summary>
+            Cập nhật thông tin file chi tiết hồ sơ bệnh án
+            </summary>
+            <param name="medicalRecordDetailFileId"></param>
+            <param name="medicalRecordDetailFileModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.DeleteMedicalRecordDetailFile(System.Int32)">
+            <summary>
+            Xóa file chi tiết hồ sơ bệnh án
+            </summary>
+            <param name="medicalRecordDetailFileId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.NotificationController.GetTotalNotificationCount">
+            <summary>
+            Lấy ra tổng số notification chưa đọc
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.NotificationController.GetNotifications">
+            <summary>
+            Lấy thông tin thông báo của user
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.NotificationController.ReadNotification(System.Nullable{System.Int32},System.Boolean)">
+            <summary>
+            Kiểm tra user đọc thông báo chưa
+            </summary>
+            <param name="notificationId"></param>
+            <param name="isReadAll"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.SystemConfigurationController.GetConfiguration(System.String)">
+            <summary>
+            Lấy thông tin cấu hình hệ thông theo code
+            </summary>
+            <param name="configurationCode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.UserController.GetUserInfo">
             <summary>
             Lấy thông tin user theo Id
             </summary>
-            <param name="id"></param>
             <returns></returns>
         </member>
-        <member name="M:MrApp.API.Controllers.UserController.UpdateItem(System.Int32,Medical.Models.UserModel)">
+        <member name="M:MrApp.API.Controllers.UserController.UpdateItem(Medical.Models.UserModel)">
             <summary>
             Cập nhật thông tin Profile
             </summary>
-            <param name="id"></param>
             <param name="itemModel"></param>
             <returns></returns>
         </member>

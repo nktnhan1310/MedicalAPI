@@ -1,6 +1,7 @@
 ﻿using Medical.Entities.DomainEntity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
@@ -62,13 +63,37 @@ namespace Medical.Entities
         /// </summary>
         public DateTime? ExpiredDate { get; set; }
 
-        #region Extension Properties
+        /// <summary>
+        /// Họ tên người dùng
+        /// </summary>
+        public string UserFullName { get; set; }
 
         /// <summary>
-        /// Tên bệnh viện
+        /// Số lần vi phạm
         /// </summary>
-        [NotMapped]
-        public string HospitalName { get; set; }
+        public int? TotalViolations { get; set; }
+
+        /// <summary>
+        /// Cờ khóa tài khoản
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsLocked { get; set; }
+
+        /// <summary>
+        /// Khóa đến ngày
+        /// </summary>
+        public DateTime? LockedDate { get; set; }
+
+        /// <summary>
+        /// Giới tính
+        /// 0 => Nữ
+        /// 1 => Nam
+        /// </summary>
+        [DefaultValue(false)]
+        public bool Gender { get; set; }
+
+
+        #region Extension Properties
 
         /// <summary>
         /// Những nhóm người dùng thuộc
@@ -81,6 +106,13 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public IList<PermitObjectPermissions> PermitObjectPermissions { get; set; }
+
+        /// <summary>
+        /// List file của người dùng
+        /// </summary>
+        [NotMapped]
+        public IList<UserFiles> UserFiles { get; set; }
+
 
         #endregion
 

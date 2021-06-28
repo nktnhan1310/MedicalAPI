@@ -9,7 +9,7 @@ namespace Medical.Entities
     /// <summary>
     /// Lịch sử thanh toán theo phiếu khám
     /// </summary>
-    public class PaymentHistories : MedicalAppDomain
+    public class PaymentHistories : MedicalAppDomainHospital
     {
         /// <summary>
         /// Theo phương thức thanh toán
@@ -22,7 +22,7 @@ namespace Medical.Entities
         /// <summary>
         /// Theo mã lịch khám
         /// </summary>
-        public int ExaminationFormId { get; set; }
+        public int? ExaminationFormId { get; set; }
 
         /// <summary>
         /// Chi phí khám bệnh
@@ -34,16 +34,45 @@ namespace Medical.Entities
         /// </summary>
         public double? ServiceFee { get; set; }
 
+        /// <summary>
+        /// Mã chi tiết dịch vụ phát sinh
+        /// </summary>
+        public int? ExaminationFormDetailId { get; set; }
+
+        /// <summary>
+        /// Mã dịch vụ phát sinh
+        /// </summary>
+        public int? AdditionServiceId { get; set; }
+
+        /// <summary>
+        /// Mã toa thuốc
+        /// </summary>
+        public int? MedicalBillId { get; set; }
+
         #region Extension Properties
 
         /// <summary>
         /// Tên phương thức thanh toán
         /// </summary>
+        [NotMapped]
         public string PaymentMethodName { get; set; }
         /// <summary>
         /// Thông tin ngân hàng thanh toán
         /// </summary>
+        [NotMapped]
         public string BankInfo { get; set; }
+
+        /// <summary>
+        /// Tên dịch vụ phát sinh
+        /// </summary>
+        [NotMapped]
+        public string AdditionServiceName { get; set; }
+
+        /// <summary>
+        /// Mã toa thuốc
+        /// </summary>
+        [NotMapped]
+        public string MedicalBillCode { get; set; }
 
         #endregion
 

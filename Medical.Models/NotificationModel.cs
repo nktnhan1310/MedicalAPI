@@ -35,9 +35,9 @@ namespace Medical.Models
         #region Extension Properties
 
         /// <summary>
-        /// Tên bệnh viện
+        /// Cờ check thông báo đã được đọc chưa
         /// </summary>
-        public string HospitalName { get; set; }
+        public bool IsRead { get; set; }
 
         /// <summary>
         /// Từ user

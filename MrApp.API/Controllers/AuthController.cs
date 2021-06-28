@@ -22,15 +22,61 @@ namespace MrApp.API.Controllers
 {
     [Route("api/authenticate")]
     [ApiController]
-    [Description("Đăng nhập/đăng ký/quên mật khẩu/ đổi mật khẩu")]
+    [Description("Authenticate")]
     public class AuthController : AuthCoreController
     {
-        private readonly IUserService userService;
         private readonly IUserGroupService userGroupService;
         public AuthController(IServiceProvider serviceProvider, IConfiguration configuration, IMapper mapper, ILogger<AuthCoreController> logger) : base(serviceProvider, configuration, mapper, logger)
         {
             userService = serviceProvider.GetRequiredService<IUserService>();
             userGroupService = serviceProvider.GetRequiredService<IUserGroupService>();
+        }
+
+        /// <summary>
+        /// Đăng nhập hệ thống
+        /// </summary>
+        /// <param name="loginModel"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public override async Task<AppDomainResult> LoginAsync([FromBody] LoginModel loginModel)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (ModelState.IsValid)
+            {
+                success = await this.userService.Verify(loginModel.UserName, loginModel.Password, true);
+                if (success)
+                {
+                    var userInfos = await this.userService.GetAsync(e => !e.Deleted 
+                    && (e.UserName == loginModel.UserName
+                    || e.Phone == loginModel.UserName
+                    || e.Email == loginModel.UserName
+                    ));
+                    if (userInfos != null && userInfos.Any())
+                    {
+                        var userModel = mapper.Map<UserModel>(userInfos.FirstOrDefault());
+                        var token = await GenerateJwtToken(userModel);
+                        // Lưu giá trị token
+                        await this.userService.UpdateUserToken(userModel.Id, token, true);
+                        appDomainResult = new AppDomainResult()
+                        {
+                            Success = true,
+                            Data = new
+                            {
+                                token = token,
+                            },
+                            ResultCode = (int)HttpStatusCode.OK
+                        };
+
+                    }
+                }
+                else
+                    throw new UnauthorizedAccessException("Tên đăng nhập hoặc mật khẩu không chính xác");
+            }
+            else
+                throw new AppException(ModelState.GetErrorMessage());
+            return appDomainResult;
         }
 
         /// <summary>

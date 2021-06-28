@@ -56,6 +56,11 @@ namespace Medical.Models
         [StringLength(1000)]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Thông tin user
+        /// </summary>
+        public int? UserId { get; set; }
+
         #region Extension Properties
 
         /// <summary>
@@ -66,10 +71,7 @@ namespace Medical.Models
         /// Tên chuyên khoa
         /// </summary>
         public string SpecialistTypeName { get; set; }
-        /// <summary>
-        /// Tên bệnh viện
-        /// </summary>
-        public string HospitalName { get; set; }
+       
         /// <summary>
         /// Chuyên khoa theo từng bác sĩ
         /// </summary>

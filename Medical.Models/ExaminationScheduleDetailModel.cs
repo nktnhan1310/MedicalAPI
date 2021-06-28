@@ -42,6 +42,27 @@ namespace Medical.Models
         public string DoctorDisplayName { get; set; }
 
         /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        public string DoctorCode { get; set; }
+
+        /// <summary>
+        /// Ngày khám
+        /// </summary>
+        public DateTime? ExaminationDate { get; set; }
+
+        /// <summary>
+        /// Ngày khám hiển thị
+        /// </summary>
+        public string ExaminationDateDisplay
+        {
+            get
+            {
+                return ExaminationDate.HasValue ? ExaminationDate.Value.ToString("dd/MM/yyyy") : string.Empty;
+            }
+        }
+
+        /// <summary>
         /// Phòng khám
         /// </summary>
         public string RoomExaminationName { get; set; }

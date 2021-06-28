@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Medical.Core.App.Controllers;
 using Medical.Extensions;
-using MedicalAPI.Controllers.BaseHospital;
 
 namespace MedicalAPI.Controllers
 {

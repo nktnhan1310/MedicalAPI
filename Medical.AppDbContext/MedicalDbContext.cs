@@ -36,6 +36,9 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<Wards>(x => x.ToTable("Wards"));
             modelBuilder.Entity<Relations>(x => x.ToTable("Relations"));
             modelBuilder.Entity<PaymentMethods>(x => x.ToTable("PaymentMethods"));
+            modelBuilder.Entity<AdditionServices>(x => x.ToTable("AdditionServices"));
+            modelBuilder.Entity<MedicalBills>(x => x.ToTable("MedicalBills"));
+            modelBuilder.Entity<Medicines>(x => x.ToTable("Medicines"));
 
 
             #endregion
@@ -67,12 +70,21 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<UserInGroups>(x => x.ToTable("UserInGroups"));
             modelBuilder.Entity<NotificationApplicationUser>(x => x.ToTable("NotificationApplicationUser"));
 
+            modelBuilder.Entity<MedicalRecordFiles>(x => x.ToTable("MedicalRecordFiles"));
+            modelBuilder.Entity<MedicalRecordDetails>(x => x.ToTable("MedicalRecordDetails"));
+            modelBuilder.Entity<MedicalRecordDetailFiles>(x => x.ToTable("MedicalRecordDetailFiles"));
+
+            modelBuilder.Entity<UserFiles>(x => x.ToTable("UserFiles"));
+            modelBuilder.Entity<ExaminationFormDetails>(x => x.ToTable("ExaminationFormDetails"));
+
+
+
             #region Configs
 
             modelBuilder.Entity<EmailConfiguration>(x => x.ToTable("EmailConfiguration"));
             modelBuilder.Entity<SMSConfiguration>(x => x.ToTable("SMSConfiguration"));
             modelBuilder.Entity<HospitalConfigFees>(x => x.ToTable("HospitalConfigFee"));
-
+            modelBuilder.Entity<SystemConfiguartions>(x => x.ToTable("SystemConfiguartions"));
 
             #endregion
 
@@ -88,6 +100,7 @@ namespace Medical.AppDbContext
 
         #region Config
 
+        public DbSet<SystemConfiguartions> SystemConfiguartions { get; set; }
         public DbSet<HospitalConfigFees> HospitalConfigFee { get; set; }
         public DbSet<EmailConfiguration> EmailConfiguration { get; set; }
         public DbSet<SMSConfiguration> SMSConfiguration { get; set; }
@@ -97,6 +110,9 @@ namespace Medical.AppDbContext
 
         #region Catalogue
 
+        public DbSet<Medicines> Medicines { get; set; }
+        public DbSet<MedicalBills> MedicalBills { get; set; }
+        public DbSet<AdditionServices> AdditionServices { get; set; }
         public DbSet<PaymentMethods> PaymentMethods { get; set; }
         public DbSet<Relations> Relations { get; set; }
         public DbSet<UserInGroups> UserInGroups { get; set; }
@@ -125,6 +141,15 @@ namespace Medical.AppDbContext
         public DbSet<Wards> Wards { get; set; }
 
         #endregion
+
+        public DbSet<ExaminationFormDetails> ExaminationFormDetails { get; set; }
+
+        public DbSet<MedicalRecordDetails> MedicalRecordDetails { get; set; }
+        public DbSet<MedicalRecordDetailFiles> MedicalRecordDetailFiles { get; set; }
+
+
+        public DbSet<MedicalRecordFiles> MedicalRecordFiles { get; set; }
+        public DbSet<UserFiles> UserFiles { get; set; }
 
         public DbSet<NotificationApplicationUser> NotificationApplicationUser { get; set; }
         public DbSet<ConfigRoomExaminations> ConfigRoomExaminations { get; set; }

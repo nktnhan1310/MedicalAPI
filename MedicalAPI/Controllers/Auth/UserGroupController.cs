@@ -15,7 +15,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Medical.Core.App.Controllers;
 using Microsoft.AspNetCore.Authorization;
-using MedicalAPI.Controllers.BaseHospital;
 
 namespace MedicalAPI.Controllers
 {
@@ -27,18 +26,56 @@ namespace MedicalAPI.Controllers
     {
         private readonly IUserInGroupService userInGroupService;
         private readonly IPermissionService permissionService;
-        
-
+        private readonly IPermitObjectPermissionService permitObjectPermissionService;
 
         public UserGroupController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<UserGroups, UserGroupModel, BaseHospitalSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.catalogueService = serviceProvider.GetRequiredService<IUserGroupService>();
             userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
             permissionService = serviceProvider.GetRequiredService<IPermissionService>();
-            
+            permitObjectPermissionService = serviceProvider.GetRequiredService<IPermitObjectPermissionService>();
         }
 
-        
+        /// <summary>
+        /// Lấy thông tin nhóm theo Id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public override async Task<AppDomainResult> GetById(int id)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+
+            var item = await this.catalogueService.GetByIdAsync(id);
+            if (item != null)
+            {
+                if (LoginContext.Instance.CurrentUser != null
+                    && (!LoginContext.Instance.CurrentUser.HospitalId.HasValue
+                    || (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId == item.HospitalId)))
+                {
+                    var itemModel = mapper.Map<UserGroupModel>(item);
+                    var userInGroups = await this.userInGroupService.GetAsync(e => !e.Deleted && e.UserGroupId == id);
+                    if (userInGroups != null)
+                        itemModel.UserInGroups = mapper.Map<IList<UserInGroupModel>>(userInGroups);
+
+                    var permitObjectPermissions = await this.permitObjectPermissionService.GetAsync(e => !e.Deleted && e.UserGroupId == id);
+                    if (permitObjectPermissions != null)
+                        itemModel.PermitObjectPermissions = mapper.Map<IList<PermitObjectPermissionModel>>(permitObjectPermissions);
+                    appDomainResult = new AppDomainResult()
+                    {
+                        Success = true,
+                        Data = itemModel,
+                        ResultCode = (int)HttpStatusCode.OK
+                    };
+                }
+                else throw new KeyNotFoundException("Item không tồn tại");
+            }
+            else
+                throw new KeyNotFoundException("Item không tồn tại");
+
+            return appDomainResult;
+        }
 
         /// <summary>
         /// Lấy danh sách quyền

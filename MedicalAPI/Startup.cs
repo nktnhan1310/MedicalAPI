@@ -29,6 +29,9 @@ using System.IO;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.SignalR;
 using Medical.Utilities;
+using Hangfire;
+using Hangfire.SqlServer;
+using Medical.Interface.Services;
 
 namespace MedicalAPI
 {
@@ -139,6 +142,23 @@ namespace MedicalAPI
 
             });
             services.AddSignalR();
+
+            // Add Hangfire services.
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSqlServerStorage(Configuration.GetConnectionString("HangFire"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    UsePageLocksOnDequeue = true,
+                    DisableGlobalLocks = true
+                }));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
+
             //services.AddControllers();
         }
 
@@ -186,10 +206,12 @@ namespace MedicalAPI
             app.UseCors(MyAllowSpecificOrigins);
             app.UseHttpsRedirection();
             app.UseAuthentication();
-
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<JwtMiddleware>();
             app.UseAuthorization();
+
+            app.UseHangfireDashboard();
+            RecurringJob.AddOrUpdate<IExaminationFormService>("CheckExistExaminationJob", job => job.UpdateCurrentExaminationJob(), "0 0 * * *");
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -206,6 +228,7 @@ namespace MedicalAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHangfireDashboard();
                 endpoints.MapHub<NotificationHub>("/hubs/notifications");
             });
             

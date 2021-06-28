@@ -177,7 +177,6 @@ namespace MedicalAPI.Controllers
             return appDomainResult;
         }
 
-
         /// <summary>
         /// Lấy thông tin chi tiết ca
         /// </summary>

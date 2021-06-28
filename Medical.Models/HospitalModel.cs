@@ -25,9 +25,9 @@ namespace Medical.Models
         public string Name { get; set; }
         [StringLength(500, ErrorMessage = "Địa chỉ bệnh viện tối đa 500 kí tự")]
         public string Address { get; set; }
-        [StringLength(20)]
+        [StringLength(12, ErrorMessage = "Số kí tự của số điện thoại phải lớn hơn 8 và nhỏ hơn 12!", MinimumLength = 9)]
         [DataType(DataType.PhoneNumber)]
-        [RegularExpression(@"^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$", ErrorMessage = "Số điện thoại không hợp lệ")]
+        [RegularExpression(@"^[0-9]+${9,11}", ErrorMessage = "Số điện thoại không hợp lệ")]
         public string Phone { get; set; }
         /// <summary>
         /// Đường dẫn website (nếu có)

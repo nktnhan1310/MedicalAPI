@@ -37,10 +37,6 @@ namespace Medical.Models
 
         #region Extension Properties
 
-        /// <summary>
-        /// Tên bệnh viện
-        /// </summary>
-        public string HospitalName { get; set; }
 
         /// <summary>
         /// Học vị bác sĩ
@@ -82,6 +78,11 @@ namespace Medical.Models
         /// Tên bác sĩ
         /// </summary>
         public string DoctorName { get; set; }
+
+        /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        public string DoctorCode { get; set; }
 
         /// <summary>
         /// Chuyên khoa

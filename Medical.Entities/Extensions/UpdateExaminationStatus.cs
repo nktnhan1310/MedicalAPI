@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -31,6 +32,11 @@ namespace Medical.Entities.Extensions
         public int? Status { get; set; }
 
         /// <summary>
+        /// Ngày tái khám
+        /// </summary>
+        public DateTime? ReExaminationDate { get; set; }
+
+        /// <summary>
         /// Nhập comment xác nhận/hủy
         /// </summary>
         [StringLength(1000)]
@@ -41,5 +47,27 @@ namespace Medical.Entities.Extensions
         /// </summary>
         public string CreatedBy { get; set; }
 
+        /// <summary>
+        /// Mã toa thuốc
+        /// </summary>
+        public string PrescriptionCode { get; set; }
+
+        /// <summary>
+        /// Toa thuốc (list chữ)
+        /// </summary>
+        public string Prescription { get; set; }
+
+        /// <summary>
+        /// List file toa thuốc/xét nghiệm/ siêu âm...
+        /// </summary>
+        public IList<MedicalRecordDetailFiles> MedicalRecordDetailFiles { get; set; }
+
+        [DefaultValue(false)]
+        public bool HasMedicalBill { get; set; }
+
+        /// <summary>
+        /// Toa thuốc
+        /// </summary>
+        public MedicalBills MedicalBills { get; set; }
     }
 }

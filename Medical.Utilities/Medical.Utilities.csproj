@@ -12,14 +12,9 @@
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.7" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="Medical.Entities">
-      <HintPath>..\Medical.Entities\bin\netcoreapp3.1\Medical.Entities.dll</HintPath>
-    </Reference>
+    <PackageReference Include="QRCoder" Version="1.4.1" />
   </ItemGroup>
 
 </Project>

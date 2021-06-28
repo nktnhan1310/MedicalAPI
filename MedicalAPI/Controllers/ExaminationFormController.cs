@@ -16,6 +16,8 @@ using System.Net;
 using System.Threading.Tasks;
 using Medical.Core.App.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
+using Microsoft.Extensions.Configuration;
 
 namespace MedicalAPI.Controllers
 {
@@ -35,8 +37,11 @@ namespace MedicalAPI.Controllers
         private readonly IPaymentMethodService paymentMethodService;
         private readonly IBankInfoService bankInfoService;
         private readonly IHospitalConfigFeeService hospitalConfigFeeService;
-        public ExaminationFormController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        private readonly IExaminationFormDetailService examinationFormDetailService;
+        private IConfiguration configuration;
+        public ExaminationFormController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>> logger, IWebHostEnvironment env, IConfiguration configuration) : base(serviceProvider, logger, env)
         {
+            this.configuration = configuration;
             this.domainService = serviceProvider.GetRequiredService<IExaminationFormService>();
             paymentHistoryService = serviceProvider.GetRequiredService<IPaymentHistoryService>();
             examinationHistoryService = serviceProvider.GetRequiredService<IExaminationHistoryService>();
@@ -48,14 +53,16 @@ namespace MedicalAPI.Controllers
             paymentMethodService = serviceProvider.GetRequiredService<IPaymentMethodService>();
             bankInfoService = serviceProvider.GetRequiredService<IBankInfoService>();
             hospitalConfigFeeService = serviceProvider.GetRequiredService<IHospitalConfigFeeService>();
+            examinationFormDetailService = serviceProvider.GetRequiredService<IExaminationFormDetailService>();
         }
-        
+
         /// <summary>
         /// Lấy tất cả thông tin chuyên khoa khám bệnh
         /// </summary>
         /// <param name="searchExaminationScheduleDetailV2"></param>
         /// <returns></returns>
         [HttpGet("get-all-examination-schedules")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetAllExaminationSchedules([FromQuery] SearchExaminationScheduleDetailV2 searchExaminationScheduleDetailV2)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -77,6 +84,7 @@ namespace MedicalAPI.Controllers
         /// <param name="searchExaminationScheduleForm"></param>
         /// <returns></returns>
         [HttpGet("get-config-time-examination-by-specialist-type")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetConfigTimeExaminationBySpecialistType([FromQuery] SearchExaminationScheduleForm searchExaminationScheduleForm)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -98,6 +106,7 @@ namespace MedicalAPI.Controllers
         /// <param name="searchExaminationDate"></param>
         /// <returns></returns>
         [HttpGet("get-list-examination-date-by-hospital/{hospitalId}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetListDateExaminationByHospital(int hospitalId, [FromQuery] SearchExaminationDate searchExaminationDate)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -124,6 +133,7 @@ namespace MedicalAPI.Controllers
         /// <param name="examinationDate"></param>
         /// <returns></returns>
         [HttpGet("get-specialist-type-by-date/{hospitalId}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetSpecialistTypeByExaminationDate(int hospitalId, [FromQuery] DateTime? examinationDate)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -152,6 +162,7 @@ namespace MedicalAPI.Controllers
         /// <param name="hospitalId"></param>
         /// <returns></returns>
         [HttpGet("get-medical-record-by-hospital/hospitalId")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetMedicalRecordByHospital(int? hospitalId)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -168,6 +179,7 @@ namespace MedicalAPI.Controllers
                     Email = e.Email,
                     Phone = e.Phone,
                     CertificateNo = e.CertificateNo,
+                    UserId = e.UserId,
                 });
             appDomainResult = new AppDomainResult()
             {
@@ -221,7 +233,7 @@ namespace MedicalAPI.Controllers
         }
 
         /// <summary>
-        /// Cập nhật trạng thái phiếu khám sức khỏe
+        /// Cập nhật trạng thái phiếu khám
         /// </summary>
         /// <param name="updateExaminationStatusModel"></param>
         /// <returns></returns>
@@ -232,15 +244,77 @@ namespace MedicalAPI.Controllers
             AppDomainResult appDomainResult = new AppDomainResult();
             if (ModelState.IsValid)
             {
-                var updateExaminationStatus = mapper.Map<UpdateExaminationStatus>(updateExaminationStatusModel);
-                bool isSuccess = await this.examinationFormService.UpdateExaminationStatus(updateExaminationStatus);
-                if (isSuccess)
+                List<string> filePaths = new List<string>();
+                List<string> folderUploadPaths = new List<string>();
+                if (updateExaminationStatusModel.MedicalRecordDetailFiles != null && updateExaminationStatusModel.MedicalRecordDetailFiles.Any())
                 {
-                    appDomainResult.Success = isSuccess;
+                    foreach (var file in updateExaminationStatusModel.MedicalRecordDetailFiles)
+                    {
+
+                        // ------- START GET URL FOR FILE
+                        string folderUploadPath = string.Empty;
+                        var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
+                        if (isProduct)
+                            folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
+                        else
+                            folderUploadPath = Path.Combine(Directory.GetCurrentDirectory());
+                        string filePath = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, file.FileName);
+
+                        string folderUplocadUrl = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, MEDICAL_RECORD_FOLDER_NAME);
+                        string fileUploadPath = Path.Combine(folderUplocadUrl, Path.GetFileName(filePath));
+                        // Kiểm tra có tồn tại file trong temp chưa?
+                        if (System.IO.File.Exists(filePath) && !System.IO.File.Exists(fileUploadPath))
+                        {
+
+                            FileUtils.CreateDirectory(folderUplocadUrl);
+                            FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
+                            folderUploadPaths.Add(fileUploadPath);
+                            string fileUrl = Path.Combine(UPLOAD_FOLDER_NAME, MEDICAL_RECORD_FOLDER_NAME, Path.GetFileName(filePath));
+                            // ------- END GET URL FOR FILE
+                            filePaths.Add(filePath);
+                            file.Created = DateTime.Now;
+                            file.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+                            file.Active = true;
+                            file.Deleted = false;
+                            file.FileName = Path.GetFileName(filePath);
+                            file.FileExtension = Path.GetExtension(filePath);
+                            file.ContentType = ContentFileTypeUtilities.GetMimeType(filePath);
+                            file.FileUrl = fileUrl;
+                        }
+                        else
+                        {
+                            file.Updated = DateTime.Now;
+                            file.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+                        }
+                    }
+                }
+                var updateExaminationStatus = mapper.Map<UpdateExaminationStatus>(updateExaminationStatusModel);
+                bool success = await this.examinationFormService.UpdateExaminationStatus(updateExaminationStatus);
+                if (success)
+                {
                     appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                    // Remove file trong thư mục temp
+                    if (filePaths.Any())
+                    {
+                        foreach (var filePath in filePaths)
+                        {
+                            System.IO.File.Delete(filePath);
+                        }
+                    }
                 }
                 else
+                {
+                    if (folderUploadPaths.Any())
+                    {
+                        foreach (var folderUploadPath in folderUploadPaths)
+                        {
+                            System.IO.File.Delete(folderUploadPath);
+                        }
+                    }
                     throw new Exception("Lỗi trong quá trình xử lý");
+                }
+                
+                appDomainResult.Success = success;
             }
             else
                 throw new AppException(ModelState.GetErrorMessage());
@@ -263,6 +337,7 @@ namespace MedicalAPI.Controllers
         /// <param name="feeCaculateExaminationRequest"></param>
         /// <returns></returns>
         [HttpGet("get-caculate-fee-response")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetFeeResponseExamination([FromQuery] FeeCaculateExaminationRequest feeCaculateExaminationRequest)
         {
             if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
@@ -284,6 +359,7 @@ namespace MedicalAPI.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("get-list-payment-method")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetPaymentMethods()
         {
             var paymentMethods = await this.paymentMethodService.GetAsync(e => !e.Deleted);
@@ -300,6 +376,7 @@ namespace MedicalAPI.Controllers
         /// <param name="hospitalId"></param>
         /// <returns></returns>
         [HttpGet("get-hospital-bank-info/{hospitalId}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetHospitalBankInfos(int hospitalId)
         {
             if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)

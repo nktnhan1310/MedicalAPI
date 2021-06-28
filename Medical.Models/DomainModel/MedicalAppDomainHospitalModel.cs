@@ -10,5 +10,10 @@ namespace Medical.Models.DomainModel
         /// Mã bệnh viện
         /// </summary>
         public int? HospitalId { get; set; }
+
+        /// <summary>
+        /// Tên bệnh viện
+        /// </summary>
+        public string HospitalName { get; set; }
     }
 }

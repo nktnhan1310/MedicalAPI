@@ -18,17 +18,21 @@ namespace Medical.Extensions
     public class MedicalAppAuthorize : AuthorizeAttribute, IAuthorizationFilter
     {
         private readonly string[] Permissions;
+        private readonly string ControllerName;
 
-        public MedicalAppAuthorize(string[] permission)
+        public MedicalAppAuthorize(string[] permission, string controllerName = "")
         {
             Permissions = permission;
+            ControllerName = controllerName;
         }
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
             var user = (UserLoginModel)context.HttpContext.Items["User"];//.User;
             string controllerName = string.Empty;
-            if (context.ActionDescriptor is ControllerActionDescriptor descriptor)
+            if (!string.IsNullOrEmpty(ControllerName))
+                controllerName = ControllerName;
+            else if (context.ActionDescriptor is ControllerActionDescriptor descriptor)
             {
                 controllerName = descriptor.ControllerName;
             }

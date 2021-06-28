@@ -7,6 +7,25 @@ namespace Medical.Utilities
     public class CatalogueUtilities
     {
         /// <summary>
+        /// Trạng thái toa thuốc
+        /// </summary>
+        public enum MedicalBillStatus
+        {
+            /// <summary>
+            /// Mới tạo
+            /// </summary>
+            New = 0,
+            /// <summary>
+            /// Chờ lấy thuốc
+            /// </summary>
+            Wait = 1,
+            /// <summary>
+            /// Hoàn thành đơn thuốc
+            /// </summary>
+            Finished = 2
+        }
+
+        /// <summary>
         /// Loại dịch vụ
         /// </summary>
         public enum ServiceType
@@ -57,6 +76,29 @@ namespace Medical.Utilities
         }
 
         /// <summary>
+        /// Trạng thái thanh toán
+        /// </summary>
+        public enum AdditionServiceStatus
+        {
+            /// <summary>
+            /// Trạng thái mới
+            /// </summary>
+            New = 0,
+            /// <summary>
+            /// Chờ xác nhận thanh toán
+            /// </summary>
+            WaitConfirmPayment = 1,
+            /// <summary>
+            /// Chờ thực hiện dịch vụ
+            /// </summary>
+            WaitForService = 2,
+            /// <summary>
+            /// Hoàn thành dịch vụ
+            /// </summary>
+            Finish = 3
+        }
+
+        /// <summary>
         /// Trạng thái của phiếu khám bệnh
         /// </summary>
         public enum ExaminationStatus
@@ -78,13 +120,21 @@ namespace Medical.Utilities
             /// </summary>
             Canceled = 3,
             /// <summary>
-            /// Chờ xác nhận tái khám
+            /// Chờ tái khám
             /// </summary>
             WaitReExamination = 4,
             /// <summary>
-            /// Đã xác nhận tái khám
+            /// Xác nhận tái khám
             /// </summary>
-            ConfirmedReExamination = 5
+            ConfirmedReExamination = 5,
+            /// <summary>
+            /// Tái khám
+            /// </summary>
+            ReExamination = 6,
+            /// <summary>
+            /// Khám hoàn tất
+            /// </summary>
+            FinishExamination = 7,
         }
 
         /// <summary>
@@ -111,8 +161,12 @@ namespace Medical.Utilities
             /// <summary>
             /// Xác nhận tái khám
             /// </summary>
-            ConfirmReExamination = 4
-            
+            ConfirmReExamination = 4,
+            /// <summary>
+            /// Hoàn thành khám
+            /// </summary>
+            FinishExamination = 5
+
         }
 
         public enum ExaminationType

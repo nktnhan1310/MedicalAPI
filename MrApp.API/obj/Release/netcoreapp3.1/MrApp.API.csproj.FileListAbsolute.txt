@@ -94,7 +94,6 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\M
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\Medical.Models.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\Medical.Service.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\Medical.Utilities.pdb
-E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\MrApp.API.csprojAssemblyReference.cache
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\MrApp.API.AssemblyInfoInputs.cache
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\MrApp.API.AssemblyInfo.cs
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\MrApp.API.csproj.CoreCompileInputs.cache
@@ -108,3 +107,4 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\M
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\MrApp.API.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\MrApp.API.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\MrApp.API.genruntimeconfig.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\MrApp.API.csproj.AssemblyReference.cache

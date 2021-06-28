@@ -2,7 +2,6 @@
 using Medical.Entities;
 using Medical.Interface.Services;
 using Medical.Models;
-using MedicalAPI.Controllers.BaseHospital;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

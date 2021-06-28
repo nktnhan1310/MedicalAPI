@@ -29,11 +29,7 @@ namespace Medical.Entities
 
         #region Extension Properties
 
-        /// <summary>
-        /// Tên bệnh viện
-        /// </summary>
-        [NotMapped]
-        public string HospitalName { get; set; }
+        
 
         /// <summary>
         /// Học vị bác sĩ
@@ -112,6 +108,12 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public string DoctorName { get; set; }
+
+        /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        [NotMapped]
+        public string DoctorCode { get; set; }
 
         /// <summary>
         /// Chuyên khoa

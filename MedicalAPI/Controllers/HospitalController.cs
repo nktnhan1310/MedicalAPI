@@ -47,6 +47,26 @@ namespace MedicalAPI.Controllers
         }
 
         /// <summary>
+        /// Lấy all thông tin danh sách item
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
+        public override async Task<AppDomainResult> Get()
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            var items = await this.domainService.GetAllAsync();
+            var itemModels = mapper.Map<IList<HospitalModel>>(items);
+            appDomainResult = new AppDomainResult()
+            {
+                Success = true,
+                Data = itemModels,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+            return appDomainResult;
+        }
+
+        /// <summary>
         /// Lấy thông tin bệnh viện
         /// </summary>
         /// <param name="id"></param>
@@ -56,6 +76,8 @@ namespace MedicalAPI.Controllers
         public override async Task<AppDomainResult> GetById(int id)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                id = LoginContext.Instance.CurrentUser.HospitalId.Value;
             var item = await this.domainService.GetByIdAsync(id, e => new Hospitals()
             {
                 Id = e.Id,
@@ -143,7 +165,7 @@ namespace MedicalAPI.Controllers
                 itemModel.Deleted = false;
                 itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
                 itemModel.Created = DateTime.Now;
-                
+
                 var item = mapper.Map<Hospitals>(itemModel);
                 if (item != null)
                 {
@@ -157,33 +179,31 @@ namespace MedicalAPI.Controllers
                     {
                         foreach (var file in item.HospitalFiles)
                         {
-                            string filePath = Path.Combine(env.ContentRootPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, file.FileName);
+                            string folderUploadPath = string.Empty;
+                            var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
 
-
-
+                            if (isProduct)
+                                folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
+                            else
+                                folderUploadPath = Path.Combine(Directory.GetCurrentDirectory());
+                            string filePath = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, file.FileName);
+                            string folderUploadUrl = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME);
+                            string fileUploadPath = Path.Combine(folderUploadUrl, Path.GetFileName(filePath));
                             // Kiểm tra có tồn tại file trong temp chưa?
-                            if (System.IO.File.Exists(filePath))
+                            if (System.IO.File.Exists(filePath) && !System.IO.File.Exists(fileUploadPath))
                             {
-                                string folderUploadPath = string.Empty;
-                                var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
-
-                                if (isProduct)
-                                    folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
-                                else
-                                    folderUploadPath = Path.Combine(Directory.GetCurrentDirectory(), UPLOAD_FOLDER_NAME);
-                                string fileUploadPath = Path.Combine(folderUploadPath, Path.GetFileName(filePath));
-                                FileUtils.CreateDirectory(folderUploadPath);
+                                FileUtils.CreateDirectory(folderUploadUrl);
                                 FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
-                                folderUploadPaths.Add(folderUploadPath);
+                                folderUploadPaths.Add(fileUploadPath);
                                 //var currentLinkSite = $"{Medical.Extensions.HttpContext.Current.Request.Scheme}://{Medical.Extensions.HttpContext.Current.Request.Host}/{UPLOAD_FOLDER_NAME}/";
                                 string fileUrl = Path.Combine(UPLOAD_FOLDER_NAME, Path.GetFileName(filePath));
 
                                 filePaths.Add(filePath);
                                 file.Created = DateTime.Now;
-                                file.CreatedBy = "admin";
+                                file.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
                                 file.Active = true;
                                 file.Deleted = false;
-                                file.FileContent = System.IO.File.ReadAllBytes(filePath);
+                                //file.FileContent = System.IO.File.ReadAllBytes(filePath);
                                 file.FileName = Path.GetFileName(filePath);
                                 file.FileExtension = Path.GetExtension(filePath);
                                 file.HospitalId = item.Id;
@@ -243,6 +263,8 @@ namespace MedicalAPI.Controllers
                 itemModel.Id = id;
                 itemModel.Updated = DateTime.Now;
                 itemModel.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+                if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                    itemModel.Id = LoginContext.Instance.CurrentUser.HospitalId.Value;
                 var item = mapper.Map<Hospitals>(itemModel);
                 if (item != null)
                 {
@@ -257,22 +279,23 @@ namespace MedicalAPI.Controllers
                     {
                         foreach (var file in item.HospitalFiles)
                         {
-                            string filePath = Path.Combine(env.ContentRootPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, file.FileName);
+                            // ------- START GET URL FOR FILE
+                            string folderUploadPath = string.Empty;
+                            var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
+                            if (isProduct)
+                                folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
+                            else
+                                folderUploadPath = Path.Combine(Directory.GetCurrentDirectory());
+                            string filePath = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, file.FileName);
 
+                            string folderUploadUrl = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME);
+                            string fileUploadPath = Path.Combine(folderUploadUrl, Path.GetFileName(filePath));
                             // Kiểm tra có tồn tại file trong temp chưa?
-                            if (System.IO.File.Exists(filePath))
+                            if (System.IO.File.Exists(filePath) && !System.IO.File.Exists(fileUploadPath))
                             {
-                                // ------- START GET URL FOR FILE
-                                string folderUploadPath = string.Empty;
-                                var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
-                                if (isProduct)
-                                    folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
-                                else
-                                    folderUploadPath = Path.Combine(Directory.GetCurrentDirectory(), UPLOAD_FOLDER_NAME);
-                                string fileUploadPath = Path.Combine(folderUploadPath, Path.GetFileName(filePath));
-                                FileUtils.CreateDirectory(folderUploadPath);
+                                FileUtils.CreateDirectory(folderUploadUrl);
                                 FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
-                                folderUploadPaths.Add(folderUploadPath);
+                                folderUploadPaths.Add(fileUploadPath);
                                 //var currentLinkSite = $"{Medical.Extensions.HttpContext.Current.Request.Scheme}://{Medical.Extensions.HttpContext.Current.Request.Host}/{UPLOAD_FOLDER_NAME}/";
                                 string fileUrl = Path.Combine(UPLOAD_FOLDER_NAME, Path.GetFileName(filePath));
 
@@ -283,7 +306,7 @@ namespace MedicalAPI.Controllers
                                 file.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
                                 file.Active = true;
                                 file.Deleted = false;
-                                file.FileContent = System.IO.File.ReadAllBytes(filePath);
+                                //file.FileContent = System.IO.File.ReadAllBytes(filePath);
                                 file.FileName = Path.GetFileName(filePath);
                                 file.FileExtension = Path.GetExtension(filePath);
                                 file.HospitalId = item.Id;
@@ -332,15 +355,34 @@ namespace MedicalAPI.Controllers
             return appDomainResult;
         }
 
+        /// <summary>
+        /// Lấy danh sách item phân trang
+        /// </summary>
+        /// <param name="baseSearch"></param>
+        /// <returns></returns>
+        [HttpGet("get-paged-data")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
+        public override Task<AppDomainResult> GetPagedData([FromQuery] SearchHospital baseSearch)
+        {
+            return base.GetPagedData(baseSearch);
+        }
+
         [HttpGet("download-file/{id}")]
         [MedicalAppAuthorize(new string[] { CoreContants.Download })]
-        public override async Task<ActionResult> DownloadFile(int id)
+        public override async Task<AppDomainResult> DownloadFile(int id)
         {
+
+
             var fileInfo = await this.hospitalFileService.GetByIdAsync(id);
             if (fileInfo != null)
-                return File(fileInfo.FileContent, fileInfo.ContentType, fileInfo.FileName);
-            this.logger.LogInformation("Hospital Download File Error!");
-            throw new Exception("Hospital Download File Error!");
+                return new AppDomainResult()
+                {
+                    Data = fileInfo.FileUrl,
+                    Success = true,
+                    ResultCode = (int)HttpStatusCode.OK
+                };
+            else
+                throw new Exception("Hospital Download File Error!");
         }
     }
 }

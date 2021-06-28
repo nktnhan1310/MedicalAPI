@@ -41,6 +41,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.GenerateJwtToken(Medical.Models.UserModel)">
+            <summary>
+            Tạo token từ thông tin user
+            </summary>
+            <param name="user"></param>
+            <returns></returns>
+        </member>
         <member name="M:Medical.Core.App.Controllers.BaseController`3.Get">
             <summary>
             Lấy all thông tin danh sách item
@@ -105,6 +112,12 @@
             <param name="files"></param>
             <returns></returns>
         </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.GetPermission">
+            <summary>
+            Lấy thông tin quyền của chức năng
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Medical.Core.App.Controllers.CatalogueController`3.Get">
             <summary>
             Lấy all thông tin danh sách item
@@ -155,11 +168,10 @@
             <param name="baseSearch"></param>
             <returns></returns>
         </member>
-        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DownloadTemplateImport(System.String)">
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DownloadTemplateImport">
             <summary>
             Down load template file import
             </summary>
-            <param name="fileName"></param>
             <returns></returns>
         </member>
         <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DownloadImportFileResult(System.String)">
@@ -174,6 +186,175 @@
             Import file danh mục
             </summary>
             <param name="file"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.Get">
+            <summary>
+            Lấy all thông tin danh sách item
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.GetById(System.Int32)">
+            <summary>
+            Lấy thông tin theo id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.AddItem(`1)">
+            <summary>
+            Thêm mới item
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.UpdateItem(System.Int32,`1)">
+            <summary>
+            Cập nhật thông tin item
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.PatchItem(System.Int32,`1)">
+            <summary>
+            Cập nhật 1 phần item
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.DeleteItem(System.Int32)">
+            <summary>
+            Xóa item
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.GetPagedData(`2)">
+            <summary>
+            Lấy danh sách item phân trang
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.DownloadTemplateImport">
+            <summary>
+            Down load template file import
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.DownloadImportFileResult(System.String)">
+            <summary>
+            Tải về file kết quả sau khi import
+            </summary>
+            <param name="fileName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.ImportTemplateFile(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Import file danh mục
+            </summary>
+            <param name="file"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.Get">
+            <summary>
+            Lấy all thông tin danh sách item
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.GetById(System.Int32)">
+            <summary>
+            Lấy thông tin theo id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.AddItem(`1)">
+            <summary>
+            Thêm mới item
+            </summary>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.UpdateItem(System.Int32,`1)">
+            <summary>
+            Cập nhật thông tin item
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.PatchItem(System.Int32,`1)">
+            <summary>
+            Cập nhật 1 phần item
+            </summary>
+            <param name="id"></param>
+            <param name="itemModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.DeleteItem(System.Int32)">
+            <summary>
+            Xóa item
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.GetPagedData(`2)">
+            <summary>
+            Lấy danh sách item phân trang
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.UploadFile(Microsoft.AspNetCore.Http.IFormFile)">
+            <summary>
+            Upload Single File
+            </summary>
+            <param name="file"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.UploadFiles(System.Collections.Generic.List{Microsoft.AspNetCore.Http.IFormFile})">
+            <summary>
+            Upload Multiple File
+            </summary>
+            <param name="files"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.GetPermission">
+            <summary>
+            Lấy thông tin quyền của chức năng
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.ReportCoreController`3.GetPagedListReport(`2)">
+            <summary>
+            Lấy danh sách phân trang báo cáo
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.ReportCoreController`3.ExportReport(`2)">
+            <summary>
+            Xuất báo cáo
+            </summary>
+            <param name="baseSearch"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.ReportCoreController`3.GetTemplateFilePath(System.String)">
+            <summary>
+            Lấy đường dẫn file template
+            </summary>
+            <param name="fileTemplateName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.ReportCoreController`3.GetParameterReport(Medical.Utilities.PagedListReport{`1},`2)">
+            <summary>
+            Lấy thông số parameter truyền vào
+            </summary>
+            <param name="pagedList"></param>
+            <param name="baseSearch"></param>
             <returns></returns>
         </member>
     </members>

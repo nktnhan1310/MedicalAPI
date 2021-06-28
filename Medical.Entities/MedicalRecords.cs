@@ -14,7 +14,7 @@ namespace Medical.Entities
     public class MedicalRecords : MedicalAppDomainHospital
     {
         /// <summary>
-        /// Mã bệnh nhân
+        /// Mã hồ sơ
         /// </summary>
         [StringLength(50)]
         public string Code { get; set; }
@@ -79,7 +79,53 @@ namespace Medical.Entities
         /// </summary>
         public int UserId { get; set; }
 
+        /// <summary>
+        /// Tiểu sử bệnh
+        /// </summary>
+        public string MedicalHistory { get; set; }
+
+        /// <summary>
+        /// Thông tin dị ứng
+        /// </summary>
+        public string AllergyInformation { get; set; }
+
         #region Extension Properties
+
+        /// <summary>
+        /// Tên quận
+        /// </summary>
+        [NotMapped]
+        public string DistrictName { get; set; }
+
+        /// <summary>
+        /// Tên phường
+        /// </summary>
+        [NotMapped]
+        public string WardName { get; set; }
+
+        /// <summary>
+        /// Tên thành phố
+        /// </summary>
+        [NotMapped]
+        public string CityName { get; set; }
+
+        /// <summary>
+        /// Tên quốc gia
+        /// </summary>
+        [NotMapped]
+        public string CountryName { get; set; }
+
+        /// <summary>
+        /// Tên nghề nghiệp
+        /// </summary>
+        [NotMapped]
+        public string JobName { get; set; }
+
+        /// <summary>
+        /// Tên dân tộc
+        /// </summary>
+        [NotMapped]
+        public string NationName { get; set; }
 
         /// <summary>
         /// Tên đầy đủ
@@ -98,6 +144,18 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public IList<MedicalRecordAdditions> MedicalRecordAdditions { get; set; }
+
+        /// <summary>
+        /// List file theo hồ sơ
+        /// </summary>
+        [NotMapped]
+        public IList<MedicalRecordFiles> MedicalRecordFiles { get; set; }
+
+        /// <summary>
+        /// Chi tiết hồ sơ khám bệnh (Hồ sơ bệnh án)
+        /// </summary>
+        [NotMapped]
+        public IList<MedicalRecordDetails> MedicalRecordDetails { get; set; }
 
         #endregion
 

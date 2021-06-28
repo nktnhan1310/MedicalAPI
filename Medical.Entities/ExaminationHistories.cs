@@ -14,6 +14,27 @@ namespace Medical.Entities
         /// Mã lịch hẹn
         /// </summary>
         public int ExaminationFormId { get; set; }
+
+        /// <summary>
+        /// Ngày khám
+        /// </summary>
+        public DateTime? ExaminationDate { get; set; }
+
+        /// <summary>
+        /// Ngày tái khám
+        /// </summary>
+        public DateTime? ReExaminationDate { get; set; }
+
+        /// <summary>
+        /// STT khám bệnh
+        /// </summary>
+        public string ExaminationIndex { get; set; }
+
+        /// <summary>
+        /// STT chờ khám bệnh
+        /// </summary>
+        public string ExaminationPaymentIndex { get; set; }
+
         /// <summary>
         /// Hành động (Tạo lịch hẹn,...)
         /// </summary>

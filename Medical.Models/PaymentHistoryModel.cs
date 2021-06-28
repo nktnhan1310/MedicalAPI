@@ -9,7 +9,7 @@ namespace Medical.Models
     /// <summary>
     /// Lịch sử thanh toán theo phiếu khám
     /// </summary>
-    public class PaymentHistoryModel : MedicalAppDomainModel
+    public class PaymentHistoryModel : MedicalAppDomainHospitalModel
     {
         /// <summary>
         /// Theo phương thức thanh toán
@@ -18,11 +18,11 @@ namespace Medical.Models
         /// <summary>
         /// Thông tin ngân hàng thanh toán
         /// </summary>
-        public int BankInfoId { get; set; }
+        public int? BankInfoId { get; set; }
         /// <summary>
         /// Theo mã lịch khám
         /// </summary>
-        public int ExaminationFormId { get; set; }
+        public int? ExaminationFormId { get; set; }
 
         /// <summary>
         /// Chi phí khám bệnh
@@ -34,6 +34,20 @@ namespace Medical.Models
         /// </summary>
         public double? ServiceFee { get; set; }
 
+        /// <summary>
+        /// Mã chi tiết dịch vụ phát sinh
+        /// </summary>
+        public int? ExaminationFormDetailId { get; set; }
+
+        /// <summary>
+        /// Mã dịch vụ phát sinh
+        /// </summary>
+        public int? AdditionServiceId { get; set; }
+        /// <summary>
+        /// Mã toa thuốc
+        /// </summary>
+        public int? MedicalBillId { get; set; }
+
         #region Extension Properties
 
         /// <summary>
@@ -44,6 +58,16 @@ namespace Medical.Models
         /// Thông tin ngân hàng thanh toán
         /// </summary>
         public string BankInfo { get; set; }
+
+        /// <summary>
+        /// Tên dịch vụ phát sinh
+        /// </summary>
+        public string AdditionServiceName { get; set; }
+
+        /// <summary>
+        /// Mã toa thuốc
+        /// </summary>
+        public string MedicalBillCode { get; set; }
 
         #endregion
     }

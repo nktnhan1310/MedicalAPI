@@ -19,7 +19,7 @@ using System.Threading.Tasks;
 namespace Medical.Core.App.Controllers
 {
     [ApiController]
-    public abstract class CatalogueController<E, T, DomainSearch> : BaseController<E, T, DomainSearch> where E : MedicalCatalogueAppDomain where T : MedicalCatalogueAppDomainModel where DomainSearch : BaseSearch
+    public abstract class CatalogueController<E, T, DomainSearch> : BaseController<E, T, DomainSearch> where E : MedicalCatalogueAppDomain where T : MedicalCatalogueAppDomainModel where DomainSearch : BaseSearch, new()
     {
         protected ICatalogueService<E, DomainSearch> catalogueService;
 
@@ -36,9 +36,18 @@ namespace Medical.Core.App.Controllers
         public override async Task<AppDomainResult> Get()
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            DomainSearch baseSearch = new DomainSearch();
+            IList<T> itemModels = new List<T>();
+            baseSearch.PageIndex = 1;
+            baseSearch.PageSize = int.MaxValue;
+            baseSearch.OrderBy = "Id";
 
-            var items = await this.catalogueService.GetAllAsync();
-            var itemModels = mapper.Map<IList<T>>(items);
+            var pagedItems = await this.catalogueService.GetPagedListData(baseSearch);
+            if (pagedItems != null && pagedItems.Items != null && pagedItems.Items.Any())
+                itemModels = mapper.Map<IList<T>>(pagedItems.Items);
+
+            //var items = await this.catalogueService.GetAllAsync();
+            //var itemModels = mapper.Map<IList<T>>(items);
             appDomainResult = new AppDomainResult()
             {
                 Success = true,
@@ -92,6 +101,7 @@ namespace Medical.Core.App.Controllers
             {
                 itemModel.Created = DateTime.Now;
                 itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+                itemModel.Active = true;
                 var item = mapper.Map<E>(itemModel);
                 if (item != null)
                 {

@@ -44,7 +44,17 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public string DoctorDisplayName { get; set; }
+        /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        [NotMapped]
+        public string DoctorCode { get; set; }
 
+        /// <summary>
+        /// Ngày khám
+        /// </summary>
+        [NotMapped]
+        public DateTime? ExaminationDate { get; set; }
         /// <summary>
         /// Phòng khám
         /// </summary>

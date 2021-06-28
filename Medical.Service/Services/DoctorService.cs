@@ -127,6 +127,8 @@ namespace Medical.Service
             string result = string.Empty;
             if (Queryable.Any(e => !e.Deleted && e.HospitalId == item.HospitalId && e.Id != item.Id && e.Code == item.Code))
                 return "Mã bác sĩ đã tồn tại";
+            if(Queryable.Any(e => !e.Deleted && e.UserId.HasValue && e.HospitalId == item.HospitalId && e.Id != item.Id && e.UserId == item.UserId))
+                return "Tài khoản đã được chọn";
             if (item.DoctorDetails != null && item.DoctorDetails.Any())
             {
                 List<int> specialistTypeIds = new List<int>();
@@ -147,6 +149,5 @@ namespace Medical.Service
                 result = string.Join("; ", messages);
             return result;
         }
-
     }
 }

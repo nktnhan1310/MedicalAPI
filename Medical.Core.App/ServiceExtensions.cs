@@ -73,7 +73,12 @@ namespace Medical.Core.App
             services.AddScoped<IDashBoardService, DashBoardService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<INotificationApplicationUserService, NotificationApplicationUserService>();
-            
+            services.AddScoped<IUserFileService, UserFileService>();
+            services.AddScoped<IMedicalRecordFileService, MedicalRecordFileService>();
+            services.AddScoped<IMedicalRecordDetailService, MedicalRecordDetailService>();
+            services.AddScoped<IMedicalRecordDetailFileService, MedicalRecordDetailFileService>();
+            services.AddScoped<IAdditionServiceType, AdditionServiceType>();
+            services.AddScoped<IExaminationFormDetailService, ExaminationFormDetailService>();
 
             #region REPORT
 
@@ -95,6 +100,9 @@ namespace Medical.Core.App
 
             #region Catalogue Service
 
+            
+            services.AddScoped<IMedicineService, MedicineService>();
+            services.AddScoped<IMedicalBillService, MedicalBillService>();
             services.AddScoped<INotificationTypeService, NotificationTypeService>();
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<ICityService, CityService>();
@@ -119,6 +127,7 @@ namespace Medical.Core.App
             services.AddScoped<IEmailConfigurationService, EmailConfigurationService>();
             services.AddScoped<IHospitalConfigFeeService, HospitalConfigFeeService>();
             services.AddScoped<ISMSConfigurationService, SMSConfigurationService>();
+            services.AddScoped<ISystemConfigurationService, SystemConfigurationService>();
 
             #endregion
 

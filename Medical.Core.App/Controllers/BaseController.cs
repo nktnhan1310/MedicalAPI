@@ -24,7 +24,7 @@ using Medical.Interface.Services;
 namespace Medical.Core.App.Controllers
 {
     [ApiController]
-    public abstract class BaseController<E, T, F> : ControllerBase where E : MedicalAppDomain where T : MedicalAppDomainModel where F : BaseSearch
+    public abstract class BaseController<E, T, F> : ControllerBase where E : MedicalAppDomain where T : MedicalAppDomainModel where F : BaseSearch, new()
     {
         protected readonly ILogger<BaseController<E, T, F>> logger;
         protected readonly IServiceProvider serviceProvider;
@@ -51,8 +51,17 @@ namespace Medical.Core.App.Controllers
         public virtual async Task<AppDomainResult> Get()
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            var items = await this.domainService.GetAllAsync();
-            var itemModels = mapper.Map<IList<T>>(items);
+            F baseSearch = new F();
+            IList<T> itemModels = new List<T>();
+            baseSearch.PageIndex = 1;
+            baseSearch.PageSize = int.MaxValue;
+            baseSearch.OrderBy = "Created desc";
+
+            var pagedItems = await this.domainService.GetPagedListData(baseSearch);
+            if (pagedItems != null && pagedItems.Items != null && pagedItems.Items.Any())
+                itemModels = mapper.Map<IList<T>>(pagedItems.Items);
+            //var items = await this.domainService.GetAllAsync();
+            //var itemModels = mapper.Map<IList<T>>(items);
             appDomainResult = new AppDomainResult()
             {
                 Success = true,
@@ -263,7 +272,7 @@ namespace Medical.Core.App.Controllers
 
         [HttpGet("download-file/{fileId}")]
         [MedicalAppAuthorize(new string[] { CoreContants.Download })]
-        public virtual async Task<ActionResult> DownloadFile(int fileId)
+        public virtual async Task<AppDomainResult> DownloadFile(int fileId)
         {
             await Task.Run(() =>
             {
@@ -400,6 +409,7 @@ namespace Medical.Core.App.Controllers
 
         public const string TEMP_FOLDER_NAME = "Temp";
         public const string UPLOAD_FOLDER_NAME = "upload";
+        public const string MEDICAL_RECORD_FOLDER_NAME = "medicalrecord";
 
         #endregion
 

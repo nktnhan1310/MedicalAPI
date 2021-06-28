@@ -14,11 +14,6 @@ namespace Medical.Entities.DomainEntity
         [StringLength(500)]
         public string FileName { get; set; }
         /// <summary>
-        /// Nội dung file
-        /// </summary>
-        [NotMapped]
-        public byte[] FileContent { get; set; }
-        /// <summary>
         /// Loại file
         /// </summary>
         [StringLength(100)]

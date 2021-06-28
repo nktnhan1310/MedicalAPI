@@ -60,7 +60,7 @@ namespace Medical.Service
                 // Lưu thông tin bác sĩ
                 await unitOfWork.Repository<MedicalRecords>().CreateAsync(item);
                 await unitOfWork.SaveAsync();
-                // Cập nhật thông tin chuyên khoa của bác sĩ
+                // Cập nhật thông tin thêm của hồ sơ
                 if (item.MedicalRecordAdditions != null && item.MedicalRecordAdditions.Any())
                 {
                     foreach (var medicalRecordAddition in item.MedicalRecordAdditions)
@@ -70,6 +70,18 @@ namespace Medical.Service
                         await unitOfWork.Repository<MedicalRecordAdditions>().CreateAsync(medicalRecordAddition);
                     }
                 }
+
+                // Cập nhật thông tin file của hồ os7
+                if (item.MedicalRecordFiles != null && item.MedicalRecordFiles.Any())
+                {
+                    foreach (var medicalRecordFile in item.MedicalRecordFiles)
+                    {
+                        medicalRecordFile.MedicalRecordId = item.Id;
+                        medicalRecordFile.Created = DateTime.Now;
+                        await unitOfWork.Repository<MedicalRecordFiles>().CreateAsync(medicalRecordFile);
+                    }
+                }
+
                 await unitOfWork.SaveAsync();
                 result = true;
             }
@@ -110,6 +122,31 @@ namespace Medical.Service
                             medicalRecordAddition.MedicalRecordId = exists.Id;
                             medicalRecordAddition.Created = DateTime.Now;
                             await unitOfWork.Repository<MedicalRecordAdditions>().CreateAsync(medicalRecordAddition);
+                        }
+                    }
+                }
+
+                // Cập nhật thông tin file hồ sơ người dùng
+                if (item.MedicalRecordFiles != null && item.MedicalRecordFiles.Any())
+                {
+                    foreach (var medicalRecordFile in item.MedicalRecordFiles)
+                    {
+                        var existMedicalRecordFile = await this.unitOfWork.Repository<MedicalRecordFiles>().GetQueryable()
+                            .Where(e => e.Id == medicalRecordFile.Id
+                            )
+                            .FirstOrDefaultAsync();
+                        if (existMedicalRecordFile != null)
+                        {
+                            existMedicalRecordFile = mapper.Map<MedicalRecordFiles>(medicalRecordFile);
+                            existMedicalRecordFile.MedicalRecordId = item.Id;
+                            existMedicalRecordFile.Updated = DateTime.Now;
+                            this.unitOfWork.Repository<MedicalRecordFiles>().Update(existMedicalRecordFile);
+                        }
+                        else
+                        {
+                            medicalRecordFile.Created = DateTime.Now;
+                            medicalRecordFile.MedicalRecordId = item.Id;
+                            await this.unitOfWork.Repository<MedicalRecordFiles>().CreateAsync(medicalRecordFile);
                         }
                     }
                 }

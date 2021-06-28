@@ -2,6 +2,7 @@ using Medical.AppDbContext;
 using Medical.Core.App;
 using Medical.Extensions;
 using Medical.Models.AutoMapper;
+using Medical.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +21,7 @@ using Newtonsoft.Json.Serialization;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -128,10 +131,8 @@ namespace MrApp.API
                 options.SuppressModelStateInvalidFilter = true;
 
             });
-            //services.AddDistributedRedisCache(r =>
-            //{
-            //    r.Configuration = Configuration["redis:connectionString"];
-            //});
+            services.AddSignalR();
+
             //services.AddControllers();
         }
 
@@ -139,14 +140,24 @@ namespace MrApp.API
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             loggerFactory.AddSerilog();
-            //serviceProvider.MigrationDatabase(Configuration);
 
             if (env.IsDevelopment())
             {
                 app.UseExceptionHandler("/error-local-development");
             }
-            //app.ConfigureExceptionHandler();
-            app.UseStaticFiles();
+
+            var folderPath = Configuration.GetValue<string>("MySettings:FolderUpload");
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                     Path.Combine(folderPath, "upload")),
+                RequestPath = "/upload"
+            });
+
+            
+
+            app.UseStaticHttpContext();
             app.UseStaticHttpContext();
             app.UseSession();
             app.UseCookiePolicy();
@@ -166,14 +177,15 @@ namespace MrApp.API
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("../swagger/v1/swagger.json", "Medical V1");
+                c.SwaggerEndpoint("../swagger/v1/swagger.json", "MrApp API V1");
                 c.InjectStylesheet("../css/swagger.min.css");
-                //c.RoutePrefix = "mrapp";
+                c.RoutePrefix = "mrapp";
             });
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<NotificationHub>("/hubs/notifications");
             });
 
 

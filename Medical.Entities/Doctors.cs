@@ -54,6 +54,11 @@ namespace Medical.Entities
         [StringLength(1000)]
         public string Description { get; set; }
 
+        /// <summary>
+        /// Thông tin user
+        /// </summary>
+        public int? UserId { get; set; }
+
         #region Extension Properties
 
         /// <summary>
@@ -66,11 +71,7 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public string SpecialistTypeName { get; set; }
-        /// <summary>
-        /// Tên bệnh viện
-        /// </summary>
-        [NotMapped]
-        public string HospitalName { get; set; }
+        
         /// <summary>
         /// Chuyên khoa theo từng bác sĩ
         /// </summary>

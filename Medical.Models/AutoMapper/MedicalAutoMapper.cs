@@ -54,6 +54,19 @@ namespace Medical.Models.AutoMapper
             CreateMap<NotificationModel, Notifications>().ReverseMap();
             CreateMap<PagedList<NotificationModel>, PagedList<Notifications>>().ReverseMap();
 
+            CreateMap<UserFileModel, UserFiles>().ReverseMap();
+            CreateMap<PagedList<UserFileModel>, PagedList<UserFiles>>().ReverseMap();
+
+            CreateMap<MedicalRecordFileModel, MedicalRecordFiles>().ReverseMap();
+            CreateMap<PagedList<MedicalRecordFileModel>, PagedList<MedicalRecordFiles>>().ReverseMap();
+
+            CreateMap<MedicalRecordDetailModel, MedicalRecordDetails>().ReverseMap();
+            CreateMap<PagedList<MedicalRecordDetailModel>, PagedList<MedicalRecordDetails>>().ReverseMap();
+
+            CreateMap<MedicalRecordDetailFileModel, MedicalRecordDetailFiles>().ReverseMap();
+            CreateMap<PagedList<MedicalRecordDetailFileModel>, PagedList<MedicalRecordDetailFiles>>().ReverseMap();
+
+
             #region REPORT
 
             CreateMap<ReportRevenueModel, ReportRevenue>().ReverseMap();
@@ -64,12 +77,13 @@ namespace Medical.Models.AutoMapper
 
             CreateMap<ReportUserExaminationFormModel, ReportUserExaminationForm>().ReverseMap();
             CreateMap<PagedListReport<ReportUserExaminationFormModel>, PagedListReport<ReportUserExaminationForm>>().ReverseMap();
-            
+
 
             #endregion
 
             #region Configuration
 
+            CreateMap<SystemConfiguartionModel, SystemConfiguartions>().ReverseMap();
             CreateMap<EmailConfigurationModel, EmailConfiguration>().ReverseMap();
             CreateMap<SMSConfiguartionModel, SMSConfiguration>().ReverseMap();
             CreateMap<HospitalConfigFeeModel, HospitalConfigFees>().ReverseMap();
@@ -98,6 +112,16 @@ namespace Medical.Models.AutoMapper
 
             #region Catalogue
 
+
+            CreateMap<MedicineModel, Medicines>().ReverseMap();
+            CreateMap<PagedList<MedicineModel>, PagedList<Medicines>>().ReverseMap();
+
+            CreateMap<MedicalBillModel, MedicalBills>().ReverseMap();
+            CreateMap<PagedList<MedicalBillModel>, PagedList<MedicalBills>>().ReverseMap();
+
+            CreateMap<AdditionServiceModel, AdditionServices>().ReverseMap();
+            CreateMap<PagedList<AdditionServiceModel>, PagedList<AdditionServices>>().ReverseMap();
+
             CreateMap<NotificationTypeModel, NotificationTypes>().ReverseMap();
             CreateMap<PagedList<NotificationTypeModel>, PagedList<NotificationTypes>>().ReverseMap();
 
@@ -121,7 +145,7 @@ namespace Medical.Models.AutoMapper
 
             CreateMap<WardModel, Wards>().ReverseMap();
             CreateMap<PagedList<WardModel>, PagedList<Wards>>().ReverseMap();
-            
+
 
             CreateMap<JobModel, Jobs>().ReverseMap();
             CreateMap<PagedList<JobModel>, PagedList<Jobs>>().ReverseMap();

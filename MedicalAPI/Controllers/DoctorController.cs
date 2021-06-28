@@ -25,10 +25,73 @@ namespace MedicalAPI.Controllers
     public class DoctorController : CoreHospitalController<Doctors, DoctorModel, SearchDoctor>
     {
         private readonly IDoctorDetailService doctorDetailService;
+        private readonly IUserService userService;
+        private readonly IUserGroupService userGroupService;
+        private readonly IUserInGroupService userInGroupService;
+
+
         public DoctorController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<Doctors, DoctorModel, SearchDoctor>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IDoctorService>();
             this.doctorDetailService = serviceProvider.GetRequiredService<IDoctorDetailService>();
+            userService = serviceProvider.GetRequiredService<IUserService>();
+            userGroupService = serviceProvider.GetRequiredService<IUserGroupService>();
+            userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
+        }
+
+        /// <summary>
+        /// Lấy thông tin user chưa được phân bố của bệnh viện
+        /// </summary>
+        /// <param name="hospitaId"></param>
+        /// <returns></returns>
+        [HttpGet("get-user-hospital-infos")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetUserInfos(int? hospitaId)
+        {
+            // Lấy thông tin group bác sĩ
+            List<int> groupDoctorIds = new List<int>();
+            var doctorGroupRoleInfos = await this.userGroupService.GetAsync(e => (!LoginContext.Instance.CurrentUser.HospitalId.HasValue || e.HospitalId == LoginContext.Instance.CurrentUser.HospitalId) && e.Code == "BS");
+            if (doctorGroupRoleInfos != null && doctorGroupRoleInfos.Any())
+            {
+                groupDoctorIds = doctorGroupRoleInfos.Select(e => e.Id).ToList();
+                var userInGroupDoctors = await this.userInGroupService.GetAsync(e => !e.Deleted && groupDoctorIds.Contains(e.UserGroupId));
+                if(userInGroupDoctors != null && userInGroupDoctors.Any())
+                {
+                    var userInGroupDoctorIds = userInGroupDoctors.Select(e => e.UserId).Distinct().ToList();
+                    // Lấy tất cả user đã được phân bố cho bệnh viện
+                    var doctorUserIds = this.domainService.Get(e => !e.Deleted
+                    && e.UserId.HasValue
+                    && (!hospitaId.HasValue || e.HospitalId == hospitaId)
+                    && (!LoginContext.Instance.CurrentUser.HospitalId.HasValue || e.HospitalId == LoginContext.Instance.CurrentUser.HospitalId.Value)
+                    ).Select(e => e.UserId).ToList();
+
+                    var userInfos = await this.userService.GetAsync(e => !e.Deleted
+                    && e.HospitalId.HasValue
+                    && !e.IsAdmin
+                    && userInGroupDoctorIds.Contains(e.Id)
+                    && e.Id != LoginContext.Instance.CurrentUser.UserId
+                    && (!hospitaId.HasValue || e.HospitalId == hospitaId)
+                    && (!LoginContext.Instance.CurrentUser.HospitalId.HasValue || e.HospitalId == LoginContext.Instance.CurrentUser.HospitalId.Value)
+                    && !doctorUserIds.Contains(e.Id)
+                    , e => new Users()
+                    {
+                        Id = e.Id,
+                        FirstName = e.FirstName,
+                        LastName = e.LastName,
+                        Phone = e.Phone,
+                        Email = e.Email,
+                        HospitalId = e.HospitalId
+                    });
+                    return new AppDomainResult()
+                    {
+                        Data = mapper.Map<IList<UserModel>>(userInfos),
+                        Success = true,
+                        ResultCode = (int)HttpStatusCode.OK
+                    };
+                }
+                else throw new AppException("Không có tài khoản bác sĩ thích hợp");
+            }
+            else throw new AppException("Không có tài khoản bác sĩ thích hợp");
         }
 
         /// <summary>

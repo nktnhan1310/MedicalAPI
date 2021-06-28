@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "w9SFPRikzidq+9deVdkAfcDPq4hNzFpbwf2oSoTN5o67AqMBoB20A9HAlLikx4c9trROqL/6FsNelB+Ud17isA==",
+  "success": true,
+  "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\ConsoleTest\\ConsoleTest.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.netcore.platforms\\3.1.0\\microsoft.netcore.platforms.3.1.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.win32.systemevents\\4.7.0\\microsoft.win32.systemevents.4.7.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\qrcoder\\1.4.1\\qrcoder.1.4.1.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\system.drawing.common\\4.7.0\\system.drawing.common.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}

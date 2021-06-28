@@ -1,3 +1,3 @@
-﻿https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/?tabs=vs
+﻿https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/managing?tabs=dotnet-core-cli
 Step1: EntityFrameworkCore\Add-Migration MedicalDbContext_001
 Step2: EntityFrameworkCore\Update-Database

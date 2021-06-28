@@ -35,5 +35,53 @@ namespace MedicalAPI.Controllers
         public AuthController(IServiceProvider serviceProvider, IConfiguration configuration, IMapper mapper, ILogger<AuthCoreController> logger) : base(serviceProvider, configuration, mapper, logger)
         {
         }
+
+        /// <summary>
+        /// Đăng nhập hệ thống
+        /// </summary>
+        /// <param name="loginModel"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public override async Task<AppDomainResult> LoginAsync([FromBody] LoginModel loginModel)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (ModelState.IsValid)
+            {
+                success = await this.userService.Verify(loginModel.UserName, loginModel.Password);
+                if (success)
+                {
+                    var userInfos = await this.userService.GetAsync(e => !e.Deleted
+                    && (e.UserName == loginModel.UserName
+                    || e.Phone == loginModel.UserName
+                    || e.Email == loginModel.UserName
+                    ));
+                    if (userInfos != null && userInfos.Any())
+                    {
+                        var userModel = mapper.Map<UserModel>(userInfos.FirstOrDefault());
+                        var token = await GenerateJwtToken(userModel);
+                        // Lưu giá trị token
+                        await this.userService.UpdateUserToken(userModel.Id, token, true);
+                        appDomainResult = new AppDomainResult()
+                        {
+                            Success = true,
+                            Data = new
+                            {
+                                token = token,
+                            },
+                            ResultCode = (int)HttpStatusCode.OK
+                        };
+
+                    }
+                }
+                else
+                    throw new UnauthorizedAccessException("Tên đăng nhập hoặc mật khẩu không chính xác");
+            }
+            else
+                throw new AppException(ModelState.GetErrorMessage());
+            return appDomainResult;
+        }
+
     }
 }

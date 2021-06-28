@@ -85,7 +85,7 @@ namespace Medical.Service.Services.DomainService
         public override async Task<string> GetExistItemMessage(E item)
         {
             string result = string.Empty;
-            bool isExistCode = await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Code == item.Code);
+            bool isExistCode = await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Code == item.Code && x.HospitalId == item.HospitalId);
             if (isExistCode)
                 return "Mã đã tồn tại!";
             return result;

@@ -9,6 +9,7 @@ namespace Medical.Interface.Services
 {
     public interface IExaminationFormService : IDomainService<ExaminationForms, SearchExaminationForm>
     {
+        Task UpdateCurrentExaminationJob();
         Task<bool> UpdateExaminationStatus(UpdateExaminationStatus updateExaminationStatus);
         Task<string> GetExaminationFormIndex(SearchExaminationIndex searchExaminationIndex);
     }

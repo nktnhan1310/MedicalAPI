@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -41,5 +42,31 @@ namespace Medical.Models
         /// Mã ngân hàng
         /// </summary>
         public int? BankInfoId { get; set; }
+
+        /// <summary>
+        /// Ngày tái khám
+        /// </summary>
+        public DateTime? ReExaminationDate { get; set; }
+
+        [DefaultValue(false)]
+        public bool HasMedicalBill { get; set; }
+
+        // ------------------------------------------ THÔNG TIN CHI TIẾT HỒ SƠ BỆNH ÁN
+        /// <summary>
+        /// Mã toa thuốc
+        /// </summary>
+        public string PrescriptionCode { get; set; }
+
+        /// <summary>
+        /// Toa thuốc (list chữ)
+        /// </summary>
+        public string Prescription { get; set; }
+
+        public IList<MedicalRecordDetailFileModel> MedicalRecordDetailFiles { get; set; }
+
+        /// <summary>
+        /// Toa thuốc khám bệnh nếu có
+        /// </summary>
+        public MedicalBillModel MedicalBills { get; set; }
     }
 }

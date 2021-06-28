@@ -121,6 +121,8 @@ namespace Medical.Models
                         return "Đã xác nhận";
                     case (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination:
                         return "Đã xác nhận tái khám";
+                    case (int)CatalogueUtilities.ExaminationStatus.FinishExamination:
+                        return "Hoàn thành";
                     default:
                         return string.Empty;
                 }
@@ -171,6 +173,11 @@ namespace Medical.Models
         /// Lịch sử thanh toán
         /// </summary>
         public IList<PaymentHistoryModel> PaymentHistories { get; set; }
+
+        /// <summary>
+        /// Chi tiết dịch vụ phát sinh
+        /// </summary>
+        public IList<ExaminationFormDetailModel> ExaminationFormDetails { get; set; }
 
         #endregion
     }

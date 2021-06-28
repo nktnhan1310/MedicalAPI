@@ -39,10 +39,7 @@ namespace Medical.Models
 
         #region Extension Properties
 
-        /// <summary>
-        /// Tên bệnh viện
-        /// </summary>
-        public string HospitalName { get; set; }
+        
         /// <summary>
         /// Phương thức thanh toán
         /// </summary>

@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Medical.Core.App.Controllers;
-using MedicalAPI.Controllers.BaseHospital;
 using Microsoft.Extensions.Logging;
 
 namespace MedicalAPI.Controllers

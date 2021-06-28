@@ -36,10 +36,10 @@ namespace Medical.Entities
         #region Extension Properties
 
         /// <summary>
-        /// Tên bệnh viện
+        /// Cờ check thông báo đã được đọc chưa
         /// </summary>
         [NotMapped]
-        public string HospitalName { get; set; }
+        public bool IsRead { get; set; }
 
         /// <summary>
         /// Từ user

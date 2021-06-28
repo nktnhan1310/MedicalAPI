@@ -36,11 +36,7 @@ namespace Medical.Entities
 
         #region Extension Properties
 
-        /// <summary>
-        /// Tên bệnh viện
-        /// </summary>
-        [NotMapped]
-        public string HospitalName { get; set; }
+        
         /// <summary>
         /// Phương thức thanh toán
         /// </summary>

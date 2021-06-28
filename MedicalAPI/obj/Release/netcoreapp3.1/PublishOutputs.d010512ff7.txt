@@ -16,6 +16,9 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\EntityFramework.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\EPPlus.Core.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\ExcelMapper.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Hangfire.AspNetCore.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Hangfire.Core.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Hangfire.SqlServer.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\LazyCache.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\LazyCache.AspNetCore.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\System.Net.Http.Formatting.dll
@@ -70,6 +73,7 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\NPOI.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\NuGet.Frameworks.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\BouncyCastle.Crypto.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\QRCoder.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Serilog.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Serilog.Extensions.Logging.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Serilog.Extensions.Logging.File.dll
@@ -103,6 +107,18 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\System.Text.Encodings.Web.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\System.Text.Json.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\System.Xml.XPath.XmlDocument.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\ca\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\de\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\es\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\fa\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\fr\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\nb\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\nl\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\pt-BR\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\pt-PT\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\pt\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\zh-TW\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\zh\Hangfire.Core.resources.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\cs\Microsoft.CodeAnalysis.resources.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\de\Microsoft.CodeAnalysis.resources.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\es\Microsoft.CodeAnalysis.resources.dll
