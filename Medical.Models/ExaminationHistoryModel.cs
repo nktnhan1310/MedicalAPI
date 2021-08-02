@@ -28,6 +28,21 @@ namespace Medical.Models
         public DateTime? ReExaminationDate { get; set; }
 
         /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        public int? DoctorId { get; set; }
+
+        /// <summary>
+        /// Ca khám
+        /// </summary>
+        public int? ExaminationScheduleDetailId { get; set; }
+
+        /// <summary>
+        /// Chọn lại phòng khám
+        /// </summary>
+        public int? RoomExaminationId { get; set; }
+
+        /// <summary>
         /// STT khám bệnh
         /// </summary>
         public string ExaminationIndex { get; set; }
@@ -75,11 +90,15 @@ namespace Medical.Models
                     case (int)CatalogueUtilities.ExaminationStatus.Canceled:
                         return "Đã hủy";
                     case (int)CatalogueUtilities.ExaminationStatus.Confirmed:
-                        return "Đã xác nhận";
+                        return "Đã xác nhận thanh toán";
                     case (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination:
-                        return "Đã xác nhận tái khám";
+                        return "Đã xác nhận thanh toán tái khám";
                     case (int)CatalogueUtilities.ExaminationStatus.FinishExamination:
                         return "Hoàn thành";
+                    case (int)CatalogueUtilities.ExaminationStatus.PaymentFailed:
+                        return "Thanh toán thất bại";
+                    case (int)CatalogueUtilities.ExaminationStatus.PaymentReExaminationFailed:
+                        return "Thanh toán tái khám thất bại";
                     default:
                         return string.Empty;
                 }
@@ -107,6 +126,10 @@ namespace Medical.Models
                         return "Cập nhật";
                     case (int)CatalogueUtilities.ExaminationAction.FinishExamination:
                         return "Hoàn thành";
+                    case (int)CatalogueUtilities.ExaminationAction.Return:
+                        return "Trả lại phiếu";
+                    case (int)CatalogueUtilities.ExaminationAction.ReturnReExamination:
+                        return "Trả lại phiếu tái khám";
                     default:
                         return string.Empty;
                 }

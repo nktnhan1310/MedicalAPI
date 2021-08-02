@@ -24,7 +24,7 @@ namespace MedicalAPI.Controllers
     [ApiController]
     [Description("Quản lý hồ sơ khám bệnh")]
     [Authorize]
-    public class MedicalRecordController : CoreHospitalController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>
+    public class MedicalRecordController : BaseController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>
     {
         private readonly IMedicalRecordAdditionService medicalRecordAdditionService;
         private readonly IRelationService relationService;
@@ -33,7 +33,7 @@ namespace MedicalAPI.Controllers
         private readonly IConfiguration configuration;
         private readonly IUserService userService;
 
-        public MedicalRecordController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>> logger, IWebHostEnvironment env, IConfiguration configuration) : base(serviceProvider, logger, env)
+        public MedicalRecordController(IServiceProvider serviceProvider, ILogger<BaseController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>> logger, IWebHostEnvironment env, IConfiguration configuration) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IMedicalRecordService>();
             medicalRecordAdditionService = serviceProvider.GetRequiredService<IMedicalRecordAdditionService>();
@@ -53,7 +53,7 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetUserCustomerInfo(string userName)
         {
             var userCustomerInfos = await this.userService.GetAsync(e => 
-            !e.Deleted && e.Active && !e.HospitalId.HasValue && !e.IsAdmin
+            !e.Deleted && e.Active && !e.IsLocked && !e.HospitalId.HasValue && !e.IsAdmin
             && (string.IsNullOrEmpty(userName) 
             || (e.Phone.Contains(userName) || e.Email.Contains(userName) || e.UserName.Contains(userName)
             || e.UserFullName.Contains(userName)
@@ -77,6 +77,37 @@ namespace MedicalAPI.Controllers
             };
         }
 
+        /// <summary>
+        /// Lấy thông tin user làm hồ sơ
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("get-user-info/{userId}")]
+        public async Task<AppDomainResult> GetUserInfo(int? userId)
+        {
+            UserModel userInfo = null;
+            if (!userId.HasValue || userId.Value == 0)
+                throw new AppException("Không tìm thấy thông tin user");
+            var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.Active && !e.IsLocked && e.Id == userId);
+            if(userInfos != null && userInfos.Any())
+            {
+                userInfo = userInfos.Select(e => new UserModel()
+                {
+                    Id = e.Id,
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                    Email = e.Email,
+                    Phone = e.Phone,
+                    UserFullName = e.UserFullName
+                }).FirstOrDefault();
+            }
+            else throw new AppException("Không tìm thấy thông tin user");
+            return new AppDomainResult()
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
 
         /// <summary>
         /// Lấy thông tin theo id
@@ -92,13 +123,26 @@ namespace MedicalAPI.Controllers
             {
                 throw new KeyNotFoundException("id không tồn tại");
             }
-            var item = await this.domainService.GetByIdAsync(id);
+
+            SearchMedicalRecord searchMedicalRecord = new SearchMedicalRecord()
+            {
+                PageIndex = 1,
+                PageSize = 10,
+                OrderBy = "Id desc",
+                MedicalRecordId = id
+            };
+            MedicalRecords item = null;
+            var pagedItems = await this.domainService.GetPagedListData(searchMedicalRecord);
+            if (pagedItems != null && pagedItems.Items.Any())
+                item = pagedItems.Items.FirstOrDefault();
+            //var item = await this.domainService.GetByIdAsync(id);
 
             if (item != null)
             {
                 if (LoginContext.Instance.CurrentUser != null
                     && (!LoginContext.Instance.CurrentUser.HospitalId.HasValue
-                    || (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId == item.HospitalId)))
+                    || (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId == item.HospitalId))
+                    )
                 {
                     var itemModel = mapper.Map<MedicalRecordModel>(item);
                     var medicalAdditions = await this.medicalRecordAdditionService.GetAsync(e => !e.Deleted && e.MedicalRecordId == id);
@@ -216,7 +260,6 @@ namespace MedicalAPI.Controllers
                                 System.IO.File.Delete(folderUploadPath);
                             }
                         }
-                        throw new Exception("Lỗi trong quá trình xử lý");
                     }
                     appDomainResult.Success = success;
                 }
@@ -312,7 +355,6 @@ namespace MedicalAPI.Controllers
                                 System.IO.File.Delete(folderUploadPath);
                             }
                         }
-                        throw new Exception("Lỗi trong quá trình xử lý");
                     }
                     appDomainResult.Success = success;
                 }

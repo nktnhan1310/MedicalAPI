@@ -22,6 +22,11 @@ namespace Medical.Entities.Extensions
         public int? PaymentMethodId { get; set; }
 
         /// <summary>
+        /// Tổng số tiền cần thanh toán
+        /// </summary>
+        public double? TotalPrice { get; set; }
+
+        /// <summary>
         /// Mã ngân hàng
         /// </summary>
         public int? BankInfoId { get; set; }
@@ -35,6 +40,21 @@ namespace Medical.Entities.Extensions
         /// Ngày tái khám
         /// </summary>
         public DateTime? ReExaminationDate { get; set; }
+
+        /// <summary>
+        /// Ca khám
+        /// </summary>
+        public int? ExaminationScheduleDetailId { get; set; }
+
+        /// <summary>
+        /// Chọn lại phòng khám
+        /// </summary>
+        public int? RoomExaminationId { get; set; }
+
+        /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        public int? DoctorId { get; set; }
 
         /// <summary>
         /// Nhập comment xác nhận/hủy

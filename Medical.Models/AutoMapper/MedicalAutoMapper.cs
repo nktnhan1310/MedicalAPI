@@ -66,6 +66,24 @@ namespace Medical.Models.AutoMapper
             CreateMap<MedicalRecordDetailFileModel, MedicalRecordDetailFiles>().ReverseMap();
             CreateMap<PagedList<MedicalRecordDetailFileModel>, PagedList<MedicalRecordDetailFiles>>().ReverseMap();
 
+            CreateMap<MomoPaymentModel, MomoPayments>().ReverseMap();
+            CreateMap<PagedList<MomoPaymentModel>, PagedList<MomoPayments>>().ReverseMap();
+
+            CreateMap<ExaminationFormDetailModel, ExaminationFormDetails>().ReverseMap();
+            CreateMap<PagedList<ExaminationFormDetailModel>, PagedList<ExaminationFormDetails>>().ReverseMap();
+
+            CreateMap<SMSEmailTemplateModel, SMSEmailTemplates>().ReverseMap();
+            CreateMap<PagedList<SMSEmailTemplateModel>, PagedList<SMSEmailTemplates>>().ReverseMap();
+
+            CreateMap<ContentReplaceCharacterModel, ContentReplaceCharacters>().ReverseMap();
+            CreateMap<PagedList<ContentReplaceCharacterModel>, PagedList<ContentReplaceCharacters>>().ReverseMap();
+
+            CreateMap<OTPHistoryModel, OTPHistories>().ReverseMap();
+            CreateMap<PagedList<OTPHistoryModel>, PagedList<OTPHistories>>().ReverseMap();
+
+            CreateMap<SystemCommentModel, SystemComments>().ReverseMap();
+            CreateMap<PagedList<SystemCommentModel>, PagedList<SystemComments>>().ReverseMap();
+            
 
             #region REPORT
 
@@ -84,10 +102,14 @@ namespace Medical.Models.AutoMapper
             #region Configuration
 
             CreateMap<SystemConfiguartionModel, SystemConfiguartions>().ReverseMap();
+            CreateMap<MomoConfigurationModel, MomoConfigurations>().ReverseMap();
             CreateMap<EmailConfigurationModel, EmailConfiguration>().ReverseMap();
             CreateMap<SMSConfiguartionModel, SMSConfiguration>().ReverseMap();
             CreateMap<HospitalConfigFeeModel, HospitalConfigFees>().ReverseMap();
             CreateMap<PagedList<HospitalConfigFeeModel>, PagedList<HospitalConfigFees>>().ReverseMap();
+            CreateMap<PagedList<SystemConfigFeeModel>, PagedList<SystemConfigFee>>().ReverseMap();
+            CreateMap<SystemConfigFeeModel, SystemConfigFee>().ReverseMap();
+
 
             #endregion
 

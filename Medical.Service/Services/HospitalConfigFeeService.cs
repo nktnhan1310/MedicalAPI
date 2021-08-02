@@ -73,12 +73,17 @@ namespace Medical.Service
             double? fee = null;
             if (feeCaculateExaminationRequest != null)
             {
-                var configFee = await this.Queryable.Where(e => !e.Deleted && e.Active
+                var configFeeHospital = await this.Queryable.Where(e => !e.Deleted && e.Active
                 && e.HospitalId == feeCaculateExaminationRequest.HospitalId
                 && e.PaymentMethodId == feeCaculateExaminationRequest.PaymentMethodId
                 && e.ServiceTypeId == feeCaculateExaminationRequest.ServiceTypeId
                 && (!feeCaculateExaminationRequest.SpecialistTypeId.HasValue || e.SpecialistTypeId == feeCaculateExaminationRequest.SpecialistTypeId.Value)
                 ).FirstOrDefaultAsync();
+
+                // Phí tiện ích hệ thống
+                var configFee = await this.unitOfWork.Repository<SystemConfigFee>().GetQueryable()
+                    .Where(e => !e.Deleted && e.Active).FirstOrDefaultAsync();
+
 
 
                 if (feeCaculateExaminationRequest.SpecialistTypeId.HasValue && feeCaculateExaminationRequest.SpecialistTypeId.Value > 0)
@@ -103,15 +108,28 @@ namespace Medical.Service
                 if (configFee != null)
                 {
                     // Xét TH.a: Tính theo phần trăm
-                    if (configFee.IsRate)
+                    if (configFee.IsCheckRate)
                     {
                         if (price.HasValue)
-                            fee = (price ?? 0) * (configFee.FeeRate / 100);
+                            fee = (price ?? 0) * (configFee.Rate / 100);
                     }
                     // Xét TH.b: Lấy phí cấu hình
                     else
                         fee = configFee.Fee;
                 }
+                if(configFeeHospital != null)
+                {
+                    // Xét TH.a: Tính theo phần trăm
+                    if (configFeeHospital.IsRate)
+                    {
+                        if (price.HasValue)
+                            fee += (price ?? 0) * (configFeeHospital.FeeRate / 100);
+                    }
+                    // Xét TH.b: Lấy phí cấu hình
+                    else
+                        fee += configFeeHospital.Fee;
+                }
+
             }
             feeCaculateExamination.ExaminationPrice = price;
             feeCaculateExamination.ExaminationFee = fee;

@@ -50,7 +50,7 @@ namespace Medical.Service
                 new SqlParameter("@MedicalBillId", baseSearch.MedicalBillId),
                 new SqlParameter("@CreatedDate", baseSearch.CreatedDate),
 
-                
+
 
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
@@ -86,42 +86,54 @@ namespace Medical.Service
                     {
                         e => e.Status
                     };
+                    if ((existMedicalBill.Status == (int)CatalogueUtilities.MedicalBillStatus.New
+                        || existMedicalBill.Status == (int)CatalogueUtilities.MedicalBillStatus.PaymentFailed
+                        )
+                        && updateMedicalBillStatus.PaymentMethodId.HasValue && updateMedicalBillStatus.PaymentMethodId.Value > 0)
+                    {
+                        existMedicalBill.PaymentMethodId = updateMedicalBillStatus.PaymentMethodId.Value;
+                        expressions = new Expression<Func<MedicalBills, object>>[]
+                        {
+                            e => e.Status,
+                            e => e.PaymentMethodId
+                        };
+                    }
                     existMedicalBill.Status = updateMedicalBillStatus.Status;
                     switch (updateMedicalBillStatus.Status)
                     {
                         case (int)CatalogueUtilities.MedicalBillStatus.Wait:
                             {
-                                if (updateMedicalBillStatus.PaymentMethodId.HasValue && updateMedicalBillStatus.PaymentMethodId > 0)
+                                var medicineInfos = await this.unitOfWork.Repository<Medicines>().GetQueryable()
+                                    .Where(e => !e.Deleted && e.MedicalBillId == existMedicalBill.Id).ToListAsync();
+                                double totalMedicinePrice = 0;
+                                if (medicineInfos != null && medicineInfos.Any())
+                                    totalMedicinePrice = medicineInfos.Sum(e => e.Price ?? 0);
+                                // Lưu lịch sử thanh toán
+                                PaymentHistories paymentHistories = new PaymentHistories()
                                 {
-                                    // Lưu lịch sử thanh toán
-                                    PaymentHistories paymentHistories = new PaymentHistories()
-                                    {
-                                        Active = true,
-                                        Deleted = false,
-                                        CreatedBy = updateMedicalBillStatus.CreatedBy,
-                                        Created = DateTime.Now,
-                                        ExaminationFee = updateMedicalBillStatus.TotalPrice,
-                                        ServiceFee = updateMedicalBillStatus.Fee,
-                                        AdditionServiceId = null,
-                                        BankInfoId = updateMedicalBillStatus.BankInfoId,
-                                        ExaminationFormId = existMedicalBill.ExaminationFormId,
-                                        MedicalBillId = existMedicalBill.Id,
-                                        ExaminationFormDetailId = null,
-                                        HospitalId = existMedicalBill.HospitalId,
-                                        PaymentMethodId = updateMedicalBillStatus.PaymentMethodId ?? 0,
-                                    };
-                                    await this.unitOfWork.Repository<PaymentHistories>().CreateAsync(paymentHistories);
+                                    Active = true,
+                                    Deleted = false,
+                                    CreatedBy = updateMedicalBillStatus.CreatedBy,
+                                    Created = DateTime.Now,
+                                    ExaminationFee = !updateMedicalBillStatus.TotalPrice.HasValue ? totalMedicinePrice : updateMedicalBillStatus.TotalPrice.Value,
+                                    ServiceFee = updateMedicalBillStatus.Fee,
+                                    AdditionServiceId = null,
+                                    BankInfoId = updateMedicalBillStatus.BankInfoId,
+                                    ExaminationFormId = existMedicalBill.ExaminationFormId,
+                                    MedicalBillId = existMedicalBill.Id,
+                                    ExaminationFormDetailId = null,
+                                    HospitalId = existMedicalBill.HospitalId,
+                                    PaymentMethodId = updateMedicalBillStatus.PaymentMethodId ?? 0,
+                                };
+                                await this.unitOfWork.Repository<PaymentHistories>().CreateAsync(paymentHistories);
 
-                                    expressions = new Expression<Func<MedicalBills, object>>[]
-                                    {
+                                expressions = new Expression<Func<MedicalBills, object>>[]
+                                {
                                         e => e.Status,
                                         e => e.MedicalBillIndex
-                                    };
-                                    // Tạo STT chờ lấy thuốc
-                                    existMedicalBill.MedicalBillIndex = await this.GetMedicalBillIndex(existMedicalBill);
-
-                                }
-                                else throw new Exception("Vui lòng chọn phương thức thanh toán");
+                                };
+                                // Tạo STT chờ lấy thuốc
+                                existMedicalBill.MedicalBillIndex = await this.GetMedicalBillIndex(existMedicalBill);
                             }
                             break;
                         default:
@@ -143,7 +155,7 @@ namespace Medical.Service
                     if (existMedicalBill != null)
                     {
                         var medicalRecordInfo = await unitOfWork.Repository<MedicalRecords>().GetQueryable().Where(e => e.Id == existMedicalBill.MedicalRecordId).FirstOrDefaultAsync();
-                        if(medicalRecordInfo != null)
+                        if (medicalRecordInfo != null)
                         {
                             var userInfo = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == medicalRecordInfo.UserId).FirstOrDefaultAsync();
                             if (userInfo != null)
@@ -152,7 +164,7 @@ namespace Medical.Service
                                     await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", existMedicalBill.MedicalBillIndex));
                             }
                         }
-                       
+
                     }
                 }
             }
@@ -184,6 +196,49 @@ namespace Medical.Service
             }
             indexString = index.ToString("D3");
             return indexString;
+        }
+
+        public async Task<string> GetCheckStatusMessage(int medicalBillId, int statusCheck)
+        {
+            string result = string.Empty;
+            bool isError = false;
+            var medicalBillInfo = await this.unitOfWork.Repository<MedicalBills>().GetQueryable()
+                .Where(e => e.Id == medicalBillId)
+                .FirstOrDefaultAsync();
+            if (medicalBillInfo != null)
+            {
+                switch (statusCheck)
+                {
+                    case (int)CatalogueUtilities.MedicalBillStatus.WaitPayment:
+                    case (int)CatalogueUtilities.MedicalBillStatus.New:
+                        {
+                            if (medicalBillInfo.Status != (int)CatalogueUtilities.MedicalBillStatus.New
+                                && medicalBillInfo.Status != (int)CatalogueUtilities.MedicalBillStatus.PaymentFailed
+                                )
+                                isError = true;
+                        }
+                        break;
+                    case (int)CatalogueUtilities.MedicalBillStatus.Wait:
+                        {
+                            if (medicalBillInfo.Status != (int)CatalogueUtilities.MedicalBillStatus.New
+                                )
+                                isError = true;
+                        }
+                        break;
+                    case (int)CatalogueUtilities.MedicalBillStatus.Finished:
+                        {
+                            if (medicalBillInfo.Status != (int)CatalogueUtilities.MedicalBillStatus.Wait
+                                )
+                                isError = true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                if (isError) return "Trạng thái dịch vụ phát sinh hợp lệ! Không thể cập nhật";
+                return string.Empty;
+            }
+            else return "Không tìm thấy thông tin dịch vụ phát sinh";
         }
 
     }

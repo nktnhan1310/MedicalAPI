@@ -2,6 +2,7 @@
 using Medical.Entities;
 using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
+using Medical.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -30,8 +31,9 @@ namespace Medical.Service
             {
                 new SqlParameter("@PageIndex", baseSearch.PageIndex),
                 new SqlParameter("@PageSize", baseSearch.PageSize),
-                new SqlParameter("@DegreeId", baseSearch.DegreeId ?? 0),
-                new SqlParameter("@SpecialListTypeId", baseSearch.SpecialListTypeId ?? 0),
+                new SqlParameter("@DegreeId", baseSearch.DegreeId),
+                new SqlParameter("@HospitalId", baseSearch.HospitalId),
+                new SqlParameter("@SpecialListTypeId", baseSearch.SpecialListTypeId),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
                 new SqlParameter("@TotalPage", SqlDbType.Int, 0),
@@ -59,6 +61,8 @@ namespace Medical.Service
                     {
                         doctorDetail.DoctorId = item.Id;
                         doctorDetail.Created = DateTime.Now;
+                        doctorDetail.Active = true;
+                        doctorDetail.Id = 0;
                         await unitOfWork.Repository<DoctorDetails>().CreateAsync(doctorDetail);
                     }
                 }
@@ -106,6 +110,7 @@ namespace Medical.Service
                         {
                             doctorDetail.DoctorId = exists.Id;
                             doctorDetail.Created = DateTime.Now;
+                            doctorDetail.Id = 0;
                             await unitOfWork.Repository<DoctorDetails>().CreateAsync(doctorDetail);
                         }
                     }
@@ -149,5 +154,39 @@ namespace Medical.Service
                 result = string.Join("; ", messages);
             return result;
         }
+
+        /// <summary>
+        /// Lấy danh sách bác sĩ có lịch trực
+        /// </summary>
+        /// <param name="searchExaminationScheduleDetailV2"></param>
+        /// <returns></returns>
+        public async Task<PagedList<DoctorDetails>> GetListDoctorExaminations(SearchExaminationScheduleDetailV2 searchExaminationScheduleDetailV2)
+        {
+            PagedList<DoctorDetails> pagedList = new PagedList<DoctorDetails>();
+            SqlParameter[] sqlParameters = new SqlParameter[]
+            {
+                new SqlParameter("@PageIndex", searchExaminationScheduleDetailV2.PageIndex),
+                new SqlParameter("@PageSize", searchExaminationScheduleDetailV2.PageSize),
+                new SqlParameter("@HospitalId", searchExaminationScheduleDetailV2.HospitalId),
+                new SqlParameter("@DoctorId", searchExaminationScheduleDetailV2.DoctorId),
+                new SqlParameter("@SpecialistTypeId", searchExaminationScheduleDetailV2.SpecialistTypeId),
+                new SqlParameter("@Gender", searchExaminationScheduleDetailV2.Gender),
+                new SqlParameter("@DegreeTypeId", searchExaminationScheduleDetailV2.DegreeTypeId),
+                new SqlParameter("@SessionId", searchExaminationScheduleDetailV2.SessionId),
+                new SqlParameter("@DayOfWeek", searchExaminationScheduleDetailV2.DayOfWeek),
+                new SqlParameter("@ExaminationDate", searchExaminationScheduleDetailV2.ExaminationDate),
+                new SqlParameter("@OrderBy", searchExaminationScheduleDetailV2.OrderBy),
+                new SqlParameter("@SearchContent", searchExaminationScheduleDetailV2.SearchContent),
+                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+            };
+
+            pagedList = await unitOfWork.Repository<DoctorDetails>().ExcuteQueryPagingAsync("DocTorDetail_GetInfo", sqlParameters);
+            pagedList.PageSize = searchExaminationScheduleDetailV2.PageSize;
+            pagedList.PageIndex = searchExaminationScheduleDetailV2.PageIndex;
+
+            return pagedList;
+        }
+
+
     }
 }

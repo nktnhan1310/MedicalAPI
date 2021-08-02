@@ -27,6 +27,16 @@ namespace Medical.Models
         #region Extension Properties
 
         /// <summary>
+        /// Mã chuyên khoa
+        /// </summary>
+        public int? SpecialistTypeId { get; set; }
+
+        /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        public int? DoctorId { get; set; }
+
+        /// <summary>
         /// Ca khám
         /// </summary>
         public string ConfigTimeExaminationValue { get; set; }

@@ -188,3 +188,4 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Core.App\obj\Debug\netcoreapp
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Core.App\obj\Debug\netcoreapp3.1\Medical.Core.App.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Core.App\obj\Debug\netcoreapp3.1\Medical.Core.App.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Core.App\obj\Debug\netcoreapp3.1\Medical.Core.App.genruntimeconfig.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Core.App\bin\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll

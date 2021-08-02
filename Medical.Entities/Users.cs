@@ -92,14 +92,31 @@ namespace Medical.Entities
         [DefaultValue(false)]
         public bool Gender { get; set; }
 
+        /// <summary>
+        /// Cờ kiểm tra OTP của user
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsCheckOTP { get; set; }
 
         #region Extension Properties
 
         /// <summary>
-        /// Những nhóm người dùng thuộc
+        /// Cờ xét reset mật khẩu
         /// </summary>
         [NotMapped]
-        public IList<UserInGroups> UserInGroups { get; set; }
+        public bool IsResetPassword { get; set; }
+
+        /// <summary>
+        /// List id nhóm người dùng được chọn
+        /// </summary>
+        [NotMapped]
+        public List<int> UserGroupIds { get; set; }
+
+        ///// <summary>
+        ///// Những nhóm người dùng thuộc
+        ///// </summary>
+        //[NotMapped]
+        //public IList<UserInGroups> UserInGroups { get; set; }
 
         /// <summary>
         /// Danh mục quyền ứng với chức năng người dùng

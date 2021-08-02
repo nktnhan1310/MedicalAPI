@@ -39,5 +39,28 @@ namespace Medical.Entities.Extensions
                 return ExaminationFee.HasValue ? string.Format("{0} đ", ExaminationFee.Value.ToString("#,###")) : string.Format("{0} đ", 0);
             }
         }
+
+        /// <summary>
+        /// Tổng chi phí chi trả
+        /// </summary>
+        public double? TotalPayment
+        {
+            get
+            {
+                return (ExaminationPrice ?? 0) + (ExaminationFee ?? 0);
+            }
+        }
+
+        /// <summary>
+        /// Tổng chi phí chi trả hiển thị
+        /// </summary>
+        public string TotalPaymentDisplay
+        {
+            get
+            {
+                return TotalPayment.HasValue ? string.Format("{0} đ", TotalPayment.Value.ToString("#,###")) : string.Format("{0} đ", 0);
+            }
+        }
+
     }
 }

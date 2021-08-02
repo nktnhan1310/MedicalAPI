@@ -32,23 +32,25 @@ namespace MedicalAPI.Controllers.Catalogue
         /// Lấy thông tin phường/xã theo mã thành phố
         /// </summary>
         /// <param name="cityId"></param>
+        /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-by-city-id/{cityId}")]
-        public async Task<AppDomainResult> GetByCityId(int cityId)
+        public async Task<AppDomainResult> GetByCityId(int cityId, string searchContent)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            var wards = await this.catalogueService.GetAsync(e => !e.Deleted && e.Active && e.CityId == cityId, e => new Wards()
+            IList<WardModel> wardModels = new List<WardModel>();
+
+            SearchBaseLocation searchBaseLocation = new SearchBaseLocation()
             {
-                Id = e.Id,
-                Code = e.Code,
-                Name = e.Name,
-                CityId = e.CityId,
-                CityName = e.CityName,
-                DistrictId = e.DistrictId,
-                DistrictName = e.DistrictName,
-                Active = e.Active,
-            });
-            var wardModels = mapper.Map<IList<WardModel>>(wards);
+                PageIndex = 1,
+                PageSize = int.MaxValue,
+                CityId = cityId,
+                SearchContent = searchContent,
+                OrderBy = "Code"
+            };
+            var pagedWardDatas = await this.catalogueService.GetPagedListData(searchBaseLocation);
+            if(pagedWardDatas != null && pagedWardDatas.Items.Any())
+                wardModels = mapper.Map<IList<WardModel>>(pagedWardDatas.Items);
             appDomainResult = new AppDomainResult()
             {
                 Success = true,
@@ -61,23 +63,37 @@ namespace MedicalAPI.Controllers.Catalogue
         /// Lấy thông tin phường/xã theo mã quận/huyện
         /// </summary>
         /// <param name="districtId"></param>
+        /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-by-district-id/{districtId}")]
-        public async Task<AppDomainResult> GetByDistrictId(int districtId)
+        public async Task<AppDomainResult> GetByDistrictId(int districtId, string searchContent)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            var wards = await this.catalogueService.GetAsync(e => !e.Deleted && e.Active && e.DistrictId == districtId, e => new Wards()
+
+            IList<WardModel> wardModels = new List<WardModel>();
+            SearchBaseLocation searchBaseLocation = new SearchBaseLocation()
             {
-                Id = e.Id,
-                Code = e.Code,
-                Name = e.Name,
-                CityId = e.CityId,
-                CityName = e.CityName,
-                DistrictId = e.DistrictId,
-                DistrictName = e.DistrictName,
-                Active = e.Active,
-            });
-            var wardModels = mapper.Map<IList<WardModel>>(wards);
+                PageIndex = 1,
+                PageSize = int.MaxValue,
+                DistrictId = districtId,
+                SearchContent = searchContent,
+                OrderBy = "Code"
+            };
+            var pagedWardDatas = await this.catalogueService.GetPagedListData(searchBaseLocation);
+            if (pagedWardDatas != null && pagedWardDatas.Items.Any())
+                wardModels = mapper.Map<IList<WardModel>>(pagedWardDatas.Items);
+            //var wards = await this.catalogueService.GetAsync(e => !e.Deleted && e.Active && e.DistrictId == districtId, e => new Wards()
+            //{
+            //    Id = e.Id,
+            //    Code = e.Code,
+            //    Name = e.Name,
+            //    CityId = e.CityId,
+            //    CityName = e.CityName,
+            //    DistrictId = e.DistrictId,
+            //    DistrictName = e.DistrictName,
+            //    Active = e.Active,
+            //});
+            //var wardModels = mapper.Map<IList<WardModel>>(wards);
             appDomainResult = new AppDomainResult()
             {
                 Success = true,

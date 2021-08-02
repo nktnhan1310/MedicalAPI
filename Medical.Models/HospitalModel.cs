@@ -129,7 +129,12 @@ namespace Medical.Models
         /// <summary>
         /// Bảng mapping kênh khám của bệnh viện
         /// </summary>
-        public IList<ChannelMappingHospitalModel> ChannelMappingHospitals { get; set; }
+        //public IList<ChannelMappingHospitalModel> ChannelMappingHospitals { get; set; }
+
+        /// <summary>
+        /// Danh sách kênh được chọn
+        /// </summary>
+        public List<int> ChannelIds { get; set; }
 
         /// <summary>
         /// File của thông tin bệnh viện (logo/sơ đồ bệnh viện/ danh sách chuyên khoa)

@@ -12,6 +12,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -38,7 +40,9 @@ namespace MrApp.API.Controllers
         private readonly IBankInfoService bankInfoService;
         private readonly IHospitalConfigFeeService hospitalConfigFeeService;
         private readonly IDoctorService doctorService;
-
+        private readonly IMomoPaymentService momoPaymentService;
+        private readonly IMomoConfigurationService momoConfigurationService;
+        private readonly IDoctorDetailService doctorDetailService;
         public ExaminationFormController(IServiceProvider serviceProvider, ILogger<BaseController> logger, IWebHostEnvironment env, IMapper mapper, IConfiguration configuration) : base(serviceProvider, logger, env, mapper, configuration)
         {
             paymentHistoryService = serviceProvider.GetRequiredService<IPaymentHistoryService>();
@@ -52,19 +56,40 @@ namespace MrApp.API.Controllers
             bankInfoService = serviceProvider.GetRequiredService<IBankInfoService>();
             hospitalConfigFeeService = serviceProvider.GetRequiredService<IHospitalConfigFeeService>();
             doctorService = serviceProvider.GetRequiredService<IDoctorService>();
+            momoPaymentService = serviceProvider.GetRequiredService<IMomoPaymentService>();
+            momoConfigurationService = serviceProvider.GetRequiredService<IMomoConfigurationService>();
+            doctorDetailService = serviceProvider.GetRequiredService<IDoctorDetailService>();
         }
 
         /// <summary>
         /// Lấy thông tin danh sách bác sĩ theo bệnh viện
         /// </summary>
         /// <param name="hospitalId"></param>
+        /// <param name="specialistTypeId"></param>
         /// <returns></returns>
-        [HttpGet("get-list-doctor-by-hospital/{hospitalId}")]
+        [HttpGet("get-list-doctor-by-hospital/{hospitalId}/specialistTypeId")]
         [MedicalAppAuthorize(new string[] { CoreContants.View })]
-        public async Task<AppDomainResult> GetDoctorByHospital(int hospitalId)
+        public async Task<AppDomainResult> GetDoctorByHospital(int hospitalId, int? specialistTypeId)
         {
             if (hospitalId <= 0) throw new AppException("Vui lòng chọn bệnh viện");
             var doctors = await this.doctorService.GetAsync(e => !e.Deleted && e.Active && e.HospitalId == hospitalId);
+            if(doctors != null && doctors.Any())
+            {
+                if (specialistTypeId.HasValue && specialistTypeId.Value > 0)
+                {
+                    var doctorIds = doctors.Select(e => e.Id).ToList();
+                    var doctorDetails = await this.doctorDetailService.GetAsync(e => !e.Deleted
+                    && doctorIds.Contains(e.DoctorId)
+                    && e.SpecialistTypeId == specialistTypeId.Value);
+                    var doctorIdsBySpecialistTypes = doctorDetails.Select(e => e.DoctorId).ToList();
+                    if (doctorIdsBySpecialistTypes != null && doctorIdsBySpecialistTypes.Any())
+                        doctors = await this.doctorService.GetAsync(e => !e.Deleted 
+                        && e.Active
+                        && e.HospitalId == hospitalId
+                        && doctorIdsBySpecialistTypes.Contains(e.Id));
+                    else doctors = null;
+                }
+            }
 
             return new AppDomainResult()
             {
@@ -72,6 +97,28 @@ namespace MrApp.API.Controllers
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK
             };
+        }
+
+        /// <summary>
+        /// Lấy ra danh sách bác sĩ khám bệnh
+        /// </summary>
+        /// <param name="searchExaminationScheduleDetailV2"></param>
+        /// <returns></returns>
+        [HttpGet("get-doctor-examination")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetDoctorExamination([FromQuery] SearchExaminationScheduleDetailV2 searchExaminationScheduleDetailV2)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            if (!searchExaminationScheduleDetailV2.HospitalId.HasValue || searchExaminationScheduleDetailV2.HospitalId.Value <= 0)
+                throw new AppException("Vui lòng chọn bệnh viện");
+            var doctorExaminations = await this.doctorService.GetListDoctorExaminations(searchExaminationScheduleDetailV2);
+            var doctorExaminationModels = mapper.Map<PagedList<DoctorDetailModel>>(doctorExaminations);
+            appDomainResult = new AppDomainResult()
+            {
+                Success = true,
+                Data = doctorExaminationModels
+            };
+            return appDomainResult;
         }
 
         /// <summary>
@@ -227,10 +274,31 @@ namespace MrApp.API.Controllers
         public async Task<AppDomainResult> UpdateExaminationStatus([FromBody] UpdateExaminationStatusModel updateExaminationStatusModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
+            MomoResponseModel momoResponseModel = null;
+            bool isSuccess = false;
             if (ModelState.IsValid)
             {
+                // KIỂM TRA TRẠNG THÁI HIỆN TẠI VỚI TRẠNG THÁI CẬP NHẬT PHIẾU
+                string checkMessage = await this.examinationFormService.GetCheckStatusMessage(updateExaminationStatusModel.ExaminationFormId, updateExaminationStatusModel.Status ?? 0);
+                if (!string.IsNullOrEmpty(checkMessage)) throw new AppException(checkMessage);
+
+                // KIỂM TRA CÓ THANH TOÁN HAY KHÔNG?
+                if (updateExaminationStatusModel.PaymentMethodId.HasValue && updateExaminationStatusModel.PaymentMethodId.Value > 0)
+                {
+                    var paymentMethodInfos = await this.paymentMethodService.GetAsync(e => !e.Deleted && e.Active && e.Id == updateExaminationStatusModel.PaymentMethodId.Value);
+                    if (paymentMethodInfos != null && paymentMethodInfos.Any())
+                    {
+                        var paymentMethodInfo = paymentMethodInfos.FirstOrDefault();
+                        // THANH TOÁN QUA MOMO => Trạng thái chờ xác nhận => Chờ thanh toán thành công => Cập nhật trạng thái
+                        if (paymentMethodInfo.Code == CatalogueUtilities.PaymentMethod.MOMO.ToString())
+                        {
+                            momoResponseModel = await GetResponseMomoPayment(updateExaminationStatusModel);
+                        }
+                    }
+                }
+
                 var updateExaminationStatus = mapper.Map<UpdateExaminationStatus>(updateExaminationStatusModel);
-                bool isSuccess = await this.examinationFormService.UpdateExaminationStatus(updateExaminationStatus);
+                isSuccess = await this.examinationFormService.UpdateExaminationStatus(updateExaminationStatus);
                 if (isSuccess)
                 {
                     appDomainResult.Success = isSuccess;
@@ -241,8 +309,92 @@ namespace MrApp.API.Controllers
             }
             else
                 throw new AppException(ModelState.GetErrorMessage());
-            return appDomainResult;
+            return new AppDomainResult()
+            {
+                Data = momoResponseModel,
+                Success = isSuccess,
+                ResultCode = (int)HttpStatusCode.OK
+            };
         }
+
+
+        /// <summary>
+        /// Trả lại thông tin phản hồi từ momo
+        /// </summary>
+        /// <param name="updateExaminationStatusModel"></param>
+        /// <returns></returns>
+        private async Task<MomoResponseModel> GetResponseMomoPayment(UpdateExaminationStatusModel updateExaminationStatusModel)
+        {
+            MomoResponseModel momoResponseModel = null;
+            MomoConfigurations momoConfiguration = new MomoConfigurations();
+            string endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
+            var momoConfigurationInfos = await this.momoConfigurationService.GetAsync(e => !e.Deleted && e.Active);
+            if (momoConfigurationInfos != null && momoConfigurationInfos.Any())
+            {
+                momoConfiguration = momoConfigurationInfos.FirstOrDefault();
+                string orderInfo = "test";
+                string amount = updateExaminationStatusModel.TotalPrice.HasValue ? updateExaminationStatusModel.TotalPrice.Value.ToString() : "0";
+                string orderid = Guid.NewGuid().ToString();
+                string requestId = Guid.NewGuid().ToString();
+                string extraData = "";
+
+                //Before sign HMAC SHA256 signature
+                string rawHash = "partnerCode=" +
+                momoConfiguration.PartnerCode + "&accessKey=" +
+                momoConfiguration.AccessKey + "&requestId=" +
+                requestId + "&amount=" +
+                amount + "&orderId=" +
+                orderid + "&orderInfo=" +
+                orderInfo + "&returnUrl=" +
+                momoConfiguration.ReturnUrlWebApp + "&notifyUrl=" +
+                momoConfiguration.NotifyUrl + "&extraData=" +
+                extraData;
+
+                MomoUtilities crypto = new MomoUtilities();
+                //sign signature SHA256
+                string signature = crypto.SignSHA256(rawHash, momoConfiguration.SecretKey);
+
+                //build body json request
+                JObject message = new JObject
+                {
+                    { "partnerCode", momoConfiguration.PartnerCode },
+                    { "accessKey", momoConfiguration.AccessKey },
+                    { "requestId", requestId },
+                    { "amount", amount },
+                    { "orderId", orderid },
+                    { "orderInfo", orderInfo },
+                    { "returnUrl", momoConfiguration.ReturnUrlWebApp },
+                    { "notifyUrl", momoConfiguration.NotifyUrl },
+                    { "extraData", extraData },
+                    { "requestType", "captureMoMoWallet" },
+                    { "signature", signature }
+
+                };
+                string responseFromMomo = crypto.SendPaymentRequest(endpoint, message.ToString());
+                momoResponseModel = JsonConvert.DeserializeObject<MomoResponseModel>(responseFromMomo);
+                if (momoResponseModel != null && momoResponseModel.errorCode == 0)
+                {
+                    MomoPayments momoPayments = new MomoPayments()
+                    {
+                        Created = DateTime.Now,
+                        CreatedBy = LoginContext.Instance.CurrentUser.UserName,
+                        Active = true,
+                        Deleted = false,
+                        Amount = amount,
+                        RequestId = requestId,
+                        OrderId = orderid,
+                        OrderInfo = orderInfo,
+                        Signature = signature,
+                        ExaminationFormId = updateExaminationStatusModel.ExaminationFormId
+                    };
+                    bool success = await this.momoPaymentService.CreateAsync(momoPayments);
+                    if (!success) throw new AppException("Không lưu được thông tin thanh toán");
+                }
+            }
+            else throw new AppException("Không lấy được cấu hình thanh toán momo");
+            return momoResponseModel;
+        }
+
 
         /// <summary>
         /// Lấy thông tin theo id
@@ -258,11 +410,50 @@ namespace MrApp.API.Controllers
             {
                 throw new KeyNotFoundException("id không tồn tại");
             }
-            var item = await this.examinationFormService.GetByIdAsync(id);
+            SearchExaminationForm searchExaminationForm = new SearchExaminationForm()
+            {
+                PageIndex = 1,
+                PageSize = 1,
+                ExaminationFormId = id,
+                OrderBy = "Id desc"
+            };
+            ExaminationForms item = null;
+            var pagedItems = await this.examinationFormService.GetPagedListData(searchExaminationForm);
+            if (pagedItems != null && pagedItems.Items.Any())
+            {
+                item = pagedItems.Items.FirstOrDefault();
+            }
+
+            //var item = await this.examinationFormService.GetByIdAsync(id);
 
             if (item != null)
             {
                 var itemModel = mapper.Map<ExaminationFormModel>(item);
+                // Lấy thông tin chi tiết lịch nếu có
+                if (item.ExaminationScheduleDetailId.HasValue && item.ExaminationScheduleDetailId.Value > 0)
+                {
+                    SearchExaminationScheduleForm searchExaminationScheduleForm = new SearchExaminationScheduleForm()
+                    {
+                        HospitalId = item.HospitalId ?? 0,
+                        DoctorId = item.DoctorId,
+                        ExaminationScheduleDetailId = item.ExaminationScheduleDetailId.Value,
+                        ExaminationDate = item.ExaminationDate,
+                        SpecialistTypeId = item.SpecialistTypeId ?? 0
+                    };
+                    var examinationScheduleDetails = await this.examinationScheduleService.GetExaminationScheduleDetails(searchExaminationScheduleForm);
+                    if (examinationScheduleDetails != null && examinationScheduleDetails.Any())
+                    {
+                        itemModel.ExaminationScheduleDetail = mapper.Map<ExaminationScheduleDetailModel>(examinationScheduleDetails.FirstOrDefault());
+                    }
+                }
+                // Lây thông tin lịch sử
+                //var examinationHistories = await this.examinationHistoryService.GetAsync(e => !e.Deleted && e.ExaminationFormId == item.Id);
+                //if (examinationHistories != null && examinationHistories.Any())
+                //    itemModel.ExaminationHistories = mapper.Map<IList<ExaminationHistoryModel>>(examinationHistories.OrderByDescending(e => e.Id));
+                // Lây thông tin lịch sử thanh toán
+                //var payentHistories = await this.paymentHistoryService.GetAsync(e => !e.Deleted && e.ExaminationFormId == item.Id);
+                //if (payentHistories != null && payentHistories.Any())
+                //    itemModel.PaymentHistories = mapper.Map<IList<PaymentHistoryModel>>(payentHistories.OrderByDescending(e => e.Id));
                 appDomainResult = new AppDomainResult()
                 {
                     Success = true,
@@ -304,7 +495,10 @@ namespace MrApp.API.Controllers
                         throw new AppException(messageUserCheck);
                     success = await this.examinationFormService.CreateAsync(item);
                     if (success)
+                    {
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                        appDomainResult.Data = item;
+                    }
                     else
                         throw new Exception("Lỗi trong quá trình xử lý");
                     appDomainResult.Success = success;
@@ -396,8 +590,8 @@ namespace MrApp.API.Controllers
 
             if (ModelState.IsValid)
             {
-                if (!baseSearch.HospitalId.HasValue || baseSearch.HospitalId.Value <= 0)
-                    throw new AppException("Vui lòng chọn bệnh viện");
+                //if (!baseSearch.HospitalId.HasValue || baseSearch.HospitalId.Value <= 0)
+                //    throw new AppException("Vui lòng chọn bệnh viện");
                 baseSearch.UserId = LoginContext.Instance.CurrentUser.UserId;
                 PagedList<ExaminationForms> pagedData = await this.examinationFormService.GetPagedListData(baseSearch);
                 PagedList<ExaminationFormModel> pagedDataModel = mapper.Map<PagedList<ExaminationFormModel>>(pagedData);

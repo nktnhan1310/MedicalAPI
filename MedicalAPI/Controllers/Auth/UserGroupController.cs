@@ -57,7 +57,7 @@ namespace MedicalAPI.Controllers
                     var itemModel = mapper.Map<UserGroupModel>(item);
                     var userInGroups = await this.userInGroupService.GetAsync(e => !e.Deleted && e.UserGroupId == id);
                     if (userInGroups != null)
-                        itemModel.UserInGroups = mapper.Map<IList<UserInGroupModel>>(userInGroups);
+                        itemModel.UserIds = userInGroups.Select(e => e.UserId).ToList();
 
                     var permitObjectPermissions = await this.permitObjectPermissionService.GetAsync(e => !e.Deleted && e.UserGroupId == id);
                     if (permitObjectPermissions != null)

@@ -107,6 +107,8 @@ namespace Medical.Core.App.Controllers
             {
                 if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                     itemModel.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
+                itemModel.Active = true;
+                itemModel.Deleted = false;
                 itemModel.Created = DateTime.Now;
                 itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
                 var item = mapper.Map<E>(itemModel);

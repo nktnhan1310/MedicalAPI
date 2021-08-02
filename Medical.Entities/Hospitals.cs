@@ -111,6 +111,12 @@ namespace Medical.Entities
         public IList<ChannelMappingHospital> ChannelMappingHospitals { get; set; }
 
         /// <summary>
+        /// Danh sách kênh được chọn
+        /// </summary>
+        [NotMapped]
+        public List<int> ChannelIds { get; set; }
+
+        /// <summary>
         /// File của thông tin bệnh viện (logo/sơ đồ bệnh viện/ danh sách chuyên khoa)
         /// </summary>
         [NotMapped]

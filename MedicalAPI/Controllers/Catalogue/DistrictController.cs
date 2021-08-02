@@ -32,21 +32,25 @@ namespace MedicalAPI.Controllers.Catalogue
         /// Lấy thông tin quận huyện theo mã thành phố
         /// </summary>
         /// <param name="cityId"></param>
+        /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-by-city-id/{cityId}")]
-        public async Task<AppDomainResult> GetByCityId(int cityId)
+        public async Task<AppDomainResult> GetByCityId(int cityId, string searchContent)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            var districts = await this.catalogueService.GetAsync(e => !e.Deleted && !e.Active && e.CityId == cityId, e => new Districts()
+            IList<DistrictModel> districtModels = new List<DistrictModel>();
+            SearchBaseLocation searchBaseLocation = new SearchBaseLocation()
             {
-                Id = e.Id,
-                Code = e.Code,
-                Name = e.Name,
-                CityId = e.CityId,
-                CityName = e.CityName,
-                Active = e.Active,
-            });
-            var districtModels = mapper.Map<IList<DistrictModel>>(districts);
+                PageIndex = 1,
+                PageSize = int.MaxValue,
+                CityId = cityId,
+                OrderBy = "Code",
+                SearchContent = searchContent
+                
+            };
+            var pagedDistrict = await this.catalogueService.GetPagedListData(searchBaseLocation);
+            if (pagedDistrict != null && pagedDistrict.Items.Any())
+                districtModels = mapper.Map<IList<DistrictModel>>(pagedDistrict.Items);
             appDomainResult = new AppDomainResult()
             {
                 Success = true,

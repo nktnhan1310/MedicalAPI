@@ -77,6 +77,16 @@ namespace Medical.Utilities
         public const string SPECIALIST_TYPE_CATALOGUE_NAME = "SpecialistType";
 
         /// <summary>
+        /// PHÒNG KHÁM CỦA BỆNH VIỆN
+        /// </summary>
+        public const string ROOM_EXAMINATION_CATALOGUE_NAME = "RoomExamination";
+
+        /// <summary>
+        /// Bác sĩ của bệnh viện
+        /// </summary>
+        public const string DOCTOR_CATALOGUE_NAME = "Doctor";
+
+        /// <summary>
         /// CÔNG VIỆC
         /// </summary>
         public const string JOB_CATALOGUE_NAME = "Job";
@@ -91,6 +101,46 @@ namespace Medical.Utilities
         /// </summary>
         public const string SESSION_TYPE_CATALOGUE_NAME = "SessionType";
 
+        /// <summary>
+        /// Bệnh viện
+        /// </summary>
+        public const string HOSPITAL_CATALOGUE_NAME = "Hospital";
+
+        /// <summary>
+        /// Kênh đăng ký
+        /// </summary>
+        public const string CHANNEL_CATALOGUE_NAME = "Channel";
+
+        /// <summary>
+        /// Chức vị của bác sĩ
+        /// </summary>
+        public const string DEGREE_TYPE_CATALOGUE_NAME = "DegreeType";
+
+        /// <summary>
+        /// Loại thông báo
+        /// </summary>
+        public const string NOTIFICATION_TYPE_CATALOGUE_NAME = "NotificationType";
+
+        /// <summary>
+        /// Dịch vụ phát sinh
+        /// </summary>
+        public const string ADDITION_SERVICE_TYPE_CATALOGUE_NAME = "AdditionService";
+
         #endregion
+
+        #region SMS Template
+
+        /// <summary>
+        /// Xác nhận OTP SMS
+        /// </summary>
+        public const string SMS_XNOTP = "XNOTP";
+
+        #endregion
+
+        #region EmailTemplate
+
+
+        #endregion
+
     }
 }

@@ -1,3 +1,4 @@
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\MrApp.API.xml
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\MrApp.API.exe
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\appsettings.Development.json
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\appsettings.json
@@ -23,6 +24,7 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\P
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.Caching.Memory.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.Caching.Redis.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.Configuration.Abstractions.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.Configuration.Binder.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.DependencyInjection.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.Extensions.DependencyModel.dll

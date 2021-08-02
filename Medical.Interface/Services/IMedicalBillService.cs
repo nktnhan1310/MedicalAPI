@@ -10,5 +10,7 @@ namespace Medical.Interface.Services
     public interface IMedicalBillService : ICatalogueHospitalService<MedicalBills, SearchMedicalBill>
     {
         Task<bool> UpdateMedicalBillStatus(UpdateMedicalBillStatus updateMedicalBillStatus);
+
+        Task<string> GetCheckStatusMessage(int medicalBillId, int statusCheck);
     }
 }

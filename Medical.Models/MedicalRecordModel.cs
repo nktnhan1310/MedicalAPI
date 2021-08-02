@@ -17,16 +17,13 @@ namespace Medical.Models
         /// </summary>
         [StringLength(50, ErrorMessage = "Số kí tự của Mã bệnh viện phải nhỏ hơn 50!")]
         public string Code { get; set; }
+
         /// <summary>
-        /// Họ và tên lót
+        /// Tên đầy đủ của user
         /// </summary>
-        [StringLength(200, ErrorMessage = "Số kí tự của Họ và tên lót phải nhỏ hơn 200!")]
-        public string FirstName { get; set; }
-        /// <summary>
-        /// Tên
-        /// </summary>
-        [StringLength(200, ErrorMessage = "Số kí tự của Tên phải nhỏ hơn 200!")]
-        public string LastName { get; set; }
+        [StringLength(1000, ErrorMessage = "Số kí tự của họ tên phải nhỏ hơn 1000!")]
+        public string UserFullName { get; set; }
+
         /// <summary>
         /// Sinh nhật
         /// </summary>
@@ -126,18 +123,6 @@ namespace Medical.Models
         /// Tên dân tộc
         /// </summary>
         public string NationName { get; set; }
-
-
-        /// <summary>
-        /// Tên đầy đủ
-        /// </summary>
-        public string FullName
-        {
-            get
-            {
-                return LastName + " " + FirstName;
-            }
-        }
 
         /// <summary>
         /// Thông tin người thân (nếu có)

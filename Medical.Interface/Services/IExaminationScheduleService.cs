@@ -13,5 +13,7 @@ namespace Medical.Interface.Services
         Task<IList<ExaminationSchedules>> GetExaminationSchedules(SearchExaminationScheduleForm searchExaminationScheduleDetail);
 
         Task<PagedList<ExaminationSchedules>> GetAllExaminationSchedules(SearchExaminationScheduleDetailV2 searchExaminationScheduleDetailV2);
+
+        Task<IList<ExaminationScheduleDetails>> GetExaminationScheduleDetails(SearchExaminationScheduleForm searchExaminationScheduleDetail);
     }
 }

@@ -31,8 +31,14 @@ namespace Medical.Service
             {
                 new SqlParameter("@PageIndex", baseSearch.PageIndex),
                 new SqlParameter("@PageSize", baseSearch.PageSize),
+
+                new SqlParameter("@MedicalRecordId", baseSearch.MedicalRecordId),
+
+
                 new SqlParameter("@UserId", baseSearch.UserId),
-                new SqlParameter("@HospitalId", baseSearch.HospitalId),
+                //new SqlParameter("@HospitalId", baseSearch.HospitalId),
+                new SqlParameter("@HospitalId", null),
+
                 new SqlParameter("@Gender", baseSearch.Gender),
                 new SqlParameter("@JobId", baseSearch.JobId),
                 new SqlParameter("@CountryId", baseSearch.CountryId),
@@ -58,6 +64,7 @@ namespace Medical.Service
             if (item != null)
             {
                 // Lưu thông tin bác sĩ
+                item.Id = 0;
                 await unitOfWork.Repository<MedicalRecords>().CreateAsync(item);
                 await unitOfWork.SaveAsync();
                 // Cập nhật thông tin thêm của hồ sơ
@@ -67,6 +74,8 @@ namespace Medical.Service
                     {
                         medicalRecordAddition.MedicalRecordId = item.Id;
                         medicalRecordAddition.Created = DateTime.Now;
+                        medicalRecordAddition.Active = true;
+                        medicalRecordAddition.Id = 0;
                         await unitOfWork.Repository<MedicalRecordAdditions>().CreateAsync(medicalRecordAddition);
                     }
                 }
@@ -78,6 +87,8 @@ namespace Medical.Service
                     {
                         medicalRecordFile.MedicalRecordId = item.Id;
                         medicalRecordFile.Created = DateTime.Now;
+                        medicalRecordFile.Active = true;
+                        medicalRecordFile.Id = 0;
                         await unitOfWork.Repository<MedicalRecordFiles>().CreateAsync(medicalRecordFile);
                     }
                 }
@@ -121,6 +132,7 @@ namespace Medical.Service
                         {
                             medicalRecordAddition.MedicalRecordId = exists.Id;
                             medicalRecordAddition.Created = DateTime.Now;
+                            medicalRecordAddition.Id = 0;
                             await unitOfWork.Repository<MedicalRecordAdditions>().CreateAsync(medicalRecordAddition);
                         }
                     }
@@ -146,6 +158,7 @@ namespace Medical.Service
                         {
                             medicalRecordFile.Created = DateTime.Now;
                             medicalRecordFile.MedicalRecordId = item.Id;
+                            medicalRecordFile.Id = 0;
                             await this.unitOfWork.Repository<MedicalRecordFiles>().CreateAsync(medicalRecordFile);
                         }
                     }
@@ -160,7 +173,7 @@ namespace Medical.Service
         {
             List<string> messages = new List<string>();
             string result = string.Empty;
-            bool isExistMedicalRecord = await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.UserId == item.Id && x.HospitalId == item.HospitalId);
+            bool isExistMedicalRecord = await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.UserId == item.UserId);
             if (isExistMedicalRecord)
                 messages.Add("Hồ sơ của người dùng đã tồn tại!");
             if (messages.Any())
@@ -168,10 +181,10 @@ namespace Medical.Service
             return result;
         }
 
-        public async Task<int> GetMedicalRecordIdByUser(int hospitalId, int userId)
+        public async Task<int> GetMedicalRecordIdByUser(int userId)
         {
             int medicalRecordId = 0;
-            var medicalRecordInfo = await this.Queryable.Where(e => !e.Deleted && e.HospitalId == hospitalId && e.UserId == userId).FirstOrDefaultAsync();
+            var medicalRecordInfo = await this.Queryable.Where(e => !e.Deleted && e.UserId == userId).FirstOrDefaultAsync();
             if (medicalRecordInfo != null)
                 medicalRecordId = medicalRecordInfo.Id;
             return medicalRecordId;

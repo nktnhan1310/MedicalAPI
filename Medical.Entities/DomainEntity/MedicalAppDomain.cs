@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -54,6 +55,8 @@ namespace Medical.Entities.DomainEntity
         /// Cờ active
         /// </summary>
         public bool Active { get; set; }
+
+        
 
     }
 }

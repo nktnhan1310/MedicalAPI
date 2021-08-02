@@ -58,6 +58,7 @@ namespace Medical.Service
             bool result = false;
             if (item != null)
             {
+                item.Id = 0;
                 await this.unitOfWork.Repository<Notifications>().CreateAsync(item);
                 await this.unitOfWork.SaveAsync();
 
@@ -77,7 +78,6 @@ namespace Medical.Service
         public override async Task<bool> UpdateAsync(Notifications item)
         {
             bool result = false;
-
             var exists = await Queryable
                  .AsNoTracking()
                  .Where(e => e.Id == item.Id && !e.Deleted)
@@ -134,8 +134,6 @@ namespace Medical.Service
                     command.Parameters.AddRange(sqlParameters);
                     command.CommandType = CommandType.StoredProcedure;
                     command.ExecuteNonQuery();
-                    //SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
-                    //sqlDataAdapter.Fill(dataTable);
                 }
                 finally
                 {

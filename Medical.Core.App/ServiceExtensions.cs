@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
 using Medical.Service.Services;
+using Medical.Extensions;
 
 namespace Medical.Core.App
 {
@@ -79,6 +80,12 @@ namespace Medical.Core.App
             services.AddScoped<IMedicalRecordDetailFileService, MedicalRecordDetailFileService>();
             services.AddScoped<IAdditionServiceType, AdditionServiceType>();
             services.AddScoped<IExaminationFormDetailService, ExaminationFormDetailService>();
+            services.AddScoped<IMomoPaymentService, MomoPaymentService>();
+            services.AddScoped<IOTPHistoryService, OTPHistoryService>();
+            services.AddScoped<ISMSEmailTemplateService, SMSEmailTemplateService>();
+            services.AddScoped<IContentReplaceCharacterService, ContentReplaceCharacterService>();
+            services.AddScoped<ISystemCommentService, SystemCommentService>();
+
 
             #region REPORT
 
@@ -119,6 +126,7 @@ namespace Medical.Core.App
             services.AddScoped<INationService, NationService>();
             services.AddScoped<IRelationService, RelationService>();
             services.AddScoped<IPaymentMethodService, PaymentMethodService>();
+
             
             #endregion
 
@@ -128,6 +136,9 @@ namespace Medical.Core.App
             services.AddScoped<IHospitalConfigFeeService, HospitalConfigFeeService>();
             services.AddScoped<ISMSConfigurationService, SMSConfigurationService>();
             services.AddScoped<ISystemConfigurationService, SystemConfigurationService>();
+            services.AddScoped<IMomoConfigurationService, MomoConfigurationService>();
+            services.AddScoped<ISystemConfigFeeService, SystemConfigFeeService>();
+
 
             #endregion
 
@@ -156,6 +167,7 @@ namespace Medical.Core.App
                       new string[] { }
                     }
                   });
+                //c.OperationFilter<SwaggerFileOperationFilter>();
                 //var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
                 ////var xmlPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), xmlFile);
 

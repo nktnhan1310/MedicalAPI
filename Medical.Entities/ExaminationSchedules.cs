@@ -82,16 +82,23 @@ namespace Medical.Entities
                             if (configTimeExaminationProperties != null && configTimeExaminationProperties.Any())
                             {
                                 int configTimeExaminationId = 0;
+                                int roomExaminationTryParseId = 0;
+                                int? roomExaminationId = null;
                                 DateTime examinationDate;
                                 if (!DateTime.TryParse(configTimeExaminationProperties[1], out examinationDate))
                                     continue;
                                 int.TryParse(configTimeExaminationProperties[0], out configTimeExaminationId);
+                                if (int.TryParse(configTimeExaminationProperties[6], out roomExaminationTryParseId))
+                                    roomExaminationId = roomExaminationTryParseId;
                                 results.Add(new ConfigTimeExaminationDayOfWeek()
                                 {
                                     ConfigTimeExaminationId = configTimeExaminationId,
                                     ExaminationDate = examinationDate,
                                     SessionTypeName = configTimeExaminationProperties[2],
-                                    DayOfWeekName = configTimeExaminationProperties[3]
+                                    DayOfWeekName = configTimeExaminationProperties[3],
+                                    ConfigTimeExaminationValue = configTimeExaminationProperties[4],
+                                    RoomName = configTimeExaminationProperties[5],
+                                    RoomExaminationId = roomExaminationId
                                 });
                             }
 
@@ -102,6 +109,8 @@ namespace Medical.Entities
                 return null;
             }
         }
+
+        
 
         /// <summary>
         /// Tên bác sĩ
@@ -139,6 +148,21 @@ namespace Medical.Entities
         /// Mã ca khám
         /// </summary>
         public int ConfigTimeExaminationId { get; set; }
+
+        /// <summary>
+        /// Mốc thời gian làm việc
+        /// </summary>
+        public string ConfigTimeExaminationValue { get; set; }
+
+        /// <summary>
+        /// Id phòng khám
+        /// </summary>
+        public int? RoomExaminationId { get; set; }
+
+        /// <summary>
+        /// Tên phòng
+        /// </summary>
+        public string RoomName { get; set; }
 
         /// <summary>
         /// Ngày khám

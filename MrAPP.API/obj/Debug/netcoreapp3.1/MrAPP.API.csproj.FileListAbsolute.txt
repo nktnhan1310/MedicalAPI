@@ -220,3 +220,4 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Debug\netcoreapp3.1\MrA
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Debug\netcoreapp3.1\MrApp.API.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Debug\netcoreapp3.1\MrApp.API.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Debug\netcoreapp3.1\MrApp.API.genruntimeconfig.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll

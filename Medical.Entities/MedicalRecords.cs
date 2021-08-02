@@ -18,16 +18,13 @@ namespace Medical.Entities
         /// </summary>
         [StringLength(50)]
         public string Code { get; set; }
+
         /// <summary>
-        /// Tên
+        /// Tên đầy đủ của user
         /// </summary>
-        [StringLength(200)]
-        public string FirstName { get; set; }
-        /// <summary>
-        /// Họ và tên lót
-        /// </summary>
-        [StringLength(200)]
-        public string LastName { get; set; }
+        [StringLength(1000)]
+        public string UserFullName { get; set; }
+
         /// <summary>
         /// Sinh nhật
         /// </summary>
@@ -126,18 +123,6 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public string NationName { get; set; }
-
-        /// <summary>
-        /// Tên đầy đủ
-        /// </summary>
-        [NotMapped]
-        public string FullName
-        {
-            get
-            {
-                return LastName + " " + FirstName;
-            }
-        }
 
         /// <summary>
         /// Thông tin người thân (nếu có)

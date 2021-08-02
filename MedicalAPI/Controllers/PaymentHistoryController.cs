@@ -19,9 +19,9 @@ namespace MedicalAPI.Controllers
     [ApiController]
     [Description("Quản lý lịch sử thanh toán")]
     [Authorize]
-    public class PaymentHistoryController : BaseController<PaymentHistories, PaymentHistoryModel, BaseSearch>
+    public class PaymentHistoryController : CoreHospitalController<PaymentHistories, PaymentHistoryModel, SearchPaymentHistory>
     {
-        public PaymentHistoryController(IServiceProvider serviceProvider, ILogger<BaseController<PaymentHistories, PaymentHistoryModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        public PaymentHistoryController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<PaymentHistories, PaymentHistoryModel, SearchPaymentHistory>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IPaymentHistoryService>();
         }

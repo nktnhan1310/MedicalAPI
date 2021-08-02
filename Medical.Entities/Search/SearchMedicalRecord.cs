@@ -4,8 +4,13 @@ using System.Text;
 
 namespace Medical.Entities
 {
-    public class SearchMedicalRecord : BaseHospitalSearch
+    public class SearchMedicalRecord : BaseSearch
     {
+        /// <summary>
+        /// Mã hsnb
+        /// </summary>
+        public int? MedicalRecordId { get; set; }
+
         /// <summary>
         /// Theo bệnh nhân
         /// </summary>

@@ -120,6 +120,7 @@ namespace Medical.Service.Services.DomainService
         protected virtual Expression<Func<E, bool>> GetExpression(T baseSearch)
         {
             return e => !e.Deleted
+            && (!baseSearch.HospitalId.HasValue || e.HospitalId == baseSearch.HospitalId) 
             && (string.IsNullOrEmpty(baseSearch.SearchContent)
                 || e.Code.Contains(baseSearch.SearchContent)
                 || e.Name.Contains(baseSearch.SearchContent)

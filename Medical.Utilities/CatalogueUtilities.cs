@@ -16,13 +16,21 @@ namespace Medical.Utilities
             /// </summary>
             New = 0,
             /// <summary>
+            /// Chờ xác nhận thanh toán
+            /// </summary>
+            WaitPayment = 1,
+            /// <summary>
             /// Chờ lấy thuốc
             /// </summary>
-            Wait = 1,
+            Wait = 2,
             /// <summary>
             /// Hoàn thành đơn thuốc
             /// </summary>
-            Finished = 2
+            Finished = 3,
+            /// <summary>
+            /// Thanh toán thất bại
+            /// </summary>
+            PaymentFailed = 4,
         }
 
         /// <summary>
@@ -73,6 +81,10 @@ namespace Medical.Utilities
             /// Thanh toán qua APP
             /// </summary>
             APP = 1,
+            /// <summary>
+            /// Thanh toán qua MOMO
+            /// </summary>
+            MOMO = 2,
         }
 
         /// <summary>
@@ -95,7 +107,11 @@ namespace Medical.Utilities
             /// <summary>
             /// Hoàn thành dịch vụ
             /// </summary>
-            Finish = 3
+            Finish = 3,
+            /// <summary>
+            /// Thanh toán thất bại
+            /// </summary>
+            PaymentFailed = 4,
         }
 
         /// <summary>
@@ -112,7 +128,7 @@ namespace Medical.Utilities
             /// </summary>
             WaitConfirm = 1,
             /// <summary>
-            /// Đã xác nhận
+            /// Đã xác nhận thanh toán
             /// </summary>
             Confirmed = 2,
             /// <summary>
@@ -120,21 +136,25 @@ namespace Medical.Utilities
             /// </summary>
             Canceled = 3,
             /// <summary>
-            /// Chờ tái khám
+            /// Chờ xác nhận tái khám
             /// </summary>
             WaitReExamination = 4,
             /// <summary>
-            /// Xác nhận tái khám
+            /// Đã xác nhận thanh toán tái khám
             /// </summary>
             ConfirmedReExamination = 5,
             /// <summary>
-            /// Tái khám
-            /// </summary>
-            ReExamination = 6,
-            /// <summary>
             /// Khám hoàn tất
             /// </summary>
-            FinishExamination = 7,
+            FinishExamination = 6,
+            /// <summary>
+            /// Thanh toán thất bại
+            /// </summary>
+            PaymentFailed = 7,
+            /// <summary>
+            /// Thanh toán tái khám thất bại
+            /// </summary>
+            PaymentReExaminationFailed = 8
         }
 
         /// <summary>
@@ -165,8 +185,15 @@ namespace Medical.Utilities
             /// <summary>
             /// Hoàn thành khám
             /// </summary>
-            FinishExamination = 5
-
+            FinishExamination = 5,
+            /// <summary>
+            /// Trả lại phiếu
+            /// </summary>
+            Return = 6,
+            /// <summary>
+            /// Trả lại phiếu tái khám
+            /// </summary>
+            ReturnReExamination = 7,
         }
 
         public enum ExaminationType

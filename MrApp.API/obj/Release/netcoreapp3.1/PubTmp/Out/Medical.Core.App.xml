@@ -11,6 +11,21 @@
             <param name="loginModel"></param>
             <returns></returns>
         </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.SendOTP(System.String,System.String)">
+            <summary>
+            Kiểm tra mã OTP
+            </summary>
+            <param name="phoneNumber"></param>
+            <param name="otpValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.GenerateOTPCode(System.String)">
+            <summary>
+            Gửi mã OTP theo sdt có trong hệ thống
+            </summary>
+            <param name="phoneNumber"></param>
+            <returns></returns>
+        </member>
         <member name="M:Medical.Core.App.Controllers.AuthCoreController.Register(Medical.Models.RegisterModel)">
             <summary>
             Đăng ký
@@ -23,6 +38,13 @@
             Đổi mật khẩu
             </summary>
             <param name="userId"></param>
+            <param name="changePasswordModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.ChangePasswordByConfirmOTP(Medical.Models.ChangePasswordOTPModel)">
+            <summary>
+            Cập nhật lại mật khẩu cho user
+            </summary>
             <param name="changePasswordModel"></param>
             <returns></returns>
         </member>
@@ -41,11 +63,12 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Medical.Core.App.Controllers.AuthCoreController.GenerateJwtToken(Medical.Models.UserModel)">
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.GenerateJwtToken(Medical.Models.UserModel,System.Boolean)">
             <summary>
             Tạo token từ thông tin user
             </summary>
             <param name="user"></param>
+            <param name="isConfirmOTP"></param>
             <returns></returns>
         </member>
         <member name="M:Medical.Core.App.Controllers.BaseController`3.Get">

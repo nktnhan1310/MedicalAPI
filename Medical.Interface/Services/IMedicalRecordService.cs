@@ -8,6 +8,6 @@ namespace Medical.Interface.Services
 {
     public interface IMedicalRecordService : IDomainService<MedicalRecords, SearchMedicalRecord>
     {
-        Task<int> GetMedicalRecordIdByUser(int hospitalId, int userId);
+        Task<int> GetMedicalRecordIdByUser(int userId);
     }
 }

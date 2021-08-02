@@ -22,6 +22,8 @@ namespace Medical.Models
         }
         public string Phone { get; set; }
         public string Email { get; set; }
+        public bool IsCheckOTP { get; set; }
         public IList<RoleModel> Roles { get; set; }
+        public bool IsConfirmOTP { get; set; }
     }
 }

@@ -52,7 +52,7 @@ namespace Medical.Core.App.Controllers
             IList<T> itemModels = new List<T>();
             baseSearch.PageIndex = 1;
             baseSearch.PageSize = int.MaxValue;
-            baseSearch.OrderBy = "Id";
+            baseSearch.OrderBy = "Id desc";
 
             baseSearch.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
             var pagedItems = await this.domainService.GetPagedListData(baseSearch);
@@ -263,7 +263,7 @@ namespace Medical.Core.App.Controllers
 
             if (ModelState.IsValid)
             {
-                if (LoginContext.Instance.CurrentUser != null)
+                if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                     baseSearch.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
                 PagedList<E> pagedData = await this.domainService.GetPagedListData(baseSearch);
                 PagedList<T> pagedDataModel = mapper.Map<PagedList<T>>(pagedData);

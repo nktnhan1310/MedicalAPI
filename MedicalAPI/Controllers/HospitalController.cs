@@ -111,6 +111,8 @@ namespace MedicalAPI.Controllers
             {
                 // Lấy thông tin kênh đăng ký bệnh viện
                 item.ChannelMappingHospitals = await this.channelMappingHospitalService.GetAsync(e => !e.Deleted && e.HospitalId == item.Id);
+                if (item.ChannelMappingHospitals != null && item.ChannelMappingHospitals.Any())
+                    item.ChannelIds = item.ChannelMappingHospitals.Select(e => e.ChannelId).ToList();
                 // Lấy thông tin mapping dịch vụ bệnh viện
                 item.ServiceTypeMappingHospitals = await this.serviceTypeMappingHospitalService.GetAsync(e => !e.Deleted && e.HospitalId == item.Id);
                 // Lấy thông tin file của thông tin bệnh viện
@@ -233,7 +235,6 @@ namespace MedicalAPI.Controllers
                                 System.IO.File.Delete(folderUploadPath);
                             }
                         }
-                        throw new Exception("Lỗi trong quá trình xử lý");
                     }
                     appDomainResult.Success = success;
                 }
@@ -342,7 +343,6 @@ namespace MedicalAPI.Controllers
                                 System.IO.File.Delete(folderUploadPath);
                             }
                         }
-                        throw new Exception("Lỗi trong quá trình xử lý");
                     }
                     appDomainResult.Success = success;
                 }

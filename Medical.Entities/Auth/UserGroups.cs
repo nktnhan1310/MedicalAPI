@@ -14,11 +14,14 @@ namespace Medical.Entities
 
         #region Extension Properties
 
-        /// <summary>
-        /// Người dùng thuộc nhóm
-        /// </summary>
         [NotMapped]
-        public IList<UserInGroups> UserInGroups { get; set; }
+        public List<int> UserIds { get; set; }
+
+        ///// <summary>
+        ///// Người dùng thuộc nhóm
+        ///// </summary>
+        //[NotMapped]
+        //public IList<UserInGroups> UserInGroups { get; set; }
 
         /// <summary>
         /// Chức năng + quyền của nhóm

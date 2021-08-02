@@ -75,8 +75,8 @@ namespace MedicalAPI.Controllers
         [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public override async Task<AppDomainResult> Get()
         {
-            var items = await this.domainService.GetAsync(e =>
-            !LoginContext.Instance.CurrentUser.HospitalId.HasValue || e.HospitalId == LoginContext.Instance.CurrentUser.HospitalId.Value);
+            var items = await this.domainService.GetAsync(e => !e.Deleted
+            && (!LoginContext.Instance.CurrentUser.HospitalId.HasValue || e.HospitalId == LoginContext.Instance.CurrentUser.HospitalId.Value));
             var itemModels = mapper.Map<IList<UserModel>>(items);
             return new AppDomainResult()
             {
@@ -112,7 +112,7 @@ namespace MedicalAPI.Controllers
                     itemModel.ConfirmPassWord = item.Password;
                     var userInGroups = await this.userInGroupService.GetAsync(e => !e.Deleted && e.UserId == id);
                     if (userInGroups != null)
-                        itemModel.UserInGroups = mapper.Map<IList<UserInGroupModel>>(userInGroups);
+                        itemModel.UserGroupIds = userInGroups.Select(e => e.UserGroupId).ToList();
                     var userFiles = await this.userFileService.GetAsync(e => !e.Deleted && e.UserId == id);
                     if (userFiles != null)
                         itemModel.UserFiles = mapper.Map<IList<UserFileModel>>(userFiles);
@@ -224,7 +224,6 @@ namespace MedicalAPI.Controllers
                                 System.IO.File.Delete(folderUploadPath);
                             }
                         }
-                        throw new Exception("Lỗi trong quá trình xử lý");
                     }
                     appDomainResult.Success = success;
                 }
@@ -321,7 +320,6 @@ namespace MedicalAPI.Controllers
                                 System.IO.File.Delete(folderUploadPath);
                             }
                         }
-                        throw new Exception("Lỗi trong quá trình xử lý");
                     }
                     appDomainResult.Success = success;
                 }
@@ -384,7 +382,7 @@ namespace MedicalAPI.Controllers
 
             if (ModelState.IsValid)
             {
-                if (LoginContext.Instance.CurrentUser != null)
+                if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                     baseSearch.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
                 PagedList<Users> pagedData = await this.domainService.GetPagedListData(baseSearch);
                 PagedList<UserModel> pagedDataModel = mapper.Map<PagedList<UserModel>>(pagedData);

@@ -12,5 +12,10 @@ namespace Medical.Models
         public string UserName { set; get; }
         [Required(ErrorMessage = "Mật khẩu là bắt buộc nhập")]
         public string Password { set; get; }
+
+        /// <summary>
+        /// Mã OTP nêu đăng nhập bằng sdt
+        /// </summary>
+        //public string OTPValue { get; set; }
     }
 }

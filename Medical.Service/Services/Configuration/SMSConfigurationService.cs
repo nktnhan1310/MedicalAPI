@@ -3,6 +3,7 @@ using Medical.Entities;
 using Medical.Interface;
 using Medical.Interface.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -25,8 +26,10 @@ namespace Medical.Service
 
     public class SMSConfigurationService : DomainService<SMSConfiguration, BaseSearch>, ISMSConfigurationService
     {
-        public SMSConfigurationService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        private IConfiguration configuration;
+        public SMSConfigurationService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper)
         {
+            this.configuration = configuration;
         }
 
         /// <summary>
@@ -93,6 +96,8 @@ namespace Medical.Service
                     doc.LoadXml(strResult);
                     string json = JsonConvert.SerializeXmlNode(doc);
                     EsmsResult rs = JsonConvert.DeserializeObject<EsmsResult>(json);
+                    bool isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
+                    if (!isProduct) return true;
                     if (rs.CodeResult == 100)
                     {
                         return true;

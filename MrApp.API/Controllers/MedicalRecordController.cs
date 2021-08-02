@@ -24,7 +24,7 @@ namespace MrApp.API.Controllers
 {
     [Route("api/medical-record")]
     [ApiController]
-    [Description("Hồ sơ bệnh án")]
+    [Description("Hồ sơ bệnh án/ Hồ sơ người bệnh")]
     [Authorize]
     public class MedicalRecordController : BaseController
     {
@@ -33,7 +33,7 @@ namespace MrApp.API.Controllers
         private readonly IMedicalRecordFileService medicalRecordFileService;
         private readonly IMedicalRecordDetailService medicalRecordDetailService;
         private readonly IMedicalRecordDetailFileService medicalRecordDetailFileService;
-
+        private readonly IUserService userService;
 
         public MedicalRecordController(IServiceProvider serviceProvider, ILogger<BaseController> logger, IWebHostEnvironment env, IMapper mapper, IConfiguration configuration) : base(serviceProvider, logger, env, mapper, configuration)
         {
@@ -42,69 +42,90 @@ namespace MrApp.API.Controllers
             medicalRecordFileService = serviceProvider.GetRequiredService<IMedicalRecordFileService>();
             medicalRecordDetailService = serviceProvider.GetRequiredService<IMedicalRecordDetailService>();
             medicalRecordDetailFileService = serviceProvider.GetRequiredService<IMedicalRecordDetailFileService>();
+            userService = serviceProvider.GetRequiredService<IUserService>();
         }
 
         /// <summary>
-        /// Lấy thông tin theo id
+        /// Lấy thông tin hồ sơ bệnh án của user đăng nhập
         /// </summary>
-        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("get-medical-record-info")]
         [MedicalAppAuthorize(new string[] { CoreContants.View })]
-        public async Task<AppDomainResult> GetById(int id)
+        public async Task<AppDomainResult> GetMedicalRecordInfo()
         {
-            AppDomainResult appDomainResult = new AppDomainResult();
-            if (id == 0)
+            MedicalRecordModel medicalRecordModel = new MedicalRecordModel();
+            SearchMedicalRecord searchMedicalRecord = new SearchMedicalRecord()
             {
-                throw new KeyNotFoundException("id không tồn tại");
-            }
-            var item = await this.medicalRecordService.GetByIdAsync(id);
+                PageIndex = 1,
+                PageSize = 10,
+                OrderBy = "Id desc",
+                UserId = LoginContext.Instance.CurrentUser.UserId,
+            };
+            var pagedItems = await this.medicalRecordService.GetPagedListData(searchMedicalRecord);
+            IList<MedicalRecords> medicalRecordInfos = new List<MedicalRecords>();
+            if (pagedItems != null && pagedItems.Items.Any())
+                medicalRecordInfos = pagedItems.Items.ToList();
+            //var medicalRecordInfos = await this.medicalRecordService.GetAsync(e => e.UserId == LoginContext.Instance.CurrentUser.UserId);
+            if (medicalRecordInfos != null && medicalRecordInfos.Any())
+            {
+                var medicalRecordInfo = medicalRecordInfos.FirstOrDefault();
+                medicalRecordModel = mapper.Map<MedicalRecordModel>(medicalRecordInfo);
+                // Lấy thông tin người thân
+                var medicalAdditions = await this.medicalRecordAdditionService.GetAsync(e => !e.Deleted && e.MedicalRecordId == medicalRecordInfo.Id);
+                if (medicalAdditions != null)
+                    medicalRecordModel.MedicalRecordAdditions = mapper.Map<IList<MedicalRecordAdditionModel>>(medicalAdditions);
+                // Lấy thông tin file hồ sơ bệnh án
+                var medicalFiles = await this.medicalRecordFileService.GetAsync(e => !e.Deleted && e.MedicalRecordId == medicalRecordInfo.Id);
+                if (medicalFiles != null)
+                    medicalRecordModel.MedicalRecordFiles = mapper.Map<IList<MedicalRecordFileModel>>(medicalFiles);
 
-            if (item != null && item.UserId == LoginContext.Instance.CurrentUser.UserId)
-            {
-                if ((!LoginContext.Instance.CurrentUser.HospitalId.HasValue
-                    || (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId == item.HospitalId)))
+                // Lấy thông tin chi tiết hồ sơ bệnh án
+                var medicalRecordDetails = await this.medicalRecordDetailService.GetAsync(e => !e.Deleted && e.MedicalRecordId == medicalRecordInfo.Id);
+                if (medicalRecordDetails != null)
                 {
-                    var itemModel = mapper.Map<MedicalRecordModel>(item);
-                    // Lấy thông tin người thân
-                    var medicalAdditions = await this.medicalRecordAdditionService.GetAsync(e => !e.Deleted && e.MedicalRecordId == id);
-                    if (medicalAdditions != null)
-                        itemModel.MedicalRecordAdditions = mapper.Map<IList<MedicalRecordAdditionModel>>(medicalAdditions);
-                    // Lấy thông tin file hồ sơ bệnh án
-                    var medicalFiles = await this.medicalRecordFileService.GetAsync(e => !e.Deleted && e.MedicalRecordId == id);
-                    if (medicalFiles != null)
-                        itemModel.MedicalRecordFiles = mapper.Map<IList<MedicalRecordFileModel>>(medicalFiles);
-
-                    // Lấy thông tin chi tiết hồ sơ bệnh án
-                    var medicalRecordDetails = await this.medicalRecordDetailService.GetAsync(e => !e.Deleted && e.MedicalRecordId == id);
-                    if (medicalRecordDetails != null)
+                    medicalRecordModel.MedicalRecordDetails = mapper.Map<IList<MedicalRecordDetailModel>>(medicalRecordDetails);
+                    // Lấy thông tin file của hồ sơ bệnh án
+                    if (medicalRecordModel.MedicalRecordDetails.Any())
                     {
-                        itemModel.MedicalRecordDetails = mapper.Map<IList<MedicalRecordDetailModel>>(medicalRecordDetails);
-                        // Lấy thông tin file của hồ sơ bệnh án
-                        if(itemModel.MedicalRecordDetails.Any())
+                        foreach (var detail in medicalRecordModel.MedicalRecordDetails)
                         {
-                            foreach (var detail in itemModel.MedicalRecordDetails)
-                            {
-                                var detailFiles = await this.medicalRecordDetailFileService.GetAsync(e => !e.Deleted && e.MedicalRecordDetailId == detail.Id);
-                                detail.MedicalRecordDetailFiles = mapper.Map<IList<MedicalRecordDetailFileModel>>(detailFiles);
-                            }
-                        }    
+                            var detailFiles = await this.medicalRecordDetailFileService.GetAsync(e => !e.Deleted && e.MedicalRecordDetailId == detail.Id);
+                            detail.MedicalRecordDetailFiles = mapper.Map<IList<MedicalRecordDetailFileModel>>(detailFiles);
+                        }
                     }
-
-                    appDomainResult = new AppDomainResult()
-                    {
-                        Success = true,
-                        Data = itemModel,
-                        ResultCode = (int)HttpStatusCode.OK
-                    };
                 }
-                else throw new KeyNotFoundException("Item không tồn tại");
+
             }
             else
             {
-                throw new KeyNotFoundException("Item không tồn tại");
+                var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.Active && !e.IsLocked && e.Id == LoginContext.Instance.CurrentUser.UserId);
+                if(userInfos != null && userInfos.Any())
+                {
+                    var userInfo = userInfos.FirstOrDefault();
+                    MedicalRecords medicalRecords = new MedicalRecords()
+                    {
+                        Created = DateTime.Now,
+                        CreatedBy = LoginContext.Instance.CurrentUser.UserName,
+                        Email = userInfo.Email,
+                        Phone = userInfo.Phone,
+                        Active = true,
+                        Deleted = false,
+                        UserId = LoginContext.Instance.CurrentUser.UserId,
+                        UserFullName = userInfo.FirstName + " " + userInfo.LastName
+                    };
+                    bool success = await this.medicalRecordService.CreateAsync(medicalRecords);
+                    if (success)
+                        medicalRecordModel = mapper.Map<MedicalRecordModel>(medicalRecords);
+                    else throw new AppException("Tạo hồ sơ thất bại!");
+                }
+                else throw new AppException("Lấy thông tin user thất bại!");
             }
-            return appDomainResult;
+            return new AppDomainResult()
+            {
+                Data = medicalRecordModel,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
         }
 
         /// <summary>
@@ -197,7 +218,6 @@ namespace MrApp.API.Controllers
                                 System.IO.File.Delete(folderUploadPath);
                             }
                         }
-                        throw new Exception("Lỗi trong quá trình xử lý");
                     }
                     appDomainResult.Success = success;
                 }
@@ -210,158 +230,6 @@ namespace MrApp.API.Controllers
             return appDomainResult;
         }
 
-        /// <summary>
-        /// Thêm mới hồ sơ bệnh án
-        /// </summary>
-        /// <param name="itemModel"></param>
-        /// <returns></returns>
-        [HttpPost]
-        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
-        public async Task<AppDomainResult> AddItem([FromBody] MedicalRecordModel itemModel)
-        {
-            if (LoginContext.Instance.CurrentUser != null)
-                itemModel.UserId = LoginContext.Instance.CurrentUser.UserId;
-            else throw new UnauthorizedAccessException("Không có quyền truy cập");
-            AppDomainResult appDomainResult = new AppDomainResult();
-            bool success = false;
-            if (ModelState.IsValid)
-            {
-                if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
-                    itemModel.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
-                itemModel.Created = DateTime.Now;
-                itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
-                itemModel.Active = true;
-                var item = mapper.Map<MedicalRecords>(itemModel);
-                if (item != null)
-                {
-                    // Kiểm tra item có tồn tại chưa?
-                    var messageUserCheck = await this.medicalRecordService.GetExistItemMessage(item);
-                    if (!string.IsNullOrEmpty(messageUserCheck))
-                        throw new AppException(messageUserCheck);
-                    List<string> filePaths = new List<string>();
-                    List<string> folderUploadPaths = new List<string>();
-                    if (item.MedicalRecordFiles != null && item.MedicalRecordFiles.Any())
-                    {
-                        foreach (var file in item.MedicalRecordFiles)
-                        {
-                            string filePath = Path.Combine(env.ContentRootPath, CoreContants.UPLOAD_FOLDER_NAME, CoreContants.TEMP_FOLDER_NAME, file.FileName);
-                            string folderUploadPath = string.Empty;
-                            var folderUpload = configuration.GetValue<string>("MySettings:FolderUpload");
-                            folderUploadPath = Path.Combine(folderUpload, CoreContants.UPLOAD_FOLDER_NAME, MEDICAL_RECORD_FOLDER_NAME);
-                            string fileUploadPath = Path.Combine(folderUploadPath, Path.GetFileName(filePath));
-                            // Kiểm tra có tồn tại file trong temp chưa?
-                            if (System.IO.File.Exists(filePath) && !System.IO.File.Exists(fileUploadPath))
-                            {
-                                
-                                FileUtils.CreateDirectory(folderUploadPath);
-                                FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
-                                folderUploadPaths.Add(fileUploadPath);
-                                string fileUrl = Path.Combine(CoreContants.UPLOAD_FOLDER_NAME, MEDICAL_RECORD_FOLDER_NAME, Path.GetFileName(filePath));
-                                filePaths.Add(filePath);
-                                file.Created = DateTime.Now;
-                                file.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
-                                file.Active = true;
-                                file.Deleted = false;
-                                file.FileName = Path.GetFileName(filePath);
-                                file.FileExtension = Path.GetExtension(filePath);
-                                file.MedicalRecordId = item.Id;
-                                file.FileUrl = fileUrl;
-                            }
-                        }
-                    }
-                    success = await this.medicalRecordService.CreateAsync(item);
-                    if (success)
-                    {
-                        appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                        // Remove file trong thư mục temp
-                        if (filePaths.Any())
-                        {
-                            foreach (var filePath in filePaths)
-                            {
-                                System.IO.File.Delete(filePath);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (folderUploadPaths.Any())
-                        {
-                            foreach (var folderUploadPath in folderUploadPaths)
-                            {
-                                System.IO.File.Delete(folderUploadPath);
-                            }
-                        }
-                        throw new Exception("Lỗi trong quá trình xử lý");
-                    }
-                    appDomainResult.Success = success;
-                }
-                else
-                    throw new AppException("Item không tồn tại");
-            }
-            else
-            {
-                throw new AppException(ModelState.GetErrorMessage());
-            }
-            return appDomainResult;
-        }
-
-        /// <summary>
-        /// Lấy thông tin danh sách hồ sơ bệnh án theo user đăng nhập
-        /// </summary>
-        /// <param name="baseSearch"></param>
-        /// <returns></returns>
-        [HttpGet("get-paged-data")]
-        [MedicalAppAuthorize(new string[] { CoreContants.View })]
-        public async Task<AppDomainResult> GetPagedData([FromQuery] SearchMedicalRecord baseSearch)
-        {
-            if (LoginContext.Instance.CurrentUser != null)
-                baseSearch.UserId = LoginContext.Instance.CurrentUser.UserId;
-            else throw new UnauthorizedAccessException("Không có quyền truy cập");
-            AppDomainResult appDomainResult = new AppDomainResult();
-
-            if (ModelState.IsValid)
-            {
-                PagedList<MedicalRecords> pagedData = await this.medicalRecordService.GetPagedListData(baseSearch);
-                PagedList<MedicalRecordModel> pagedDataModel = mapper.Map<PagedList<MedicalRecordModel>>(pagedData);
-                appDomainResult = new AppDomainResult
-                {
-                    Data = pagedDataModel,
-                    Success = true,
-                    ResultCode = (int)HttpStatusCode.OK
-                };
-            }
-            else
-                throw new AppException(ModelState.GetErrorMessage());
-
-            return appDomainResult;
-        }
-
-        /// <summary>
-        /// Xóa hồ sơ
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpDelete("{id}")]
-        [MedicalAppAuthorize(new string[] { CoreContants.Delete })]
-        public async Task<AppDomainResult> DeleteItem(int id)
-        {
-            var existMedicalRecords = await this.medicalRecordService.GetAsync(e => e.Id == id, e => new MedicalRecords() { UserId = e.UserId });
-            if (LoginContext.Instance.CurrentUser == null
-                || (existMedicalRecords != null && existMedicalRecords.Any() && LoginContext.Instance.CurrentUser.UserId != existMedicalRecords.FirstOrDefault().UserId))
-                throw new UnauthorizedAccessException("Không có quyền truy cập");
-
-            AppDomainResult appDomainResult = new AppDomainResult();
-            bool success = await this.medicalRecordService.DeleteAsync(id);
-            if (success)
-            {
-                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                appDomainResult.Success = success;
-            }
-            else
-                throw new Exception("Lỗi trong quá trình xử lý");
-
-            return appDomainResult;
-        }
 
 
         #region Contants

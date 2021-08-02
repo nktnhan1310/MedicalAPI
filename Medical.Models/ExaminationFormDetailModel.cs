@@ -55,6 +55,16 @@ namespace Medical.Models
         #region Extension Properties
 
         /// <summary>
+        /// Mã phiếu khám
+        /// </summary>
+        public string ExaminationCode { get; set; }
+
+        /// <summary>
+        /// Mã hồ sơ bệnh án
+        /// </summary>
+        public string MedicalRecordCode { get; set; }
+
+        /// <summary>
         /// Tên dịch vụ phát sinh
         /// </summary>
         public string AdditionServiceName { get; set; }

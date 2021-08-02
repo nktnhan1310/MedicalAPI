@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -31,6 +32,7 @@ namespace Medical.Entities
         /// <summary>
         /// Cột sắp xếp
         /// </summary>
+        [DefaultValue("Id desc")]
         public string OrderBy { set; get; }
     }
 }

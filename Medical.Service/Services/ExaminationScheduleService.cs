@@ -36,6 +36,7 @@ namespace Medical.Service
                 new SqlParameter("@DoctorId", baseSearch.DoctorId),
                 new SqlParameter("@HospitalId", baseSearch.HospitalId),
                 new SqlParameter("@ExaminationDate", baseSearch.ExaminationDate),
+                new SqlParameter("@ExaminationScheduleId", baseSearch.ExaminationScheduleId),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("OrderBy", baseSearch.OrderBy),
                 new SqlParameter("@TotalPage", SqlDbType.Int, 0),
@@ -49,6 +50,7 @@ namespace Medical.Service
             if (item != null)
             {
                 // Lưu thông tin bác sĩ
+                item.Id = 0;
                 await unitOfWork.Repository<ExaminationSchedules>().CreateAsync(item);
                 await unitOfWork.SaveAsync();
                 // Cập nhật thông tin chi tiết ca
@@ -58,6 +60,8 @@ namespace Medical.Service
                     {
                         examinationScheduleDetail.ScheduleId = item.Id;
                         examinationScheduleDetail.Created = DateTime.Now;
+                        examinationScheduleDetail.Active = true;
+                        examinationScheduleDetail.Id = 0;
                         await unitOfWork.Repository<ExaminationScheduleDetails>().CreateAsync(examinationScheduleDetail);
                     }
                 }
@@ -100,6 +104,7 @@ namespace Medical.Service
                         {
                             examinationScheduleDetail.ScheduleId = exists.Id;
                             examinationScheduleDetail.Created = DateTime.Now;
+                            examinationScheduleDetail.Id = 0;
                             await unitOfWork.Repository<ExaminationScheduleDetails>().CreateAsync(examinationScheduleDetail);
                         }
                     }
@@ -164,6 +169,7 @@ namespace Medical.Service
                 new SqlParameter("@SpecialistTypeId", searchExaminationScheduleDetail.SpecialistTypeId),
                 new SqlParameter("@ExaminationDate", examinationDate),
                 new SqlParameter("@DoctorId", searchExaminationScheduleDetail.DoctorId),
+                new SqlParameter("@ExaminationScheduleDetailId", searchExaminationScheduleDetail.ExaminationScheduleDetailId),
 
             };
             examinationScheduleDetails = await unitOfWork.Repository<ExaminationScheduleDetails>().ExcuteStoreAsync("ExaminationScheduleDetail_GetInfo", sqlParameters);
@@ -174,14 +180,34 @@ namespace Medical.Service
                     Id = e.Key,
                     DoctorName = e.FirstOrDefault().DoctorDisplayName,
                     SpecialistTypeName = e.FirstOrDefault().SpecialistTypeName,
-                    SpecialistTypeId = searchExaminationScheduleDetail.SpecialistTypeId,
+                    SpecialistTypeId = searchExaminationScheduleDetail.SpecialistTypeId ?? 0,
                     HospitalId = searchExaminationScheduleDetail.HospitalId,
-                    DoctorId = searchExaminationScheduleDetail.DoctorId ?? 0,
+                    DoctorId = e.FirstOrDefault().DoctorId ?? 0,
                     ExaminationDate = examinationDate,
                     ExaminationScheduleDetails = e.ToList()
                 }).ToList();
             return examinationSchedules;
         }
+
+
+        public async Task<IList<ExaminationScheduleDetails>> GetExaminationScheduleDetails(SearchExaminationScheduleForm searchExaminationScheduleDetail)
+        {
+            IList<ExaminationScheduleDetails> examinationScheduleDetails = new List<ExaminationScheduleDetails>();
+            var examinationDate = searchExaminationScheduleDetail.ExaminationDate.HasValue ? searchExaminationScheduleDetail.ExaminationDate.Value : DateTime.Now;
+            SqlParameter[] sqlParameters = new SqlParameter[]
+            {
+                new SqlParameter("@HospitalId", searchExaminationScheduleDetail.HospitalId),
+                new SqlParameter("@SpecialistTypeId", searchExaminationScheduleDetail.SpecialistTypeId),
+                new SqlParameter("@ExaminationDate", examinationDate),
+                new SqlParameter("@DoctorId", searchExaminationScheduleDetail.DoctorId),
+                new SqlParameter("@ExaminationScheduleDetailId", searchExaminationScheduleDetail.ExaminationScheduleDetailId),
+
+
+            };
+            examinationScheduleDetails = await unitOfWork.Repository<ExaminationScheduleDetails>().ExcuteStoreAsync("ExaminationScheduleDetail_GetInfo", sqlParameters);
+            return examinationScheduleDetails;
+        }
+
 
         /// <summary>
         /// Lấy danh sách tất cả lịch + chuyên khoa khám bệnh
@@ -201,6 +227,7 @@ namespace Medical.Service
                 new SqlParameter("@Gender", searchExaminationScheduleDetailV2.Gender),
                 new SqlParameter("@DegreeTypeId", searchExaminationScheduleDetailV2.DegreeTypeId),
                 new SqlParameter("@SessionId", searchExaminationScheduleDetailV2.SessionId),
+                new SqlParameter("@DayOfWeek", searchExaminationScheduleDetailV2.DayOfWeek),
                 new SqlParameter("@ExaminationDate", searchExaminationScheduleDetailV2.ExaminationDate),
                 new SqlParameter("@OrderBy", searchExaminationScheduleDetailV2.OrderBy),
                 new SqlParameter("@SearchContent", searchExaminationScheduleDetailV2.SearchContent),

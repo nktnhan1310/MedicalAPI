@@ -15,7 +15,6 @@ namespace Medical.Models
         /// <summary>
         /// Mật khẩu cũ
         /// </summary>
-        [Required(ErrorMessage = "Mật khẩu cũ là bắt buộc nhập")]
         [DataType(DataType.Password)]
         public string OldPassword { get; set; }
         /// <summary>

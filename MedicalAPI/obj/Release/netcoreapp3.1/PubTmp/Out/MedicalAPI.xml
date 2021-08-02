@@ -109,25 +109,175 @@
             <param name="searchUserInGroup"></param>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.Catalogue.DistrictController.GetByCityId(System.Int32)">
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetCountryCatalogue(System.String)">
+            <summary>
+            Lấy danh sách quốc gia
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetCityCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách thành phố
+            </summary>
+            <param name="countryId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetDayOfWeekCatalogue">
+            <summary>
+            Danh sách ngày trong tuần
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetDistrictCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách quận
+            </summary>
+            <param name="cityId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetWardCatalogue(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách phường
+            </summary>
+            <param name="cityId"></param>
+            <param name="districtid"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetNationCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách dân tộc
+            </summary>
+            <param name="countryId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetJobCatalogue(System.String)">
+            <summary>
+            Lấy danh sách công việc
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetServiceTypeCatalogue(System.String)">
+            <summary>
+            Lấy danh sách dịch vụ của bệnh viện
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetHospitalCatalogue(System.String)">
+            <summary>
+            Lấy danh sách bệnh viện
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetChannelCatalogue(System.String)">
+            <summary>
+            Lấy danh sách kênh đăng kí
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetDegreeTypeCatalogue(System.String)">
+            <summary>
+            Lấy danh sách chức vị của bác sĩ
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetNotificationTypeCatalogue(System.String)">
+            <summary>
+            Lấy danh sách loại thông báo
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetSessionTypeCatalogue(System.String)">
+            <summary>
+            Lấy danh sách buổi khám
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetPaymentMethodCatalogue(System.String)">
+            <summary>
+            Lấy danh sách phương thức thanh toán
+            </summary>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetSystemConfigFee">
+            <summary>
+            Lấy thông tin phí tiện ích từ cấu hình hệ thống
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetMedicalRecordCatalogue(Medical.Entities.SearchMedicalRecord)">
+            <summary>
+            Lấy danh sách hồ sơ người bệnh
+            </summary>
+            <param name="searchMedicalRecord"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetAdditionServiceTypeCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách dịch vụ phát sinh của bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetSpecialistTypeCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách chuyên khoa của bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetRoomExaminationCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách Phòng khám của bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.CatalogueController.GetDoctorCatalogue(System.Nullable{System.Int32},System.String)">
+            <summary>
+            Lấy danh sách bác sĩ theo bệnh viện
+            </summary>
+            <param name="hospitalId"></param>
+            <param name="searchContent"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.Catalogue.DistrictController.GetByCityId(System.Int32,System.String)">
             <summary>
             Lấy thông tin quận huyện theo mã thành phố
             </summary>
             <param name="cityId"></param>
+            <param name="searchContent"></param>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.Catalogue.WardController.GetByCityId(System.Int32)">
+        <member name="M:MedicalAPI.Controllers.Catalogue.WardController.GetByCityId(System.Int32,System.String)">
             <summary>
             Lấy thông tin phường/xã theo mã thành phố
             </summary>
             <param name="cityId"></param>
+            <param name="searchContent"></param>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.Catalogue.WardController.GetByDistrictId(System.Int32)">
+        <member name="M:MedicalAPI.Controllers.Catalogue.WardController.GetByDistrictId(System.Int32,System.String)">
             <summary>
             Lấy thông tin phường/xã theo mã quận/huyện
             </summary>
             <param name="districtId"></param>
+            <param name="searchContent"></param>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.RoomExaminationController.GetRoomDetail(Medical.Entities.SearchHopitalExtension)">
@@ -217,6 +367,20 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetDoctorByHospital(System.Nullable{System.Int32})">
+            <summary>
+            Lấy thông tin danh sách bác sĩ theo bệnh viện
+            </summary>
+            <param name="specialistTypeId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetDoctorExamination(Medical.Entities.SearchExaminationScheduleDetailV2)">
+            <summary>
+            Lấy ra danh sách bác sĩ khám bệnh
+            </summary>
+            <param name="searchExaminationScheduleDetailV2"></param>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetAllExaminationSchedules(Medical.Entities.SearchExaminationScheduleDetailV2)">
             <summary>
             Lấy tất cả thông tin chuyên khoa khám bệnh
@@ -247,11 +411,10 @@
             <param name="examinationDate"></param>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetMedicalRecordByHospital(System.Nullable{System.Int32})">
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetMedicalRecordCatalogue">
             <summary>
-            Lấy danh sách hồ sơ bệnh án theo bệnh viện
+            Lấy danh sách hồ sơ bệnh án 
             </summary>
-            <param name="hospitalId"></param>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetExaminationHistory(System.Int32)">
@@ -273,6 +436,20 @@
             Cập nhật trạng thái phiếu khám
             </summary>
             <param name="updateExaminationStatusModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetResponseMomoPayment(Medical.Models.UpdateExaminationStatusModel)">
+            <summary>
+            Trả lại thông tin phản hồi từ momo
+            </summary>
+            <param name="updateExaminationStatusModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetById(System.Int32)">
+            <summary>
+            Lấy thông tin phiếu khám theo Id
+            </summary>
+            <param name="id"></param>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.ExaminationFormController.GetFeeResponseExamination(Medical.Entities.Extensions.FeeCaculateExaminationRequest)">
@@ -301,6 +478,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.ExaminationFormDetailController.GetResponseMomoPayment(Medical.Entities.UpdateExaminationFormDetailStatus)">
+            <summary>
+            Trả lại thông tin phản hồi từ momo
+            </summary>
+            <param name="updateExaminationFormDetailStatus"></param>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetSpecialistTypeByHospital(System.Int32)">
             <summary>
             Lấy thông tin chuyên khoa theo bệnh viện được chọn
@@ -315,17 +499,19 @@
             <param name="hospitalId"></param>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetSpecialistTypeByDoctor(System.Int32)">
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetSpecialistTypeByDoctor(System.Nullable{System.Int32},System.Int32)">
             <summary>
             Lấy thông tin chuyên khoa của bác sĩ được chọn
             </summary>
+            <param name="hospitalId"></param>
             <param name="doctorId"></param>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetDoctorBySpecialistType(System.Int32)">
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetDoctorBySpecialistType(System.Nullable{System.Int32},System.Int32)">
             <summary>
             Lấy thông tin bác sĩ theo chuyên khoa được chọn
             </summary>
+            <param name="hospitalId"></param>
             <param name="specialistTypeId"></param>
             <returns></returns>
         </member>
@@ -335,10 +521,11 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetConfigTimeExamination(System.Int32)">
+        <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.GetConfigTimeExamination(System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             Lấy thông tin cấu hình ca khám theo buổi khám
             </summary>
+            <param name="hospitalId"></param>
             <param name="sesstionTypeId"></param>
             <returns></returns>
         </member>
@@ -406,10 +593,24 @@
             <param name="updateMedicalBillStatus"></param>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.MedicalBillController.GetResponseMomoPayment(Medical.Entities.UpdateMedicalBillStatus)">
+            <summary>
+            Trả lại thông tin phản hồi từ momo
+            </summary>
+            <param name="updateMedicalBillStatus"></param>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.MedicalRecordController.GetUserCustomerInfo(System.String)">
             <summary>
             Lây thông tin tài khoản khach
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.MedicalRecordController.GetUserInfo(System.Nullable{System.Int32})">
+            <summary>
+            Lấy thông tin user làm hồ sơ
+            </summary>
+            <param name="userId"></param>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.MedicalRecordController.GetById(System.Int32)">
@@ -446,6 +647,43 @@
             </summary>
             <param name="userId"></param>
             <param name="recordDetailId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.MomoConfigurationController.GetMomoConfiguration">
+            <summary>
+            Lấy thông tin cấu hình momo
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.MomoConfigurationController.UpdateMomoConfiguration(Medical.Models.MomoConfigurationModel)">
+            <summary>
+            Cập nhật thông tin cấu hình momo
+            </summary>
+            <param name="momoConfigurationModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.MomoPaymentController.TestMoMoPayment">
+            <summary>
+            Thử thanh toán qua momo
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.MomoPaymentController.GetMoMoReturnResult(Medical.Models.MomoRequestBody)">
+            <summary>
+            Lấy thông tin thanh toán của momo
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.MomoPaymentController.GetMoMoNotifyResult(Medical.Models.MomoRequestBody)">
+            <summary>
+            Lấy thông tin thanh toán của momo
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.MomoPaymentController.CheckMomopayment(System.String,System.String)">
+            <summary>
+            Kiểm tra thông tin thanh toán momo theo requestId hoặc orderId
+            </summary>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.NotificationController.GetById(System.Int32)">
@@ -511,6 +749,19 @@
             <summary>
             Cập nhật cấu hình SMS
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.SystemConfigFeeController.GetSystemConfigFee">
+            <summary>
+            Lấy thông tin cấu hình phí tiện ích
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.SystemConfigFeeController.UpdateSystemConfigFee(Medical.Models.SystemConfigFeeModel)">
+            <summary>
+            Cập nhật thông tin cấu hình phí tiện ích
+            </summary>
+            <param name="systemConfigFeeModel"></param>
             <returns></returns>
         </member>
     </members>

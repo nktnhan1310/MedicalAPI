@@ -56,6 +56,18 @@ namespace Medical.Entities
         #region Extension Properties
 
         /// <summary>
+        /// Mã phiếu khám
+        /// </summary>
+        [NotMapped]
+        public string ExaminationCode { get; set; }
+
+        /// <summary>
+        /// Mã hồ sơ bệnh án
+        /// </summary>
+        [NotMapped]
+        public string MedicalRecordCode { get; set; }
+
+        /// <summary>
         /// Tên dịch vụ phát sinh
         /// </summary>
         [NotMapped]

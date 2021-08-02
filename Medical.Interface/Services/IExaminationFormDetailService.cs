@@ -10,5 +10,7 @@ namespace Medical.Interface.Services
     public interface IExaminationFormDetailService : ICoreHospitalService<ExaminationFormDetails, SearchExaminationFormDetail>
     {
         Task<bool> UpdateExaminationFormDetailStatus(UpdateExaminationFormDetailStatus updateExaminationFormDetailStatus);
+
+        Task<string> GetCheckStatusMessage(int examinationFormDetailId, int statusCheck);
     }
 }

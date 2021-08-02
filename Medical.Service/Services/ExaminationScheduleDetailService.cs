@@ -5,6 +5,7 @@ using Medical.Interface.UnitOfWork;
 using Microsoft.Data.SqlClient;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,5 +17,14 @@ namespace Medical.Service
         {
         }
 
+        protected override string GetStoreProcName()
+        {
+            return "ExaminationScheduleDetailV2_GetInfo";
+        }
+
+        protected override SqlParameter[] GetSqlParameters(BaseSearch baseSearch)
+        {
+            return base.GetSqlParameters(baseSearch);
+        }
     }
 }

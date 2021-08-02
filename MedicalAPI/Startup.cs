@@ -32,6 +32,7 @@ using Medical.Utilities;
 using Hangfire;
 using Hangfire.SqlServer;
 using Medical.Interface.Services;
+using Hangfire.Dashboard;
 
 namespace MedicalAPI
 {
@@ -209,9 +210,8 @@ namespace MedicalAPI
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<JwtMiddleware>();
             app.UseAuthorization();
-
-            app.UseHangfireDashboard();
-            RecurringJob.AddOrUpdate<IExaminationFormService>("CheckExistExaminationJob", job => job.UpdateCurrentExaminationJob(), "0 0 * * *");
+            //app.UseHangfireDashboard();
+            app.UseHangfireServer();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -224,6 +224,9 @@ namespace MedicalAPI
                 c.InjectStylesheet("../css/swagger.min.css");
                 c.RoutePrefix = "admin";
             });
+
+
+            RecurringJob.AddOrUpdate<IExaminationFormService>("CheckExistExaminationJob", job => job.UpdateCurrentExaminationJob(), "0 0 * * *", TimeZoneInfo.Local);
 
             app.UseEndpoints(endpoints =>
             {

@@ -39,7 +39,7 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<AdditionServices>(x => x.ToTable("AdditionServices"));
             modelBuilder.Entity<MedicalBills>(x => x.ToTable("MedicalBills"));
             modelBuilder.Entity<Medicines>(x => x.ToTable("Medicines"));
-
+            modelBuilder.Entity<MomoPayments>(x => x.ToTable("MomoPayments"));
 
             #endregion
 
@@ -77,7 +77,10 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<UserFiles>(x => x.ToTable("UserFiles"));
             modelBuilder.Entity<ExaminationFormDetails>(x => x.ToTable("ExaminationFormDetails"));
 
-
+            modelBuilder.Entity<OTPHistories>(x => x.ToTable("OTPHistories"));
+            modelBuilder.Entity<SMSEmailTemplates>(x => x.ToTable("SMSEmailTemplates"));
+            modelBuilder.Entity<ContentReplaceCharacters>(x => x.ToTable("ContentReplaceCharacters"));
+            modelBuilder.Entity<SystemComments>(x => x.ToTable("SystemComments"));
 
             #region Configs
 
@@ -85,6 +88,8 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<SMSConfiguration>(x => x.ToTable("SMSConfiguration"));
             modelBuilder.Entity<HospitalConfigFees>(x => x.ToTable("HospitalConfigFee"));
             modelBuilder.Entity<SystemConfiguartions>(x => x.ToTable("SystemConfiguartions"));
+            modelBuilder.Entity<MomoConfigurations>(x => x.ToTable("MomoConfigurations"));
+            modelBuilder.Entity<SystemConfigFee>(x => x.ToTable("SystemConfigFee"));
 
             #endregion
 
@@ -104,7 +109,10 @@ namespace Medical.AppDbContext
         public DbSet<HospitalConfigFees> HospitalConfigFee { get; set; }
         public DbSet<EmailConfiguration> EmailConfiguration { get; set; }
         public DbSet<SMSConfiguration> SMSConfiguration { get; set; }
+        public DbSet<MomoConfigurations> MomoConfigurations { get; set; }
+        public DbSet<SystemConfigFee> SystemConfigFee { get; set; }
 
+        
 
         #endregion
 
@@ -142,6 +150,12 @@ namespace Medical.AppDbContext
 
         #endregion
 
+        public DbSet<SystemComments> SystemComments { get; set; }
+        public DbSet<SMSEmailTemplates> SMSEmailTemplates { get; set; }
+        public DbSet<ContentReplaceCharacters> ContentReplaceCharacters { get; set; }
+
+        public DbSet<OTPHistories> OTPHistories { get; set; }
+        public DbSet<MomoPayments> MomoPayments { get; set; }
         public DbSet<ExaminationFormDetails> ExaminationFormDetails { get; set; }
 
         public DbSet<MedicalRecordDetails> MedicalRecordDetails { get; set; }

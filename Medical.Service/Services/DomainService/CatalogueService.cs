@@ -121,9 +121,9 @@ namespace Medical.Service.Services.DomainService
         {
             return e => !e.Deleted
             && (string.IsNullOrEmpty(baseSearch.SearchContent)
-                || e.Code.Contains(baseSearch.SearchContent)
+                || (e.Code.Contains(baseSearch.SearchContent)
                 || e.Name.Contains(baseSearch.SearchContent)
-                || e.Description.Contains(baseSearch.SearchContent)
+                || e.Description.Contains(baseSearch.SearchContent))
                 );
         }
 

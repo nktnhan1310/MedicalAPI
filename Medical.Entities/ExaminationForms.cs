@@ -126,6 +126,12 @@ namespace Medical.Entities
         public string MedicalRecordCode { get; set; }
         
         /// <summary>
+        /// Mã người bệnh
+        /// </summary>
+        [NotMapped]
+        public int? ClientId { get; set; }
+
+        /// <summary>
         /// Tên bệnh nhân
         /// </summary>
         [NotMapped]

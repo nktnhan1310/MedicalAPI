@@ -44,6 +44,7 @@ namespace Medical.Service
                 new SqlParameter("@MedicalRecordId", baseSearch.MedicalRecordId),
                 new SqlParameter("@PaymentMethodId", baseSearch.PaymentMethodId),
                 new SqlParameter("@Status", baseSearch.Status),
+                new SqlParameter("@ExaminationFormDetailId", baseSearch.ExaminationFormDetailId),
                 new SqlParameter("@ExaminationDate", baseSearch.ExaminationDate),
 
 
@@ -72,6 +73,18 @@ namespace Medical.Service
                 {
                     e => e.Status
                 };
+                if ((existExaminationFormDetail.Status == (int)CatalogueUtilities.AdditionServiceStatus.New
+                        || existExaminationFormDetail.Status == (int)CatalogueUtilities.AdditionServiceStatus.PaymentFailed
+                        )
+                        && updateExaminationFormDetailStatus.PaymentMethodId.HasValue && updateExaminationFormDetailStatus.PaymentMethodId.Value > 0)
+                {
+                    existExaminationFormDetail.PaymentMethodId = updateExaminationFormDetailStatus.PaymentMethodId.Value;
+                    includeProperties = new Expression<Func<ExaminationFormDetails, object>>[]
+                    {
+                            e => e.Status,
+                            e => e.PaymentMethodId
+                    };
+                }
                 existExaminationFormDetail.Status = updateExaminationFormDetailStatus.Status;
                 switch (updateExaminationFormDetailStatus.Status)
                 {
@@ -95,7 +108,8 @@ namespace Medical.Service
                                 ExaminationFormId = existExaminationFormDetail.ExaminationFormId,
                                 ExaminationFormDetailId = existExaminationFormDetail.Id,
                                 ExaminationFee = existExaminationFormDetail.Price,
-                                PaymentMethodId = existExaminationFormDetail.PaymentMethodId ?? 0,
+                                PaymentMethodId = updateExaminationFormDetailStatus.PaymentMethodId ?? 0,
+                                HospitalId = existExaminationFormDetail.HospitalId,
                             };
                             await this.unitOfWork.Repository<PaymentHistories>().CreateAsync(paymentHistories);
                         }
@@ -179,5 +193,55 @@ namespace Medical.Service
                 result = string.Join(" ", messages);
             return result;
         }
+
+        /// <summary>
+        /// Check trạng thái cập nhật hiện tại của dịch vụ phát sinh
+        /// </summary>
+        /// <param name="examinationFormDetailId"></param>
+        /// <param name="Status"></param>
+        /// <returns></returns>
+        public async Task<string> GetCheckStatusMessage(int examinationFormDetailId, int statusCheck)
+        {
+            string result = string.Empty;
+            bool isError = false;
+            var examinationFormDetailInfo = await this.unitOfWork.Repository<ExaminationFormDetails>().GetQueryable()
+                .Where(e => e.Id == examinationFormDetailId)
+                .FirstOrDefaultAsync();
+            if (examinationFormDetailInfo != null)
+            {
+                switch (statusCheck)
+                {
+                    case (int)CatalogueUtilities.AdditionServiceStatus.WaitConfirmPayment:
+                    case (int)CatalogueUtilities.AdditionServiceStatus.New:
+                        {
+                            if (examinationFormDetailInfo.Status != (int)CatalogueUtilities.AdditionServiceStatus.New
+                                && examinationFormDetailInfo.Status != (int)CatalogueUtilities.AdditionServiceStatus.PaymentFailed
+                                )
+                                isError = true;
+                        }
+                        break;
+                    case (int)CatalogueUtilities.AdditionServiceStatus.WaitForService:
+                        {
+                            if (examinationFormDetailInfo.Status != (int)CatalogueUtilities.AdditionServiceStatus.WaitConfirmPayment
+                                )
+                                isError = true;
+                        }
+                        break;
+                    case (int)CatalogueUtilities.AdditionServiceStatus.Finish:
+                        {
+                            if (examinationFormDetailInfo.Status != (int)CatalogueUtilities.AdditionServiceStatus.WaitForService
+                                )
+                                isError = true;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+                if (isError) return "Trạng thái dịch vụ phát sinh hợp lệ! Không thể cập nhật";
+                return string.Empty;
+            }
+            else return "Không tìm thấy thông tin dịch vụ phát sinh";
+        }
+
     }
 }

@@ -44,9 +44,29 @@ namespace Medical.Models
         public int? BankInfoId { get; set; }
 
         /// <summary>
+        /// Tổng số tiền cần thanh toán
+        /// </summary>
+        public double? TotalPrice { get; set; }
+
+        /// <summary>
         /// Ngày tái khám
         /// </summary>
         public DateTime? ReExaminationDate { get; set; }
+
+        /// <summary>
+        /// Ca khám
+        /// </summary>
+        public int? ExaminationScheduleDetailId { get; set; }
+
+        /// <summary>
+        /// Chọn lại phòng khám
+        /// </summary>
+        public int? RoomExaminationId { get; set; }
+
+        /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        public int? DoctorId { get; set; }
 
         [DefaultValue(false)]
         public bool HasMedicalBill { get; set; }

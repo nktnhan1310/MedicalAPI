@@ -80,8 +80,9 @@ namespace Medical.Extensions
                 // attach user to context on successful jwt validation
                 context.Items["User"] = userModel;
             }
-            catch
+            catch(Exception ex)
             {
+                throw new TimeoutException(ex.Message);
                 // do nothing if jwt validation fails
                 // user is not attached to context so request won't have access to secure routes
             }

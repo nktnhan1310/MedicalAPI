@@ -32,11 +32,18 @@ namespace Medical.Entities
         /// <summary>
         /// Dịch vụ khám
         /// </summary>
-        public int? ExaminationTypeId { get; set; }
+        public int? ServiceTypeId { get; set; }
+
+        /// <summary>
+        /// Mã phiếu khám
+        /// </summary>
+        public int? ExaminationFormId { get; set; }
+
         /// <summary>
         /// Bác sĩ
         /// </summary>
         public int? DoctorId { get; set; }
+
         /// <summary>
         /// Trạng thái
         /// </summary>

@@ -74,6 +74,26 @@ namespace Medical.Models
         /// </summary>
         public IList<ConfigTimeExaminationDayOfWeekModel> ConfigTimeExaminationDayOfWeeks { get; set; }
 
+        public IList<DayOfWeekDisplayModel> DayOfWeekDisplays
+        {
+            get
+            {
+                if(ConfigTimeExaminationDayOfWeeks != null && ConfigTimeExaminationDayOfWeeks.Any())
+                {
+                    IList<DayOfWeekDisplayModel> dayOfWeekDisplays = new List<DayOfWeekDisplayModel>(); 
+                    dayOfWeekDisplays = ConfigTimeExaminationDayOfWeeks
+                        .GroupBy(e => e.SessionTypeName)
+                        .Select(e => new DayOfWeekDisplayModel()
+                        {
+                            SessionTypeName = e.FirstOrDefault().SessionTypeName,
+                            DayOfWeekName = string.Join(", ", e.Select(x => x.DayOfWeekName).Distinct().ToList())
+                        }).ToList();
+                    return dayOfWeekDisplays;
+                }
+                return null;
+            }
+        }
+
         /// <summary>
         /// Tên bác sĩ
         /// </summary>
@@ -97,6 +117,18 @@ namespace Medical.Models
         #endregion
     }
 
+    public class DayOfWeekDisplayModel
+    {
+        /// <summary>
+        /// Tên buổi
+        /// </summary>
+        public string SessionTypeName { get; set; }
+        /// <summary>
+        /// Tên ngày
+        /// </summary>
+        public string DayOfWeekName { get; set; }
+    }
+
     /// <summary>
     /// Danh sách lịch khám theo chuyên khoa
     /// </summary>
@@ -106,6 +138,21 @@ namespace Medical.Models
         /// Mã ca khám
         /// </summary>
         public int ConfigTimeExaminationId { get; set; }
+
+        /// <summary>
+        /// Mốc thời gian làm việc
+        /// </summary>
+        public string ConfigTimeExaminationValue { get; set; }
+
+        /// <summary>
+        /// Id phòng khám
+        /// </summary>
+        public int? RoomExaminationId { get; set; }
+
+        /// <summary>
+        /// Tên phòng
+        /// </summary>
+        public string RoomName { get; set; }
 
         /// <summary>
         /// Ngày khám

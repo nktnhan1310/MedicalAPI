@@ -28,6 +28,18 @@ namespace Medical.Entities
         #region Extension Properties
 
         /// <summary>
+        /// Mã chuyên khoa
+        /// </summary>
+        [NotMapped]
+        public int? SpecialistTypeId { get; set; }
+
+        /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        [NotMapped]
+        public int? DoctorId { get; set; }
+
+        /// <summary>
         /// Ca khám
         /// </summary>
         [NotMapped]

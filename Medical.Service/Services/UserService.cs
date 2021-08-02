@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
 using Medical.Entities;
+using Medical.Extensions;
 using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.FormulaParsing.ExpressionGraph;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -63,6 +65,7 @@ namespace Medical.Service
             bool isPhone = ValidateUserName.IsPhoneNumber(item.UserName);
             bool isEmail = ValidateUserName.IsEmail(item.UserName);
 
+
             if (isExistEmail)
                 messages.Add("Email đã tồn tại!");
             if (isExistPhone)
@@ -94,16 +97,25 @@ namespace Medical.Service
                 if (item != null)
                 {
                     // Tạo mới nhóm người dùng
+                    item.Id = 0;
                     await this.unitOfWork.Repository<Users>().CreateAsync(item);
                     await this.unitOfWork.SaveAsync();
 
                     // Lưu thông tin user thuộc nhóm người dùng
-                    if (item.UserInGroups != null && item.UserInGroups.Any())
+                    if (item.UserGroupIds != null && item.UserGroupIds.Any())
                     {
-                        foreach (var userInGroup in item.UserInGroups)
+                        foreach (var userGroupId in item.UserGroupIds)
                         {
-                            userInGroup.Created = DateTime.Now;
-                            userInGroup.UserId = item.Id;
+                            UserInGroups userInGroup = new UserInGroups()
+                            {
+                                Created = DateTime.Now,
+                                CreatedBy = item.CreatedBy,
+                                UserId = item.Id,
+                                UserGroupId = userGroupId,
+                                Active = true,
+                                Deleted = false,
+                                Id = 0
+                            };
                             await this.unitOfWork.Repository<UserInGroups>().CreateAsync(userInGroup);
                         }
                     }
@@ -114,6 +126,8 @@ namespace Medical.Service
                         {
                             permitObjectPermission.Created = DateTime.Now;
                             permitObjectPermission.UserId = item.Id;
+                            permitObjectPermission.Active = true;
+                            permitObjectPermission.Id = 0;
                             await this.unitOfWork.Repository<PermitObjectPermissions>().CreateAsync(permitObjectPermission);
                         }
                     }
@@ -125,6 +139,8 @@ namespace Medical.Service
                         {
                             userFile.Created = DateTime.Now;
                             userFile.UserId = item.Id;
+                            userFile.Active = true;
+                            userFile.Id = 0;
                             await this.unitOfWork.Repository<UserFiles>().CreateAsync(userFile);
                         }
                     }
@@ -148,29 +164,56 @@ namespace Medical.Service
             var existItem = await this.Queryable.Where(e => e.Id == item.Id).FirstOrDefaultAsync();
             if (existItem != null)
             {
+                if (!item.IsResetPassword)
+                    item.Password = existItem.Password;
                 existItem = mapper.Map<Users>(item);
                 this.unitOfWork.Repository<Users>().Update(existItem);
                 await this.unitOfWork.SaveAsync();
 
                 // Cập nhật thông tin user ở nhóm
-                if (item.UserInGroups != null && item.UserInGroups.Any())
+                if (item.UserGroupIds != null && item.UserGroupIds.Any())
                 {
-                    foreach (var userInGroup in item.UserInGroups)
+                    foreach (var userGroupId in item.UserGroupIds)
                     {
-                        var existUserInGroup = await this.unitOfWork.Repository<UserInGroups>().GetQueryable().Where(e => e.Id == userInGroup.Id).FirstOrDefaultAsync();
+                        var existUserInGroup = await this.unitOfWork.Repository<UserInGroups>().GetQueryable()
+                            .Where(e => e.UserGroupId == userGroupId && e.UserId == existItem.Id).FirstOrDefaultAsync();
                         if (existUserInGroup != null)
                         {
-                            existUserInGroup = mapper.Map<UserInGroups>(userInGroup);
+                            existUserInGroup.UserGroupId = userGroupId;
                             existUserInGroup.UserId = item.Id;
                             existUserInGroup.Updated = DateTime.Now;
                             this.unitOfWork.Repository<UserInGroups>().Update(existUserInGroup);
                         }
                         else
                         {
+                            UserInGroups userInGroup = new UserInGroups()
+                            {
+                                Created = DateTime.Now,
+                                CreatedBy = item.CreatedBy,
+                                UserId = item.Id,
+                                UserGroupId = userGroupId,
+                                Active = true,
+                                Deleted = false,
+                            };
+
                             userInGroup.Created = DateTime.Now;
                             userInGroup.UserId = item.Id;
+                            userInGroup.Id = 0;
                             await this.unitOfWork.Repository<UserInGroups>().CreateAsync(userInGroup);
-
+                        }
+                    }
+                }
+                else
+                {
+                    var userInGroups = await this.unitOfWork.Repository<UserInGroups>().GetQueryable().Where(e => e.UserId == existItem.Id).ToListAsync();
+                    if (userInGroups != null && userInGroups.Any())
+                    {
+                        foreach (var userInGroup in userInGroups)
+                        {
+                            //userInGroup.Updated = DateTime.Now;
+                            //userInGroup.UpdatedBy = item.UpdatedBy;
+                            //userInGroup.Deleted = true;
+                            this.unitOfWork.Repository<UserInGroups>().Delete(userInGroup);
                         }
                     }
                 }
@@ -180,7 +223,8 @@ namespace Medical.Service
                 {
                     foreach (var permitObjectPermission in item.PermitObjectPermissions)
                     {
-                        var existPermitObjectPermission = await this.unitOfWork.Repository<PermitObjectPermissions>().GetQueryable().Where(e => e.Id == permitObjectPermission.Id).FirstOrDefaultAsync();
+                        var existPermitObjectPermission = await this.unitOfWork.Repository<PermitObjectPermissions>().GetQueryable()
+                            .Where(e => e.Id == permitObjectPermission.Id).FirstOrDefaultAsync();
                         if (existPermitObjectPermission != null)
                         {
                             existPermitObjectPermission = mapper.Map<PermitObjectPermissions>(permitObjectPermission);
@@ -192,6 +236,7 @@ namespace Medical.Service
                         {
                             permitObjectPermission.Created = DateTime.Now;
                             permitObjectPermission.UserId = item.Id;
+                            permitObjectPermission.Id = 0;
                             await this.unitOfWork.Repository<PermitObjectPermissions>().CreateAsync(permitObjectPermission);
 
                         }
@@ -214,6 +259,7 @@ namespace Medical.Service
                         {
                             userFile.Created = DateTime.Now;
                             userFile.UserId = item.Id;
+                            userFile.Id = 0;
                             await this.unitOfWork.Repository<UserFiles>().CreateAsync(userFile);
 
                         }
@@ -248,12 +294,33 @@ namespace Medical.Service
                 if (user.IsLocked && isMrApp)
                 {
                     if (user.LockedDate.HasValue)
-                        throw new Exception(string.Format("Account is Locked! Unlock date: {0}", user.LockedDate.Value.ToString("dd/MM/yyyy")));
+                    {
+                        // Nếu qua thời hạn => unlock user
+                        if (user.LockedDate.Value < DateTime.Now && user.Password == SecurityUtils.HashSHA1(password))
+                        {
+                            user.IsLocked = false;
+                            user.LockedDate = null;
+                            user.TotalViolations = 0;
+                            Expression<Func<Users, object>>[] includeProperties = new Expression<Func<Users, object>>[]
+                            {
+                                e => e.IsLocked,
+                                e => e.LockedDate,
+                                e => e.TotalViolations
+                            };
+                            await this.unitOfWork.Repository<Users>().UpdateFieldsSaveAsync(user, includeProperties);
+                            return true;
+                        }
+                        else throw new Exception(string.Format("Account is Locked! Unlock date: {0}", user.LockedDate.Value.ToString("dd/MM/yyyy")));
+                    }
                     else throw new Exception("Account is Locked");
                 }
                 if (!user.Active)
                 {
                     throw new Exception("Account is UnActive");
+                }
+                if (!user.IsAdmin && !user.IsCheckOTP)
+                {
+                    throw new Exception("Người dùng chưa xác thực otp");
                 }
                 if (user.Password == SecurityUtils.HashSHA1(password))
                 {
@@ -298,6 +365,10 @@ namespace Medical.Service
         public async Task<bool> HasPermission(int userId, string controller, IList<string> permissions)
         {
             bool hasPermit = false;
+
+            var userInfo = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == userId).FirstOrDefaultAsync();
+            if(userInfo != null && userInfo.IsLocked)
+                throw new AppException("User account is locked!");
 
             // Lấy ra những nhóm user thuộc
             var userGroupIds = await unitOfWork.Repository<UserInGroups>().GetQueryable()
@@ -370,7 +441,8 @@ namespace Medical.Service
                 if (isLogin)
                 {
                     userInfo.Token = token;
-                    userInfo.ExpiredDate = DateTime.UtcNow.AddDays(1);
+                    userInfo.ExpiredDate = DateTime.Now.AddDays(1);
+                    //userInfo.ExpiredDate = DateTime.Now.AddMinutes(1);
                 }
                 else
                 {

@@ -19,5 +19,18 @@ namespace Medical.Utilities
             return new string(Enumerable.Repeat(chars, length)
               .Select(s => s[random.Next(s.Length)]).ToArray());
         }
+
+        /// <summary>
+        /// Khởi tạo chuỗi OTP random từ 0-9
+        /// </summary>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public static string RandomOTPString(int length)
+        {
+            const string chars = "0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+              .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
     }
 }

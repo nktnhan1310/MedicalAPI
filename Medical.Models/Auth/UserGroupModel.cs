@@ -15,9 +15,14 @@ namespace Medical.Models
         #region Extension Properties
 
         /// <summary>
-        /// Người dùng thuộc nhóm
+        /// List id user của nhóm
         /// </summary>
-        public IList<UserInGroupModel> UserInGroups { get; set; }
+        public List<int> UserIds { get; set; }
+
+        ///// <summary>
+        ///// Người dùng thuộc nhóm
+        ///// </summary>
+        //public IList<UserInGroupModel> UserInGroups { get; set; }
 
         /// <summary>
         /// Chức năng + quyền của nhóm

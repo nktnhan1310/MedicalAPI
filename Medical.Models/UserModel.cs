@@ -81,6 +81,12 @@ namespace Medical.Models
         /// </summary>
         public DateTime? LockedDate { get; set; }
 
+        /// <summary>
+        /// Cờ kiểm tra OTP của user
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsCheckOTP { get; set; }
+
         #region Extension Properties
 
         /// <summary>
@@ -122,9 +128,9 @@ namespace Medical.Models
         public bool Gender { get; set; }
 
         /// <summary>
-        /// Những nhóm người dùng thuộc
+        /// List id nhóm người dùng được chọn
         /// </summary>
-        public IList<UserInGroupModel> UserInGroups { get; set; }
+        public List<int> UserGroupIds { get; set; }
 
         /// <summary>
         /// Danh mục quyền ứng với chức năng người dùng

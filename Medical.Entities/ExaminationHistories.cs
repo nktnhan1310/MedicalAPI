@@ -26,6 +26,21 @@ namespace Medical.Entities
         public DateTime? ReExaminationDate { get; set; }
 
         /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        public int? DoctorId { get; set; }
+
+        /// <summary>
+        /// Ca khám
+        /// </summary>
+        public int? ExaminationScheduleDetailId { get; set; }
+
+        /// <summary>
+        /// Chọn lại phòng khám
+        /// </summary>
+        public int? RoomExaminationId { get; set; }
+
+        /// <summary>
         /// STT khám bệnh
         /// </summary>
         public string ExaminationIndex { get; set; }

@@ -64,6 +64,17 @@ namespace Medical.Models
         #region Extension Properties
 
         /// <summary>
+        /// Tên đầy đủ của bác sĩ
+        /// </summary>
+        public string Name
+        {
+            get
+            {
+                return FirstName + " " + LastName;
+            }
+        }
+
+        /// <summary>
         /// Tên học vị
         /// </summary>
         public string DegreeTypeName { get; set; }

@@ -38,6 +38,11 @@ namespace Medical.Models
         public DateTime? ReExaminationDate { get; set; }
 
         /// <summary>
+        /// Mã người khám
+        /// </summary>
+        public int? ClientId { get; set; }
+
+        /// <summary>
         /// Chuyên khoa
         /// </summary>
         public int? SpecialistTypeId { get; set; }
@@ -118,11 +123,15 @@ namespace Medical.Models
                     case (int)CatalogueUtilities.ExaminationStatus.Canceled:
                         return "Đã hủy";
                     case (int)CatalogueUtilities.ExaminationStatus.Confirmed:
-                        return "Đã xác nhận";
+                        return "Đã xác nhận thanh toán";
                     case (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination:
-                        return "Đã xác nhận tái khám";
+                        return "Đã xác nhận thanh toán tái khám";
                     case (int)CatalogueUtilities.ExaminationStatus.FinishExamination:
                         return "Hoàn thành";
+                    case (int)CatalogueUtilities.ExaminationStatus.PaymentFailed:
+                        return "Thanh toán thất bại";
+                    case (int)CatalogueUtilities.ExaminationStatus.PaymentReExaminationFailed:
+                        return "Thanh toán tái khám thất bại";
                     default:
                         return string.Empty;
                 }
@@ -178,6 +187,9 @@ namespace Medical.Models
         /// Chi tiết dịch vụ phát sinh
         /// </summary>
         public IList<ExaminationFormDetailModel> ExaminationFormDetails { get; set; }
+
+        public ExaminationScheduleDetailModel ExaminationScheduleDetail { get; set; }
+
 
         #endregion
     }

@@ -39,6 +39,9 @@ namespace Medical.Extensions
 
                 switch (error)
                 {
+                    case AggregateException e:
+                        response.StatusCode = (int)HttpStatusCode.Locked;
+                        break;
                     case AppException e:
                         // custom application error
                         response.StatusCode = (int)HttpStatusCode.BadRequest;
@@ -56,6 +59,9 @@ namespace Medical.Extensions
                     case KeyNotFoundException e:
                         // not found error
                         response.StatusCode = (int)HttpStatusCode.NotFound;
+                        break;
+                    case TimeoutException e:
+                        response.StatusCode = (int)HttpStatusCode.RequestTimeout;
                         break;
                     default:
                         {

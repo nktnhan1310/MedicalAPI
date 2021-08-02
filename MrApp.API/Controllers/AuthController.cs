@@ -103,23 +103,16 @@ namespace MrApp.API.Controllers
                     Created = DateTime.Now,
                     CreatedBy = register.UserName,
                     Active = true,
-                    Phone = ValidateUserName.IsPhoneNumber(register.UserName) ? register.UserName : string.Empty,
-                    Email = ValidateUserName.IsEmail(register.UserName) ? register.UserName : string.Empty,
-                    UserInGroups = new List<UserInGroups>(),
+                    Phone = register.Phone,
+                    Email = register.Email,
+                    IsCheckOTP = false,
+                    UserGroupIds = new List<int>(),
                 };
                 // Tạo mặc định trong group User
                 var groupUserInfos = await userGroupService.GetAsync(e => e.Code == CoreContants.USER_GROUP);
                 if (groupUserInfos != null && groupUserInfos.Any())
                 {
-                    UserInGroups userInGroups = new UserInGroups()
-                    {
-                        UserGroupId = groupUserInfos.FirstOrDefault().Id,
-                        Created = DateTime.Now,
-                        CreatedBy = register.UserName,
-                        Deleted = false,
-                        Active = true,
-                    };
-                    user.UserInGroups.Add(userInGroups);
+                    user.UserGroupIds.Add(groupUserInfos.FirstOrDefault().Id);
                 }
 
                 // Kiểm tra item có tồn tại chưa?

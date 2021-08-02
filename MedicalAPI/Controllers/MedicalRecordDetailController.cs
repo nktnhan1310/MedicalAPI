@@ -40,12 +40,11 @@ namespace MedicalAPI.Controllers
         /// <summary>
         /// Lấy thông tin chi tiết hồ sơ bệnh án theo user
         /// </summary>
-        /// <param name="userId"></param>
         /// <param name="recordDetailId"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpGet("get-record-detail-info-by-user/{userId}/{recordDetailId}")]
-        public async Task<IActionResult> GetRecordDetailInfoByUser(int userId, int recordDetailId)
+        [HttpGet("get-record-detail-info-by-user/{recordDetailId}")]
+        public async Task<IActionResult> GetRecordDetailInfoByUser(int recordDetailId)
         {
             SearchMedicalRecordDetail searchMedicalRecordDetail = new SearchMedicalRecordDetail()
             {
@@ -53,7 +52,7 @@ namespace MedicalAPI.Controllers
                 PageSize = 10,
                 OrderBy = "Id desc",
                 MedicalRecordDetailId = recordDetailId,
-                UserId = userId,
+                //UserId = userId,
             };
             var pagedList = await this.domainService.GetPagedListData(searchMedicalRecordDetail);
             if (pagedList != null && pagedList.Items.Any())

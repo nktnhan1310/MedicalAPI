@@ -67,20 +67,41 @@ namespace Medical.Service
                         serviceTypeMappingHospital.HospitalId = item.Id;
                         serviceTypeMappingHospital.Created = DateTime.Now;
                         serviceTypeMappingHospital.CreatedBy = item.CreatedBy;
+                        serviceTypeMappingHospital.Active = true;
+                        serviceTypeMappingHospital.Id = 0;
                         await unitOfWork.Repository<ServiceTypeMappingHospital>().CreateAsync(serviceTypeMappingHospital);
                     }
                 }
                 // Cập nhật thông tin Kênh bệnh viện
-                if (item.ChannelMappingHospitals != null && item.ChannelMappingHospitals.Any())
+                //if (item.ChannelMappingHospitals != null && item.ChannelMappingHospitals.Any())
+                //{
+                //    foreach (var channelMappingHospital in item.ChannelMappingHospitals)
+                //    {
+                //        channelMappingHospital.HospitalId = item.Id;
+                //        channelMappingHospital.Created = DateTime.Now;
+                //        channelMappingHospital.CreatedBy = item.CreatedBy;
+                //        channelMappingHospital.Active = true;
+                //        await unitOfWork.Repository<ChannelMappingHospital>().CreateAsync(channelMappingHospital);
+                //    }
+                //}
+                if(item.ChannelIds != null && item.ChannelIds.Any())
                 {
-                    foreach (var channelMappingHospital in item.ChannelMappingHospitals)
+                    foreach (var channelId in item.ChannelIds)
                     {
-                        channelMappingHospital.HospitalId = item.Id;
-                        channelMappingHospital.Created = DateTime.Now;
-                        channelMappingHospital.CreatedBy = item.CreatedBy;
+                        ChannelMappingHospital channelMappingHospital = new ChannelMappingHospital()
+                        {
+                            Created = DateTime.Now,
+                            CreatedBy = item.CreatedBy,
+                            Active = true,
+                            Deleted = false,
+                            ChannelId = channelId,
+                            HospitalId = item.Id,
+                            Id = 0
+                        };
                         await unitOfWork.Repository<ChannelMappingHospital>().CreateAsync(channelMappingHospital);
                     }
                 }
+
                 // Cập nhật thông tin file
                 if (item.HospitalFiles != null && item.HospitalFiles.Any())
                 {
@@ -89,6 +110,8 @@ namespace Medical.Service
                         hospitalFile.HospitalId = item.Id;
                         hospitalFile.Created = DateTime.Now;
                         hospitalFile.CreatedBy = item.CreatedBy;
+                        hospitalFile.Active = true;
+                        hospitalFile.Id = 0;
                         await unitOfWork.Repository<HospitalFiles>().CreateAsync(hospitalFile);
                     }
                 }
@@ -100,6 +123,8 @@ namespace Medical.Service
                         bankInfo.HospitalId = item.Id;
                         bankInfo.Created = DateTime.Now;
                         bankInfo.CreatedBy = item.CreatedBy;
+                        bankInfo.Active = true;
+                        bankInfo.Id = 0;
                         await unitOfWork.Repository<BankInfos>().CreateAsync(bankInfo);
                     }
                 }
@@ -148,33 +173,52 @@ namespace Medical.Service
                             serviceTypeMappingHospital.HospitalId = item.Id;
                             serviceTypeMappingHospital.Created = DateTime.Now;
                             serviceTypeMappingHospital.CreatedBy = item.UpdatedBy;
+                            serviceTypeMappingHospital.Id = 0;
                             await unitOfWork.Repository<ServiceTypeMappingHospital>().CreateAsync(serviceTypeMappingHospital);
                         }
                     }
                 }
 
                 // Cập nhật thông tin kênh thanh toán
-                if (item.ChannelMappingHospitals != null && item.ChannelMappingHospitals.Any())
+                if (item.ChannelIds != null && item.ChannelIds.Any())
                 {
-                    foreach (var channelMappingHospital in item.ChannelMappingHospitals)
+                    foreach (var channelId in item.ChannelIds)
                     {
-                        var existChannelMappingHospital = await unitOfWork.Repository<ChannelMappingHospital>().GetQueryable()
-                                                             .AsNoTracking()
-                                                             .Where(e => e.Id == channelMappingHospital.Id && !e.Deleted)
-                                                             .FirstOrDefaultAsync();
-                        if (existChannelMappingHospital != null)
+                        var existChannelMappintHospital = await this.unitOfWork.Repository<ChannelMappingHospital>().GetQueryable()
+                            .Where(e => e.ChannelId == channelId && e.HospitalId == exists.Id).FirstOrDefaultAsync();
+                        if (existChannelMappintHospital != null)
                         {
-                            channelMappingHospital.Updated = DateTime.Now;
-                            channelMappingHospital.UpdatedBy = item.UpdatedBy;
-                            existChannelMappingHospital = mapper.Map<ChannelMappingHospital>(channelMappingHospital);
-                            unitOfWork.Repository<ChannelMappingHospital>().Update(existChannelMappingHospital);
+                            existChannelMappintHospital.ChannelId = channelId;
+                            existChannelMappintHospital.HospitalId = exists.Id;
+                            existChannelMappintHospital.Updated = DateTime.Now;
+                            this.unitOfWork.Repository<ChannelMappingHospital>().Update(existChannelMappintHospital);
                         }
                         else
                         {
-                            channelMappingHospital.HospitalId = item.Id;
-                            channelMappingHospital.Created = DateTime.Now;
-                            channelMappingHospital.CreatedBy = item.UpdatedBy;
-                            await unitOfWork.Repository<ChannelMappingHospital>().CreateAsync(channelMappingHospital);
+                            ChannelMappingHospital channelMappingHospital = new ChannelMappingHospital()
+                            {
+                                Created = DateTime.Now,
+                                CreatedBy = item.CreatedBy,
+                                ChannelId = channelId,
+                                HospitalId = exists.Id,
+                                Active = true,
+                                Deleted = false,
+                                Id = 0
+                            };
+                            await this.unitOfWork.Repository<ChannelMappingHospital>().CreateAsync(channelMappingHospital);
+                        }
+                    }
+                }
+                else
+                {
+                    var channelMappingHospitals = await this.unitOfWork.Repository<ChannelMappingHospital>().GetQueryable()
+                        .Where(e => e.HospitalId == exists.Id).ToListAsync();
+                    if (channelMappingHospitals != null && channelMappingHospitals.Any())
+                    {
+                        foreach (var channelMappingHospital in channelMappingHospitals)
+                        {
+                            
+                            this.unitOfWork.Repository<ChannelMappingHospital>().Delete(channelMappingHospital);
                         }
                     }
                 }
@@ -199,6 +243,7 @@ namespace Medical.Service
                             hospitalFile.HospitalId = item.Id;
                             hospitalFile.Created = DateTime.Now;
                             hospitalFile.CreatedBy = item.UpdatedBy;
+                            hospitalFile.Id = 0;
                             await unitOfWork.Repository<HospitalFiles>().CreateAsync(hospitalFile);
                         }
                     }
@@ -225,6 +270,7 @@ namespace Medical.Service
                             bankInfo.HospitalId = item.Id;
                             bankInfo.Created = DateTime.Now;
                             bankInfo.CreatedBy = item.UpdatedBy;
+                            bankInfo.Id = 0;
                             await unitOfWork.Repository<BankInfos>().CreateAsync(bankInfo);
                         }
                     }
