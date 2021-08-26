@@ -13,9 +13,25 @@
         </member>
         <member name="M:Medical.Core.App.Controllers.AuthCoreController.SendOTP(System.String,System.String)">
             <summary>
-            Kiểm tra mã OTP
+            Kiểm tra mã OTP đăng nhập hệ thống
             </summary>
             <param name="phoneNumber"></param>
+            <param name="otpValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.SendOTPGetPassword(System.String,System.String)">
+            <summary>
+            Kiểm tra OTP để đổi mật khẩu cho điện thoại
+            </summary>
+            <param name="phoneNumber"></param>
+            <param name="otpValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.SendOTPGetPasswordEmail(System.String,System.String)">
+            <summary>
+            Kiểm tra OTP để đổi mật khẩu cho Email
+            </summary>
+            <param name="email"></param>
             <param name="otpValue"></param>
             <returns></returns>
         </member>
@@ -24,6 +40,13 @@
             Gửi mã OTP theo sdt có trong hệ thống
             </summary>
             <param name="phoneNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.AuthCoreController.GenerateOTPCodeEmail(System.String)">
+            <summary>
+            Tạo OTP gửi qua email
+            </summary>
+            <param name="email"></param>
             <returns></returns>
         </member>
         <member name="M:Medical.Core.App.Controllers.AuthCoreController.Register(Medical.Models.RegisterModel)">
@@ -191,7 +214,7 @@
             <param name="baseSearch"></param>
             <returns></returns>
         </member>
-        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DownloadTemplateImport">
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.DownloadTemplateImport(System.String)">
             <summary>
             Down load template file import
             </summary>
@@ -274,10 +297,11 @@
             <param name="fileName"></param>
             <returns></returns>
         </member>
-        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.ImportTemplateFile(Microsoft.AspNetCore.Http.IFormFile)">
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.ImportTemplateFile(System.Nullable{System.Int32},Microsoft.AspNetCore.Http.IFormFile)">
             <summary>
             Import file danh mục
             </summary>
+            <param name="hostpialId"></param>
             <param name="file"></param>
             <returns></returns>
         </member>

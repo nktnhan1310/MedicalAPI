@@ -23,6 +23,11 @@ namespace Medical.Entities
         public int? ExaminationFormId { get; set; }
 
         /// <summary>
+        /// Thông tin giờ khám
+        /// </summary>
+        public int? ExaminationScheduleDetailId { get; set; }
+
+        /// <summary>
         /// Giá khám
         /// </summary>
         public double? Price { get; set; }
@@ -58,6 +63,37 @@ namespace Medical.Entities
         [DefaultValue(false)]
         public bool HasMedicalBills { get; set; }
 
+        /// <summary>
+        /// Chuẩn đoán của bác sĩ
+        /// </summary>
+        public string DoctorComment { get; set; }
+
+        /// <summary>
+        /// STT khám bệnh
+        /// </summary>
+        public string ExaminationIndex { get; set; }
+
+        /// <summary>
+        /// STT chờ thanh toán
+        /// </summary>
+        public string ExaminationPaymentIndex { get; set; }
+
+        /// <summary>
+        /// Phương thức thanh toán
+        /// </summary>
+        public int? PaymentMethodId { get; set; }
+
+        /// <summary>
+        /// Loại khám
+        /// </summary>
+        public int? TypeId { get; set; }
+
+        /// <summary>
+        /// ID bác sĩ
+        /// </summary>
+        public int? DoctorId { get; set; }
+
+
         #region Extension Properties
 
         /// <summary>
@@ -65,6 +101,12 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public string MedicalRecordCode { get; set; }
+
+        /// <summary>
+        /// Địa chỉ bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalAddress { get; set; }
 
         /// <summary>
         /// Chuyên khoa
@@ -89,6 +131,42 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public IList<MedicalBills> MedicalBills { get; set; }
+
+        /// <summary>
+        /// Giá trị cấu hình giờ khám
+        /// </summary>
+        [NotMapped]
+        public string ConfigTimeValue { get; set; }
+
+        /// <summary>
+        /// Phòng khám
+        /// </summary>
+        [NotMapped]
+        public string RoomName { get; set; }
+
+        /// <summary>
+        /// Tên phương thức thanh toán
+        /// </summary>
+        [NotMapped]
+        public string PaymentMethodName { get; set; }
+
+        /// <summary>
+        /// Tên đầy đủ của bác sĩ
+        /// </summary>
+        [NotMapped]
+        public string DoctorName { get; set; }
+
+        /// <summary>
+        /// Học hàm học vị của bác sĩ
+        /// </summary>
+        [NotMapped]
+        public string DoctorDegreeTypeName { get; set; }
+
+        /// <summary>
+        /// Tên hiển thị của bác sĩ
+        /// </summary>
+        [NotMapped]
+        public string DoctorDislayName { get; set; }
 
         #endregion
 

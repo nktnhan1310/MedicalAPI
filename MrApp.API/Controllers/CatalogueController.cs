@@ -23,7 +23,6 @@ namespace MrApp.API.Controllers
     [Route("api/catalogue")]
     [ApiController]
     [Description("Quản lý danh mục hệ thống")]
-    [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
     public class CatalogueController : ControllerBase
     {
 
@@ -96,6 +95,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-country-catalogue")]
+        [AllowAnonymous]
         public async Task<AppDomainResult> GetCountryCatalogue(string searchContent)
         {
             var countries = await this.countryService.GetAsync(e => !e.Deleted && e.Active
@@ -119,6 +119,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-city-catalogue/countryId")]
+        [AllowAnonymous]
         public async Task<AppDomainResult> GetCityCatalogue(int? countryId, string searchContent)
         {
             var cities = await this.cityService.GetAsync(e => !e.Deleted && e.Active
@@ -143,6 +144,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-district-catalogue/cityId")]
+        [AllowAnonymous]
         public async Task<AppDomainResult> GetDistrictCatalogue(int? cityId, string searchContent)
         {
             var districts = await this.districtService.GetAsync(e => !e.Deleted && e.Active
@@ -168,6 +170,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-ward-catalogue/cityId/districtId")]
+        [AllowAnonymous]
         public async Task<AppDomainResult> GetWardCatalogue(int? cityId, int? districtid, string searchContent)
         {
             var wards = await this.wardService.GetAsync(e => !e.Deleted && e.Active
@@ -193,6 +196,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-nation-catalogue/countryId")]
+        [AllowAnonymous]
         public async Task<AppDomainResult> GetNationCatalogue(int? countryId, string searchContent)
         {
             var nations = await this.nationService.GetAsync(e => !e.Deleted && e.Active
@@ -216,6 +220,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-job-catalogue")]
+        [AllowAnonymous]
         public async Task<AppDomainResult> GetJobCatalogue(string searchContent)
         {
             var jobs = await this.jobService.GetAsync(e => !e.Deleted && e.Active
@@ -238,6 +243,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-service-type-catalogue")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetServiceTypeCatalogue(string searchContent)
         {
             var serviceTypes = await this.serviceTypeService.GetAsync(e => !e.Deleted && e.Active
@@ -260,6 +266,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-hospital-catalogue")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetHospitalCatalogue(string searchContent)
         {
             var hospitals = await this.hospitalService.GetAsync(e => !e.Deleted && e.Active
@@ -283,6 +290,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-channel-catalogue/hospitalId")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetChannelCatalogue(int? hospitalId, string searchContent)
         {
             var channels = await this.channelService.GetAsync(e => !e.Deleted && e.Active
@@ -306,6 +314,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-degree-type-catalogue/hospitalId")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetDegreeTypeCatalogue(int? hospitalId, string searchContent)
         {
             var degreeTypes = await this.degreeTypeService.GetAsync(e => !e.Deleted && e.Active
@@ -329,6 +338,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-notification-type-catalogue/hospitalId")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetNotificationTypeCatalogue(int? hospitalId, string searchContent)
         {
             var notificationTypes = await this.notificationTypeService.GetAsync(e => !e.Deleted && e.Active
@@ -351,6 +361,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-session-type-catalogue")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetSessionTypeCatalogue(string searchContent)
         {
             var sessionTypes = await this.sessionTypeService.GetAsync(e => !e.Deleted && e.Active
@@ -373,6 +384,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-payment-method-catalogue")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetPaymentMethodCatalogue(string searchContent)
         {
             var paymentMethods = await this.paymentMethodService.GetAsync(e => !e.Deleted && e.Active
@@ -394,6 +406,7 @@ namespace MrApp.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("get-day-of-week-catalogue")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetDayOfWeekCatalogue()
         {
             AppDomainResult appDomainResult = new AppDomainResult();
@@ -456,6 +469,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-addition-service-catalogue/hospitalId")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetAdditionServiceTypeCatalogue(int? hospitalId, string searchContent)
         {
             var additionServices = await this.additionServiceType.GetAsync(e => !e.Deleted && e.Active
@@ -480,6 +494,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-specialist-type-catalogue/hospitalId")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetSpecialistTypeCatalogue(int? hospitalId, string searchContent)
         {
             var specialistTypes = await this.specialListTypeService.GetAsync(e => !e.Deleted && e.Active
@@ -504,6 +519,7 @@ namespace MrApp.API.Controllers
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-room-examination-catalogue/hospitalId")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
         public async Task<AppDomainResult> GetRoomExaminationCatalogue(int? hospitalId, string searchContent)
         {
             var roomExaminations = await this.roomExaminationService.GetAsync(e => !e.Deleted && e.Active

@@ -57,6 +57,11 @@ namespace Medical.Entities.Extensions
         public int? DoctorId { get; set; }
 
         /// <summary>
+        /// Chuẩn đoán của bác sĩ
+        /// </summary>
+        public string DoctorComment { get; set; }
+
+        /// <summary>
         /// Nhập comment xác nhận/hủy
         /// </summary>
         [StringLength(1000)]

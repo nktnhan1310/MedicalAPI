@@ -429,3 +429,8 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\Me
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.xml
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.genruntimeconfig.cache
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Template\CatalogueHospitalTemplate.xlsx
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Google.Apis.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Google.Apis.Auth.PlatformServices.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Google.Apis.Auth.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Debug\netcoreapp3.1\Google.Apis.Core.dll

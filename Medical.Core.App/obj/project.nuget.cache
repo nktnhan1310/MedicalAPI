@@ -1,12 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "/e61WdbskYH4ZBR4lFL9eD7bHHlXk8xXYcKDjGZCsMvvUZa4VSIkU8NM+SMIEL0XHQVNPrjO0mvf7dr3NSjq2A==",
+  "dgSpecHash": "ii5CBfBDpi6IllJ/ptccuPaASrQgNlCTrvOMrjCTl+ZOLo3alK0lj9Lhz1Og4r4JrR7wTgd/0F/UTQYOJ0hCqQ==",
   "success": true,
   "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Core.App\\Medical.Core.App.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\epplus.core\\1.5.4\\epplus.core.1.5.4.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\excelmapper\\5.2.298\\excelmapper.5.2.298.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\google.apis\\1.54.0\\google.apis.1.54.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\google.apis.auth\\1.54.0\\google.apis.auth.1.54.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\google.apis.core\\1.54.0\\google.apis.core.1.54.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.entityframeworkcore\\5.0.7\\microsoft.entityframeworkcore.5.0.7.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\5.0.7\\microsoft.entityframeworkcore.abstractions.5.0.7.nupkg.sha512",

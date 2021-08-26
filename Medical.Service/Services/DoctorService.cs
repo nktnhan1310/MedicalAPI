@@ -3,6 +3,7 @@ using Medical.Entities;
 using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using System;

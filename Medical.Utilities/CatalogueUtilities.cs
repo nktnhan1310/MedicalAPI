@@ -7,6 +7,25 @@ namespace Medical.Utilities
     public class CatalogueUtilities
     {
         /// <summary>
+        /// Loại dịch vụ phát sinh
+        /// </summary>
+        public enum AdditionServiceType
+        {
+            /// <summary>
+            /// Xét nghiệm
+            /// </summary>
+            XN = 0,
+            /// <summary>
+            /// Chụp x-quang
+            /// </summary>
+            XQ = 1,
+            /// <summary>
+            /// Siêu âm
+            /// </summary>
+            SA = 2
+        }
+
+        /// <summary>
         /// Trạng thái toa thuốc
         /// </summary>
         public enum MedicalBillStatus
@@ -207,5 +226,48 @@ namespace Medical.Utilities
             /// </summary>
             Doctor = 1,
         }
+
+        /// <summary>
+        /// Loại file của bệnh viện
+        /// </summary>
+        public enum HospitalFileType
+        {
+            /// <summary>
+            /// Logo
+            /// </summary>
+            Logo = 0,
+            /// <summary>
+            /// Sơ đồ bệnh viện
+            /// </summary>
+            Mapping = 1,
+            /// <summary>
+            /// Chuyên khoa
+            /// </summary>
+            SpecialList = 2
+        }
+
+        /// <summary>
+        /// Loại thông báo
+        /// </summary>
+        public enum NotificationType
+        {
+            /// <summary>
+            /// Hệ thống
+            /// </summary>
+            SYS = 0,
+            /// <summary>
+            /// Bệnh viện
+            /// </summary>
+            HOS = 1,
+            /// <summary>
+            /// Người dùng
+            /// </summary>
+            USER = 2,
+            /// <summary>
+            /// Nhóm người dùng
+            /// </summary>
+            USERGROUP = 3,
+        }
+
     }
 }

@@ -87,6 +87,9 @@ namespace Medical.Core.App
             services.AddScoped<ISystemCommentService, SystemCommentService>();
 
 
+
+
+
             #region REPORT
 
             services.AddScoped<IReportRevenueService, ReportRevenueService>();
@@ -111,6 +114,7 @@ namespace Medical.Core.App
             services.AddScoped<IMedicineService, MedicineService>();
             services.AddScoped<IMedicalBillService, MedicalBillService>();
             services.AddScoped<INotificationTypeService, NotificationTypeService>();
+            services.AddScoped<INotificationTemplateService, NotificationTemplateService>();
             services.AddScoped<IWardService, WardService>();
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IDistrictService, DistrictService>();
@@ -126,7 +130,6 @@ namespace Medical.Core.App
             services.AddScoped<INationService, NationService>();
             services.AddScoped<IRelationService, RelationService>();
             services.AddScoped<IPaymentMethodService, PaymentMethodService>();
-
             
             #endregion
 
@@ -138,6 +141,8 @@ namespace Medical.Core.App
             services.AddScoped<ISystemConfigurationService, SystemConfigurationService>();
             services.AddScoped<IMomoConfigurationService, MomoConfigurationService>();
             services.AddScoped<ISystemConfigFeeService, SystemConfigFeeService>();
+            services.AddHttpClient<IFaceBookAuthService, FaceBookAuthService>();
+            services.AddScoped<IGoogleAuthService, GoogleAuthService>();
 
 
             #endregion

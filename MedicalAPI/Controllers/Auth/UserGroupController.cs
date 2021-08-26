@@ -78,6 +78,46 @@ namespace MedicalAPI.Controllers
         }
 
         /// <summary>
+        /// Lấy all thông tin danh sách item
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
+        public override async Task<AppDomainResult> Get()
+        {
+            BaseHospitalSearch baseSearch = new BaseHospitalSearch();
+            List<UserGroupModel> itemModels = new List<UserGroupModel>();
+            baseSearch.PageIndex = 1;
+            baseSearch.PageSize = int.MaxValue;
+            baseSearch.OrderBy = "Id";
+            baseSearch.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
+
+            var pagedItems = await this.catalogueService.GetPagedListData(baseSearch);
+            if (pagedItems != null && pagedItems.Items != null && pagedItems.Items.Any())
+                itemModels = mapper.Map<List<UserGroupModel>>(pagedItems.Items);
+            //----------------------------------------------------
+            // Lấy thông tin nhóm mặc định nếu không có nhóm riêng
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue
+                && LoginContext.Instance.CurrentUser.HospitalId.Value > 0
+                )
+            {
+                baseSearch.HospitalId = 0;
+                var pagedDefaultItems = await this.catalogueService.GetPagedListData(baseSearch);
+                if (pagedDefaultItems != null && pagedDefaultItems.Items != null && pagedDefaultItems.Items.Any())
+                {
+                    var itemDefaultModels = mapper.Map<List<UserGroupModel>>(pagedDefaultItems.Items);
+                    itemModels.AddRange(itemDefaultModels);
+                }
+            }
+            return new AppDomainResult()
+            {
+                Success = true,
+                Data = itemModels,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
         /// Lấy danh sách quyền
         /// </summary>
         /// <returns></returns>

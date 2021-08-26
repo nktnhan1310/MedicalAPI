@@ -15,5 +15,10 @@ namespace Medical.Service
         public SessionTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
         }
+
+        protected override string GetTableName()
+        {
+            return "SessionTypes";
+        }
     }
 }

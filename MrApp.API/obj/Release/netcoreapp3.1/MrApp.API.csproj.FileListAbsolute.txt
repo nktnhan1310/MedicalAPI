@@ -110,3 +110,7 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\M
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\MrApp.API.csproj.AssemblyReference.cache
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\MrApp.API.xml
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\Google.Apis.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\Google.Apis.Auth.PlatformServices.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\Google.Apis.Auth.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\Google.Apis.Core.dll

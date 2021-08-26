@@ -11,6 +11,12 @@ namespace Medical.Entities
         /// Theo thông báo nào
         /// </summary>
         public int NotificationId { get; set; }
+
+        /// <summary>
+        /// Nội dung thông báo của user
+        /// </summary>
+        public string NotificationContent { get; set; }
+
         /// <summary>
         /// Gửi đến user
         /// </summary>

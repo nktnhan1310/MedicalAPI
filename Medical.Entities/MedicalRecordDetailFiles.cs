@@ -19,6 +19,6 @@ namespace Medical.Entities
         /// 2 => HÌNH SIÊU ÂM
         /// 3 => HÌNH CHỤP X QUANG
         /// </summary>
-        public int AdditionServiceId { get; set; }
+        //public int AdditionServiceId { get; set; }
     }
 }

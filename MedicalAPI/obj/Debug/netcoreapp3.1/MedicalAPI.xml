@@ -96,6 +96,12 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.UserGroupController.Get">
+            <summary>
+            Lấy all thông tin danh sách item
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.UserGroupController.GetPermissionCatalogue">
             <summary>
             Lấy danh sách quyền
@@ -299,6 +305,34 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetSynthesysReport(Medical.Entities.DashBoardSynthesisRequest)">
+            <summary>
+            Lấy thông số báo cáo theo bệnh viện ngày/tháng/năm
+            </summary>
+            <param name="dashBoardSynthesisRequest"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetSynthesysHospitalReport(Medical.Entities.DashBoardSynthesisRequest)">
+            <summary>
+            Lấy danh sách bệnh viện báo cáo tổng hợp
+            </summary>
+            <param name="dashBoardSynthesisRequest"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetSaleReport(Medical.Entities.DashBoardSaleRequest)">
+            <summary>
+            Lấy thông số báo cáo doanh thu theo bệnh viện ngày/tháng/năm
+            </summary>
+            <param name="dashBoardSaleRequest"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DashboardController.GetSaleHospitalReport(Medical.Entities.DashBoardSaleRequest)">
+            <summary>
+            Lấy danh sách bệnh viện báo cáo doanh thu
+            </summary>
+            <param name="dashBoardSaleRequest"></param>
+            <returns></returns>
+        </member>
         <member name="M:MedicalAPI.Controllers.DashboardController.GetReExamination">
             <summary>
             Lấy tổng lịch tái khám mới theo ngày/tháng/năm
@@ -339,6 +373,13 @@
             <summary>
             Tổng tiền thanh toán qua App/COD theo ngày tháng năm
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.DoctorController.AddItem(Medical.Models.DoctorModel)">
+            <summary>
+            Thêm mới item
+            </summary>
+            <param name="itemModel"></param>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.DoctorController.GetUserInfos(System.Nullable{System.Int32})">
@@ -641,12 +682,18 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.MedicalRecordDetailController.GetRecordDetailInfoByUser(System.Int32,System.Int32)">
+        <member name="M:MedicalAPI.Controllers.MedicalRecordDetailController.GetRecordDetailInfoByUser(System.Int32)">
             <summary>
             Lấy thông tin chi tiết hồ sơ bệnh án theo user
             </summary>
-            <param name="userId"></param>
             <param name="recordDetailId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.MedicalRecordDetailController.GetExaminationFormDetails(Medical.Entities.SearchExaminationFormDetail)">
+            <summary>
+            Lấy thông tin dịch vụ phát sinh
+            </summary>
+            <param name="searchExaminationFormDetail"></param>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.MomoConfigurationController.GetMomoConfiguration">
@@ -726,10 +773,11 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:MedicalAPI.Controllers.NotificationController.GetNotifications">
+        <member name="M:MedicalAPI.Controllers.NotificationController.GetPagedData(Medical.Entities.SearchNotification)">
             <summary>
-            Lấy thông tin thông báo của user
+            
             </summary>
+            <param name="baseSearch"></param>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.NotificationController.ReadNotification(System.Nullable{System.Int32})">
@@ -737,6 +785,19 @@
             Kiểm tra user đọc thông báo chưa
             </summary>
             <param name="notificationId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.NotificationController.ReadNotifications(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Đọc thông báo user
+            </summary>
+            <param name="notificationIds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MedicalAPI.Controllers.NotificationController.DeleteUserNotifications(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Xóa thông báo của user
+            </summary>
             <returns></returns>
         </member>
         <member name="M:MedicalAPI.Controllers.SMSConfigurationController.GetSMSConfiguration">

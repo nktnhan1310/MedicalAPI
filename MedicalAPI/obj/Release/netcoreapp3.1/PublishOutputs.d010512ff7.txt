@@ -1,3 +1,4 @@
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Template\CatalogueHospitalTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\certificates\0ABCF9D817DF8B74941816E88D833A06.txt
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Template\CatalogueTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Template\ReportExaminationFormTemplate.xlsx
@@ -16,6 +17,10 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\EntityFramework.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\EPPlus.Core.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\ExcelMapper.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Google.Apis.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Google.Apis.Auth.PlatformServices.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Google.Apis.Auth.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Google.Apis.Core.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Hangfire.AspNetCore.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Hangfire.Core.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Release\netcoreapp3.1\PubTmp\Out\Hangfire.SqlServer.dll

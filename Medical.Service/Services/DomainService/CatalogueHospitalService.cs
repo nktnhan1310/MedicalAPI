@@ -25,7 +25,12 @@ namespace Medical.Service.Services.DomainService
     {
         protected IConfiguration configuration;
 
-        protected CatalogueHospitalService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        protected CatalogueHospitalService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper)
+        {
+            this.configuration = configuration;
+        }
+
+        public CatalogueHospitalService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
         {
         }
 
@@ -134,7 +139,7 @@ namespace Medical.Service.Services.DomainService
         /// <param name="stream"></param>
         /// <param name="createdBy"></param>
         /// <returns></returns>
-        public virtual async Task<AppDomainImportResult> ImportTemplateFile(Stream stream, string createdBy)
+        public virtual async Task<AppDomainImportResult> ImportTemplateFile(Stream stream, string createdBy, int? hospitalId)
         {
             AppDomainImportResult appDomainImportResult = new AppDomainImportResult();
             var dataTable = SetDataTable();
@@ -148,7 +153,9 @@ namespace Medical.Service.Services.DomainService
                     throw new Exception("Sheet name không tồn tại");
                 }
                 var existItems = Queryable.Where(e => !e.Deleted);
-                var catalogueMappers = new ExcelMapper(stream) { HeaderRow = false, MinRowNumber = 1 }.Fetch<CatalogueMapper>().ToList();
+                var existHospitals = this.unitOfWork.Repository<Hospitals>().GetQueryable().Where(e => !e.Deleted && e.Active);
+
+                var catalogueMappers = new ExcelMapper(stream) { HeaderRow = false, MinRowNumber = 1 }.Fetch<CatalogueHospitalMapper>().ToList();
                 if (catalogueMappers != null && catalogueMappers.Any())
                 {
                     List<string> codeImports = new List<string>();
@@ -156,7 +163,15 @@ namespace Medical.Service.Services.DomainService
                     {
                         int index = catalogueMappers.IndexOf(catalogueMapper);
                         int resultIndex = index + 2;
+                        Hospitals hospitalInfo = new Hospitals();
                         IList<string> errors = new List<string>();
+
+                        if (string.IsNullOrEmpty(catalogueMapper.HospitalCode))
+                            errors.Add("Vui lòng nhập mã bệnh viện");
+                        if (!existHospitals.Any(x => x.Code == catalogueMapper.HospitalCode))
+                            errors.Add("Mã bệnh viện không tồn tại");
+                        else
+                            hospitalInfo = await existHospitals.Where(e => e.Code == catalogueMapper.HospitalCode).FirstOrDefaultAsync();
                         if (string.IsNullOrEmpty(catalogueMapper.Code))
                             errors.Add("Vui lòng nhập mã");
                         if (existItems.Any(x => x.Code == catalogueMapper.Code) || codeImports.Any(x => x == catalogueMapper.Code))
@@ -165,12 +180,12 @@ namespace Medical.Service.Services.DomainService
                             errors.Add("Vui lòng nhập tên");
                         if (errors.Any())
                         {
-                            ws.Cells["D" + resultIndex].Value = string.Join(", ", errors);
+                            ws.Cells["E" + resultIndex].Value = string.Join(", ", errors);
                             totalFailed += 1;
                         }
                         else
                         {
-                            ws.Cells["D" + resultIndex].Value = "Thành công";
+                            ws.Cells["E" + resultIndex].Value = "Thành công";
                             totalSuccess += 1;
                             E item = new E()
                             {
@@ -181,13 +196,14 @@ namespace Medical.Service.Services.DomainService
                                 Active = true,
                                 Created = DateTime.Now,
                                 CreatedBy = createdBy,
+                                HospitalId = hospitalId.HasValue ? hospitalId.Value : hospitalInfo.Id
                             };
                             codeImports.Add(catalogueMapper.Code);
                             dataTable = AddDataTableRow(dataTable, item);
                         }
                     }
                 }
-                ws.Column(4).Hidden = false;
+                ws.Column(5).Hidden = false;
                 ws.Cells.AutoFitColumns();
                 appDomainImportResult.Data = new
                 {
@@ -242,7 +258,7 @@ namespace Medical.Service.Services.DomainService
         /// <returns></returns>
         protected virtual DataTable AddDataTableRow(DataTable dt, E item)
         {
-            dt.Rows.Add(item.Id, item.Created, item.CreatedBy, item.Updated, item.UpdatedBy, item.Deleted, item.Active, item.Code, item.Name, item.Description);
+            dt.Rows.Add(item.Id, item.Created, item.CreatedBy, item.Updated, item.UpdatedBy, item.Deleted, item.Active, item.HospitalId, item.Code, item.Name, item.Description);
             return dt;
         }
 

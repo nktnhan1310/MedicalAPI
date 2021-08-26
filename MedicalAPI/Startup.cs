@@ -56,6 +56,8 @@ namespace MedicalAPI
         }
 
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+        readonly string SignalROrigins = "SignalROrigins";
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -71,11 +73,38 @@ namespace MedicalAPI
 
 
 
-
+            services.AddHttpClient();
             services.ConfigureRepositoryWrapper();
             services.ConfigureService();
 
             services.AddLazyCache();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder
+                    .WithOrigins("https://localhost:4200")
+                    .AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   ;
+                });
+                options.AddPolicy(SignalROrigins,
+                builder =>
+                {
+                    builder
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials()
+                   .SetIsOriginAllowed(hostName => true)
+                   ;
+                });
+
+
+            });
+
             services
                 .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
              .AddNewtonsoftJson(options =>
@@ -88,18 +117,7 @@ namespace MedicalAPI
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
-            services.AddCors(options =>
-            {
-                options.AddPolicy(MyAllowSpecificOrigins,
-                builder =>
-                {
-                    builder
-                    .WithOrigins("http://localhost:4200")
-                    .AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-                });
-            });
+            
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -125,7 +143,6 @@ namespace MedicalAPI
             })
             .AddJwtBearer(x =>
             {
-
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters
@@ -160,13 +177,13 @@ namespace MedicalAPI
             // Add the processing server as IHostedService
             services.AddHangfireServer();
 
-            //services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory, IServiceProvider serviceProvider)
         {
             loggerFactory.AddSerilog();
+
             //serviceProvider.MigrationDatabase(Configuration);
             if (env.IsDevelopment())
             {
@@ -196,15 +213,13 @@ namespace MedicalAPI
                 RequestPath = "/.well-known/pki-validation"
             });
 
-
-
-
             app.UseStaticHttpContext();
 
             app.UseSession();
             app.UseCookiePolicy();
             app.UseRouting();
             app.UseCors(MyAllowSpecificOrigins);
+
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseMiddleware<ErrorHandlerMiddleware>();
@@ -232,7 +247,7 @@ namespace MedicalAPI
             {
                 endpoints.MapControllers();
                 endpoints.MapHangfireDashboard();
-                endpoints.MapHub<NotificationHub>("/hubs/notifications");
+                endpoints.MapHub<NotificationHub>("/hubs/notifications").RequireCors(SignalROrigins);
             });
             
 

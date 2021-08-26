@@ -21,6 +21,6 @@ namespace Medical.Models
         /// Loại file
         /// 0 => AVATAR CỦA HỒ SƠ
         /// </summary>
-        public int AdditionServiceId { get; set; }
+        //public int AdditionServiceId { get; set; }
     }
 }

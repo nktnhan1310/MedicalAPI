@@ -78,6 +78,7 @@ namespace Medical.Entities
         /// </summary>
         public int? PaymentMethodId { get; set; }
 
+
         /// <summary>
         /// Số thứ tự khám bệnh
         /// </summary>
@@ -94,6 +95,12 @@ namespace Medical.Entities
         public string Note { get; set; }
 
         #region Extension Properties
+
+        /// <summary>
+        /// Địa chỉ bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalAddress { get; set; }
 
         /// <summary>
         /// Phí khám bệnh nếu có

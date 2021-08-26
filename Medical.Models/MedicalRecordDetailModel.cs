@@ -54,6 +54,36 @@ namespace Medical.Models
         [DefaultValue(false)]
         public bool HasMedicalBills { get; set; }
 
+        /// <summary>
+        /// Chuẩn đoán của bác sĩ
+        /// </summary>
+        public string DoctorComment { get; set; }
+
+        /// <summary>
+        /// Thông tin giờ khám
+        /// </summary>
+        public int? ExaminationScheduleDetailId { get; set; }
+
+        /// <summary>
+        /// STT khám bệnh
+        /// </summary>
+        public string ExaminationIndex { get; set; }
+
+        /// <summary>
+        /// STT chờ thanh toán
+        /// </summary>
+        public string ExaminationPaymentIndex { get; set; }
+
+        /// <summary>
+        /// Phương thức thanh toán
+        /// </summary>
+        public int? PaymentMethodId { get; set; }
+
+        /// <summary>
+        /// Loại khám
+        /// </summary>
+        public int? TypeId { get; set; }
+
         #region Extension Properties
 
         /// <summary>
@@ -61,6 +91,10 @@ namespace Medical.Models
         /// </summary>
         public string MedicalRecordCode { get; set; }
 
+        /// <summary>
+        /// Địa chỉ bệnh viện
+        /// </summary>
+        public string HospitalAddress { get; set; }
 
         /// <summary>
         /// Chuyên khoa
@@ -81,6 +115,37 @@ namespace Medical.Models
         /// Toa thuốc
         /// </summary>
         public IList<MedicalBillModel> MedicalBills { get; set; }
+
+        /// <summary>
+        /// Giá trị cấu hình giờ khám
+        /// </summary>
+        public string ConfigTimeValue { get; set; }
+
+        /// <summary>
+        /// Phòng khám
+        /// </summary>
+        public string RoomName { get; set; }
+
+        /// <summary>
+        /// Tên phương thức thanh toán
+        /// </summary>
+        public string PaymentMethodName { get; set; }
+
+        /// <summary>
+        /// Tên đầy đủ của bác sĩ
+        /// </summary>
+        public string DoctorName { get; set; }
+
+        /// <summary>
+        /// Học hàm học vị của bác sĩ
+        /// </summary>
+        public string DoctorDegreeTypeName { get; set; }
+
+        /// <summary>
+        /// Tên hiển thị của bác sĩ
+        /// </summary>
+        public string DoctorDislayName { get; set; }
+
 
         #endregion
     }

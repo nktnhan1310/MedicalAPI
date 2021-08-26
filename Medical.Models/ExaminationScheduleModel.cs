@@ -29,12 +29,6 @@ namespace Medical.Models
         [Required]
         public int SpecialistTypeId { get; set; }
 
-        /// <summary>
-        /// Bác sĩ
-        /// </summary>
-        [Required]
-        public new int HospitalId { get; set; }
-
         #region Extension Properties
 
 

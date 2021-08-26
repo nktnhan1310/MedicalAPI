@@ -15,6 +15,8 @@ namespace Medical.Service
     {
         public NationService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
+            this.configuration = configuration;
+
         }
         protected override string GetTableName()
         {

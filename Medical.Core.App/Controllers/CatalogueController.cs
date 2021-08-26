@@ -257,9 +257,9 @@ namespace Medical.Core.App.Controllers
         /// Down load template file import
         /// </summary>
         /// <returns></returns>
-        [HttpGet("download-template-import/{fileName}")]
+        [HttpGet("download-template-import")]
         [MedicalAppAuthorize(new string[] { CoreContants.Download })]
-        public virtual async Task<ActionResult> DownloadTemplateImport()
+        public virtual async Task<ActionResult> DownloadTemplateImport(string fileName)
         {
             var currentDirectory = System.IO.Directory.GetCurrentDirectory();
             string path = System.IO.Path.Combine(currentDirectory, TEMPLATE_FOLDER_NAME, CATALOGUE_TEMPLATE_NAME);

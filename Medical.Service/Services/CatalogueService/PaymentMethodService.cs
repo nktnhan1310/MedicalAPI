@@ -14,6 +14,13 @@ namespace Medical.Service.Services
     {
         public PaymentMethodService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
+            this.configuration = configuration;
+
+        }
+
+        protected override string GetTableName()
+        {
+            return "PaymentMethods";
         }
     }
 }

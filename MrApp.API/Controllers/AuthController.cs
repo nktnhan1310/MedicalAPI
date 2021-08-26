@@ -26,10 +26,15 @@ namespace MrApp.API.Controllers
     public class AuthController : AuthCoreController
     {
         private readonly IUserGroupService userGroupService;
+        private readonly IFaceBookAuthService faceBookAuthService;
+        private readonly IGoogleAuthService googleAuthService;
+
         public AuthController(IServiceProvider serviceProvider, IConfiguration configuration, IMapper mapper, ILogger<AuthCoreController> logger) : base(serviceProvider, configuration, mapper, logger)
         {
             userService = serviceProvider.GetRequiredService<IUserService>();
             userGroupService = serviceProvider.GetRequiredService<IUserGroupService>();
+            faceBookAuthService = serviceProvider.GetRequiredService<IFaceBookAuthService>();
+            googleAuthService = serviceProvider.GetRequiredService<IGoogleAuthService>();
         }
 
         /// <summary>
@@ -48,7 +53,7 @@ namespace MrApp.API.Controllers
                 success = await this.userService.Verify(loginModel.UserName, loginModel.Password, true);
                 if (success)
                 {
-                    var userInfos = await this.userService.GetAsync(e => !e.Deleted 
+                    var userInfos = await this.userService.GetAsync(e => !e.Deleted
                     && (e.UserName == loginModel.UserName
                     || e.Phone == loginModel.UserName
                     || e.Email == loginModel.UserName
@@ -130,5 +135,160 @@ namespace MrApp.API.Controllers
             }
             return appDomainResult;
         }
+
+
+        /// <summary>
+        /// Đăng nhập bằng facebook
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("login-facebook")]
+        public virtual async Task<AppDomainResult> LoginWithFaceBookAsync(string accessToken)
+        {
+            var validatedTokenResult = await faceBookAuthService.ValidateTokenAsync(accessToken);
+            if (!validatedTokenResult.Data.IsValid)
+            {
+                throw new AppException("Invalid Facebook token");
+            }
+            // Lấy thông tin user của facebook
+            var faceBookUserInfo = await faceBookAuthService.GetUserInfoAsync(accessToken);
+            if (faceBookUserInfo == null)
+            {
+                throw new AppException("User info is not valid");
+
+            }
+            var existUserSystems = await userService.GetAsync(e => !e.Deleted 
+            && (e.Email == faceBookUserInfo.Email || e.UserName == faceBookUserInfo.Email));
+            if (existUserSystems == null || !existUserSystems.Any())
+            {
+                Users users = new Users()
+                {
+                    Deleted = false,
+                    Active = true,
+                    UserName = faceBookUserInfo.Email,
+                    Email = faceBookUserInfo.Email,
+                    Phone = string.Empty,
+                    Created = DateTime.Now,
+                    CreatedBy = "Api",
+                    IsLoginFaceBook = true,
+                    IsCheckOTP = true,
+                    UserGroupIds = new List<int>(),
+                };
+                // Tạo mặc định trong group User
+                var groupUserInfos = await userGroupService.GetAsync(e => e.Code == CoreContants.USER_GROUP);
+                if (groupUserInfos != null && groupUserInfos.Any())
+                {
+                    users.UserGroupIds.Add(groupUserInfos.FirstOrDefault().Id);
+                }
+                bool success = await userService.CreateAsync(users);
+                if (!success)
+                {
+                    throw new Exception("Something went wrong");
+                }
+                var userModel = mapper.Map<UserModel>(users);
+                var token = await GenerateJwtToken(userModel);
+                await this.userService.UpdateUserToken(userModel.Id, token, true);
+                return new AppDomainResult()
+                {
+                    Success = true,
+                    Data = new
+                    {
+                        token = token,
+                    },
+                    ResultCode = (int)HttpStatusCode.OK
+                };
+            }
+            else
+            {
+                var userModel = mapper.Map<UserModel>(existUserSystems.FirstOrDefault());
+                var token = await GenerateJwtToken(userModel);
+                await this.userService.UpdateUserToken(userModel.Id, token, true);
+                return new AppDomainResult()
+                {
+                    Success = true,
+                    Data = new
+                    {
+                        token = token,
+                    },
+                    ResultCode = (int)HttpStatusCode.OK
+                };
+            }
+            
+        }
+
+        /// <summary>
+        /// Đăng nhập bằng facebook
+        /// </summary>
+        /// <param name="googleAuths"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost("login-google")]
+        public virtual async Task<AppDomainResult> LoginWithGoogleAsync([FromBody] GoogleAuths googleAuths)
+        {
+            var payload = await googleAuthService.VerifyGoogleToken(googleAuths);
+            if (payload == null)
+            {
+                throw new AppException("Invalid google token");
+            }
+            var existUserSystems = await userService.GetAsync(e => !e.Deleted
+            && (e.Email == payload.Email || e.UserName == payload.Email));
+            if (existUserSystems == null || !existUserSystems.Any())
+            {
+                Users users = new Users()
+                {
+                    Deleted = false,
+                    Active = true,
+                    UserName = payload.Email,
+                    Email = payload.Email,
+                    Phone = string.Empty,
+                    Created = DateTime.Now,
+                    CreatedBy = "Api",
+                    IsLoginFaceBook = true,
+                    IsCheckOTP = true,
+                    UserGroupIds = new List<int>(),
+                };
+                // Tạo mặc định trong group User
+                var groupUserInfos = await userGroupService.GetAsync(e => e.Code == CoreContants.USER_GROUP);
+                if (groupUserInfos != null && groupUserInfos.Any())
+                {
+                    users.UserGroupIds.Add(groupUserInfos.FirstOrDefault().Id);
+                }
+                bool success = await userService.CreateAsync(users);
+                if (!success)
+                {
+                    throw new Exception("Something went wrong");
+                }
+                var userModel = mapper.Map<UserModel>(users);
+                var token = await GenerateJwtToken(userModel);
+                await this.userService.UpdateUserToken(userModel.Id, token, true);
+                return new AppDomainResult()
+                {
+                    Success = true,
+                    Data = new
+                    {
+                        token = token,
+                    },
+                    ResultCode = (int)HttpStatusCode.OK
+                };
+            }
+            else
+            {
+                var userModel = mapper.Map<UserModel>(existUserSystems.FirstOrDefault());
+                var token = await GenerateJwtToken(userModel);
+                await this.userService.UpdateUserToken(userModel.Id, token, true);
+                return new AppDomainResult()
+                {
+                    Success = true,
+                    Data = new
+                    {
+                        token = token,
+                    },
+                    ResultCode = (int)HttpStatusCode.OK
+                };
+            }
+
+        }
+
     }
 }

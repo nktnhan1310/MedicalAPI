@@ -10,6 +10,13 @@
   <ItemGroup>
     <None Remove="Controllers\Auth\PermitObjectController.cs~RF71a514.TMP" />
     <None Remove="Controllers\Auth\UserController.cs~RF15d6792.TMP" />
+    <None Remove="Template\CatalogueHospitalTemplate.xlsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Template\CatalogueHospitalTemplate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -18,6 +25,7 @@
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="ExcelMapper" Version="5.2.298" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.54.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.23" />
     <PackageReference Include="Hangfire.Core" Version="1.7.23" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.7.23" />

@@ -1,6 +1,7 @@
 ﻿using Medical.Models.DomainModel;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Medical.Models
@@ -21,6 +22,11 @@ namespace Medical.Models
         public string Phone { get; set; }
 
         /// <summary>
+        /// Email gửi OTP
+        /// </summary>
+        public string Email { get; set; }
+
+        /// <summary>
         /// Mã OTP
         /// </summary>
         public string OTPValue { get; set; }
@@ -29,6 +35,9 @@ namespace Medical.Models
         /// Thời gian hết hạn
         /// </summary>
         public DateTime? ExpiredDate { get; set; }
+
+        [DefaultValue(false)]
+        public bool IsEmail { get; set; }
 
         /// <summary>
         /// Trạng thái

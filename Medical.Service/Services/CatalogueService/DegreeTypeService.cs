@@ -14,6 +14,12 @@ namespace Medical.Service
     {
         public DegreeTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
+            this.configuration = configuration;
+        }
+
+        protected override string GetTableName()
+        {
+            return "DegreeTypes";
         }
     }
 }

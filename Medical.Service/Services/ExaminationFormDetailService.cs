@@ -42,12 +42,13 @@ namespace Medical.Service
                 new SqlParameter("@ExaminationFormId", baseSearch.ExaminationFormId),
                 new SqlParameter("@AdditionServiceId", baseSearch.AdditionServiceId),
                 new SqlParameter("@MedicalRecordId", baseSearch.MedicalRecordId),
+                new SqlParameter("@MedicalRecordId", baseSearch.MedicalRecordId),
+                new SqlParameter("@MedicalRecordDetailId", baseSearch.MedicalRecordDetailId),
                 new SqlParameter("@PaymentMethodId", baseSearch.PaymentMethodId),
                 new SqlParameter("@Status", baseSearch.Status),
                 new SqlParameter("@ExaminationFormDetailId", baseSearch.ExaminationFormDetailId),
                 new SqlParameter("@ExaminationDate", baseSearch.ExaminationDate),
-
-
+                new SqlParameter("@IsFromMedicalRecordDetail", baseSearch.IsFromMedicalRecordDetail),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
                 new SqlParameter("@TotalPage", SqlDbType.Int, 0),
@@ -55,6 +56,41 @@ namespace Medical.Service
 
             };
             return base.GetSqlParameters(baseSearch);
+        }
+
+        /// <summary>
+        /// Tạo mới dịch vụ phát sinh
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public override async Task<bool> CreateAsync(ExaminationFormDetails item)
+        {
+            bool result = false;
+            if (item != null)
+            {
+                if (item.ExaminationFormId.HasValue)
+                {
+                    var examinationFormInfo = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable().Where(e => e.Id == item.ExaminationFormId).FirstOrDefaultAsync();
+                    var additionServiceInfo = await this.unitOfWork.Repository<AdditionServices>().GetQueryable().Where(e => e.Id == item.AdditionServiceId).FirstOrDefaultAsync();
+                    if(examinationFormInfo != null)
+                    {
+                        item.MedicalRecordId = examinationFormInfo.RecordId;
+                        var medicalRecordInfo = await this.unitOfWork.Repository<MedicalRecords>().GetQueryable().Where(e => e.Id == examinationFormInfo.RecordId).FirstOrDefaultAsync();
+                        item.UserId = medicalRecordInfo.UserId;
+                        item.ExaminationDate = examinationFormInfo.ExaminationDate;
+                    }
+                    if(additionServiceInfo != null)
+                    {
+                        item.Price = additionServiceInfo.Price;
+                    }
+                    item.PaymentMethodId = null;
+                    item.Status = (int)CatalogueUtilities.AdditionServiceStatus.New;
+                    await this.unitOfWork.Repository<ExaminationFormDetails>().CreateAsync(item);
+                    await this.unitOfWork.SaveAsync();
+                    result = true;
+                }
+            }
+            return result;
         }
 
         /// <summary>
@@ -67,11 +103,16 @@ namespace Medical.Service
             bool result = false;
             var existExaminationFormDetail = await this.unitOfWork.Repository<ExaminationFormDetails>().GetQueryable()
                 .Where(e => e.Id == updateExaminationFormDetailStatus.ExaminationFormDetailId).FirstOrDefaultAsync();
-            if(existExaminationFormDetail != null)
+            if (existExaminationFormDetail != null)
             {
-                Expression<Func<ExaminationFormDetails, object>>[] includeProperties = new Expression<Func<ExaminationFormDetails, object>>[] 
+                existExaminationFormDetail.Updated = DateTime.Now;
+                existExaminationFormDetail.UpdatedBy = updateExaminationFormDetailStatus.CreatedBy;
+
+                Expression<Func<ExaminationFormDetails, object>>[] includeProperties = new Expression<Func<ExaminationFormDetails, object>>[]
                 {
-                    e => e.Status
+                    e => e.Status,
+                    e => e.Updated,
+                    e => e.UpdatedBy,
                 };
                 if ((existExaminationFormDetail.Status == (int)CatalogueUtilities.AdditionServiceStatus.New
                         || existExaminationFormDetail.Status == (int)CatalogueUtilities.AdditionServiceStatus.PaymentFailed
@@ -82,10 +123,14 @@ namespace Medical.Service
                     includeProperties = new Expression<Func<ExaminationFormDetails, object>>[]
                     {
                             e => e.Status,
-                            e => e.PaymentMethodId
+                            e => e.PaymentMethodId,
+                            e => e.Updated,
+                            e => e.UpdatedBy,
                     };
                 }
                 existExaminationFormDetail.Status = updateExaminationFormDetailStatus.Status;
+
+
                 switch (updateExaminationFormDetailStatus.Status)
                 {
                     case (int)CatalogueUtilities.AdditionServiceStatus.WaitForService:
@@ -95,7 +140,9 @@ namespace Medical.Service
                             includeProperties = new Expression<Func<ExaminationFormDetails, object>>[]
                             {
                                 e => e.Status,
-                                e => e.AdditionExaminationIndex
+                                e => e.AdditionExaminationIndex,
+                                e => e.Updated,
+                                e => e.UpdatedBy,
                             };
                             // Lưu lịch sử thanh toán
                             PaymentHistories paymentHistories = new PaymentHistories()
@@ -132,7 +179,7 @@ namespace Medical.Service
                     if (existExaminationFormDetail != null)
                     {
                         var userInfo = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == existExaminationFormDetail.UserId).FirstOrDefaultAsync();
-                        if(userInfo != null)
+                        if (userInfo != null)
                         {
                             if (!string.IsNullOrEmpty(existExaminationFormDetail.AdditionExaminationIndex))
                                 await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", existExaminationFormDetail.AdditionExaminationIndex));
@@ -181,11 +228,13 @@ namespace Medical.Service
         {
             List<string> messages = new List<string>();
             bool isExistAdditionServiceId = await this.unitOfWork.Repository<ExaminationFormDetails>().GetQueryable()
-                .AnyAsync(e => 
-                !e.Deleted 
-                && e.Id != item.Id 
-                && e.ExaminationFormId == item.ExaminationFormId 
+                .AnyAsync(e =>
+                !e.Deleted
+                && e.Id != item.Id
+                && e.ExaminationFormId == item.ExaminationFormId
                 && e.AdditionServiceId == item.AdditionServiceId);
+            if(item.AdditionServiceId <= 0)
+                messages.Add("Vui lòng chọn dịch vụ phát sinh");
             if (isExistAdditionServiceId)
                 messages.Add("Dịch vụ phát sinh đã tồn tại");
             string result = string.Empty;

@@ -54,6 +54,9 @@ namespace Medical.Models.AutoMapper
             CreateMap<NotificationModel, Notifications>().ReverseMap();
             CreateMap<PagedList<NotificationModel>, PagedList<Notifications>>().ReverseMap();
 
+            CreateMap<NotificationTemplateModel, NotificationTemplates>().ReverseMap();
+            CreateMap<PagedList<NotificationTemplateModel>, PagedList<NotificationTemplates>>().ReverseMap();
+
             CreateMap<UserFileModel, UserFiles>().ReverseMap();
             CreateMap<PagedList<UserFileModel>, PagedList<UserFiles>>().ReverseMap();
 

@@ -48,6 +48,9 @@ namespace Medical.Entities
         /// Trạng thái
         /// </summary>
         public int? Status { get; set; }
-        
+
+        public List<int> StatusIds { get; set; }
+
+
     }
 }

@@ -19,9 +19,14 @@ namespace Medical.Entities
         public int AdditionServiceId { get; set; }
 
         /// <summary>
-        /// Mã hồ sơ bệnh án
+        /// Mã hồ sơ người bệnh
         /// </summary>
         public int? MedicalRecordId { get; set; }
+
+        /// <summary>
+        /// Mã hồ sơ bệnh án
+        /// </summary>
+        public int? MedicalRecordDetailId { get; set; }
 
         /// <summary>
         /// STT chờ khám của dịch vụ phát sinh
@@ -51,7 +56,7 @@ namespace Medical.Entities
         /// <summary>
         /// Ngày khám
         /// </summary>
-        public DateTime ExaminationDate { get; set; }
+        public DateTime? ExaminationDate { get; set; }
 
         #region Extension Properties
 

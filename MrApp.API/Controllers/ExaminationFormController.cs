@@ -17,6 +17,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -43,6 +44,8 @@ namespace MrApp.API.Controllers
         private readonly IMomoPaymentService momoPaymentService;
         private readonly IMomoConfigurationService momoConfigurationService;
         private readonly IDoctorDetailService doctorDetailService;
+        private readonly IHospitalFileService hospitalFileService;
+
         public ExaminationFormController(IServiceProvider serviceProvider, ILogger<BaseController> logger, IWebHostEnvironment env, IMapper mapper, IConfiguration configuration) : base(serviceProvider, logger, env, mapper, configuration)
         {
             paymentHistoryService = serviceProvider.GetRequiredService<IPaymentHistoryService>();
@@ -59,6 +62,7 @@ namespace MrApp.API.Controllers
             momoPaymentService = serviceProvider.GetRequiredService<IMomoPaymentService>();
             momoConfigurationService = serviceProvider.GetRequiredService<IMomoConfigurationService>();
             doctorDetailService = serviceProvider.GetRequiredService<IDoctorDetailService>();
+            hospitalFileService = serviceProvider.GetRequiredService<IHospitalFileService>();
         }
 
         /// <summary>
@@ -73,7 +77,7 @@ namespace MrApp.API.Controllers
         {
             if (hospitalId <= 0) throw new AppException("Vui lòng chọn bệnh viện");
             var doctors = await this.doctorService.GetAsync(e => !e.Deleted && e.Active && e.HospitalId == hospitalId);
-            if(doctors != null && doctors.Any())
+            if (doctors != null && doctors.Any())
             {
                 if (specialistTypeId.HasValue && specialistTypeId.Value > 0)
                 {
@@ -83,7 +87,7 @@ namespace MrApp.API.Controllers
                     && e.SpecialistTypeId == specialistTypeId.Value);
                     var doctorIdsBySpecialistTypes = doctorDetails.Select(e => e.DoctorId).ToList();
                     if (doctorIdsBySpecialistTypes != null && doctorIdsBySpecialistTypes.Any())
-                        doctors = await this.doctorService.GetAsync(e => !e.Deleted 
+                        doctors = await this.doctorService.GetAsync(e => !e.Deleted
                         && e.Active
                         && e.HospitalId == hospitalId
                         && doctorIdsBySpecialistTypes.Contains(e.Id));
@@ -293,6 +297,44 @@ namespace MrApp.API.Controllers
                         if (paymentMethodInfo.Code == CatalogueUtilities.PaymentMethod.MOMO.ToString())
                         {
                             momoResponseModel = await GetResponseMomoPayment(updateExaminationStatusModel);
+                        }
+                    }
+                }
+                List<string> filePaths = new List<string>();
+                List<string> folderUploadPaths = new List<string>();
+                if (updateExaminationStatusModel.MedicalRecordDetailFiles != null && updateExaminationStatusModel.MedicalRecordDetailFiles.Any())
+                {
+                    foreach (var file in updateExaminationStatusModel.MedicalRecordDetailFiles)
+                    {
+                        string filePath = Path.Combine(env.ContentRootPath, CoreContants.UPLOAD_FOLDER_NAME, CoreContants.TEMP_FOLDER_NAME, file.FileName);
+                        // ------- START GET URL FOR FILE
+                        string folderUploadPath = string.Empty;
+                        var folderUpload = configuration.GetValue<string>("MySettings:FolderUpload");
+                        folderUploadPath = Path.Combine(folderUpload, CoreContants.UPLOAD_FOLDER_NAME, MEDICAL_RECORD_FOLDER_NAME);
+                        string fileUploadPath = Path.Combine(folderUploadPath, Path.GetFileName(filePath));
+                        // Kiểm tra có tồn tại file trong temp chưa?
+                        if (System.IO.File.Exists(filePath) && !System.IO.File.Exists(fileUploadPath))
+                        {
+
+                            FileUtils.CreateDirectory(folderUploadPath);
+                            FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
+                            folderUploadPaths.Add(fileUploadPath);
+                            string fileUrl = Path.Combine(CoreContants.UPLOAD_FOLDER_NAME, MEDICAL_RECORD_FOLDER_NAME, Path.GetFileName(filePath));
+                            // ------- END GET URL FOR FILE
+                            filePaths.Add(filePath);
+                            file.Created = DateTime.Now;
+                            file.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+                            file.Active = true;
+                            file.Deleted = false;
+                            file.FileName = Path.GetFileName(filePath);
+                            file.FileExtension = Path.GetExtension(filePath);
+                            file.ContentType = ContentFileTypeUtilities.GetMimeType(filePath);
+                            file.FileUrl = fileUrl;
+                        }
+                        else
+                        {
+                            file.Updated = DateTime.Now;
+                            file.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
                         }
                     }
                 }
@@ -594,7 +636,20 @@ namespace MrApp.API.Controllers
                 //    throw new AppException("Vui lòng chọn bệnh viện");
                 baseSearch.UserId = LoginContext.Instance.CurrentUser.UserId;
                 PagedList<ExaminationForms> pagedData = await this.examinationFormService.GetPagedListData(baseSearch);
+                
+
                 PagedList<ExaminationFormModel> pagedDataModel = mapper.Map<PagedList<ExaminationFormModel>>(pagedData);
+                if (pagedDataModel != null && pagedDataModel.Items != null && pagedDataModel.Items.Any())
+                {
+                    foreach (var item in pagedDataModel.Items)
+                    {
+                        var hospitalFiles = await hospitalFileService.GetAsync(e => !e.Deleted && e.HospitalId == item.HospitalId && e.FileType == (int)CatalogueUtilities.HospitalFileType.Logo);
+                        if(hospitalFiles != null && hospitalFiles.Any())
+                        {
+                            item.HospitalFiles = mapper.Map<IList<HospitalFileModel>>(hospitalFiles);
+                        }
+                    }
+                }
                 appDomainResult = new AppDomainResult
                 {
                     Data = pagedDataModel,
@@ -670,6 +725,6 @@ namespace MrApp.API.Controllers
 
         #endregion
 
-
+        public const string MEDICAL_RECORD_FOLDER_NAME = "medicalrecord";
     }
 }

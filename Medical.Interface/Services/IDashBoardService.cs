@@ -36,5 +36,32 @@ namespace Medical.Interface.Services
         /// <returns></returns>
         Task<DashBoardResponse> GetTotalPaymentSystem(DashBoardRequest dashBoardRequest);
 
+        /// <summary>
+        /// Lấy thông tin danh sách báo cáo tổng hợp
+        /// </summary>
+        /// <param name="dashBoardSynthesisRequest"></param>
+        /// <returns></returns>
+        Task<List<DashBoardSynthesisResponse>> GetSynthesisReport(DashBoardSynthesisRequest dashBoardSynthesisRequest);
+
+        /// <summary>
+        /// Lấy danh sách bệnh viện
+        /// </summary>
+        /// <param name="dashBoardSynthesisRequest"></param>
+        /// <returns></returns>
+        Task<List<DashBoardSynthesisByHospitalResponse>> GetSynthesisReportByHospital(DashBoardSynthesisRequest dashBoardSynthesisRequest);
+
+        /// <summary>
+        /// Lấy số liệu báo cáo doanh thu theo ngày/tháng/năm
+        /// </summary>
+        /// <param name="dashBoardSaleRequest"></param>
+        /// <returns></returns>
+        Task<List<DashBoardSaleResponse>> GetSaleReport(DashBoardSaleRequest dashBoardSaleRequest);
+
+        /// <summary>
+        /// Lấy danh sách bệnh viện với doanh thu
+        /// </summary>
+        /// <param name="dashBoardSaleRequest"></param>
+        /// <returns></returns>
+        Task<List<DashBoardSaleByHospitalResponse>> GetSaleReportByHospital(DashBoardSaleRequest dashBoardSaleRequest);
     }
 }

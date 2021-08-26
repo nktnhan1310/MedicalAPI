@@ -224,3 +224,8 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\pt\Hangfire.Core.resources.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\zh-TW\Hangfire.Core.resources.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\zh\Hangfire.Core.resources.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Template\CatalogueHospitalTemplate.xlsx
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Google.Apis.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Google.Apis.Auth.PlatformServices.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Google.Apis.Auth.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Google.Apis.Core.dll

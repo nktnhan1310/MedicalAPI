@@ -40,6 +40,7 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<MedicalBills>(x => x.ToTable("MedicalBills"));
             modelBuilder.Entity<Medicines>(x => x.ToTable("Medicines"));
             modelBuilder.Entity<MomoPayments>(x => x.ToTable("MomoPayments"));
+            modelBuilder.Entity<NotificationTemplates>(x => x.ToTable("NotificationTemplates"));
 
             #endregion
 
@@ -90,6 +91,8 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<SystemConfiguartions>(x => x.ToTable("SystemConfiguartions"));
             modelBuilder.Entity<MomoConfigurations>(x => x.ToTable("MomoConfigurations"));
             modelBuilder.Entity<SystemConfigFee>(x => x.ToTable("SystemConfigFee"));
+            modelBuilder.Entity<FaceBookAuthSettings>(x => x.ToTable("FaceBookAuthSettings"));
+            modelBuilder.Entity<GoogleSettings>(x => x.ToTable("GoogleSettings"));
 
             #endregion
 
@@ -105,6 +108,8 @@ namespace Medical.AppDbContext
 
         #region Config
 
+        public DbSet<GoogleSettings> GoogleSettings { get; set; }
+        public DbSet<FaceBookAuthSettings> FaceBookAuthSettings { get; set; }
         public DbSet<SystemConfiguartions> SystemConfiguartions { get; set; }
         public DbSet<HospitalConfigFees> HospitalConfigFee { get; set; }
         public DbSet<EmailConfiguration> EmailConfiguration { get; set; }
@@ -112,12 +117,11 @@ namespace Medical.AppDbContext
         public DbSet<MomoConfigurations> MomoConfigurations { get; set; }
         public DbSet<SystemConfigFee> SystemConfigFee { get; set; }
 
-        
-
         #endregion
 
         #region Catalogue
 
+        public DbSet<NotificationTemplates> NotificationTemplates { get; set; }
         public DbSet<Medicines> Medicines { get; set; }
         public DbSet<MedicalBills> MedicalBills { get; set; }
         public DbSet<AdditionServices> AdditionServices { get; set; }

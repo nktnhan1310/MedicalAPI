@@ -16,6 +16,11 @@ namespace Medical.Entities
         public int ExaminationFormDetailId { get; set; }
 
         /// <summary>
+        /// Ngày thực hiện dịch vụ
+        /// </summary>
+        public DateTime? ExaminationDate { get; set; }
+
+        /// <summary>
         /// Phương thức thanh toán
         /// </summary>
         public int? PaymentMethodId { get; set; }

@@ -208,6 +208,17 @@ namespace Medical.Service
                             await this.unitOfWork.Repository<ChannelMappingHospital>().CreateAsync(channelMappingHospital);
                         }
                     }
+
+                    // Kiểm tra những item không có trong role chọn => Xóa đi
+                    var existGroupOlds = await this.unitOfWork.Repository<ChannelMappingHospital>().GetQueryable().Where(e => !item.ChannelIds.Contains(e.ChannelId) && e.HospitalId == exists.Id).ToListAsync();
+                    if (existGroupOlds != null)
+                    {
+                        foreach (var existGroupOld in existGroupOlds)
+                        {
+                            this.unitOfWork.Repository<ChannelMappingHospital>().Delete(existGroupOld);
+                        }
+                    }
+
                 }
                 else
                 {

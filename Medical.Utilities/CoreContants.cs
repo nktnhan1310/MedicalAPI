@@ -28,6 +28,8 @@ namespace Medical.Utilities
         public const string QR_CODE_FOLDER_NAME = "qrcode";
         public const string USER_FOLDER_NAME = "user";
 
+        public const string GET_TOTAL_NOTIFICATION = "get-total-notification";
+
         /// <summary>
         /// Danh mục quyền
         /// </summary>
@@ -43,6 +45,26 @@ namespace Medical.Utilities
             Download = 8,
             Export = 9
         }
+
+        #region Notification Template
+
+        /// <summary>
+        /// Template thông báo cho user được apply bác sĩ
+        /// </summary>
+        public const string NOTI_TEMPLATE_DOCTOR_CREATE = "DT_NT_CREATE";
+
+        /// <summary>
+        /// Template thông báo có thông tin hồ sơ được tạo cho user
+        /// </summary>
+        public const string NOTI_TEMPLATE_MEDICAL_RECORD_CREATE = "MEDICAL_RECORD_CREATE";
+
+        /// <summary>
+        /// Tạo phiếu khám
+        /// </summary>
+        public const string NOTI_TEMPLATE_EXAMINATION_FORM_CREATE = "EXAMINATION_FORM_CREATE";
+
+
+        #endregion
 
         #region Catalogue Name
 

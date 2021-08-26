@@ -15,5 +15,10 @@ namespace Medical.Service
         public WardService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
         }
+
+        protected override string GetTableName()
+        {
+            return "Wards";
+        }
     }
 }

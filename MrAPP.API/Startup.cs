@@ -63,11 +63,27 @@ namespace MrApp.API
 
 
 
-
+            services.AddHttpClient();
             services.ConfigureRepositoryWrapper();
             services.ConfigureService();
 
             services.AddLazyCache();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder
+                    .WithOrigins("http://localhost:4200"
+                    , "https://mrapp.monamedia.net/"
+                    )
+                    .AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+                });
+            });
+
             services
                 .AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
              .AddNewtonsoftJson(options =>
@@ -76,18 +92,7 @@ namespace MrApp.API
                  options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                  options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Local;
              });
-            services.AddCors(options =>
-            {
-                options.AddPolicy(MyAllowSpecificOrigins,
-                builder =>
-                {
-                    builder
-                    .WithOrigins("http://localhost:4200")
-                    .AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-                });
-            });
+            
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -155,7 +160,6 @@ namespace MrApp.API
                 RequestPath = "/upload"
             });
 
-            
 
             app.UseStaticHttpContext();
             app.UseStaticHttpContext();

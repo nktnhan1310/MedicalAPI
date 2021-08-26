@@ -1,12 +1,15 @@
 {
   "version": 2,
-  "dgSpecHash": "q392B3Zn12nRkkXz+kTLGe2fEOW0+2FgoYnXmcHK+k8OdJIiS12RktMuAq7h7SpAfvc+KAnRdpi0Uz+F88x3Cg==",
+  "dgSpecHash": "zUGAfroBOdQVJCFdlzY02Ii4PHilr7Tm3FryvO5NWT8QxMvAKkKohNBprjbfsXN/RH9Ohsp9+kfE5VjkKTtGKw==",
   "success": true,
   "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\MrApp.API\\MrApp.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Admin\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\google.apis\\1.54.0\\google.apis.1.54.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\google.apis.auth\\1.54.0\\google.apis.auth.1.54.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\google.apis.core\\1.54.0\\google.apis.core.1.54.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\lazycache\\2.1.3\\lazycache.2.1.3.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\lazycache.aspnetcore\\2.1.3\\lazycache.aspnetcore.2.1.3.nupkg.sha512",

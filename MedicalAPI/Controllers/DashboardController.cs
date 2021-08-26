@@ -68,6 +68,83 @@ namespace MedicalAPI.Controllers
         }
 
         /// <summary>
+        /// Lấy thông số báo cáo theo bệnh viện ngày/tháng/năm
+        /// </summary>
+        /// <param name="dashBoardSynthesisRequest"></param>
+        /// <returns></returns>
+        [HttpGet("get-synthesys-report")]
+        public async Task<AppDomainResult> GetSynthesysReport([FromQuery] DashBoardSynthesisRequest dashBoardSynthesisRequest)
+        {
+            dashBoardSynthesisRequest.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.HasValue ? LoginContext.Instance.CurrentUser.HospitalId : dashBoardSynthesisRequest.HospitalId;
+           
+            var listResults = await this.dashBoardService.GetSynthesisReport(dashBoardSynthesisRequest);
+            return new AppDomainResult()
+            {
+                Data = listResults,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
+        /// Lấy danh sách bệnh viện báo cáo tổng hợp
+        /// </summary>
+        /// <param name="dashBoardSynthesisRequest"></param>
+        /// <returns></returns>
+        [HttpGet("get-synthesys-hospital-report")]
+        public async Task<AppDomainResult> GetSynthesysHospitalReport([FromQuery] DashBoardSynthesisRequest dashBoardSynthesisRequest)
+        {
+            dashBoardSynthesisRequest.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.HasValue ? LoginContext.Instance.CurrentUser.HospitalId : dashBoardSynthesisRequest.HospitalId;
+
+            var listResults = await this.dashBoardService.GetSynthesisReportByHospital(dashBoardSynthesisRequest);
+            return new AppDomainResult()
+            {
+                Data = listResults,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+
+        /// <summary>
+        /// Lấy thông số báo cáo doanh thu theo bệnh viện ngày/tháng/năm
+        /// </summary>
+        /// <param name="dashBoardSaleRequest"></param>
+        /// <returns></returns>
+        [HttpGet("get-sale-report")]
+        public async Task<AppDomainResult> GetSaleReport([FromQuery] DashBoardSaleRequest dashBoardSaleRequest)
+        {
+            dashBoardSaleRequest.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.HasValue ? LoginContext.Instance.CurrentUser.HospitalId : dashBoardSaleRequest.HospitalId;
+
+            var listResults = await this.dashBoardService.GetSaleReport(dashBoardSaleRequest);
+            return new AppDomainResult()
+            {
+                Data = listResults,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
+        /// Lấy danh sách bệnh viện báo cáo doanh thu
+        /// </summary>
+        /// <param name="dashBoardSaleRequest"></param>
+        /// <returns></returns>
+        [HttpGet("get-sale-hospital-report")]
+        public async Task<AppDomainResult> GetSaleHospitalReport([FromQuery] DashBoardSaleRequest dashBoardSaleRequest)
+        {
+            dashBoardSaleRequest.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.HasValue ? LoginContext.Instance.CurrentUser.HospitalId : dashBoardSaleRequest.HospitalId;
+            var listResults = await this.dashBoardService.GetSaleReportByHospital(dashBoardSaleRequest);
+            return new AppDomainResult()
+            {
+                Data = listResults,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+
+        /// <summary>
         /// Lấy tổng lịch tái khám mới theo ngày/tháng/năm
         /// </summary>
         /// <returns></returns>

@@ -12,8 +12,14 @@ namespace Medical.Service
 {
     public class ConfigTimeExaminationService : CatalogueHospitalService<ConfigTimeExaminations, BaseHospitalSearch>, IConfigTimeExaminationService
     {
-        public ConfigTimeExaminationService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        public ConfigTimeExaminationService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
+            this.configuration = configuration;
+        }
+
+        protected override string GetTableName()
+        {
+            return "ConfigTimeExaminations";
         }
     }
 }

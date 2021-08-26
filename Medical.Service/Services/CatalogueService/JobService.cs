@@ -14,6 +14,8 @@ namespace Medical.Service.Services
     {
         public JobService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
+            this.configuration = configuration;
+
         }
 
         protected override string GetTableName()

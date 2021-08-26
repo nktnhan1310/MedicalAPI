@@ -144,6 +144,11 @@ namespace Medical.Models
         public string Comment { get; set; }
 
         /// <summary>
+        /// Địa chỉ bệnh viện
+        /// </summary>
+        public string HospitalAddress { get; set; }
+
+        /// <summary>
         /// Tên dịch vụ khám
         /// </summary>
         public string ServiceTypeName { get; set; }
@@ -189,6 +194,8 @@ namespace Medical.Models
         public IList<ExaminationFormDetailModel> ExaminationFormDetails { get; set; }
 
         public ExaminationScheduleDetailModel ExaminationScheduleDetail { get; set; }
+
+        public IList<HospitalFileModel> HospitalFiles { get; set; }
 
 
         #endregion

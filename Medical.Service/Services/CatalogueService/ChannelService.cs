@@ -14,6 +14,11 @@ namespace Medical.Service
     {
         public ChannelService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
+            this.configuration = configuration;
+        }
+        protected override string GetTableName()
+        {
+            return "Channels";
         }
     }
 }

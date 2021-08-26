@@ -814,13 +814,16 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("ExaminationDate")
+                    b.Property<DateTime?>("ExaminationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ExaminationFormId")
                         .HasColumnType("int");
 
                     b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MedicalRecordDetailId")
                         .HasColumnType("int");
 
                     b.Property<int?>("MedicalRecordId")
@@ -1135,6 +1138,82 @@ namespace Medical.AppDbContext.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ExaminationTypes");
+                });
+
+            modelBuilder.Entity("Medical.Entities.FaceBookAuthSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("AppId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("AppSecret")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FaceBookAuthSettings");
+                });
+
+            modelBuilder.Entity("Medical.Entities.GoogleSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ClientId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClientSecret")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GoogleSettings");
                 });
 
             modelBuilder.Entity("Medical.Entities.HospitalConfigFees", b =>
@@ -1522,9 +1601,6 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<int>("AdditionServiceId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ContentType")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -1592,10 +1668,25 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("DoctorComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DoctorId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("ExaminationDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ExaminationFormId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExaminationIndex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExaminationPaymentIndex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ExaminationScheduleDetailId")
                         .HasColumnType("int");
 
                     b.Property<bool>("HasMedicalBills")
@@ -1605,6 +1696,9 @@ namespace Medical.AppDbContext.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("MedicalRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("PaymentMethodId")
                         .HasColumnType("int");
 
                     b.Property<double?>("Price")
@@ -1620,6 +1714,9 @@ namespace Medical.AppDbContext.Migrations
                         .HasColumnType("int");
 
                     b.Property<int?>("SpecialistTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TypeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
@@ -2052,6 +2149,9 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
 
+                    b.Property<string>("NotificationContent")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("NotificationId")
                         .HasColumnType("int");
 
@@ -2071,6 +2171,62 @@ namespace Medical.AppDbContext.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("NotificationApplicationUser");
+                });
+
+            modelBuilder.Entity("Medical.Entities.NotificationTemplates", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsTemplateDefault")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NotificationTemplates");
                 });
 
             modelBuilder.Entity("Medical.Entities.NotificationTypes", b =>
@@ -2128,7 +2284,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Content")
+                    b.Property<string>("AppUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
@@ -2150,11 +2306,11 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("IsSendNotify")
                         .HasColumnType("bit");
 
-                    b.Property<int?>("NotificationTypeId")
+                    b.Property<int?>("NotificationTemplateId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("NotificationTypeId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -2162,6 +2318,9 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("WebUrl")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -2188,8 +2347,14 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("ExpiredDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsEmail")
+                        .HasColumnType("bit");
 
                     b.Property<string>("OTPValue")
                         .HasColumnType("nvarchar(max)");
@@ -3173,6 +3338,12 @@ namespace Medical.AppDbContext.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsLocked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLoginFaceBook")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLoginGoogle")
                         .HasColumnType("bit");
 
                     b.Property<string>("LastName")

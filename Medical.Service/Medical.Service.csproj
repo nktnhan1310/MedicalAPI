@@ -12,6 +12,7 @@
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="ExcelMapper" Version="5.2.298" />
+    <PackageReference Include="Google.Apis.Auth" Version="1.54.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />

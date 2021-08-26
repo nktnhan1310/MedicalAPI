@@ -14,6 +14,7 @@ namespace Medical.Service.Services
     {
         public CountryService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
+            this.configuration = configuration;
         }
 
         /// <summary>
@@ -24,6 +25,5 @@ namespace Medical.Service.Services
         {
             return "Countries";
         }
-
     }
 }

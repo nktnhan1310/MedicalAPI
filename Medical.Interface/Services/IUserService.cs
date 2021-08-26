@@ -13,5 +13,6 @@ namespace Medical.Interface.Services
         Task<bool> HasPermission(int userId, string controller, IList<string> permissions);
         Task<string> CheckCurrentUserPassword(int userId, string password, string newPasssword);
         Task<bool> UpdateUserToken(int userId, string token, bool isLogin = false);
+        Task<bool> UpdateUserPassword(int userId, string newPassword);
     }
 }

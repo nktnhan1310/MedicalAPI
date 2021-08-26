@@ -9,6 +9,10 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\P
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\EntityFramework.SqlServer.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\EntityFramework.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Google.Apis.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Google.Apis.Auth.PlatformServices.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Google.Apis.Auth.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Google.Apis.Core.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\LazyCache.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\LazyCache.AspNetCore.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Release\netcoreapp3.1\PubTmp\Out\Microsoft.AspNetCore.Authentication.JwtBearer.dll

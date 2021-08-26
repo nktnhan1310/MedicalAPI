@@ -622,8 +622,6 @@ namespace MedicalAPI.Controllers.Catalogue
             };
         }
 
-
-
         #endregion
 
     }

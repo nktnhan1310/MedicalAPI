@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace MedicalAPI.Controllers
@@ -29,10 +30,12 @@ namespace MedicalAPI.Controllers
         private IHttpContextAccessor httpContextAccessor;
         private IConfiguration configuration;
         private IMedicalRecordDetailFileService medicalRecordDetailFileService;
+        private IExaminationFormDetailService examinationFormDetailService;
         public MedicalRecordDetailController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<MedicalRecordDetails, MedicalRecordDetailModel, SearchMedicalRecordDetail>> logger, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor, IConfiguration configuration) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IMedicalRecordDetailService>();
             medicalRecordDetailFileService = serviceProvider.GetRequiredService<IMedicalRecordDetailFileService>();
+            examinationFormDetailService = serviceProvider.GetRequiredService<IExaminationFormDetailService>();
             this.httpContextAccessor = httpContextAccessor;
             this.configuration = configuration;
         }
@@ -63,6 +66,25 @@ namespace MedicalAPI.Controllers
                 return Ok(recordDetailInfoModel);
             }
             else return NotFound("Không tìm thấy thông tin");
+        }
+
+        /// <summary>
+        /// Lấy thông tin dịch vụ phát sinh
+        /// </summary>
+        /// <param name="searchExaminationFormDetail"></param>
+        /// <returns></returns>
+        [HttpGet("get-examination-form-detail")]
+        public async Task<AppDomainResult> GetExaminationFormDetails([FromQuery] SearchExaminationFormDetail searchExaminationFormDetail)
+        {
+            searchExaminationFormDetail.UserId = LoginContext.Instance.CurrentUser.UserId;
+            searchExaminationFormDetail.IsFromMedicalRecordDetail = true;
+            var pagedData = await this.examinationFormDetailService.GetPagedListData(searchExaminationFormDetail);
+            return new AppDomainResult()
+            {
+                Data = mapper.Map<PagedList<ExaminationFormDetailModel>>(pagedData),
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
         }
     }
 }

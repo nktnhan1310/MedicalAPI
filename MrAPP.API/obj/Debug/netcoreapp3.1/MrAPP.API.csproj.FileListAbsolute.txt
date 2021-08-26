@@ -112,16 +112,20 @@ E:\MonaMedia\MedicalMaster\MedicalAPI\MrApp.API\obj\Debug\netcoreapp3.1\MrApp.AP
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\appsettings.Development.json
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\appsettings.json
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\MrApp.API.exe
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\MrApp.API.xml
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\MrApp.API.deps.json
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\MrApp.API.runtimeconfig.json
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\MrApp.API.runtimeconfig.dev.json
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\MrApp.API.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\MrApp.API.pdb
-E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\MrApp.API.xml
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\AutoMapper.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\EntityFramework.SqlServer.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\EntityFramework.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Google.Apis.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Google.Apis.Auth.PlatformServices.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Google.Apis.Auth.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Google.Apis.Core.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Humanizer.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\LazyCache.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\LazyCache.AspNetCore.dll
@@ -139,6 +143,7 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Mic
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Memory.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Caching.Redis.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Abstractions.dll
+E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyInjection.Abstractions.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.DependencyModel.dll
@@ -220,4 +225,3 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Debug\netcoreapp3.1\MrA
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Debug\netcoreapp3.1\MrApp.API.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Debug\netcoreapp3.1\MrApp.API.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\obj\Debug\netcoreapp3.1\MrApp.API.genruntimeconfig.cache
-E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Debug\netcoreapp3.1\Microsoft.Extensions.Configuration.Binder.dll

@@ -98,6 +98,17 @@ namespace Medical.Entities
         [DefaultValue(false)]
         public bool IsCheckOTP { get; set; }
 
+        /// <summary>
+        /// Cờ check login = facebook
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsLoginFaceBook { get; set; }
+        /// <summary>
+        /// Cờ check login = google
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsLoginGoogle { get; set; }
+
         #region Extension Properties
 
         /// <summary>

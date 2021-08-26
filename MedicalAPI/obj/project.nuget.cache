@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "q8F/lcimdPWB/pv5Ey20J0bA5IZ9dJ/9kIvWeMF/qPyPoXh0v2eJzL7l0y3USuLn8vyEUHpi7QTdvaA6bbddNA==",
+  "dgSpecHash": "o6pDi634vi+kCXTujGq6AfguBdpZMjxjIqCedY2suDqWSZ1ndmvM2nJFAj2VJQPmIu6llPt2FqoDCJJ4+rGIPw==",
   "success": true,
   "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\MedicalAPI\\MedicalAPI.csproj",
   "expectedPackageFiles": [
@@ -9,6 +9,9 @@
     "C:\\Users\\Admin\\.nuget\\packages\\entityframework\\6.4.4\\entityframework.6.4.4.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\epplus.core\\1.5.4\\epplus.core.1.5.4.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\excelmapper\\5.2.298\\excelmapper.5.2.298.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\google.apis\\1.54.0\\google.apis.1.54.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\google.apis.auth\\1.54.0\\google.apis.auth.1.54.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\google.apis.core\\1.54.0\\google.apis.core.1.54.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\hangfire.aspnetcore\\1.7.23\\hangfire.aspnetcore.1.7.23.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\hangfire.core\\1.7.23\\hangfire.core.1.7.23.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\hangfire.sqlserver\\1.7.23\\hangfire.sqlserver.1.7.23.nupkg.sha512",

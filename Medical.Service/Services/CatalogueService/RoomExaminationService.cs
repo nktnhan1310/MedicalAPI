@@ -17,8 +17,9 @@ namespace Medical.Service
 {
     public class RoomExaminationService : CatalogueHospitalService<RoomExaminations, SearchHopitalExtension>, IRoomExaminationService
     {
-        public RoomExaminationService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        public RoomExaminationService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
+            this.configuration = configuration;
         }
 
         public override async Task<string> GetExistItemMessage(RoomExaminations item)
@@ -65,6 +66,11 @@ namespace Medical.Service
                 || e.Name.Contains(baseSearch.SearchContent)
                 || e.Description.Contains(baseSearch.SearchContent)
                 );
+        }
+
+        protected override string GetTableName()
+        {
+            return "RoomExaminations";
         }
 
     }

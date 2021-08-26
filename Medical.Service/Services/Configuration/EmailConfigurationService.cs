@@ -136,62 +136,66 @@ namespace Medical.Service
         /// <param name="emailConfig"></param>
         public async Task Send(MailMessage message, EmailSendConfigure emailConfig)
         {
-            SmtpClient client = new SmtpClient
+            await Task.Run(() =>
             {
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(
+                SmtpClient client = new SmtpClient
+                {
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(
                                   emailConfig.ClientCredentialUserName,
                                   emailConfig.ClientCredentialPassword),
-                Host = emailConfig.SmtpServer,
-                Port = emailConfig.Port,
-                EnableSsl = emailConfig.EnableSsl,
-            };
-            Console.WriteLine("------------------------------------ Email:" + emailConfig.FromEmail);
-            Console.WriteLine("------------------------------------ ClientCredentialUserName:" + emailConfig.ClientCredentialUserName);
-            Console.WriteLine("------------------------------------ Password:" + emailConfig.ClientCredentialPassword);
-            try
-            {
-                //Add this line to bypass the certificate validation
-                //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object s,
-                //        System.Security.Cryptography.X509Certificates.X509Certificate certificate,
-                //        System.Security.Cryptography.X509Certificates.X509Chain chain,
-                //        System.Net.Security.SslPolicyErrors sslPolicyErrors)
-                //{
-                //    return true;
-                //};
-                client.Send(message);
-            }
-            catch (SmtpFailedRecipientsException ex)
-            {
-                Console.WriteLine("SmtpFailedRecipientsExceptionMessage:" + ex.Message);
-                Console.WriteLine("SmtpFailedRecipientsException:" + ex.StackTrace);
-                throw new Exception("SmtpFailedRecipientsException:" + ex.StackTrace);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("ExceptionMAILMessage:" + e.Message);
-                Console.WriteLine("ExceptionMAIL:" + e.StackTrace);
-                throw new Exception("ExceptionMAIL:" + e.StackTrace);
-            }
-            finally
-            {
-                message.Dispose();
-            }
+                    Host = emailConfig.SmtpServer,
+                    Port = emailConfig.Port,
+                    EnableSsl = emailConfig.EnableSsl,
+                };
+                Console.WriteLine("------------------------------------ Email:" + emailConfig.FromEmail);
+                Console.WriteLine("------------------------------------ ClientCredentialUserName:" + emailConfig.ClientCredentialUserName);
+                Console.WriteLine("------------------------------------ Password:" + emailConfig.ClientCredentialPassword);
+                try
+                {
+                    //Add this line to bypass the certificate validation
+                    //System.Net.ServicePointManager.ServerCertificateValidationCallback = delegate (object s,
+                    //        System.Security.Cryptography.X509Certificates.X509Certificate certificate,
+                    //        System.Security.Cryptography.X509Certificates.X509Chain chain,
+                    //        System.Net.Security.SslPolicyErrors sslPolicyErrors)
+                    //{
+                    //    return true;
+                    //};
+                    client.Send(message);
+                }
+                catch (SmtpFailedRecipientsException ex)
+                {
+                    Console.WriteLine("SmtpFailedRecipientsExceptionMessage:" + ex.Message);
+                    Console.WriteLine("SmtpFailedRecipientsException:" + ex.StackTrace);
+                    throw new Exception("SmtpFailedRecipientsException:" + ex.StackTrace);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("ExceptionMAILMessage:" + e.Message);
+                    Console.WriteLine("ExceptionMAIL:" + e.StackTrace);
+                    throw new Exception("ExceptionMAIL:" + e.StackTrace);
+                }
+                finally
+                {
+                    message.Dispose();
+                }
+            });
+            
         }
 
-        public void Send(string subject, string body, string[] Tos)
+        public async Task Send(string subject, string body, string[] Tos)
         {
-            Send(subject, body, Tos, null, null);
+            await Send(subject, body, Tos, null, null);
         }
 
 
-        public void Send(string subject, string body, string[] Tos, string[] CCs)
+        public async Task Send(string subject, string body, string[] Tos, string[] CCs)
         {
-            Send(subject, body, Tos, CCs, null);
+            await Send(subject, body, Tos, CCs, null);
         }
 
 
-        public async void Send(string subject, string body, string[] Tos, string[] CCs, string[] BCCs)
+        public async Task Send(string subject, string body, string[] Tos, string[] CCs, string[] BCCs)
         {
             EmailSendConfigure emailConfig = await GetEmailConfig();
             EmailContent content = GetEmailContent();
@@ -204,7 +208,7 @@ namespace Medical.Service
             await Send(msg, emailConfig);
         }
 
-        public async void SendMail(string subject, string Tos, string[] CCs, string[] BCCs, EmailContent emailContent)
+        public async Task SendMail(string subject, string Tos, string[] CCs, string[] BCCs, EmailContent emailContent)
         {
             EmailSendConfigure emailConfig = await GetEmailConfig();
             EmailContent content = GetEmailContent();
@@ -217,7 +221,7 @@ namespace Medical.Service
             await Send(msg, emailConfig);
         }
 
-        public async void Send(string subject, string[] Tos, string[] CCs, string[] BCCs, EmailContent emailContent)
+        public async Task Send(string subject, string[] Tos, string[] CCs, string[] BCCs, EmailContent emailContent)
         {
             EmailSendConfigure emailConfig = await GetEmailConfig();
             EmailContent content = GetEmailContent();

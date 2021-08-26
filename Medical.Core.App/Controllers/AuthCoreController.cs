@@ -43,6 +43,7 @@ namespace Medical.Core.App.Controllers
         private readonly IHospitalService hospitalService;
         private readonly IOTPHistoryService oTPHistoryService;
         private readonly ISMSEmailTemplateService sMSEmailTemplateService;
+        private readonly IFaceBookAuthService faceBookAuthService;
         public AuthCoreController(IServiceProvider serviceProvider
             , IConfiguration configuration
             , IMapper mapper, ILogger<AuthCoreController> logger
@@ -59,6 +60,7 @@ namespace Medical.Core.App.Controllers
             hospitalService = serviceProvider.GetRequiredService<IHospitalService>();
             sMSEmailTemplateService = serviceProvider.GetRequiredService<ISMSEmailTemplateService>();
             oTPHistoryService = serviceProvider.GetRequiredService<IOTPHistoryService>();
+            faceBookAuthService = serviceProvider.GetRequiredService<IFaceBookAuthService>();
         }
 
         /// <summary>
@@ -109,7 +111,7 @@ namespace Medical.Core.App.Controllers
         }
 
         /// <summary>
-        /// Kiểm tra mã OTP
+        /// Kiểm tra mã OTP đăng nhập hệ thống
         /// </summary>
         /// <param name="phoneNumber"></param>
         /// <param name="otpValue"></param>
@@ -152,6 +154,12 @@ namespace Medical.Core.App.Controllers
             };
         }
 
+        /// <summary>
+        /// Kiểm tra OTP để đổi mật khẩu cho điện thoại
+        /// </summary>
+        /// <param name="phoneNumber"></param>
+        /// <param name="otpValue"></param>
+        /// <returns></returns>
         [HttpPost("send-otp-forget-password/{phoneNumber}/{otpValue}")]
         [AllowAnonymous]
         public virtual async Task<AppDomainResult> SendOTPGetPassword(string phoneNumber, string otpValue)
@@ -162,7 +170,7 @@ namespace Medical.Core.App.Controllers
             if (userInfos != null && userInfos.Any() && userInfos.Count == 1)
             {
                 var userInfo = userInfos.FirstOrDefault();
-                var otpHistoriesChecks = await this.oTPHistoryService.GetAsync(e => !e.Deleted && e.UserId == userInfo.Id && e.Phone == userInfo.Phone && e.OTPValue == otpValue);
+                var otpHistoriesChecks = await this.oTPHistoryService.GetAsync(e => !e.Deleted && !e.IsEmail && e.UserId == userInfo.Id && e.Phone == userInfo.Phone && e.OTPValue == otpValue);
                 if (otpHistoriesChecks != null && otpHistoriesChecks.Any())
                 {
                     var latestOTPCheck = otpHistoriesChecks.OrderByDescending(e => e.Created).FirstOrDefault();
@@ -186,6 +194,48 @@ namespace Medical.Core.App.Controllers
             }
             else throw new AppException("Số điện thoại chưa được đăng ký!");
         }
+
+        /// <summary>
+        /// Kiểm tra OTP để đổi mật khẩu cho Email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="otpValue"></param>
+        /// <returns></returns>
+        [HttpPost("send-otp-email-forget-password/{email}/{otpValue}")]
+        [AllowAnonymous]
+        public virtual async Task<AppDomainResult> SendOTPGetPasswordEmail(string email, string otpValue)
+        {
+            bool isValidEmail = ValidateUserName.IsEmail(email);
+            if (!isValidEmail) throw new AppException("Email không hợp lệ!");
+            var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.Email == email);
+            if (userInfos != null && userInfos.Any() && userInfos.Count == 1)
+            {
+                var userInfo = userInfos.FirstOrDefault();
+                var otpHistoriesChecks = await this.oTPHistoryService.GetAsync(e => !e.Deleted && e.IsEmail && e.UserId == userInfo.Id && e.Email == userInfo.Email && e.OTPValue == otpValue);
+                if (otpHistoriesChecks != null && otpHistoriesChecks.Any())
+                {
+                    var latestOTPCheck = otpHistoriesChecks.OrderByDescending(e => e.Created).FirstOrDefault();
+                    if (DateTime.Now > latestOTPCheck.ExpiredDate)
+                        throw new AppException("OTP đã hết hạn, vui lòng lấy lại mã OTP khác!");
+                    var userModel = mapper.Map<UserModel>(userInfo);
+                    var token = await GenerateJwtToken(userModel, true);
+                    // Lưu giá trị token
+                    await this.userService.UpdateUserToken(userModel.Id, token, true);
+                    return new AppDomainResult()
+                    {
+                        Success = true,
+                        Data = new
+                        {
+                            token = token,
+                        },
+                        ResultCode = (int)HttpStatusCode.OK
+                    };
+                }
+                else throw new AppException("Mã OTP không chính xác!");
+            }
+            else throw new AppException("Email chưa được đăng ký!");
+        }
+
 
         /// <summary>
         /// Gửi mã OTP theo sdt có trong hệ thống
@@ -235,6 +285,56 @@ namespace Medical.Core.App.Controllers
             {
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
+        /// Tạo OTP gửi qua email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("get-otp-code-email/{email}")]
+        public virtual async Task<AppDomainResult> GenerateOTPCodeEmail(string email)
+        {
+            bool success = false;
+
+            bool isValieEmail = ValidateUserName.IsEmail(email);
+            if (!isValieEmail) throw new AppException("Email không hợp lệ!");
+            var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.Email == email);
+            if (userInfos != null && userInfos.Any() && userInfos.Count == 1)
+            {
+                var userInfo = userInfos.FirstOrDefault();
+                var otpValue = RandomUtilities.RandomOTPString(6);
+                string emailBody = string.Format("<p>Mã OTP của bạn là: {0}. Thời hạn OTP hiệu lực trong 1 phút.</p>", otpValue);
+                await emailConfigurationService.Send("OTP Xác thực", new string[] { userInfo.Email }, null, null, new EmailContent()
+                {
+                    Content = emailBody,
+                    IsHtml = true,
+                });
+                // Lưu lịch sử OTP ứng với thông tin user
+                OTPHistories oTPHistories = new OTPHistories()
+                {
+                    Created = DateTime.Now,
+                    CreatedBy = "system",
+                    UserId = userInfo.Id,
+                    Active = true,
+                    Deleted = false,
+                    OTPValue = otpValue,
+                    Phone = userInfo.Phone,
+                    Email = userInfo.Email,
+                    IsEmail = true,
+                    ExpiredDate = DateTime.Now.AddMinutes(1),
+                    Status = 0
+                };
+                await this.oTPHistoryService.CreateAsync(oTPHistories);
+            }
+            else throw new AppException("Email chưa được đăng ký!");
+
+            return new AppDomainResult
+            {
+                Success = success,
+                ResultCode = (int)HttpStatusCode.OK,
             };
         }
 
@@ -304,8 +404,9 @@ namespace Medical.Core.App.Controllers
                     throw new AppException(messageCheckPassword);
 
                 var userInfo = await this.userService.GetByIdAsync(userId);
-                userInfo.Password = SecurityUtils.HashSHA1(changePasswordModel.NewPassword);
-                appDomainResult.Success = await userService.UpdateAsync(userInfo);
+                string newPassword = SecurityUtils.HashSHA1(changePasswordModel.NewPassword);
+                userInfo.IsResetPassword = true;
+                appDomainResult.Success = await userService.UpdateUserPassword(userId, newPassword);
                 appDomainResult.ResultCode = (int)HttpStatusCode.OK;
             }
             else
@@ -326,8 +427,9 @@ namespace Medical.Core.App.Controllers
             if (!LoginContext.Instance.CurrentUser.IsConfirmOTP)
                 throw new AppException("Chưa xác nhận OTP");
             var userInfo = await this.userService.GetByIdAsync(LoginContext.Instance.CurrentUser.UserId);
-            userInfo.Password = SecurityUtils.HashSHA1(changePasswordModel.NewPassword);
-            appDomainResult.Success = await userService.UpdateAsync(userInfo);
+            string newPassword = SecurityUtils.HashSHA1(changePasswordModel.NewPassword);
+            userInfo.IsResetPassword = true;
+            appDomainResult.Success = await userService.UpdateUserPassword(LoginContext.Instance.CurrentUser.UserId, newPassword);
             appDomainResult.ResultCode = (int)HttpStatusCode.OK;
             return appDomainResult;
         }
@@ -462,7 +564,7 @@ namespace Medical.Core.App.Controllers
 
                         //await sMSConfigurationService.SendSMS(userInfo.Phone, string.Format("{0} la ma dat lai mat khau Baotrixemay cua ban", newPasswordRandom));
                     }
-                        
+
                 }
             }
             return new AppDomainResult()

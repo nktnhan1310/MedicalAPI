@@ -17,14 +17,18 @@ namespace Medical.Entities
         /// Loại thông báo
         /// </summary>
         public int? NotificationTypeId { get; set; }
+        
+
         /// <summary>
-        /// Tiêu đề
+        /// Link web
         /// </summary>
-        public string Title { get; set; }
+        public string WebUrl { get; set; }
+
         /// <summary>
-        /// Nội dung
+        /// Link app
         /// </summary>
-        public string Content { get; set; }
+        public string AppUrl { get; set; }
+
         /// <summary>
         /// gửi từ user
         /// </summary>
@@ -32,6 +36,11 @@ namespace Medical.Entities
 
         [DefaultValue(false)]
         public bool IsSendNotify { get; set; }
+
+        /// <summary>
+        /// Mã template notification
+        /// </summary>
+        public int? NotificationTemplateId { get; set; }
 
         #region Extension Properties
 
@@ -71,7 +80,16 @@ namespace Medical.Entities
         [NotMapped]
         public List<int> UserGroupIds { get; set; }
 
-
+        /// <summary>
+        /// Tiêu đề
+        /// </summary>
+        [NotMapped]
+        public string Title { get; set; }
+        /// <summary>
+        /// Nội dung
+        /// </summary>
+        [NotMapped]
+        public string Content { get; set; }
 
         #endregion
 

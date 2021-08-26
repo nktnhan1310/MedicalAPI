@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Text;
 
 namespace Medical.Entities
@@ -15,6 +16,11 @@ namespace Medical.Entities
         /// Tìm theo mã hồ sơ
         /// </summary>
         public int? MedicalRecordId { get; set; }
+
+        /// <summary>
+        /// Tìm theo hồ sơ bệnh án
+        /// </summary>
+        public int? MedicalRecordDetailId { get; set; }
 
         /// <summary>
         /// Tìm theo mã người dùng
@@ -40,6 +46,9 @@ namespace Medical.Entities
         /// Ngày khám
         /// </summary>
         public DateTime? ExaminationDate { get; set; }
+
+        [DefaultValue(false)]
+        public bool IsFromMedicalRecordDetail { get; set; }
 
         /// <summary>
         /// Tìm theo trạng thái

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Medical.Entities;
 using Medical.Extensions;
+using Medical.Interface.DbContext;
 using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
@@ -20,8 +21,10 @@ namespace Medical.Service
 {
     public class UserService : DomainService<Users, SearchUser>, IUserService
     {
-        public UserService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        private IMedicalDbContext medicalDbContext;
+        public UserService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IMedicalDbContext medicalDbContext) : base(unitOfWork, mapper)
         {
+            this.medicalDbContext = medicalDbContext;
         }
         protected override string GetStoreProcName()
         {
@@ -145,7 +148,9 @@ namespace Medical.Service
                         }
                     }
                     await this.unitOfWork.SaveAsync();
+                    await this.medicalDbContext.SaveChangesAsync();
 
+                    this.medicalDbContext.Entry<Users>(item).State = EntityState.Detached;
 
                     result = true;
                 }
@@ -200,6 +205,16 @@ namespace Medical.Service
                             userInGroup.UserId = item.Id;
                             userInGroup.Id = 0;
                             await this.unitOfWork.Repository<UserInGroups>().CreateAsync(userInGroup);
+                        }
+                    }
+
+                    // Kiểm tra những item không có trong role chọn => Xóa đi
+                    var existGroupOlds = await this.unitOfWork.Repository<UserInGroups>().GetQueryable().Where(e => !item.UserGroupIds.Contains(e.UserGroupId) && e.UserId == existItem.Id).ToListAsync();
+                    if(existGroupOlds != null)
+                    {
+                        foreach (var existGroupOld in existGroupOlds)
+                        {
+                            this.unitOfWork.Repository<UserInGroups>().Delete(existGroupOld);
                         }
                     }
                 }
@@ -265,6 +280,34 @@ namespace Medical.Service
                         }
                     }
                 }
+                await this.unitOfWork.SaveAsync();
+                result = true;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Cập nhật password mới cho user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="newPassword"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateUserPassword(int userId, string newPassword)
+        {
+            bool result = false;
+
+            var existUserInfo = await this.unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == userId).FirstOrDefaultAsync();
+            if(existUserInfo != null)
+            {
+                existUserInfo.Password = newPassword;
+                existUserInfo.Updated = DateTime.Now;
+                Expression<Func<Users, object>>[] includeProperties = new Expression<Func<Users, object>>[]
+                {
+                    e => e.Password,
+                    e => e.Updated
+                };
+                await this.unitOfWork.Repository<Users>().UpdateFieldsSaveAsync(existUserInfo ,includeProperties);
                 await this.unitOfWork.SaveAsync();
                 result = true;
             }
@@ -367,7 +410,7 @@ namespace Medical.Service
             bool hasPermit = false;
 
             var userInfo = await unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == userId).FirstOrDefaultAsync();
-            if(userInfo != null && userInfo.IsLocked)
+            if (userInfo != null && userInfo.IsLocked)
                 throw new AppException("User account is locked!");
 
             // Lấy ra những nhóm user thuộc
@@ -435,7 +478,9 @@ namespace Medical.Service
         public async Task<bool> UpdateUserToken(int userId, string token, bool isLogin = false)
         {
             bool result = false;
+
             var userInfo = await this.unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == userId).FirstOrDefaultAsync();
+            //this.medicalDbContext.Entry<Users>(userInfo).State = EntityState.Detached;
             if (userInfo != null)
             {
                 if (isLogin)

@@ -95,6 +95,9 @@ namespace Medical.Service
                     if (specialistTypeInfo != null)
                         price = specialistTypeInfo.Price;
                 }
+
+
+
                 if (!price.HasValue || price.Value <= 0)
                 {
                     var serviceTypeMappingInfo = await this.unitOfWork.Repository<ServiceTypeMappingHospital>().GetQueryable().Where(e => !e.Deleted && e.Active
@@ -103,6 +106,16 @@ namespace Medical.Service
                         ).FirstOrDefaultAsync();
                     if (serviceTypeMappingInfo != null)
                         price = serviceTypeMappingInfo.Price;
+                }
+
+                // Lấy phí của dịch vụ phát sinh (nếu có)
+                if (feeCaculateExaminationRequest.ExaminationFormId.HasValue && feeCaculateExaminationRequest.ExaminationFormId.Value > 0)
+                {
+                    var currentExaminationFormDetails = await this.unitOfWork.Repository<ExaminationFormDetails>().GetQueryable().Where(e => e.ExaminationFormId == feeCaculateExaminationRequest.ExaminationFormId.Value && !e.Deleted && !e.MedicalRecordDetailId.HasValue).ToListAsync();
+                    if (currentExaminationFormDetails != null && currentExaminationFormDetails.Any())
+                    {
+                        price += currentExaminationFormDetails.Sum(e => e.Price ?? 0);
+                    }
                 }
 
                 if (configFee != null)
@@ -117,7 +130,7 @@ namespace Medical.Service
                     else
                         fee = configFee.Fee;
                 }
-                if(configFeeHospital != null)
+                if (configFeeHospital != null)
                 {
                     // Xét TH.a: Tính theo phần trăm
                     if (configFeeHospital.IsRate)

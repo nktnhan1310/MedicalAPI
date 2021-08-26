@@ -11,11 +11,11 @@ namespace Medical.Interface
     {
         Task<EmailSendConfigure> GetEmailConfig();
         EmailContent GetEmailContent();
-        void Send(string subject, string body, string[] Tos);
-        void Send(string subject, string body, string[] Tos, string[] CCs);
-        void Send(string subject, string body, string[] Tos, string[] CCs, string[] BCCs);
-        void Send(string subject, string[] Tos, string[] CCs, string[] BCCs, EmailContent emailContent);
-        void SendMail(string subject, string Tos, string[] CCs, string[] BCCs, EmailContent emailContent);
+        Task Send(string subject, string body, string[] Tos);
+        Task Send(string subject, string body, string[] Tos, string[] CCs);
+        Task Send(string subject, string body, string[] Tos, string[] CCs, string[] BCCs);
+        Task Send(string subject, string[] Tos, string[] CCs, string[] BCCs, EmailContent emailContent);
+        Task SendMail(string subject, string Tos, string[] CCs, string[] BCCs, EmailContent emailContent);
 
     }
 }

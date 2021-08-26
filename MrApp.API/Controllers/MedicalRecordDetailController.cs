@@ -29,10 +29,12 @@ namespace MrApp.API.Controllers
     {
         private IMedicalRecordDetailService medicalRecordDetailService;
         private IMedicalRecordDetailFileService medicalRecordDetailFileService;
+        private IExaminationFormDetailService examinationFormDetailService;
         public MedicalRecordDetailController(IServiceProvider serviceProvider, ILogger<BaseController> logger, IWebHostEnvironment env, IMapper mapper, IConfiguration configuration) : base(serviceProvider, logger, env, mapper, configuration)
         {
             medicalRecordDetailService = serviceProvider.GetRequiredService<IMedicalRecordDetailService>();
             medicalRecordDetailFileService = serviceProvider.GetRequiredService<IMedicalRecordDetailFileService>();
+            examinationFormDetailService = serviceProvider.GetRequiredService<IExaminationFormDetailService>();
         }
 
         /// <summary>
@@ -118,9 +120,9 @@ namespace MrApp.API.Controllers
         /// <param name="medicalRecordDetailId"></param>
         /// <param name="updateMedicalRecordDetail"></param>
         /// <returns></returns>
-        [HttpPut("update-medical-record-detail-multiple-files/{medicalRecordDetailId}")]
+        [HttpPost("update-medical-record-detail-multiple-files/{medicalRecordDetailId}")]
         [MedicalAppAuthorize(new string[] { CoreContants.Update })]
-        public async Task<AppDomainResult> UpdateMedicalRecordDetailFile(int medicalRecordDetailId, [FromBody] UpdateMedicalRecordDetail updateMedicalRecordDetail)
+        public async Task<AppDomainResult> UpdateMedicalRecordDetailFile([FromBody] UpdateMedicalRecordDetail updateMedicalRecordDetail)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             bool success = false;
@@ -159,7 +161,7 @@ namespace MrApp.API.Controllers
                         file.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
                     }
                 }
-                success = await this.medicalRecordDetailService.UpdateMedicalRecordDetailFileAsync(medicalRecordDetailId, updateMedicalRecordDetail.MedicalRecordDetailFiles);
+                success = await this.medicalRecordDetailService.UpdateMedicalRecordDetailFileAsync(updateMedicalRecordDetail.MedicalRecordDetailId, updateMedicalRecordDetail.MedicalRecordDetailFiles);
                 if (success)
                 {
                     appDomainResult.ResultCode = (int)HttpStatusCode.OK;
@@ -193,9 +195,9 @@ namespace MrApp.API.Controllers
         /// <param name="medicalRecordDetailFileId"></param>
         /// <param name="medicalRecordDetailFileModel"></param>
         /// <returns></returns>
-        [HttpPut("update-medical-record-detail-file/{medicalRecordDetailFileId}")]
+        [HttpPost("update-medical-record-detail-file/{medicalRecordDetailFileId}")]
         [MedicalAppAuthorize(new string[] { CoreContants.Update })]
-        public async Task<AppDomainResult> UpdateMedicalRecordDetailFile(int medicalRecordDetailFileId, [FromBody] MedicalRecordDetailFileModel medicalRecordDetailFileModel)
+        public async Task<AppDomainResult> UpdateMedicalRecordDetailFile([FromBody] MedicalRecordDetailFileModel medicalRecordDetailFileModel)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             bool success = false;
@@ -254,6 +256,25 @@ namespace MrApp.API.Controllers
             }
             appDomainResult.Success = success;
             return appDomainResult;
+        }
+
+        /// <summary>
+        /// Lấy danh sách dịch vụ phát sinh trong hồ sơ bệnh án
+        /// </summary>
+        /// <param name="searchExaminationFormDetail"></param>
+        /// <returns></returns>
+        [HttpGet("get-examination-form-detail")]
+        public async Task<AppDomainResult> GetExaminationFormDetails([FromQuery] SearchExaminationFormDetail searchExaminationFormDetail)
+        {
+            searchExaminationFormDetail.UserId = LoginContext.Instance.CurrentUser.UserId;
+            searchExaminationFormDetail.IsFromMedicalRecordDetail = true;
+            var pagedData = await this.examinationFormDetailService.GetPagedListData(searchExaminationFormDetail);
+            return new AppDomainResult()
+            {
+                Data = mapper.Map<PagedList<ExaminationFormDetailModel>>(pagedData),
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
         }
 
         /// <summary>

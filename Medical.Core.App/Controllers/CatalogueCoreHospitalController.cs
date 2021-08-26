@@ -54,7 +54,7 @@ namespace Medical.Core.App.Controllers
                 Success = true,
                 Data = itemModels,
                 ResultCode = (int)HttpStatusCode.OK
-            }; ;
+            };
         }
 
         /// <summary>
@@ -272,12 +272,12 @@ namespace Medical.Core.App.Controllers
         /// Down load template file import
         /// </summary>
         /// <returns></returns>
-        [HttpGet("download-template-import/{fileName}")]
+        [HttpGet("download-template-import")]
         [MedicalAppAuthorize(new string[] { CoreContants.Download })]
         public virtual async Task<ActionResult> DownloadTemplateImport()
         {
             var currentDirectory = System.IO.Directory.GetCurrentDirectory();
-            string path = System.IO.Path.Combine(currentDirectory, TEMPLATE_FOLDER_NAME, CATALOGUE_TEMPLATE_NAME);
+            string path = System.IO.Path.Combine(currentDirectory, TEMPLATE_FOLDER_NAME, CATALOGUE_HOSPITAL_TEMPLATE_NAME);
             if (!System.IO.File.Exists(path))
                 throw new AppException("File template không tồn tại!");
             var file = await System.IO.File.ReadAllBytesAsync(path);
@@ -309,15 +309,18 @@ namespace Medical.Core.App.Controllers
         /// <summary>
         /// Import file danh mục
         /// </summary>
+        /// <param name="hostpialId"></param>
         /// <param name="file"></param>
         /// <returns></returns>
         [HttpPost("import-template-file")]
         [MedicalAppAuthorize(new string[] { CoreContants.Import })]
-        public virtual async Task<AppDomainImportResult> ImportTemplateFile(IFormFile file)
+        public virtual async Task<AppDomainImportResult> ImportTemplateFile(int? hostpialId, IFormFile file)
         {
             AppDomainImportResult appDomainImportResult = new AppDomainImportResult();
             var fileStream = file.OpenReadStream();
-            appDomainImportResult = await this.catalogueService.ImportTemplateFile(fileStream, LoginContext.Instance.CurrentUser.UserName);
+            if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                hostpialId = LoginContext.Instance.CurrentUser.HospitalId.Value;
+            appDomainImportResult = await this.catalogueService.ImportTemplateFile(fileStream, LoginContext.Instance.CurrentUser.UserName, hostpialId);
             if (appDomainImportResult.ResultFile != null)
             {
                 var webRoot = env.ContentRootPath;
@@ -336,6 +339,7 @@ namespace Medical.Core.App.Controllers
 
         public const string TEMPLATE_FOLDER_NAME = "Template";
         public const string CATALOGUE_TEMPLATE_NAME = "CatalogueTemplate.xlsx";
+        public const string CATALOGUE_HOSPITAL_TEMPLATE_NAME = "CatalogueHospitalTemplate.xlsx";
 
         #endregion
     }

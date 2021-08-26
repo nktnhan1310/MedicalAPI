@@ -117,6 +117,17 @@ namespace Medical.Service
 
                         }
                     }
+
+                    // Kiểm tra những item không có trong role chọn => Xóa đi
+                    var existGroupOlds = await this.unitOfWork.Repository<UserInGroups>().GetQueryable().Where(e => !item.UserIds.Contains(e.UserId) && e.UserGroupId == existItem.Id).ToListAsync();
+                    if (existGroupOlds != null)
+                    {
+                        foreach (var existGroupOld in existGroupOlds)
+                        {
+                            this.unitOfWork.Repository<UserInGroups>().Delete(existGroupOld);
+                        }
+                    }
+
                 }
                 else
                 {

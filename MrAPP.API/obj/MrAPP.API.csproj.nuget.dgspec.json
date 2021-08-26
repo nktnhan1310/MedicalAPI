@@ -54,6 +54,10 @@
               "target": "Package",
               "version": "[6.4.4, )"
             },
+            "Google.Apis.Auth": {
+              "target": "Package",
+              "version": "[1.54.0, )"
+            },
             "LazyCache.AspNetCore": {
               "target": "Package",
               "version": "[2.1.3, )"
@@ -139,7 +143,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.303\\RuntimeIdentifierGraph.json"
         }
       }
     }

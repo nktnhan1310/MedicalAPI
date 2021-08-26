@@ -44,6 +44,7 @@ namespace Medical.Service
 
         protected override SqlParameter[] GetSqlParameters(SearchExaminationForm baseSearch)
         {
+            string statusIds = baseSearch.StatusIds != null ? string.Join(';', baseSearch.StatusIds) : string.Empty;
             SqlParameter[] parameters =
             {
                 new SqlParameter("@PageIndex", baseSearch.PageIndex),
@@ -62,7 +63,7 @@ namespace Medical.Service
                 new SqlParameter("@ExaminationFormId", baseSearch.ExaminationFormId),
                 new SqlParameter("@ReExaminationDate", baseSearch.ReExaminationDate),
                 new SqlParameter("@ServiceTypeId", baseSearch.ServiceTypeId),
-
+                new SqlParameter("@StatusIds", statusIds),
 
 
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
@@ -126,7 +127,6 @@ namespace Medical.Service
                                     x => x.PaymentMethodId,
                                     x => x.Price
                                 };
-
                             }
                             break;
 
@@ -282,6 +282,20 @@ namespace Medical.Service
                     case (int)CatalogueUtilities.ExaminationStatus.WaitReExamination:
                     case (int)CatalogueUtilities.ExaminationStatus.FinishExamination:
                         {
+                            string examinationIndex = string.Empty;
+                            string examinationPaymentIndex = string.Empty;
+
+                            if (existExaminationFormInfo.PaymentMethodId.HasValue)
+                            {
+                                if (existExaminationFormInfo.PaymentMethodId == (int)CatalogueUtilities.PaymentMethod.COD)
+                                {
+                                    examinationIndex = existExaminationFormInfo.ExaminationIndex;
+                                }
+                                else
+                                {
+                                    examinationPaymentIndex = existExaminationFormInfo.ExaminationPaymentIndex;
+                                }
+                            }
 
                             MedicalRecordDetails medicalRecordDetails = new MedicalRecordDetails()
                             {
@@ -298,6 +312,13 @@ namespace Medical.Service
                                 ServiceTypeId = existExaminationFormInfo.ServiceTypeId,
                                 SpecialistTypeId = existExaminationFormInfo.SpecialistTypeId,
                                 HasMedicalBills = updateExaminationStatus.HasMedicalBill,
+                                ExaminationScheduleDetailId = existExaminationFormInfo.ExaminationScheduleDetailId,
+                                DoctorComment = updateExaminationStatus.DoctorComment,
+                                ExaminationIndex = examinationIndex,
+                                ExaminationPaymentIndex = examinationPaymentIndex,
+                                PaymentMethodId = existExaminationFormInfo.PaymentMethodId,
+                                TypeId = existExaminationFormInfo.TypeId,
+                                DoctorId = existExaminationFormInfo.DoctorId,
                                 Id = 0
                             };
 
@@ -306,11 +327,66 @@ namespace Medical.Service
                             await unitOfWork.SaveAsync();
                             await this.medicalDbContext.SaveChangesAsync();
 
+
+                            
+
+
                             // Lấy thông tin qrcode hình
                             this.medicalDbContext.Entry<MedicalRecordDetails>(medicalRecordDetails).State = EntityState.Detached;
                             var medicalRecordInfo = await this.medicalDbContext.Set<MedicalRecords>()
                                 .Where(e => !e.Deleted && e.Id == existExaminationFormInfo.RecordId)
                                 .AsNoTracking().FirstOrDefaultAsync();
+
+
+                            // Lưu lại thông tin dịch vụ phát sinh khi tái khám.
+
+                            // 1. Lưu lại tất cả thông tin dịch vụ phát sinh HIỆN TẠI vào hồ sơ bệnh án
+                            var currentExaminationFormDetails = await this.unitOfWork.Repository<ExaminationFormDetails>().GetQueryable().Where(e => !e.Deleted && e.Active && e.ExaminationFormId == existExaminationFormInfo.Id).ToListAsync();
+                            if (currentExaminationFormDetails != null && currentExaminationFormDetails.Any())
+                            {
+                                foreach (var currentExaminationFormDetail in currentExaminationFormDetails)
+                                {
+                                    currentExaminationFormDetail.Updated = DateTime.Now;
+                                    currentExaminationFormDetail.UpdatedBy = updateExaminationStatus.CreatedBy;
+                                    currentExaminationFormDetail.MedicalRecordDetailId = medicalRecordDetails.Id;
+
+                                    Expression<Func<ExaminationFormDetails, object>>[] expressions = new Expression<Func<ExaminationFormDetails, object>>[]
+                                    {
+                                        e => e.Updated,
+                                        e => e.UpdatedBy,
+                                        e => e.MedicalRecordDetailId
+                                    };
+                                    await this.unitOfWork.Repository<ExaminationFormDetails>().UpdateFieldsSaveAsync(currentExaminationFormDetail, expressions);
+                                }
+                            }
+                            // 2. Thêm mặc định dịch vụ xét nghiệm cho đợt tái khám kế tiếp.
+                            // CHỈ ÁP DỤNG CHO TRẠNG THÁI CHỜ XÁC NHẬN TÁI KHÁM
+                            if (updateExaminationStatus.Status == (int)CatalogueUtilities.ExaminationStatus.WaitReExamination)
+                            {
+                                var additionServiceXN = this.unitOfWork.Repository<AdditionServices>().GetQueryable().Where(e => e.Code == CatalogueUtilities.AdditionServiceType.XN.ToString()).FirstOrDefault();
+                                if (additionServiceXN != null)
+                                {
+                                    ExaminationFormDetails examinationFormDetails = new ExaminationFormDetails()
+                                    {
+                                        Created = DateTime.Now,
+                                        CreatedBy = updateExaminationStatus.CreatedBy,
+                                        Active = true,
+                                        Deleted = false,
+                                        ExaminationFormId = existExaminationFormInfo.Id,
+                                        HospitalId = existExaminationFormInfo.HospitalId,
+                                        AdditionServiceId = additionServiceXN.Id,
+                                        MedicalRecordId = existExaminationFormInfo.RecordId,
+                                        Price = additionServiceXN.Price,
+                                        Status = (int)CatalogueUtilities.AdditionServiceStatus.New,
+                                        UserId = medicalRecordInfo.UserId,
+                                        ExaminationDate = existExaminationFormInfo.ExaminationDate,
+                                    };
+                                    await this.unitOfWork.Repository<ExaminationFormDetails>().CreateAsync(examinationFormDetails);
+                                }
+                            }
+
+                            await unitOfWork.SaveAsync();
+
                             QRCodeUtils qRCodeUtils = new QRCodeUtils(configuration, httpContextAccessor);
                             if (medicalRecordInfo != null)
                             {
@@ -414,8 +490,8 @@ namespace Medical.Service
                                     item.Id = 0;
                                     item.MedicalRecordDetailId = medicalRecordDetails.Id;
                                     await unitOfWork.Repository<MedicalRecordDetailFiles>().CreateAsync(item);
-                                    await unitOfWork.SaveAsync();
                                 }
+                                await unitOfWork.SaveAsync();
                             }
                         }
                         break;

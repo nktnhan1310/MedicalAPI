@@ -15,14 +15,17 @@ namespace Medical.Models
         /// Loại thông báo
         /// </summary>
         public int? NotificationTypeId { get; set; }
+
         /// <summary>
-        /// Tiêu đề
+        /// Link web
         /// </summary>
-        public string Title { get; set; }
+        public string WebUrl { get; set; }
+
         /// <summary>
-        /// Nội dung
+        /// Link app
         /// </summary>
-        public string Content { get; set; }
+        public string AppUrl { get; set; }
+
         /// <summary>
         /// gửi từ user
         /// </summary>
@@ -31,8 +34,21 @@ namespace Medical.Models
         [DefaultValue(false)]
         public bool IsSendNotify { get; set; }
 
+        /// <summary>
+        /// Mã template notification
+        /// </summary>
+        public int? NotificationTemplateId { get; set; }
 
         #region Extension Properties
+
+        /// <summary>
+        /// Tiêu đề
+        /// </summary>
+        public string Title { get; set; }
+        /// <summary>
+        /// Nội dung
+        /// </summary>
+        public string Content { get; set; }
 
         /// <summary>
         /// Cờ check thông báo đã được đọc chưa

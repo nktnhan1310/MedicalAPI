@@ -18,6 +18,20 @@
             <param name="register"></param>
             <returns></returns>
         </member>
+        <member name="M:MrApp.API.Controllers.AuthController.LoginWithFaceBookAsync(System.String)">
+            <summary>
+            Đăng nhập bằng facebook
+            </summary>
+            <param name="accessToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.AuthController.LoginWithGoogleAsync(Medical.Entities.GoogleAuths)">
+            <summary>
+            Đăng nhập bằng facebook
+            </summary>
+            <param name="googleAuths"></param>
+            <returns></returns>
+        </member>
         <member name="M:MrApp.API.Controllers.BaseFileController.UploadFile(Microsoft.AspNetCore.Http.IFormFile)">
             <summary>
             Upload Single File
@@ -388,7 +402,7 @@
             <param name="recordDetailId"></param>
             <returns></returns>
         </member>
-        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.UpdateMedicalRecordDetailFile(System.Int32,Medical.Entities.UpdateMedicalRecordDetail)">
+        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.UpdateMedicalRecordDetailFile(Medical.Entities.UpdateMedicalRecordDetail)">
             <summary>
             Cập nhật thông tin file chi tiết hồ sơ bệnh án
             </summary>
@@ -396,12 +410,19 @@
             <param name="updateMedicalRecordDetail"></param>
             <returns></returns>
         </member>
-        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.UpdateMedicalRecordDetailFile(System.Int32,Medical.Models.MedicalRecordDetailFileModel)">
+        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.UpdateMedicalRecordDetailFile(Medical.Models.MedicalRecordDetailFileModel)">
             <summary>
             Cập nhật thông tin file chi tiết hồ sơ bệnh án
             </summary>
             <param name="medicalRecordDetailFileId"></param>
             <param name="medicalRecordDetailFileModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.GetExaminationFormDetails(Medical.Entities.SearchExaminationFormDetail)">
+            <summary>
+            Lấy danh sách dịch vụ phát sinh trong hồ sơ bệnh án
+            </summary>
+            <param name="searchExaminationFormDetail"></param>
             <returns></returns>
         </member>
         <member name="M:MrApp.API.Controllers.MedicalRecordDetailController.DeleteMedicalRecordDetailFile(System.Int32)">

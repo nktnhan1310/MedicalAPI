@@ -22,7 +22,7 @@ namespace Medical.Service.Services
 {
     public class SpecialListTypeService : CatalogueHospitalService<SpecialistTypes, SearchSpecialListType>, ISpecialListTypeService
     {
-        public SpecialListTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        public SpecialListTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
         }
 
@@ -67,7 +67,7 @@ namespace Medical.Service.Services
         /// <param name="stream"></param>
         /// <param name="createdBy"></param>
         /// <returns></returns>
-        public override async Task<AppDomainImportResult> ImportTemplateFile(Stream stream, string createdBy)
+        public override async Task<AppDomainImportResult> ImportTemplateFile(Stream stream, string createdBy, int? hospitalId)
         {
             AppDomainImportResult appDomainImportResult = new AppDomainImportResult();
             var dataTable = SetDataTable();
@@ -129,9 +129,9 @@ namespace Medical.Service.Services
                                 Deleted = false,
                                 Active = true,
                                 Created = DateTime.Now,
-                                HospitalId = hospitalInfo.Id,
+                                HospitalId = hospitalId.HasValue ? hospitalId.Value : hospitalInfo.Id,
                                 CreatedBy = createdBy,
-                                Price = price
+                                Price = price,
                             };
                             specialistTypeImports.Add(item);
                             dataTable = AddDataTableRow(dataTable, item);

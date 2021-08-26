@@ -22,5 +22,10 @@ namespace Medical.Entities.Extensions
         /// Theo chuyên khoa (nếu có)
         /// </summary>
         public int? SpecialistTypeId { get; set; }
+
+        /// <summary>
+        /// Lấy theo lịch khám
+        /// </summary>
+        public int? ExaminationFormId { get; set; }
     }
 }

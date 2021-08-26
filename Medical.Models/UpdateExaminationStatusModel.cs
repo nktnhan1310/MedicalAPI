@@ -68,6 +68,11 @@ namespace Medical.Models
         /// </summary>
         public int? DoctorId { get; set; }
 
+        /// <summary>
+        /// Chuẩn đoán của bác sĩ
+        /// </summary>
+        public string DoctorComment { get; set; }
+
         [DefaultValue(false)]
         public bool HasMedicalBill { get; set; }
 
