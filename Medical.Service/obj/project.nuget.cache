@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "QMmbr/q0H/Jo933t/TLdiycsTHjYGOFFqClqNIrtqRLwoaiNSP9itbQtwrOnNUljYK0shI/Nsvh+VxIlp0iusA==",
+  "dgSpecHash": "Fcv9l/E8EBCHKHkuyyy/UFK8K5pbKoZT8ZTujsNP3SwlrZnPypUjpZ1Y7yz7/476QAWZ2/+WhDt7jdfla8fP9g==",
   "success": true,
   "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Service\\Medical.Service.csproj",
   "expectedPackageFiles": [
@@ -10,6 +10,7 @@
     "C:\\Users\\Admin\\.nuget\\packages\\google.apis\\1.54.0\\google.apis.1.54.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\google.apis.auth\\1.54.0\\google.apis.auth.1.54.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\google.apis.core\\1.54.0\\google.apis.core.1.54.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\hangfire.core\\1.7.23\\hangfire.core.1.7.23.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.aspnetcore.authorization\\2.2.0\\microsoft.aspnetcore.authorization.2.2.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.aspnetcore.connections.abstractions\\2.2.0\\microsoft.aspnetcore.connections.abstractions.2.2.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\microsoft.aspnetcore.http.abstractions\\2.2.0\\microsoft.aspnetcore.http.abstractions.2.2.0.nupkg.sha512",

@@ -14,5 +14,12 @@ namespace Medical.Interface.Services
         Task<string> GetExaminationFormIndex(SearchExaminationIndex searchExaminationIndex);
 
         Task<string> GetCheckStatusMessage(int examinationFormId, int statusCheck);
+
+        /// <summary>
+        /// Nhắc nhở chuẩn bị đến giờ khám (10/15/30 phút)
+        /// </summary>
+        /// <param name="totalMinute"></param>
+        /// <returns></returns>
+        Task RemindUserExamination(int totalMinute);
     }
 }

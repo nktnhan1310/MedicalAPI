@@ -20,5 +20,14 @@ namespace Medical.Entities
         /// </summary>
         public int? TotalVisitNo { get; set; }
 
+        /// <summary>
+        /// Loại bệnh viện
+        /// </summary>
+        public int? HospitalTypeId { get; set; }
+
+        /// <summary>
+        /// Chức năng bệnh viện
+        /// </summary>
+        public int? HospitalFunctionTypeId { get; set; }
     }
 }

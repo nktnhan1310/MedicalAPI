@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "ii5CBfBDpi6IllJ/ptccuPaASrQgNlCTrvOMrjCTl+ZOLo3alK0lj9Lhz1Og4r4JrR7wTgd/0F/UTQYOJ0hCqQ==",
+  "dgSpecHash": "G9QqdTHdGtgAAwu13R/dd2tdsu2hesJW9/eeY0jOuoHfUEchs4L1gucJtMNAWqw4QY6tQUv8G0soTCfjrkcLAg==",
   "success": true,
   "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Core.App\\Medical.Core.App.csproj",
   "expectedPackageFiles": [
@@ -119,7 +119,8 @@
     "C:\\Users\\Admin\\.nuget\\packages\\system.xml.readerwriter\\4.3.0\\system.xml.readerwriter.4.3.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.xml.xmldocument\\4.3.0\\system.xml.xmldocument.4.3.0.nupkg.sha512",
     "C:\\Users\\Admin\\.nuget\\packages\\system.xml.xpath\\4.3.0\\system.xml.xpath.4.3.0.nupkg.sha512",
-    "C:\\Users\\Admin\\.nuget\\packages\\system.xml.xpath.xmldocument\\4.3.0\\system.xml.xpath.xmldocument.4.3.0.nupkg.sha512"
+    "C:\\Users\\Admin\\.nuget\\packages\\system.xml.xpath.xmldocument\\4.3.0\\system.xml.xpath.xmldocument.4.3.0.nupkg.sha512",
+    "C:\\Users\\Admin\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.18\\microsoft.netcore.app.host.win-x64.3.1.18.nupkg.sha512"
   ],
   "logs": []
 }

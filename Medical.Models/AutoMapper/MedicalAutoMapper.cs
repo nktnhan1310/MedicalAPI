@@ -13,12 +13,55 @@ namespace Medical.Models.AutoMapper
     {
         public MedicalAutoMapper()
         {
+            #region Extension
+
+            CreateMap<UserFileExtensionModel, UserFileExtensions>().ReverseMap();
+            CreateMap<PagedList<UserFileExtensionModel>, PagedList<UserFileExtensions>>().ReverseMap();
+
+            CreateMap<UserFolderExtensionModel, UserFolderExtensions>().ReverseMap();
+            CreateMap<PagedList<UserFolderExtensionModel>, PagedList<UserFolderExtensions>>().ReverseMap();
+
+            #endregion
+
+            CreateMap<ExaminationScheduleMappingUserModel, ExaminationScheduleMappingUsers>().ReverseMap();
+            CreateMap<PagedList<ExaminationScheduleMappingUserModel>, PagedList<ExaminationScheduleMappingUsers>>().ReverseMap();
+
+            CreateMap<ExaminationScheduleExtensionModel, ExaminationScheduleExtensions>().ReverseMap();
+            CreateMap<UserGeneralInfoModel, UserGeneralInfo>().ReverseMap();
+
+            CreateMap<ExaminationFormAdditionServiceMappingModel, ExaminationFormAdditionServiceMappings>().ReverseMap();
+            CreateMap<PagedList<ExaminationFormAdditionServiceMappingModel>, PagedList<ExaminationFormAdditionServiceMappings>>().ReverseMap();
+
+            CreateMap<HospitalHolidayConfigModel, HospitalHolidayConfigs>().ReverseMap();
+            CreateMap<PagedList<HospitalHolidayConfigModel>, PagedList<HospitalHolidayConfigs>>().ReverseMap();
+
+            CreateMap<VNPayPaymentHistoryModel, VNPayPaymentHistories>().ReverseMap();
+            CreateMap<PagedList<VNPayPaymentHistoryModel>, PagedList<VNPayPaymentHistories>>().ReverseMap();
+
+            CreateMap<UserVaccineProcessModel, UserVaccineProcesses>().ReverseMap();
+            CreateMap<PagedList<UserVaccineProcessModel>, PagedList<UserVaccineProcesses>>().ReverseMap();
+
+            CreateMap<HospitalHistoryModel, HospitalHistories>().ReverseMap();
+            CreateMap<PagedList<HospitalHistoryModel>, PagedList<HospitalHistories>>().ReverseMap();
+
+            CreateMap<SystemFileModel, SystemFiles>().ReverseMap();
+            CreateMap<PagedList<SystemFileModel>, PagedList<SystemFiles>>().ReverseMap();
+
+            CreateMap<UserPregnancyDetailModel, UserPregnancyDetails>().ReverseMap();
+            CreateMap<PagedList<UserPregnancyDetailModel>, PagedList<UserPregnancyDetails>>().ReverseMap();
+
+            CreateMap<UserPregnancyModel, UserPregnancies>().ReverseMap();
+            CreateMap<PagedList<UserPregnancyModel>, PagedList<UserPregnancies>>().ReverseMap();
 
             CreateMap<UserModel, Users>().ReverseMap();
             CreateMap<PagedList<UserModel>, PagedList<Users>>().ReverseMap();
 
+            CreateMap<UserAllergyModel, UserAllergies>().ReverseMap();
+            CreateMap<PagedList<UserAllergyModel>, PagedList<UserAllergies>>().ReverseMap();
+
             CreateMap<HospitalModel, Hospitals>().ReverseMap();
             CreateMap<PagedList<HospitalModel>, PagedList<Hospitals>>().ReverseMap();
+
             CreateMap<ServiceTypeMappingHospitalModel, ServiceTypeMappingHospital>().ReverseMap();
             CreateMap<ChannelMappingHospitalModel, ChannelMappingHospital>().ReverseMap();
             CreateMap<HospitalFileModel, HospitalFiles>().ReverseMap();
@@ -30,6 +73,8 @@ namespace Medical.Models.AutoMapper
             CreateMap<ExaminationScheduleModel, ExaminationSchedules>().ReverseMap();
             CreateMap<PagedList<ExaminationScheduleModel>, PagedList<ExaminationSchedules>>().ReverseMap();
             CreateMap<ConfigTimeExaminationDayOfWeekModel, ConfigTimeExaminationDayOfWeek>().ReverseMap();
+            CreateMap<ConfigTimeExaminationBySessionModel, ConfigTimeExaminationBySession>().ReverseMap();
+
             CreateMap<ExaminationScheduleDetailModel, ExaminationScheduleDetails>().ReverseMap();
 
             CreateMap<MedicalRecordModel, MedicalRecords>().ReverseMap();
@@ -86,7 +131,15 @@ namespace Medical.Models.AutoMapper
 
             CreateMap<SystemCommentModel, SystemComments>().ReverseMap();
             CreateMap<PagedList<SystemCommentModel>, PagedList<SystemComments>>().ReverseMap();
-            
+
+            CreateMap<UserFolderModel, UserFolders>().ReverseMap();
+            CreateMap<PagedList<UserFolderModel>, PagedList<UserFolders>>().ReverseMap();
+
+            CreateMap<MedicalRecordHistoryModel, MedicalRecordHistories>().ReverseMap();
+            CreateMap<PagedList<MedicalRecordHistoryModel>, PagedList<MedicalRecordHistories>>().ReverseMap();
+
+            CreateMap<NewFeedModel, NewFeeds>().ReverseMap();
+            CreateMap<PagedList<NewFeedModel>, PagedList<NewFeeds>>().ReverseMap();
 
             #region REPORT
 
@@ -104,6 +157,9 @@ namespace Medical.Models.AutoMapper
 
             #region Configuration
 
+            CreateMap<UserSystemExtensionPostModel, UserSystemExtensionPosts>().ReverseMap();
+            CreateMap<PagedList<UserSystemExtensionPostModel>, PagedList<UserSystemExtensionPosts>>().ReverseMap();
+
             CreateMap<SystemConfiguartionModel, SystemConfiguartions>().ReverseMap();
             CreateMap<MomoConfigurationModel, MomoConfigurations>().ReverseMap();
             CreateMap<EmailConfigurationModel, EmailConfiguration>().ReverseMap();
@@ -113,6 +169,8 @@ namespace Medical.Models.AutoMapper
             CreateMap<PagedList<SystemConfigFeeModel>, PagedList<SystemConfigFee>>().ReverseMap();
             CreateMap<SystemConfigFeeModel, SystemConfigFee>().ReverseMap();
 
+            CreateMap<PagedList<SystemAdvertisementModel>, PagedList<SystemAdvertisements>>().ReverseMap();
+            CreateMap<SystemAdvertisementModel, SystemAdvertisements>().ReverseMap();
 
             #endregion
 
@@ -137,6 +195,20 @@ namespace Medical.Models.AutoMapper
 
             #region Catalogue
 
+            CreateMap<HospitalTypeModel, HospitalTypes>().ReverseMap();
+            CreateMap<PagedList<HospitalTypeModel>, PagedList<HospitalTypes>>().ReverseMap();
+
+            CreateMap<HospitalFunctionTypeModel, HospitalFunctionTypes>().ReverseMap();
+            CreateMap<PagedList<HospitalFunctionTypeModel>, PagedList<HospitalFunctionTypes>>().ReverseMap();
+
+            CreateMap<DiagnoticTypeModel, DiagnoticTypes>().ReverseMap();
+            CreateMap<PagedList<DiagnoticTypeModel>, PagedList<DiagnoticTypes>>().ReverseMap();
+
+            CreateMap<VaccineTypeModel, VaccineTypes>().ReverseMap();
+            CreateMap<PagedList<VaccineTypeModel>, PagedList<VaccineTypes>>().ReverseMap();
+
+            CreateMap<AllergyTypeModel, AllergyTypes>().ReverseMap();
+            CreateMap<PagedList<AllergyTypeModel>, PagedList<AllergyTypes>>().ReverseMap();
 
             CreateMap<MedicineModel, Medicines>().ReverseMap();
             CreateMap<PagedList<MedicineModel>, PagedList<Medicines>>().ReverseMap();

@@ -23,6 +23,13 @@ namespace Medical.Interface.Services
         Task<DashBoardResponse> GetTotalUser(DashBoardRequest dashBoardRequest);
 
         /// <summary>
+        /// Lấy thông tin user hệ thống
+        /// </summary>
+        /// <param name="searchDashBoardUserSystem"></param>
+        /// <returns></returns>
+        Task<double> GetTotalUserSystem(SearchDashBoardUserSystem searchDashBoardUserSystem);
+
+        /// <summary>
         /// Lấy tổng số user khám bệnh ngày/tháng/năm
         /// </summary>
         /// <param name="dashBoardRequest"></param>
@@ -35,6 +42,13 @@ namespace Medical.Interface.Services
         /// <param name="dashBoardRequest"></param>
         /// <returns></returns>
         Task<DashBoardResponse> GetTotalPaymentSystem(DashBoardRequest dashBoardRequest);
+
+        /// <summary>
+        /// Lấy thông tin chi phí đã thanh toán/hoàn tiền cho hệ thống
+        /// </summary>
+        /// <param name="searchDashBoardTotalPayment"></param>
+        /// <returns></returns>
+        Task<double> GetTotalPaymentV2(SearchDashBoardTotalPayment searchDashBoardTotalPayment);
 
         /// <summary>
         /// Lấy thông tin danh sách báo cáo tổng hợp

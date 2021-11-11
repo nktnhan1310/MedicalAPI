@@ -11,6 +11,9 @@ namespace Medical.Entities
         public DateTime? ExaminationDate { get; set; }
         public int? DoctorId { get; set; }
         public int? ExaminationScheduleDetailId { get; set; }
-
+        /// <summary>
+        /// Cờ check tái khám
+        /// </summary>
+        public bool? IsReExamination { get; set; }
     }
 }

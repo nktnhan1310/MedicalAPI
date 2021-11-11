@@ -15,6 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Medical.Core.App.Controllers;
 using Microsoft.AspNetCore.Authorization;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
 namespace MedicalAPI.Controllers
 {
@@ -25,12 +27,13 @@ namespace MedicalAPI.Controllers
     public class ExaminationScheduleController : CoreHospitalController<ExaminationSchedules, ExaminationScheduleModel, SearchExaminationSchedule>
     {
         private readonly IExaminationScheduleDetailService examinationScheduleDetailService;
-        private readonly IHospitalService hospitalService;
         private readonly IDoctorService doctorService;
         private readonly ISpecialListTypeService specialListTypeService;
         private readonly IDoctorDetailService doctorDetailService;
         private readonly ISessionTypeService sessionTypeService;
         private readonly IConfigTimeExaminationService configTimeExaminationService;
+        private readonly IExaminationScheduleService examinationScheduleService;
+        private readonly IExaminationScheduleMappingUserService examinationScheduleMappingUserService;
 
         public ExaminationScheduleController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<ExaminationSchedules, ExaminationScheduleModel, SearchExaminationSchedule>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
@@ -42,6 +45,8 @@ namespace MedicalAPI.Controllers
             doctorDetailService = serviceProvider.GetRequiredService<IDoctorDetailService>();
             sessionTypeService = serviceProvider.GetRequiredService<ISessionTypeService>();
             configTimeExaminationService = serviceProvider.GetRequiredService<IConfigTimeExaminationService>();
+            examinationScheduleService = serviceProvider.GetRequiredService<IExaminationScheduleService>();
+            examinationScheduleMappingUserService = serviceProvider.GetRequiredService<IExaminationScheduleMappingUserService>();
         }
 
         [HttpGet("{id}")]
@@ -63,7 +68,7 @@ namespace MedicalAPI.Controllers
                 ExaminationScheduleId = id
             };
             var pagedItems = await this.domainService.GetPagedListData(searchExaminationSchedule);
-                 
+
             //var item = await this.domainService.GetByIdAsync(id);
 
             if (pagedItems != null && pagedItems.Items.Any())
@@ -75,9 +80,13 @@ namespace MedicalAPI.Controllers
                     || (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId == item.HospitalId)))
                 {
                     var itemModel = mapper.Map<ExaminationScheduleModel>(item);
-                    var examinationScheduleDetails = await this.examinationScheduleDetailService.GetAsync(e => !e.Deleted && e.ScheduleId == itemModel.Id);
+                    var examinationScheduleDetails = await this.examinationScheduleDetailService.GetAsync(e => !e.Deleted && e.ImportScheduleId == item.ImportScheduleId);
                     if (examinationScheduleDetails != null && examinationScheduleDetails.Any())
                         itemModel.ExaminationScheduleDetails = mapper.Map<IList<ExaminationScheduleDetailModel>>(examinationScheduleDetails);
+                    var examinationScheduleMappingUsers = await this.examinationScheduleMappingUserService.GetAsync(e => e.ExaminationScheduleId == itemModel.Id);
+                    if (examinationScheduleMappingUsers != null && examinationScheduleMappingUsers.Any())
+                        itemModel.NurseIds = examinationScheduleMappingUsers.Select(e => e.DoctorId).ToList();
+
                     appDomainResult = new AppDomainResult()
                     {
                         Success = true,
@@ -92,6 +101,186 @@ namespace MedicalAPI.Controllers
                 throw new KeyNotFoundException("Item không tồn tại");
             }
             return appDomainResult;
+        }
+
+        /// <summary>
+        /// Thêm mới item
+        /// </summary>
+        /// <param name="itemModel"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public override async Task<AppDomainResult> AddItem([FromBody] ExaminationScheduleModel itemModel)
+        {
+            if (itemModel != null && itemModel.ExaminationScheduleDetails != null && itemModel.ExaminationScheduleDetails.Any())
+            {
+                foreach (var examinationScheduleDetail in itemModel.ExaminationScheduleDetails)
+                {
+                    if (!string.IsNullOrEmpty(examinationScheduleDetail.FromTimeDisplay))
+                    {
+                        examinationScheduleDetail.FromTime = DateTimeUtilities.ConvertTimeToTotalIMinute(examinationScheduleDetail.FromTimeDisplay);
+                        if (examinationScheduleDetail.FromTime.HasValue && examinationScheduleDetail.FromTime.Value > 0)
+                            examinationScheduleDetail.FromTimeText = DateTimeUtilities.ConvertTotalMinuteToStringText(examinationScheduleDetail.FromTime.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(examinationScheduleDetail.ToTimeDisplay))
+                    {
+                        examinationScheduleDetail.ToTime = DateTimeUtilities.ConvertTimeToTotalIMinute(examinationScheduleDetail.ToTimeDisplay);
+                        if (examinationScheduleDetail.ToTime.HasValue && examinationScheduleDetail.ToTime.Value > 0)
+                            examinationScheduleDetail.ToTimeText = DateTimeUtilities.ConvertTotalMinuteToStringText(examinationScheduleDetail.ToTime.Value);
+                    }
+
+                }
+            }
+            return await base.AddItem(itemModel);
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin item
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="itemModel"></param>
+        /// <returns></returns>
+        [HttpPut("{id}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Update })]
+        public override async Task<AppDomainResult> UpdateItem(int id, [FromBody] ExaminationScheduleModel itemModel)
+        {
+            if (itemModel != null && itemModel.ExaminationScheduleDetails != null && itemModel.ExaminationScheduleDetails.Any())
+            {
+                foreach (var examinationScheduleDetail in itemModel.ExaminationScheduleDetails)
+                {
+                    if (!string.IsNullOrEmpty(examinationScheduleDetail.FromTimeDisplay))
+                    {
+                        examinationScheduleDetail.FromTime = DateTimeUtilities.ConvertTimeToTotalIMinute(examinationScheduleDetail.FromTimeDisplay);
+                        if (examinationScheduleDetail.FromTime.HasValue && examinationScheduleDetail.FromTime.Value > 0)
+                            examinationScheduleDetail.FromTimeText = DateTimeUtilities.ConvertTotalMinuteToStringText(examinationScheduleDetail.FromTime.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(examinationScheduleDetail.ToTimeDisplay))
+                    {
+                        examinationScheduleDetail.ToTime = DateTimeUtilities.ConvertTimeToTotalIMinute(examinationScheduleDetail.ToTimeDisplay);
+                        if (examinationScheduleDetail.ToTime.HasValue && examinationScheduleDetail.ToTime.Value > 0)
+                            examinationScheduleDetail.ToTimeText = DateTimeUtilities.ConvertTotalMinuteToStringText(examinationScheduleDetail.ToTime.Value);
+                    }
+
+                }
+            }
+            return await base.UpdateItem(id, itemModel);
+        }
+
+        /// <summary>
+        /// Thêm nhanh lịch trực
+        /// </summary>
+        /// <param name="examinationScheduleExtensionModel"></param>
+        /// <returns></returns>
+        [HttpPost("add-multiple-schedule")]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public async Task<AppDomainResult> AddMultipleSchedule([FromBody] ExaminationScheduleExtensionModel examinationScheduleExtensionModel)
+        {
+            if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
+            bool success = true;
+
+            if (examinationScheduleExtensionModel.ExaminationScheduleDetails != null && examinationScheduleExtensionModel.ExaminationScheduleDetails.Any())
+            {
+                foreach (var examinationScheduleDetail in examinationScheduleExtensionModel.ExaminationScheduleDetails)
+                {
+                    if (!string.IsNullOrEmpty(examinationScheduleDetail.FromTimeDisplay))
+                    {
+                        examinationScheduleDetail.FromTime = DateTimeUtilities.ConvertTimeToTotalIMinute(examinationScheduleDetail.FromTimeDisplay);
+                        if (examinationScheduleDetail.FromTime.HasValue && examinationScheduleDetail.FromTime.Value > 0)
+                            examinationScheduleDetail.FromTimeText = DateTimeUtilities.ConvertTotalMinuteToStringText(examinationScheduleDetail.FromTime.Value);
+                    }
+
+                    if (!string.IsNullOrEmpty(examinationScheduleDetail.ToTimeDisplay))
+                    {
+                        examinationScheduleDetail.ToTime = DateTimeUtilities.ConvertTimeToTotalIMinute(examinationScheduleDetail.ToTimeDisplay);
+                        if (examinationScheduleDetail.ToTime.HasValue && examinationScheduleDetail.ToTime.Value > 0)
+                            examinationScheduleDetail.ToTimeText = DateTimeUtilities.ConvertTotalMinuteToStringText(examinationScheduleDetail.ToTime.Value);
+                    }
+                }
+            }
+            var itemUpdate = mapper.Map<ExaminationScheduleExtensions>(examinationScheduleExtensionModel);
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId.Value > 0)
+                itemUpdate.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
+            itemUpdate.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+
+            if (!itemUpdate.HospitalId.HasValue || itemUpdate.HospitalId.Value <= 0) throw new AppException("Chưa chọn thông tin bệnh viện");
+
+            
+
+            success = await this.examinationScheduleService.AddMultipleExaminationSchedule(new List<ExaminationScheduleExtensions>() { itemUpdate }, itemUpdate.HospitalId ?? 0);
+            return new AppDomainResult()
+            {
+                Success = success,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
+        /// Down load template file import
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("download-template-import")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Download })]
+        public async Task<ActionResult> DownloadTemplateImport()
+        {
+            var currentDirectory = System.IO.Directory.GetCurrentDirectory();
+            string path = System.IO.Path.Combine(currentDirectory, CoreContants.TEMPLATE_FOLDER_NAME, CoreContants.EXAMINATION_SCHEDULE_TEMPLATE_NAME);
+            if (!System.IO.File.Exists(path))
+                throw new AppException("File template không tồn tại!");
+            var file = await System.IO.File.ReadAllBytesAsync(path);
+            return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "TemplateImport.xlsx");
+        }
+
+        /// <summary>
+        /// Tải về file kết quả sau khi import
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        [HttpGet("download-import-result-file/{fileName}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Download })]
+        public async Task<ActionResult> DownloadImportFileResult(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+                throw new Exception("File name không tồn tại!");
+            if (env == null)
+                throw new Exception("IHostingEnvironment is null => inject to constructor");
+            var webRoot = env.ContentRootPath;
+            string path = Path.Combine(webRoot, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, fileName);
+            var file = await System.IO.File.ReadAllBytesAsync(path);
+            // Xóa file thư mục temp
+            if (System.IO.File.Exists(path))
+                System.IO.File.Delete(path);
+            return File(file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", string.Format("KetQuaCD-{0:dd-MM-yyyy_HH_mm_ss}{1}", DateTime.Now, Path.GetExtension(fileName)));
+        }
+
+        /// <summary>
+        /// Import file danh mục
+        /// </summary>
+        /// <param name="hospitalId"></param>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [HttpPost("import-template-file")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Import })]
+        public async Task<AppDomainImportResult> ImportTemplateFile(int? hospitalId, IFormFile file)
+        {
+            AppDomainImportResult appDomainImportResult = new AppDomainImportResult();
+            var fileStream = file.OpenReadStream();
+            if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
+            if (!hospitalId.HasValue || hospitalId.Value <= 0) throw new AppException("Không tìm thấy thông tin bệnh viện");
+            appDomainImportResult = await this.examinationScheduleService.ImportExaminationSchedule(fileStream, LoginContext.Instance.CurrentUser.UserName, hospitalId.Value);
+            if (appDomainImportResult.ResultFile != null)
+            {
+                var webRoot = env.ContentRootPath;
+                string fileName = Guid.NewGuid() + Path.GetExtension(file.FileName);
+                string path = Path.Combine(webRoot, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, fileName);
+                FileUtils.CreateDirectory(Path.Combine(webRoot, TEMP_FOLDER_NAME));
+                FileUtils.SaveToPath(path, appDomainImportResult.ResultFile);
+                appDomainImportResult.ResultFile = null;
+                appDomainImportResult.DownloadFileName = fileName;
+            }
+            return appDomainImportResult;
         }
 
         /// <summary>
@@ -148,11 +337,11 @@ namespace MedicalAPI.Controllers
             AppDomainResult appDomainResult = new AppDomainResult();
             List<int> specialistTypeIds = new List<int>();
             var doctorDetails = await this.doctorDetailService.GetAsync(e => !e.Deleted && e.Active && e.DoctorId == doctorId);
-            if(doctorDetails != null && doctorDetails.Any())
+            if (doctorDetails != null && doctorDetails.Any())
                 specialistTypeIds = doctorDetails.Select(e => e.SpecialistTypeId).ToList();
             if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                 hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
-            var specialistTypes = await this.specialListTypeService.GetAsync(e => !e.Deleted && e.Active 
+            var specialistTypes = await this.specialListTypeService.GetAsync(e => !e.Deleted && e.Active
             && (!hospitalId.HasValue || e.HospitalId == hospitalId.Value)
             && specialistTypeIds.Contains(e.Id));
             var specialistTypeModels = mapper.Map<IList<SpecialistTypeModel>>(specialistTypes);
@@ -179,11 +368,11 @@ namespace MedicalAPI.Controllers
             var doctorDetails = await this.doctorDetailService.GetAsync(e => !e.Deleted && e.Active && e.SpecialistTypeId == specialistTypeId);
             if (doctorDetails != null && doctorDetails.Any())
                 doctorIds = doctorDetails.Select(e => e.DoctorId).ToList();
-            if(doctorIds.Any())
+            if (doctorIds.Any())
             {
                 if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                     hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
-                var doctorBySpecialistTypes = await this.doctorService.GetAsync(e => !e.Deleted && e.Active 
+                var doctorBySpecialistTypes = await this.doctorService.GetAsync(e => !e.Deleted && e.Active
                 && (!hospitalId.HasValue || e.HospitalId == hospitalId.Value)
                 && doctorIds.Contains(e.Id));
                 var doctorModels = mapper.Map<IList<DoctorModel>>(doctorBySpecialistTypes);
@@ -196,6 +385,34 @@ namespace MedicalAPI.Controllers
             return appDomainResult;
         }
 
+        /// <summary>
+        /// Lấy danh sách bác sĩ thay thế cho lịch hiện tại
+        /// </summary>
+        /// <param name="examinationScheduleId"></param>
+        /// <returns></returns>
+        [HttpGet("get-replace-doctor/{examinationScheduleId}")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetReplaceDoctor(int examinationScheduleId)
+        {
+            IList<DoctorModel> doctors = new List<DoctorModel>();
+            var examinationScheduleInfo = await this.domainService.GetByIdAsync(examinationScheduleId);
+            if (examinationScheduleInfo != null)
+            {
+
+                var doctorInfos = await this.doctorService.GetAsync(e => !e.Deleted && e.Active
+                   && e.HospitalId == examinationScheduleInfo.HospitalId
+                   && e.Id != examinationScheduleInfo.DoctorId
+                   );
+                doctors = mapper.Map<IList<DoctorModel>>(doctorInfos);
+            }
+
+            return new AppDomainResult
+            {
+                Success = true,
+                Data = doctors,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
 
         #region Examination Schedule Details
 
@@ -228,8 +445,8 @@ namespace MedicalAPI.Controllers
             if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                 hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             AppDomainResult appDomainResult = new AppDomainResult();
-            var configTimeExaminations = await this.configTimeExaminationService.GetAsync(e => !e.Deleted 
-            && e.Active 
+            var configTimeExaminations = await this.configTimeExaminationService.GetAsync(e => !e.Deleted
+            && e.Active
             && (!sesstionTypeId.HasValue || e.SessionId == sesstionTypeId)
             && (!hospitalId.HasValue || e.HospitalId == hospitalId.Value)
             );

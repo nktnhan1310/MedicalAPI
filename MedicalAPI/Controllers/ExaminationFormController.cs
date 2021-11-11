@@ -20,6 +20,8 @@ using System.IO;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using Microsoft.AspNetCore.SignalR;
+using Medical.Interface;
 
 namespace MedicalAPI.Controllers
 {
@@ -33,6 +35,7 @@ namespace MedicalAPI.Controllers
         private readonly IPaymentHistoryService paymentHistoryService;
         private readonly IExaminationFormService examinationFormService;
         private readonly IMedicalRecordService medicalRecordService;
+        private readonly IMedicalRecordDetailService medicalRecordDetailService;
         private readonly IExaminationScheduleService examinationScheduleService;
         private readonly IExaminationScheduleDetailService examinationScheduleDetailService;
         private readonly ISpecialListTypeService specialListTypeService;
@@ -44,10 +47,24 @@ namespace MedicalAPI.Controllers
         private readonly IMomoPaymentService momoPaymentService;
         private readonly IDoctorService doctorService;
         private readonly IDoctorDetailService doctorDetailService;
+        private readonly INotificationService notificationService;
+        private readonly IHospitalFileService hospitalFileService;
+        private readonly IVaccineTypeService vaccineTypeService;
+        private readonly IExaminationFormAdditionServiceMappingService examinationFormAdditionServiceMappingService;
+        private readonly IAdditionServiceType additionServiceType;
+        private readonly IRoomExaminationService roomExaminationService;
+        private readonly IDegreeTypeService degreeTypeService;
+
+        private IHubContext<NotificationHub> hubContext;
+        private IHubContext<NotificationAppHub> appHubContext;
 
 
         private IConfiguration configuration;
-        public ExaminationFormController(IServiceProvider serviceProvider, ILogger<BaseController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>> logger, IWebHostEnvironment env, IConfiguration configuration) : base(serviceProvider, logger, env)
+        public ExaminationFormController(IServiceProvider serviceProvider, ILogger<BaseController<ExaminationForms, ExaminationFormModel, SearchExaminationForm>> logger
+            , IWebHostEnvironment env
+            , IHubContext<NotificationHub> hubContext
+            , IHubContext<NotificationAppHub> appHubContext
+            , IConfiguration configuration) : base(serviceProvider, logger, env)
         {
             this.configuration = configuration;
             this.domainService = serviceProvider.GetRequiredService<IExaminationFormService>();
@@ -66,19 +83,32 @@ namespace MedicalAPI.Controllers
             momoPaymentService = serviceProvider.GetRequiredService<IMomoPaymentService>();
             doctorService = serviceProvider.GetRequiredService<IDoctorService>();
             doctorDetailService = serviceProvider.GetRequiredService<IDoctorDetailService>();
+            notificationService = serviceProvider.GetRequiredService<INotificationService>();
+            medicalRecordDetailService = serviceProvider.GetRequiredService<IMedicalRecordDetailService>();
+            hospitalFileService = serviceProvider.GetRequiredService<IHospitalFileService>();
+            vaccineTypeService = serviceProvider.GetRequiredService<IVaccineTypeService>();
+            examinationFormAdditionServiceMappingService = serviceProvider.GetRequiredService<IExaminationFormAdditionServiceMappingService>();
+            additionServiceType = serviceProvider.GetRequiredService<IAdditionServiceType>();
+            roomExaminationService = serviceProvider.GetRequiredService<IRoomExaminationService>();
+            degreeTypeService = serviceProvider.GetRequiredService<IDegreeTypeService>();
+
+            this.hubContext = hubContext;
+            this.appHubContext = appHubContext;
         }
 
         /// <summary>
         /// Lấy thông tin danh sách bác sĩ theo bệnh viện
         /// </summary>
         /// <param name="specialistTypeId"></param>
+        /// <param name="typeId"></param>
         /// <returns></returns>
         [HttpGet("get-list-doctor-by-hospital/specialistTypeId")]
         [MedicalAppAuthorize(new string[] { CoreContants.View })]
-        public async Task<AppDomainResult> GetDoctorByHospital(int? specialistTypeId)
+        public async Task<AppDomainResult> GetDoctorByHospital(int? specialistTypeId, int? typeId)
         {
-            var doctors = await this.doctorService.GetAsync(e => !e.Deleted && e.Active 
+            var doctors = await this.doctorService.GetAsync(e => !e.Deleted && e.Active
             && (!LoginContext.Instance.CurrentUser.HospitalId.HasValue || e.HospitalId == LoginContext.Instance.CurrentUser.HospitalId)
+            && (!typeId.HasValue || (typeId.Value == 0 && e.TypeId == 0) || e.TypeId != 0)
             );
             if (doctors != null && doctors.Any())
             {
@@ -148,6 +178,60 @@ namespace MedicalAPI.Controllers
                 Data = examinationScheduleModels
             };
             return appDomainResult;
+        }
+
+        /// <summary>
+        /// Lấy thông tin lịch khám gần nhất user đặt
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-latest-user-examination")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetLatestUserExamination()
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            SearchExaminationForm searchExaminationForm = new SearchExaminationForm()
+            {
+                PageIndex = 1,
+                PageSize = 20,
+                UserId = LoginContext.Instance.CurrentUser.UserId,
+                Status = (int)CatalogueUtilities.ExaminationStatus.FinishExamination,
+                OrderBy = "Created desc"
+            };
+
+            ExaminationForms item = null;
+            var pagedItems = await this.examinationFormService.GetPagedListData(searchExaminationForm);
+            if (pagedItems != null && pagedItems.Items.Any())
+            {
+                item = pagedItems.Items.FirstOrDefault();
+                var itemModel = mapper.Map<ExaminationFormModel>(item);
+                // Lấy thông tin dịch vụ phát sinh của phiếu khám (nếu có)
+                var additionServiceInfos = await this.examinationFormAdditionServiceMappingService
+                    .GetAsync(e => !e.Deleted
+                && e.ExaminationFormId == item.Id);
+                if (additionServiceInfos != null && additionServiceInfos.Any())
+                {
+                    itemModel.AdditionServiceIds = additionServiceInfos.Select(e => e.AdditionServiceId).ToList();
+                    itemModel.ExaminationFormServiceMappings = mapper.Map<IList<ExaminationFormAdditionServiceMappingModel>>(additionServiceInfos);
+                    var additionServiceTypeInfos = await this.additionServiceType.GetAsync(e => itemModel.AdditionServiceIds.Contains(e.Id));
+                    foreach (var examinationFormServiceMapping in itemModel.ExaminationFormServiceMappings)
+                    {
+                        var additionServiceTypeInfo = additionServiceTypeInfos.Where(e => e.Id == examinationFormServiceMapping.AdditionServiceId).FirstOrDefault();
+                        if (additionServiceTypeInfo != null) examinationFormServiceMapping.AdditionServiceName = additionServiceTypeInfo.Name;
+                    }
+                }
+                return new AppDomainResult()
+                {
+                    Success = true,
+                    Data = itemModel,
+                    ResultCode = (int)HttpStatusCode.OK
+                };
+            }
+            else return new AppDomainResult()
+            {
+                Success = false,
+                Data = null,
+                ResultCode = (int)HttpStatusCode.NoContent
+            };
         }
 
         /// <summary>
@@ -239,7 +323,7 @@ namespace MedicalAPI.Controllers
             AppDomainResult appDomainResult = new AppDomainResult();
             //if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
             //    hospitalId = LoginContext.Instance.CurrentUser.HospitalId;
-            var medicalRecords = await this.medicalRecordService.GetAsync(e => !e.Deleted && e.Active 
+            var medicalRecords = await this.medicalRecordService.GetAsync(e => !e.Deleted && e.Active
             //&& (!hospitalId.HasValue || e.HospitalId == hospitalId.Value)
             ,
                 e => new MedicalRecords()
@@ -264,20 +348,23 @@ namespace MedicalAPI.Controllers
         /// <summary>
         /// Lấy thông tin lịch sử phiếu khám (lịch hen)
         /// </summary>
-        /// <param name="examinationFormId"></param>
+        /// <param name="searchExaminationFormHistory"></param>
         /// <returns></returns>
         [HttpGet("get-examination-form-history/{examinationFormId}")]
         [MedicalAppAuthorize(new string[] { CoreContants.View })]
-        public async Task<AppDomainResult> GetExaminationHistory(int examinationFormId)
+        public async Task<AppDomainResult> GetExaminationHistory([FromQuery] SearchExaminationFormHistory searchExaminationFormHistory)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
-            var examinationForms = await this.examinationHistoryService.GetAsync(x => !x.Deleted && x.ExaminationFormId == examinationFormId);
-            var examinationFormModels = mapper.Map<IList<ExaminationHistoryModel>>(examinationForms);
+            PagedList<ExaminationHistoryModel> pagedListModel = new PagedList<ExaminationHistoryModel>();
+
+            var pagedList = await this.examinationHistoryService.GetPagedListData(searchExaminationFormHistory);
+            if (pagedList != null && pagedList.Items.Any())
+                pagedListModel = mapper.Map<PagedList<ExaminationHistoryModel>>(pagedList);
             appDomainResult = new AppDomainResult()
             {
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK,
-                Data = examinationFormModels
+                Data = pagedListModel
             };
             return appDomainResult;
         }
@@ -315,6 +402,7 @@ namespace MedicalAPI.Controllers
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             MomoResponseModel momoResponseModel = null;
+            string paymentCode = string.Empty;
             if (ModelState.IsValid)
             {
                 List<string> filePaths = new List<string>();
@@ -327,16 +415,15 @@ namespace MedicalAPI.Controllers
                 // KIỂM TRA CÓ THANH TOÁN HAY KHÔNG?
                 if (updateExaminationStatusModel.PaymentMethodId.HasValue && updateExaminationStatusModel.PaymentMethodId.Value > 0)
                 {
-                    
-
                     var paymentMethodInfos = await this.paymentMethodService.GetAsync(e => !e.Deleted && e.Active && e.Id == updateExaminationStatusModel.PaymentMethodId.Value);
-                    if(paymentMethodInfos != null && paymentMethodInfos.Any())
+                    if (paymentMethodInfos != null && paymentMethodInfos.Any())
                     {
                         var paymentMethodInfo = paymentMethodInfos.FirstOrDefault();
                         // THANH TOÁN QUA MOMO => Trạng thái chờ xác nhận => Chờ thanh toán thành công => Cập nhật trạng thái
                         if (paymentMethodInfo.Code == CatalogueUtilities.PaymentMethod.MOMO.ToString())
                         {
                             momoResponseModel = await GetResponseMomoPayment(updateExaminationStatusModel);
+                            paymentCode = paymentMethodInfo.Code;
                         }
                     }
                 }
@@ -345,7 +432,6 @@ namespace MedicalAPI.Controllers
                 {
                     foreach (var file in updateExaminationStatusModel.MedicalRecordDetailFiles)
                     {
-
                         // ------- START GET URL FOR FILE
                         string folderUploadPath = string.Empty;
                         var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
@@ -387,6 +473,102 @@ namespace MedicalAPI.Controllers
                 bool success = await this.examinationFormService.UpdateExaminationStatus(updateExaminationStatus, true);
                 if (success)
                 {
+
+                    var examinationFormInfo = await this.examinationFormService.GetByIdAsync(updateExaminationStatusModel.ExaminationFormId);
+                    if (examinationFormInfo != null)
+                    {
+                        var medicalRecordInfos = await medicalRecordService.GetAsync(e => e.Id == examinationFormInfo.RecordId, e => new MedicalRecords()
+                        {
+                            UserId = e.UserId
+                        });
+                        switch (updateExaminationStatus.Status)
+                        {
+                            // Đã xác nhận => gửi thông báo cho bác sĩ + user
+                            case (int)CatalogueUtilities.ExaminationStatus.Confirmed:
+                                {
+                                    if (medicalRecordInfos != null && medicalRecordInfos.Any())
+                                    {
+                                        await notificationService.CreateCustomNotificationUser(null, LoginContext.Instance.CurrentUser.HospitalId
+                                            , new List<int>() { medicalRecordInfos.FirstOrDefault().UserId }
+                                            , string.Format("/medical/examination/{0}", examinationFormInfo.Id)
+                                            , string.Empty
+                                            , LoginContext.Instance.CurrentUser.UserName
+                                            , examinationFormInfo.Id
+                                            , false
+                                            , "USER"
+                                            , CoreContants.NOTI_TEMPLATE_EXAMINATION_FORM_CREATE
+                                            );
+                                        await appHubContext.Clients.All.SendAsync(CoreContants.GET_TOTAL_NOTIFICATION);
+                                    }
+
+                                    if (examinationFormInfo.DoctorId.HasValue && examinationFormInfo.DoctorId.Value > 0)
+                                    {
+                                        var doctorInfo = await this.doctorService.GetByIdAsync(examinationFormInfo.DoctorId.Value);
+                                        if (doctorInfo != null && doctorInfo.UserId.HasValue && doctorInfo.UserId > 0)
+                                        {
+                                            await notificationService.CreateCustomNotificationUser(null, LoginContext.Instance.CurrentUser.HospitalId
+                                            , new List<int>() { doctorInfo.UserId.Value }
+                                            , string.Format("/medical/examination/{0}", examinationFormInfo.Id)
+                                            , string.Empty
+                                            , LoginContext.Instance.CurrentUser.UserName
+                                            , examinationFormInfo.Id
+                                            , false
+                                            , "USER"
+                                            , CoreContants.NOTI_TEMPLATE_EXAMINATION_FORM_DOCTOR_CREATE
+                                            );
+                                            await hubContext.Clients.All.SendAsync(CoreContants.GET_TOTAL_NOTIFICATION);
+                                        }
+                                    }
+                                }
+                                break;
+                            // Chờ xác nhận tái khám => thông báo cho user
+                            case (int)CatalogueUtilities.ExaminationStatus.WaitReExamination:
+                                {
+                                    if (medicalRecordInfos != null && medicalRecordInfos.Any())
+                                    {
+                                        await notificationService.CreateCustomNotificationUser(null, LoginContext.Instance.CurrentUser.HospitalId
+                                            , new List<int>() { medicalRecordInfos.FirstOrDefault().UserId }
+                                            , string.Format("/medical/examination/{0}", examinationFormInfo.Id)
+                                            , string.Empty
+                                            , LoginContext.Instance.CurrentUser.UserName
+                                            , examinationFormInfo.Id
+                                            , false
+                                            , "USER"
+                                            , CoreContants.NOTI_TEMPLATE_EXAMINATION_FORM_USER_UPDATE
+                                            );
+                                        await appHubContext.Clients.All.SendAsync(CoreContants.GET_TOTAL_NOTIFICATION);
+                                    }
+                                }
+                                break;
+                            case (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination:
+                                {
+                                    if (examinationFormInfo.DoctorId.HasValue && examinationFormInfo.DoctorId.Value > 0)
+                                    {
+                                        var doctorInfo = await this.doctorService.GetByIdAsync(examinationFormInfo.DoctorId.Value);
+                                        if (doctorInfo != null && doctorInfo.UserId.HasValue && doctorInfo.UserId > 0)
+                                        {
+                                            await notificationService.CreateCustomNotificationUser(null, LoginContext.Instance.CurrentUser.HospitalId
+                                            , new List<int>() { doctorInfo.UserId.Value }
+                                            , string.Format("/medical/examination/{0}", examinationFormInfo.Id)
+                                            , string.Empty
+                                            , LoginContext.Instance.CurrentUser.UserName
+                                            , examinationFormInfo.Id
+                                            , false
+                                            , "USER"
+                                            , CoreContants.NOTI_TEMPLATE_EXAMINATION_FORM_DOCTOR_UPDATE
+                                            );
+                                            await hubContext.Clients.All.SendAsync(CoreContants.GET_TOTAL_NOTIFICATION);
+                                        }
+                                    }
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+
+                    }
+
+
                     appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     // Remove file trong thư mục temp
                     if (filePaths.Any())
@@ -407,7 +589,7 @@ namespace MedicalAPI.Controllers
                         }
                     }
                 }
-                
+
                 appDomainResult.Success = success;
                 appDomainResult.Data = momoResponseModel;
             }
@@ -432,7 +614,7 @@ namespace MedicalAPI.Controllers
             {
                 momoConfiguration = momoConfigurationInfos.FirstOrDefault();
                 string orderInfo = "test";
-                string amount = updateExaminationStatusModel.TotalPrice.HasValue ? updateExaminationStatusModel.TotalPrice.Value.ToString() : "0";
+                string amount = updateExaminationStatusModel.TotalPrice.HasValue ? (updateExaminationStatusModel.TotalPrice.Value.ToString()) : "0";
                 string orderid = Guid.NewGuid().ToString();
                 string requestId = Guid.NewGuid().ToString();
                 string extraData = "";
@@ -448,7 +630,7 @@ namespace MedicalAPI.Controllers
                 momoConfiguration.ReturnUrlWebApp + "&notifyUrl=" +
                 momoConfiguration.NotifyUrl + "&extraData=" +
                 extraData;
-                
+
                 MomoUtilities crypto = new MomoUtilities();
                 //sign signature SHA256
                 string signature = crypto.SignSHA256(rawHash, momoConfiguration.SecretKey);
@@ -479,7 +661,7 @@ namespace MedicalAPI.Controllers
                         CreatedBy = LoginContext.Instance.CurrentUser.UserName,
                         Active = true,
                         Deleted = false,
-                        Amount = amount,
+                        Amount = Convert.ToInt64(amount),
                         RequestId = requestId,
                         OrderId = orderid,
                         OrderInfo = orderInfo,
@@ -494,11 +676,124 @@ namespace MedicalAPI.Controllers
             return momoResponseModel;
         }
 
+        /// <summary>
+        /// Thêm mới phiếu khám
+        /// </summary>
+        /// <param name="itemModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
         public override Task<AppDomainResult> AddItem([FromBody] ExaminationFormModel itemModel)
         {
             return base.AddItem(itemModel);
+        }
+
+        /// <summary>
+        /// Lấy danh sách item phân trang
+        /// </summary>
+        /// <param name="baseSearch"></param>
+        /// <returns></returns>
+        [HttpGet("get-paged-data")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
+        public override async Task<AppDomainResult> GetPagedData([FromQuery] SearchExaminationForm baseSearch)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId.Value > 0)
+                baseSearch.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
+            PagedList<ExaminationForms> pagedData = await this.examinationFormService.GetPagedListData(baseSearch);
+
+            PagedList<ExaminationFormModel> pagedDataModel = mapper.Map<PagedList<ExaminationFormModel>>(pagedData);
+            if (pagedDataModel != null && pagedDataModel.Items != null && pagedDataModel.Items.Any())
+            {
+                foreach (var item in pagedDataModel.Items)
+                {
+                    var hospitalFiles = await hospitalFileService.GetAsync(e => !e.Deleted && e.HospitalId == item.HospitalId && e.FileType == (int)CatalogueUtilities.HospitalFileType.Logo);
+                    if (hospitalFiles != null && hospitalFiles.Any())
+                    {
+                        item.HospitalFiles = mapper.Map<IList<HospitalFileModel>>(hospitalFiles);
+                    }
+
+                    // KIỂM TRA THỂ HIỆN TRẠNG THÁI CHÍCH NGỪA
+                    // NẾU LÀ KHÁC KHÁM THƯỜNG + KO CHỌN VACCINE => KHÔNG CẦN THỂ HIỆN TRẠNG THÁI VACCINE
+                    if (item.TypeId != 0 || !item.VaccineTypeId.HasValue || item.VaccineTypeId.Value <= 0) continue;
+
+                    // LẤY RA TẤT CẢ PHIẾU ĐANG ĐĂNG KÍ TIÊM LOẠI VACCINE THEO PHIẾU HIỆN TẠI (BAO GỒM CẢ PHIẾU HIỆN TẠI)
+                    var examinationCurrentRecords = await this.examinationFormService.GetAsync(e => !e.Deleted && e.Active
+                    && e.VaccineTypeId.HasValue
+                    && e.VaccineTypeId == item.VaccineTypeId
+                    && e.RecordId == item.RecordId
+                    );
+                    int totalInjections = 0;
+                    if (examinationCurrentRecords != null && examinationCurrentRecords.Any())
+                    {
+                        // LẤY RA TẤT CẢ TIỂU SỬ KHÁM CỦA USER ĐỂ KIỂM TRA USER ĐÃ TIÊM HAY CHƯA
+                        var examinationCurrentRecordIds = examinationCurrentRecords.Select(e => e.Id).ToList();
+                        var medicalRecordDetailChecks = await this.medicalRecordDetailService.GetAsync(e => !e.Deleted && e.Active
+                        && e.ExaminationFormId.HasValue
+                        && e.VaccineTypeId == item.VaccineTypeId
+                        //&& e.ServiceTypeId == item.ServiceTypeId
+                        && examinationCurrentRecordIds.Contains(e.ExaminationFormId.Value));
+                        if (medicalRecordDetailChecks != null && medicalRecordDetailChecks.Any())
+                            totalInjections = medicalRecordDetailChecks.Count();
+                    }
+
+                    if (item.NumberOfDoses.HasValue && item.NumberOfDoses.Value > 0 && totalInjections < item.NumberOfDoses.Value)
+                    {
+                        item.TotalRemainInject = item.NumberOfDoses.Value - totalInjections;
+                        // Lấy thông tin loại vaccine => tính toán ra ngày tiêm tiếp theo
+                        var vaccineTypeInfo = await this.vaccineTypeService.GetByIdAsync(item.VaccineTypeId.Value);
+                        if (vaccineTypeInfo != null && vaccineTypeInfo.DateTypeId.HasValue)
+                        {
+                            switch (vaccineTypeInfo.DateTypeId.Value)
+                            {
+                                // Ngày
+                                case 0:
+                                    {
+                                        item.NextInjectionDate = item.ExaminationDate.AddDays(vaccineTypeInfo.NumberOfDateTypeValue ?? 0);
+                                    }
+                                    break;
+                                // Tuần
+                                case 1:
+                                    {
+                                        item.NextInjectionDate = item.ExaminationDate.AddDays((vaccineTypeInfo.NumberOfDateTypeValue ?? 0) * 7);
+                                    }
+                                    break;
+                                // Tháng
+                                case 2:
+                                    {
+                                        item.NextInjectionDate = item.ExaminationDate.AddMonths(vaccineTypeInfo.NumberOfDateTypeValue ?? 0);
+                                    }
+                                    break;
+                                // Năm
+                                case 3:
+                                    {
+                                        item.NextInjectionDate = item.ExaminationDate.AddYears(vaccineTypeInfo.NumberOfDateTypeValue ?? 0);
+                                    }
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        if (item.NextInjectionDate.HasValue)
+                        {
+                            item.NextInjectionDateDisplay = string.Format("Tiêm mũi {0} ngày {1}", item.TotalCurrentInjections += 1, item.NextInjectionDate.Value.ToString("dd/MM/yyyy"));
+                        }
+                    }
+                    else
+                        item.NextInjectionDateDisplay = string.Format("Đã tiêm ngày {0}", item.ExaminationDate.ToString("dd/MM/yyyy"));
+                }
+            }
+            appDomainResult = new AppDomainResult
+            {
+                Data = pagedDataModel,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+
+
+            return appDomainResult;
         }
 
         /// <summary>
@@ -524,7 +819,7 @@ namespace MedicalAPI.Controllers
             };
             ExaminationForms item = null;
             var pagedItems = await this.domainService.GetPagedListData(searchExaminationForm);
-            if(pagedItems != null && pagedItems.Items.Any())
+            if (pagedItems != null && pagedItems.Items.Any())
             {
                 item = pagedItems.Items.FirstOrDefault();
             }
@@ -544,11 +839,27 @@ namespace MedicalAPI.Controllers
                         SpecialistTypeId = item.SpecialistTypeId ?? 0
                     };
                     var examinationScheduleDetails = await this.examinationScheduleService.GetExaminationScheduleDetails(searchExaminationScheduleForm);
-                    if(examinationScheduleDetails != null && examinationScheduleDetails.Any())
+                    if (examinationScheduleDetails != null && examinationScheduleDetails.Any())
                     {
                         itemModel.ExaminationScheduleDetail = mapper.Map<ExaminationScheduleDetailModel>(examinationScheduleDetails.FirstOrDefault());
                     }
                 }
+                // Lấy thông tin dịch vụ phát sinh của phiếu khám (nếu có)
+                var additionServiceInfos = await this.examinationFormAdditionServiceMappingService
+                    .GetAsync(e => !e.Deleted 
+                && e.ExaminationFormId == item.Id);
+                if (additionServiceInfos != null && additionServiceInfos.Any())
+                {
+                    itemModel.AdditionServiceIds = additionServiceInfos.Select(e => e.AdditionServiceId).ToList();
+                    itemModel.ExaminationFormServiceMappings = mapper.Map<IList<ExaminationFormAdditionServiceMappingModel>>(additionServiceInfos);
+                    var additionServiceTypeInfos = await this.additionServiceType.GetAsync(e => itemModel.AdditionServiceIds.Contains(e.Id));
+                    foreach (var examinationFormServiceMapping in itemModel.ExaminationFormServiceMappings)
+                    {
+                        var additionServiceTypeInfo = additionServiceTypeInfos.Where(e => e.Id == examinationFormServiceMapping.AdditionServiceId).FirstOrDefault();
+                        if (additionServiceTypeInfo != null) examinationFormServiceMapping.AdditionServiceName = additionServiceTypeInfo.Name;
+                    }
+                }
+
                 //// Lây thông tin lịch sử
                 //var examinationHistories = await this.examinationHistoryService.GetAsync(e => !e.Deleted && e.ExaminationFormId == item.Id);
                 //if(examinationHistories != null && examinationHistories.Any())
@@ -570,6 +881,107 @@ namespace MedicalAPI.Controllers
                 throw new KeyNotFoundException("Item không tồn tại");
             }
             return appDomainResult;
+        }
+
+        /// <summary>
+        /// Lấy thông tin random ca trực
+        /// </summary>
+        /// <param name="searchExaminationScheduleDetailAddition"></param>
+        /// <returns></returns>
+        [HttpGet("get-random-examination-schedule-detail")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetRandomExaminationScheduleDetailInfo([FromQuery] SearchExaminationScheduleDetailAddition searchExaminationScheduleDetailAddition)
+        {
+            int? roomExaminationId = null;
+            int? examinationScheduleDetailId = null;
+            int? doctorId = null;
+            int? specialistTypeId = null;
+            string roomExaminationName = string.Empty;
+            string doctorName = string.Empty;
+            string doctorDegreeTypeName = string.Empty;
+
+            var scheduleInfos = await this.examinationScheduleService.GetAsync(e => !e.Deleted && e.ExaminationDate.Date == searchExaminationScheduleDetailAddition.ExaminationDate.Date
+            && e.SpecialistTypeId == searchExaminationScheduleDetailAddition.SpecialistTypeId
+            && e.HospitalId == searchExaminationScheduleDetailAddition.HospitalId
+            );
+            if (scheduleInfos == null || !scheduleInfos.Any()) throw new AppException("Không tồn tại lịch khám với ngày khám và chuyên khoa này");
+            var importScheduleIds = scheduleInfos.Where(e => e.ImportScheduleId.HasValue).Select(e => e.ImportScheduleId.Value).ToList();
+            // LẤY THÔNG TIN CHI TIẾT CA TRỰC
+            var examinationScheduleDetails = await this.examinationScheduleDetailService.GetAsync(e => e.ImportScheduleId.HasValue
+            && importScheduleIds.Contains(e.ImportScheduleId.Value)
+            && e.FromTime == searchExaminationScheduleDetailAddition.FromTime && e.ToTime == searchExaminationScheduleDetailAddition.ToTime);
+            if (examinationScheduleDetails == null || !examinationScheduleDetails.Any()) throw new AppException("Không tồn tại chi tiết ca trực phù hợp");
+            // TÍNH TOÁN LẤY RA CA TRỰC CÒN CÓ THỂ ĐĂNG KÍ ĐƯỢC
+            List<ExaminationScheduleDetails> examinationScheduleDetailResults = new List<ExaminationScheduleDetails>();
+            foreach (var examinationScheduleDetail in examinationScheduleDetails)
+            {
+                int totalUserExamination = await this.examinationFormService.CountAsync(e => !e.Deleted && e.Active
+                                && e.Status != (int)CatalogueUtilities.ExaminationStatus.New
+                                && e.Status != (int)CatalogueUtilities.ExaminationStatus.Canceled
+                                && e.Status != (int)CatalogueUtilities.ExaminationStatus.PaymentFailed
+                                && e.Status != (int)CatalogueUtilities.ExaminationStatus.PaymentReExaminationFailed
+                                && e.HospitalId == searchExaminationScheduleDetailAddition.HospitalId
+                                && e.ExaminationScheduleDetailId == examinationScheduleDetail.Id
+                                && (!searchExaminationScheduleDetailAddition.ExaminationFormId.HasValue || searchExaminationScheduleDetailAddition.ExaminationFormId.Value <= 0 || e.Id != searchExaminationScheduleDetailAddition.ExaminationFormId)
+                                );
+                if (examinationScheduleDetail.MaximumExamination.HasValue && totalUserExamination >= examinationScheduleDetail.MaximumExamination.Value)
+                    continue;
+                examinationScheduleDetailResults.Add(examinationScheduleDetail);
+            }
+            // RANDOM CA TRỰC CÓ THỂ ĐƯỢC ĐĂNG KÍ => LẤY RA THÔNG TIN BÁC SĨ/PHÒNG KHÁM/CHI TIẾT CA TRỰC
+            Random random = new Random();
+            ExaminationScheduleDetails randomDetail = null;
+            if (examinationScheduleDetailResults != null && examinationScheduleDetailResults.Any())
+            {
+                int indexRandom = random.Next(examinationScheduleDetailResults.Count());
+                randomDetail = examinationScheduleDetailResults[indexRandom];
+                if (randomDetail != null)
+                {
+                    roomExaminationId = randomDetail.RoomExaminationId;
+                    if (roomExaminationId.HasValue && roomExaminationId.Value > 0)
+                    {
+                        var roomExaminationFormInfo = await this.roomExaminationService.GetSingleAsync(e => !e.Deleted && e.Id == roomExaminationId.Value
+                        && e.HospitalId == searchExaminationScheduleDetailAddition.HospitalId
+                        );
+                        if (roomExaminationFormInfo != null) roomExaminationName = roomExaminationFormInfo.Name;
+                    }
+                    examinationScheduleDetailId = randomDetail.Id;
+                    specialistTypeId = searchExaminationScheduleDetailAddition.SpecialistTypeId;
+                    // LẤY RA LỊCH ĐƯỢC RANDOM TỪ CA TRỰC => LẤY THÔNG TIN BÁC SĨ
+                    var sheduleInfoRandomSelected = scheduleInfos.Where(e => e.ImportScheduleId == randomDetail.ImportScheduleId).FirstOrDefault();
+                    if (sheduleInfoRandomSelected != null)
+                    {
+                        doctorId = sheduleInfoRandomSelected.DoctorId;
+                        if (doctorId.HasValue && doctorId.Value > 0)
+                        {
+                            var doctorInfo = await this.doctorService.GetSingleAsync(e => e.Id == doctorId.Value
+                            && e.HospitalId == searchExaminationScheduleDetailAddition.HospitalId);
+                            if (doctorInfo != null)
+                            {
+                                doctorName = doctorInfo.FirstName + " " + doctorInfo.LastName;
+                                var degreeTypeInfo = await this.degreeTypeService.GetSingleAsync(e => e.Id == doctorInfo.DegreeId
+                                );
+                                if (degreeTypeInfo != null) doctorDegreeTypeName = degreeTypeInfo.Name;
+                            }
+                        }
+                    }
+                }
+            }
+            return new AppDomainResult()
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                Data = new
+                {
+                    RoomExaminationId = roomExaminationId,
+                    RoomExaminationName = roomExaminationName,
+                    DoctorId = doctorId,
+                    DoctorName = doctorName,
+                    DoctorDegreeTypeName = doctorDegreeTypeName,
+                    ExaminationScheduleDetailId = examinationScheduleDetailId,
+                    SpecialistTypeId = specialistTypeId
+                }
+            };
         }
 
         #region FEE EXAMINATION (PHÍ KHÁM BỆNH)

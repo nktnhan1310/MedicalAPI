@@ -32,5 +32,10 @@ namespace Medical.Entities
         /// Mã dịch vụ
         /// </summary>
         public int? ServiceTypeId { get; set; }
+
+        /// <summary>
+        /// Cờ check tái khám
+        /// </summary>
+        public bool? IsReExamination { get; set; }
     }
 }

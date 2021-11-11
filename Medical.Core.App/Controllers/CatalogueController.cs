@@ -127,6 +127,66 @@ namespace Medical.Core.App.Controllers
         }
 
         /// <summary>
+        /// Thêm mới nhiều item
+        /// </summary>
+        /// <param name="itemModels"></param>
+        /// <returns></returns>
+        [HttpPost("add-multiple-item")]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public override async Task<AppDomainResult> AddMultipleItem([FromBody] IList<T> itemModels)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
+            var items = mapper.Map<IList<E>>(itemModels);
+            foreach (var item in items)
+            {
+                item.Created = DateTime.Now;
+                item.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+                // Kiểm tra item có tồn tại chưa?
+                var messageUserCheck = await this.catalogueService.GetExistItemMessage(item);
+                if (!string.IsNullOrEmpty(messageUserCheck))
+                    throw new AppException(messageUserCheck);
+                
+            }
+            success = await this.catalogueService.CreateAsync(items);
+            if (!success) throw new Exception("Lỗi trong quá trình xử lý");
+            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            appDomainResult.Success = success;
+            return appDomainResult;
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin list item
+        /// </summary>
+        /// <param name="itemModels"></param>
+        /// <returns></returns>
+        [HttpPut("update-multiple-item")]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public override async Task<AppDomainResult> UpdateMultipleItem([FromBody] IList<T> itemModels)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
+            var items = mapper.Map<IList<E>>(itemModels);
+            foreach (var item in items)
+            {
+                item.Updated = DateTime.Now;
+                item.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+                // Kiểm tra item có tồn tại chưa?
+                var messageUserCheck = await this.catalogueService.GetExistItemMessage(item);
+                if (!string.IsNullOrEmpty(messageUserCheck))
+                    throw new AppException(messageUserCheck);
+                
+            }
+            success = await this.catalogueService.UpdateAsync(items);
+            if (!success) throw new Exception("Lỗi trong quá trình xử lý");
+            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            appDomainResult.Success = success;
+            return appDomainResult;
+        }
+
+        /// <summary>
         /// Cập nhật thông tin item
         /// </summary>
         /// <param name="id"></param>
@@ -173,34 +233,34 @@ namespace Medical.Core.App.Controllers
         /// <param name="id"></param>
         /// <param name="itemModel"></param>
         /// <returns></returns>
-        [HttpPatch("{id}")]
-        [MedicalAppAuthorize(new string[] { CoreContants.Update })]
-        public override async Task<AppDomainResult> PatchItem(int id, [FromBody] T itemModel)
-        {
-            AppDomainResult appDomainResult = new AppDomainResult();
+        //[HttpPatch("{id}")]
+        //[MedicalAppAuthorize(new string[] { CoreContants.Update })]
+        //public override async Task<AppDomainResult> PatchItem(int id, [FromBody] T itemModel)
+        //{
+        //    AppDomainResult appDomainResult = new AppDomainResult();
 
-            bool success = false;
-            itemModel.Updated = DateTime.Now;
-            itemModel.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
-            var item = mapper.Map<E>(itemModel);
-            if (item != null)
-            {
-                Expression<Func<E, object>>[] includeProperties = new Expression<Func<E, object>>[]
-                {
-                        x => x.Active,
-                };
-                success = await this.catalogueService.UpdateFieldAsync(item, includeProperties);
-                if (success)
-                    appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                else
-                    throw new Exception("Lỗi trong quá trình xử lý");
-                appDomainResult.Success = success;
-            }
-            else
-                throw new KeyNotFoundException("Item không tồn tại");
+        //    bool success = false;
+        //    itemModel.Updated = DateTime.Now;
+        //    itemModel.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+        //    var item = mapper.Map<E>(itemModel);
+        //    if (item != null)
+        //    {
+        //        Expression<Func<E, object>>[] includeProperties = new Expression<Func<E, object>>[]
+        //        {
+        //                x => x.Active,
+        //        };
+        //        success = await this.catalogueService.UpdateFieldAsync(item, includeProperties);
+        //        if (success)
+        //            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+        //        else
+        //            throw new Exception("Lỗi trong quá trình xử lý");
+        //        appDomainResult.Success = success;
+        //    }
+        //    else
+        //        throw new KeyNotFoundException("Item không tồn tại");
 
-            return appDomainResult;
-        }
+        //    return appDomainResult;
+        //}
 
 
         /// <summary>
@@ -224,6 +284,32 @@ namespace Medical.Core.App.Controllers
                 throw new Exception("Lỗi trong quá trình xử lý");
             return appDomainResult;
         }
+
+        /// <summary>
+        /// Xóa nhiều lựa chọn
+        /// </summary>
+        /// <param name="itemIds"></param>
+        /// <returns></returns>
+        [HttpDelete("delete-multiples")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Delete })]
+        public override async Task<AppDomainResult> Delete([FromBody] List<int> itemIds)
+        {
+            if (itemIds == null || !itemIds.Any()) throw new AppException("Không tìm thấy thông tin id");
+
+            var existItems = await this.domainService.GetAsync(e => !e.Deleted && itemIds.Contains(e.Id));
+            if (existItems == null || !existItems.Any()) throw new AppException("Không tìm thấy thông tin item");
+            bool success = true;
+            success &= await this.catalogueService.DeleteAsync(itemIds);
+
+            if (!success) throw new Exception("Lỗi trong quá trình xử lý");
+
+            return new AppDomainResult()
+            {
+                Success = success,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
 
         /// <summary>
         /// Lấy danh sách item phân trang

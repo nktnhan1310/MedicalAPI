@@ -31,6 +31,20 @@ namespace Medical.Interface.Repository
         void LoadCollection(T item, params string[] property);
         int ExecuteNonQuery(string commandText, SqlParameter[] sqlParameters);
         int ExecuteNonQuery(string commandText);
+
+        /// <summary>  
+        /// Adds the range.  
+        /// </summary>  
+        /// <param name="entities">The entities.</param>  
+        void AddRange(IList<T> entities);
+
+        /// <summary>  
+        /// Removes the specified entity.  
+        /// </summary>  
+        /// <param name="entity">The entity.</param>  
+        void RemoveRange(T entity);
+
+
         DataTable ExcuteQuery(string commandText, SqlParameter[] sqlParameters);
 
         Task<PagedList<T>> ExcuteQueryPagingAsync(string commandText, SqlParameter[] sqlParameters);

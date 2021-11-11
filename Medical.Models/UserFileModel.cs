@@ -15,7 +15,28 @@ namespace Medical.Models
         /// <summary>
         /// Loại file
         /// 0 => avatar;
+        /// 1 => khác
         /// </summary>
         public int FileType { get; set; }
+
+        /// <summary>
+        /// Mã hồ sơ nếu có
+        /// </summary>
+        public int? MedicalRecordId { get; set; }
+
+        /// <summary>
+        /// Mã tiểu sử bệnh án (nếu có)
+        /// </summary>
+        public int? MedicalRecordDetailId { get; set; }
+
+        /// <summary>
+        /// Mã tiền sử bệnh/ tiền sử phẫu thuật
+        /// </summary>
+        public int? MedicalRecordHistoryId { get; set; }
+
+        /// <summary>
+        /// Mã folder
+        /// </summary>
+        public int? FolderId { get; set; }
     }
 }

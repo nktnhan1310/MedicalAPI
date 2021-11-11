@@ -29,10 +29,6 @@ namespace Medical.Entities
         /// Ngày tái khám
         /// </summary>
         public DateTime? ReExaminationDate { get; set; }
-        /// <summary>
-        /// Dịch vụ khám
-        /// </summary>
-        public int? ServiceTypeId { get; set; }
 
         /// <summary>
         /// Mã phiếu khám
@@ -51,6 +47,9 @@ namespace Medical.Entities
 
         public List<int> StatusIds { get; set; }
 
-
+        /// <summary>
+        /// Cờ check tái khám
+        /// </summary>
+        public bool? IsReExamination { get; set; }
     }
 }

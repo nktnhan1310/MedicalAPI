@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -47,8 +48,6 @@ namespace Medical.Utilities
         public int TotalItem { set; get; }
         
 
-
-
         public IList<T> Items { set; get; }
 
         #region Extension Properties
@@ -59,6 +58,12 @@ namespace Medical.Utilities
         public double? TotalRevenueValue { get; set; }
 
         //----------------------------------------------- REPORT EXAMINATION FORM
+
+        /// <summary>
+        /// Tổng lịch hẹn
+        /// </summary>
+        public int TotalExamination { get; set; }
+
         /// <summary>
         /// Tổng lịch hẹn mới
         /// </summary>

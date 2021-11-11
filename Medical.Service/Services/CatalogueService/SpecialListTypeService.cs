@@ -56,6 +56,13 @@ namespace Medical.Service.Services
             PagedList<SpecialistTypes> pagedList = new PagedList<SpecialistTypes>();
             SqlParameter[] parameters = GetSqlParameters(baseSearch);
             pagedList = await this.unitOfWork.Repository<SpecialistTypes>().ExcuteQueryPagingAsync(this.GetStoreProcName(), parameters);
+            // Lấy theo danh sách chuyên khoa mặc định của hệ thống
+            if (pagedList.TotalItem == 0)
+            {
+                baseSearch.HospitalId = 0;
+                SqlParameter[] parameterDefaults = GetSqlParameters(baseSearch);
+                pagedList = await this.unitOfWork.Repository<SpecialistTypes>().ExcuteQueryPagingAsync(this.GetStoreProcName(), parameterDefaults);
+            }
             pagedList.PageIndex = baseSearch.PageIndex;
             pagedList.PageSize = baseSearch.PageSize;
             return pagedList;
@@ -95,21 +102,30 @@ namespace Medical.Service.Services
                         IList<string> errors = new List<string>();
                         if (string.IsNullOrEmpty(catalogueMapper.HospitalCode))
                             errors.Add("Vui lòng nhập mã bệnh viện");
-                        if(!existHospitals.Any(x => x.Code == catalogueMapper.HospitalCode))
-                            errors.Add("Mã bệnh viện không tồn tại");
+                        if (hospitalId.HasValue && hospitalId.Value > 0)
+                            hospitalInfo = await existHospitals.Where(e => e.Id == hospitalId.Value).FirstOrDefaultAsync();
                         else
-                            hospitalInfo = await existHospitals.Where(e => e.Code == catalogueMapper.HospitalCode).FirstOrDefaultAsync();
+                        {
+                            if (!existHospitals.Any(x => x.Code == catalogueMapper.HospitalCode))
+                                errors.Add("Mã bệnh viện không tồn tại");
+                            else
+                                hospitalInfo = await existHospitals.Where(e => e.Code == catalogueMapper.HospitalCode).FirstOrDefaultAsync();
+                        }
+
                         if (hospitalInfo == null)
                             errors.Add("Thông tin bệnh viện không tồn tại");
                         if (string.IsNullOrEmpty(catalogueMapper.Code))
                             errors.Add("Vui lòng nhập mã chuyên khoa");
-                        if (hospitalInfo != null && (existItems.Any(x => x.HospitalId == hospitalInfo.Id && x.Code == catalogueMapper.Code) 
-                            || specialistTypeImports.Any(x => x.HospitalId == hospitalInfo.Id &&  x.Code == catalogueMapper.Code)))
+
+
+
+                        if (hospitalInfo != null && (existItems.Any(x => x.HospitalId == hospitalInfo.Id && x.Code == catalogueMapper.Code)
+                            || specialistTypeImports.Any(x => x.HospitalId == hospitalInfo.Id && x.Code == catalogueMapper.Code)))
                             errors.Add("Mã chuyên khoa đã tồn tại");
                         if (string.IsNullOrEmpty(catalogueMapper.Name))
                             errors.Add("Vui lòng nhập tên chuyên khoa");
                         price = TryParseUtilities.TryParseDouble(catalogueMapper.Price);
-                        if(price == null)
+                        if (price == null)
                             errors.Add("Giá khám không hợp lệ");
 
                         if (errors.Any())

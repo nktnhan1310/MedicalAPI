@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Text;
 
 namespace Medical.Entities
@@ -18,7 +19,6 @@ namespace Medical.Entities
         /// </summary>
         public int? NotificationTypeId { get; set; }
         
-
         /// <summary>
         /// Link web
         /// </summary>
@@ -41,8 +41,35 @@ namespace Medical.Entities
         /// Mã template notification
         /// </summary>
         public int? NotificationTemplateId { get; set; }
+        
+        /// <summary>
+        /// Loại hình thông báo
+        /// </summary>
+        public int? TypeId { get; set; }
+
+        /// <summary>
+        /// Mã phiếu khám (nếu có)
+        /// </summary>
+        public string ExaminationFormIds { get; set; }
 
         #region Extension Properties
+
+        /// <summary>
+        /// Danh sách mã phiếu của thông báo
+        /// </summary>
+        [NotMapped]
+        public List<int> ExaminationFormSplitIds
+        {
+            get
+            {
+                if(!string.IsNullOrEmpty(ExaminationFormIds))
+                {
+                    var listExaminationFormId = ExaminationFormIds.Split(";").Select(e => Convert.ToInt32(e)).ToList();
+                    return listExaminationFormId;
+                }
+                return null;
+            }
+        }
 
         /// <summary>
         /// Cờ check thông báo đã được đọc chưa

@@ -37,10 +37,11 @@ namespace Medical.Entities
         /// Trạng thái
         /// </summary>
         public int? Status { get; set; }
+
         /// <summary>
-        /// Tuổi
+        /// Ngày sinh
         /// </summary>
-        public int? Age { get; set; }
+        public DateTime? BirthDate { get; set; }
 
         /// <summary>
         /// Phải là admin không
@@ -90,7 +91,7 @@ namespace Medical.Entities
         /// 1 => Nam
         /// </summary>
         [DefaultValue(false)]
-        public bool Gender { get; set; }
+        public int Gender { get; set; }
 
         /// <summary>
         /// Cờ kiểm tra OTP của user
@@ -108,6 +109,21 @@ namespace Medical.Entities
         /// </summary>
         [DefaultValue(false)]
         public bool IsLoginGoogle { get; set; }
+
+        /// <summary>
+        /// Số lần chỉnh sửa phiếu
+        /// </summary>
+        public int? TotalEditExaminations { get; set; }
+
+        /// <summary>
+        /// Số lần chỉnh sửa phiếu
+        /// </summary>
+        public int? TotalCancelExaminations { get; set; }
+
+        /// <summary>
+        /// Mã user
+        /// </summary>
+        public string UserCode { get; set; }
 
         #region Extension Properties
 

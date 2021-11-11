@@ -18,6 +18,7 @@ using Microsoft.Extensions.Logging;
 using Medical.Core.App.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Configuration;
+using Medical.Interface;
 
 namespace MedicalAPI.Controllers
 {
@@ -30,7 +31,13 @@ namespace MedicalAPI.Controllers
         private readonly IHospitalFileService hospitalFileService;
         private readonly IServiceTypeMappingHospitalService serviceTypeMappingHospitalService;
         private readonly IChannelMappingHospitalService channelMappingHospitalService;
+        private readonly IHospitalHistoryService hospitalHistoryService;
+        private readonly IHospitalTypeService hospitalTypeService;
+        private readonly IHospitalFunctionTypeService hospitalFunctionTypeService;
+
         private readonly IBankInfoService bankInfoService;
+
+
         private readonly IConfiguration configuration;
         public HospitalController(IServiceProvider serviceProvider
             , ILogger<BaseController<Hospitals, HospitalModel, SearchHospital>> logger
@@ -43,6 +50,10 @@ namespace MedicalAPI.Controllers
             serviceTypeMappingHospitalService = serviceProvider.GetRequiredService<IServiceTypeMappingHospitalService>();
             channelMappingHospitalService = serviceProvider.GetRequiredService<IChannelMappingHospitalService>();
             bankInfoService = serviceProvider.GetRequiredService<IBankInfoService>();
+            hospitalHistoryService = serviceProvider.GetRequiredService<IHospitalHistoryService>();
+            hospitalTypeService = serviceProvider.GetRequiredService<IHospitalTypeService>();
+            hospitalFunctionTypeService = serviceProvider.GetRequiredService<IHospitalFunctionTypeService>();
+
             this.configuration = configuration;
         }
 
@@ -105,6 +116,11 @@ namespace MedicalAPI.Controllers
                 Slogan = e.Slogan,
                 WebSiteUrl = e.WebSiteUrl,
                 TickEndReceiveExamination = e.TickEndReceiveExamination,
+                HospitalFunctionTypeId = e.HospitalFunctionTypeId,
+                HospitalTypeId = e.HospitalTypeId,
+                Created = e.Created,
+                CreatedBy = e.CreatedBy,
+                ProvideDate = e.ProvideDate,
                 BankInfos = new List<BankInfos>()
             });
             if (item != null)
@@ -167,7 +183,7 @@ namespace MedicalAPI.Controllers
                 itemModel.Deleted = false;
                 itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
                 itemModel.Created = DateTime.Now;
-
+                itemModel.Code = StringCipher.GetFirstCharOfWord(itemModel.Name);
                 var item = mapper.Map<Hospitals>(itemModel);
                 if (item != null)
                 {
@@ -365,6 +381,27 @@ namespace MedicalAPI.Controllers
         public override Task<AppDomainResult> GetPagedData([FromQuery] SearchHospital baseSearch)
         {
             return base.GetPagedData(baseSearch);
+        }
+
+        /// <summary>
+        /// Lấy danh sách lịch sử chỉnh sửa bệnh viện
+        /// </summary>
+        /// <param name="baseSearch"></param>
+        /// <returns></returns>
+        [HttpGet("get-history-paged-data")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
+        public async Task<AppDomainResult> GetHistoryPagedData([FromQuery] BaseHospitalSearch baseSearch)
+        {
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId.Value > 0)
+                baseSearch.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
+            var pagedList = await this.hospitalHistoryService.GetPagedListData(baseSearch);
+            var pagedListModel = mapper.Map<PagedList<HospitalHistoryModel>>(pagedList);
+            return new AppDomainResult()
+            {
+                Data = pagedListModel,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
         }
 
         [HttpGet("download-file/{id}")]

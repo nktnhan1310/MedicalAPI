@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Medical.Service
 {
-    public class SessionTypeService : CatalogueService<SessionTypes, BaseSearch>, ISessionTypeService
+    public class SessionTypeService : CatalogueHospitalService<SessionTypes, BaseHospitalSearch>, ISessionTypeService
     {
         public SessionTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {

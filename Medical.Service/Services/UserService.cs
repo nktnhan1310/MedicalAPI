@@ -7,6 +7,7 @@ using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using OfficeOpenXml.FormulaParsing.ExpressionGraph;
 using System;
 using System.Collections.Generic;
@@ -22,9 +23,13 @@ namespace Medical.Service
     public class UserService : DomainService<Users, SearchUser>, IUserService
     {
         private IMedicalDbContext medicalDbContext;
-        public UserService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IMedicalDbContext medicalDbContext) : base(unitOfWork, mapper)
+        private IMedicalRecordService medicalRecordService;
+        private INotificationService notificationService;
+        public UserService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IMedicalDbContext medicalDbContext, IServiceProvider serviceProvider) : base(unitOfWork, mapper)
         {
             this.medicalDbContext = medicalDbContext;
+            this.medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
+            this.notificationService = serviceProvider.GetRequiredService<INotificationService>();
         }
         protected override string GetStoreProcName()
         {
@@ -41,6 +46,7 @@ namespace Medical.Service
                 new SqlParameter("@Email", string.IsNullOrEmpty(baseSearch.Email) ? DBNull.Value : (object)baseSearch.Email),
                 new SqlParameter("@Phone", baseSearch.Phone),
                 new SqlParameter("@UserGroupId", baseSearch.UserGroupId),
+                new SqlParameter("@IsHospital", baseSearch.IsHospital),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
                 new SqlParameter("@TotalPage", SqlDbType.Int, 0),
@@ -57,6 +63,12 @@ namespace Medical.Service
         {
             List<string> messages = new List<string>();
             string result = string.Empty;
+
+            // Tạo code cho user trường hợp thêm mới
+            if (item.Id <= 0 || string.IsNullOrEmpty(item.UserCode))
+                item.UserCode = await this.GetUserCode(item);
+
+            bool isExistUserCode = !string.IsNullOrEmpty(item.UserCode) && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.UserCode == item.UserCode);
             bool isExistEmail = !string.IsNullOrEmpty(item.Email) && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Email == item.Email);
             bool isExistPhone = !string.IsNullOrEmpty(item.Phone) && await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Phone == item.Phone);
             bool isExistUserName = !string.IsNullOrEmpty(item.UserName)
@@ -67,7 +79,11 @@ namespace Medical.Service
                 ));
             bool isPhone = ValidateUserName.IsPhoneNumber(item.UserName);
             bool isEmail = ValidateUserName.IsEmail(item.UserName);
-
+            if (isExistUserCode)
+            {
+                item.UserCode = await this.GetUserCode(item);
+                await this.GetExistItemMessage(item);
+            }
 
             if (isExistEmail)
                 messages.Add("Email đã tồn tại!");
@@ -84,6 +100,29 @@ namespace Medical.Service
             }
             if (messages.Any())
                 result = string.Join(" ", messages);
+            return result;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        private async Task<string> GetUserCode(Users item)
+        {
+            string result = string.Empty;
+            // NẾU LÀ NV BỆNH VIỆN => TẠO MÃ RANDOM (MÃ BV + CHUỖI RANDOM 8 KÍ TỰ)
+            if (item.HospitalId.HasValue && item.HospitalId.Value > 0)
+            {
+                var hospitalInfo = await this.unitOfWork.Repository<Hospitals>().GetQueryable()
+                    .Where(e => e.Id == item.HospitalId.Value).FirstOrDefaultAsync();
+                // KHỞI TẠO CHUỖI RANDOM 8 KÍ TỰ SỐ
+                var randomNumber = RandomUtilities.RandomString(8, null, 8, true);
+                result = hospitalInfo.Code + randomNumber;
+            }
+            // NẾU LÀ USER KHÔNG THUỘC BỆNH VIỆN => TẠO MÃ RANDOM GỒM 2 KÍ TỰ CHỮ + 8 KÍ TỰ SỐ
+            else
+                result = RandomUtilities.RandomString(10, 2, 8, true);
             return result;
         }
 
@@ -210,7 +249,7 @@ namespace Medical.Service
 
                     // Kiểm tra những item không có trong role chọn => Xóa đi
                     var existGroupOlds = await this.unitOfWork.Repository<UserInGroups>().GetQueryable().Where(e => !item.UserGroupIds.Contains(e.UserGroupId) && e.UserId == existItem.Id).ToListAsync();
-                    if(existGroupOlds != null)
+                    if (existGroupOlds != null)
                     {
                         foreach (var existGroupOld in existGroupOlds)
                         {
@@ -288,6 +327,135 @@ namespace Medical.Service
         }
 
         /// <summary>
+        /// Tạo mới thông tin user + hồ sơ người bệnh
+        /// </summary>
+        /// <param name="userGeneralInfo"></param>
+        /// <returns></returns>
+        public async Task<bool> CreateUserGeneralInfo(UserGeneralInfo userGeneralInfo)
+        {
+            bool result = true;
+            if (userGeneralInfo == null) throw new AppException("Không tìm thấy thông tin thêm mới");
+
+            // KIỂM TRA THÔNG TIN USER + HỒ SƠ NGƯỜI BỆNH CỦA USER
+            if (userGeneralInfo.User == null) throw new AppException("Không tìm thấy thông tin user");
+            if (userGeneralInfo.MedicalRecord == null) throw new AppException("Không tìm thấy thông tin hồ sơ người bệnh");
+            using (var contextTransaction = await this.medicalDbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // THÊM MỚI THÔNG TIN USER
+                    userGeneralInfo.User.Active = true;
+                    result &= await this.CreateAsync(userGeneralInfo.User);
+
+                    // THÊM MỚI THÔNG TIN HỒ SƠ
+                    userGeneralInfo.MedicalRecord.UserId = userGeneralInfo.User.Id;
+                    userGeneralInfo.MedicalRecord.BirthDate = userGeneralInfo.User.BirthDate;
+                    userGeneralInfo.MedicalRecord.Phone = userGeneralInfo.User.Phone;
+                    userGeneralInfo.MedicalRecord.Email = userGeneralInfo.User.Email;
+                    userGeneralInfo.MedicalRecord.Address = userGeneralInfo.User.Address;
+                    userGeneralInfo.MedicalRecord.UserFullName = userGeneralInfo.User.FirstName + " " + userGeneralInfo.User.LastName;
+                    userGeneralInfo.MedicalRecord.Active = true;
+                    result &= await this.medicalRecordService.CreateAsync(userGeneralInfo.MedicalRecord);
+
+                    // THÊM MỚI THÔNG TIN FILE CHO HỒ SƠ (NẾU CÓ)
+                    if (userGeneralInfo.UserFiles != null && userGeneralInfo.UserFiles.Any())
+                    {
+                        foreach (var userFile in userGeneralInfo.UserFiles)
+                        {
+                            userFile.Created = DateTime.Now;
+                            userFile.CreatedBy = userGeneralInfo.User.CreatedBy;
+                            userFile.UserId = userGeneralInfo.User.Id;
+                            userFile.MedicalRecordId = userGeneralInfo.MedicalRecord.Id;
+                            userFile.Active = true;
+                            userFile.Id = 0;
+                            await this.unitOfWork.Repository<UserFiles>().CreateAsync(userFile);
+                        }
+                        await this.unitOfWork.SaveAsync();
+                    }
+
+                    await contextTransaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    result = false;
+                    contextTransaction.Rollback();
+                }
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin chung của hồ sơ
+        /// </summary>
+        /// <param name="userGeneralInfo"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateUserGeneralInfo(UserGeneralInfo userGeneralInfo)
+        {
+            bool success = true;
+            if (userGeneralInfo == null) throw new AppException("Không tìm thấy thông tin cập nhật");
+            // KIỂM TRA THÔNG TIN USER + HỒ SƠ NGƯỜI BỆNH CỦA USER
+            if (userGeneralInfo.User == null) throw new AppException("Không tìm thấy thông tin user");
+            if (userGeneralInfo.MedicalRecord == null) throw new AppException("Không tìm thấy thông tin hồ sơ người bệnh");
+            using (var contextTransaction = await medicalDbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // CẬP NHẬT THÔNG TIN USER
+                    userGeneralInfo.User.Active = true;
+                    success &= await this.UpdateAsync(userGeneralInfo.User);
+                    // CẬP NHẬT THÔNG TIN HỒ SƠ
+                    userGeneralInfo.MedicalRecord.UserId = userGeneralInfo.User.Id;
+                    userGeneralInfo.MedicalRecord.BirthDate = userGeneralInfo.User.BirthDate;
+                    userGeneralInfo.MedicalRecord.Phone = userGeneralInfo.User.Phone;
+                    userGeneralInfo.MedicalRecord.Email = userGeneralInfo.User.Email;
+                    userGeneralInfo.MedicalRecord.Address = userGeneralInfo.User.Address;
+                    userGeneralInfo.MedicalRecord.UserFullName = userGeneralInfo.User.FirstName + " " + userGeneralInfo.User.LastName;
+                    userGeneralInfo.MedicalRecord.Active = true;
+                    success &= await this.medicalRecordService.UpdateAsync(userGeneralInfo.MedicalRecord);
+
+                    // CẬP NHẬT THÔNG TIN FILE CỦA USER
+                    if (userGeneralInfo.UserFiles != null && userGeneralInfo.UserFiles.Any())
+                    {
+                        foreach (var userFile in userGeneralInfo.UserFiles)
+                        {
+                            var existUserFile = await this.unitOfWork.Repository<UserFiles>().GetQueryable()
+                                .Where(e => !e.Deleted && e.UserId == userGeneralInfo.User.Id && e.MedicalRecordId == userGeneralInfo.MedicalRecord.Id).FirstOrDefaultAsync();
+
+                            if (existUserFile == null)
+                            {
+                                userFile.Created = DateTime.Now;
+                                userFile.CreatedBy = userGeneralInfo.User.CreatedBy;
+                                userFile.UserId = userGeneralInfo.User.Id;
+                                userFile.MedicalRecordId = userGeneralInfo.MedicalRecord.Id;
+                                userFile.Active = true;
+                                userFile.Id = 0;
+                                this.unitOfWork.Repository<UserFiles>().Create(userFile);
+                            }
+                            else
+                            {
+                                existUserFile = mapper.Map<UserFiles>(userFile);
+                                existUserFile.Updated = DateTime.Now;
+                                existUserFile.UpdatedBy = userGeneralInfo.User.UpdatedBy;
+                                existUserFile.UserId = userGeneralInfo.User.Id;
+                                existUserFile.MedicalRecordId = userGeneralInfo.MedicalRecord.Id;
+                                existUserFile.Active = true;
+                                this.unitOfWork.Repository<UserFiles>().Update(existUserFile);
+                            }
+                        }
+                        await this.unitOfWork.SaveAsync();
+                    }
+                    await contextTransaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    success = false;
+                    contextTransaction.Rollback();
+                }
+            }
+            return success;
+        }
+
+        /// <summary>
         /// Cập nhật password mới cho user
         /// </summary>
         /// <param name="userId"></param>
@@ -298,7 +466,7 @@ namespace Medical.Service
             bool result = false;
 
             var existUserInfo = await this.unitOfWork.Repository<Users>().GetQueryable().Where(e => e.Id == userId).FirstOrDefaultAsync();
-            if(existUserInfo != null)
+            if (existUserInfo != null)
             {
                 existUserInfo.Password = newPassword;
                 existUserInfo.Updated = DateTime.Now;
@@ -307,7 +475,7 @@ namespace Medical.Service
                     e => e.Password,
                     e => e.Updated
                 };
-                await this.unitOfWork.Repository<Users>().UpdateFieldsSaveAsync(existUserInfo ,includeProperties);
+                await this.unitOfWork.Repository<Users>().UpdateFieldsSaveAsync(existUserInfo, includeProperties);
                 await this.unitOfWork.SaveAsync();
                 result = true;
             }
@@ -506,5 +674,64 @@ namespace Medical.Service
 
             return result;
         }
+
+        #region CRON JOBS
+
+        /// <summary>
+        /// JOB TẠO THÔNG BÁO CHÚC MỪNG SINH NHẬT USER
+        /// </summary>
+        /// <returns></returns>
+        public async Task HappyBirthDateJob()
+        {
+            TimeSpan ts = new TimeSpan(0, 0, 0, 0);
+            DateTime dateCheck = DateTime.Now.Date + ts;
+            // LẤY RA THÔNG TIN USER CÓ NGÀY SINH NHẬT HÔM NAY
+            var userInfos = await this.Queryable
+                .Where(e => !e.Deleted && e.Active && e.BirthDate.HasValue
+                && e.BirthDate.Value.Date == dateCheck.Date
+                && !e.HospitalId.HasValue
+                && !e.IsAdmin
+                )
+                .Select(e => new Users()
+                {
+                    Id = e.Id,
+                    Phone = e.Phone,
+                    Email = e.Email
+                })
+                .ToListAsync();
+            if (userInfos != null && userInfos.Any())
+            {
+                // LẤY RA THÔNG TIN TEMPLATE CHÚC MỪNG SINH NHẬT
+                var happyBirthDateTemplate = await this.unitOfWork.Repository<NotificationTemplates>().GetQueryable()
+                    .Where(e => !e.Deleted && e.Code == CoreContants.TEMPLATE_HAPPY_BIRTHDATE).FirstOrDefaultAsync();
+                var notificationUserType = await this.unitOfWork.Repository<NotificationTypes>().GetQueryable()
+                    .Where(e => !e.Deleted && e.Code == CatalogueUtilities.NotificationType.USER.ToString()).FirstOrDefaultAsync();
+                // TẠO THÔNG BÁO CHÚC MỪNG SINH NHẬT CHO NGÀY HIỆN TẠI
+                if (notificationUserType != null && happyBirthDateTemplate != null)
+                {
+                    Notifications notifications = new Notifications()
+                    {
+                        Created = DateTime.Now,
+                        CreatedBy = "Job",
+                        Active = true,
+                        Deleted = false,
+                        IsRead = false,
+                        IsSendNotify = false,
+                        Content = happyBirthDateTemplate.Content,
+                        Title = happyBirthDateTemplate.Title,
+                        NotificationTypeId = notificationUserType.Id,
+                        TypeId = (int)CatalogueUtilities.NotificationCatalogueType.HappyBirthDate,
+                        NotificationTemplateId = happyBirthDateTemplate.Id,
+                        UserIds = userInfos.Select(e => e.Id).ToList()
+                    };
+                    await this.notificationService.CreateAsync(notifications);
+                }
+            }
+        }
+
+        #endregion
+
+
+
     }
 }

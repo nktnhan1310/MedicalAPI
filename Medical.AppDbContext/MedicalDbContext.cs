@@ -41,6 +41,10 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<Medicines>(x => x.ToTable("Medicines"));
             modelBuilder.Entity<MomoPayments>(x => x.ToTable("MomoPayments"));
             modelBuilder.Entity<NotificationTemplates>(x => x.ToTable("NotificationTemplates"));
+            modelBuilder.Entity<AllergyTypes>(x => x.ToTable("AllergyTypes"));
+            modelBuilder.Entity<VaccineTypes>(x => x.ToTable("VaccineTypes"));
+            modelBuilder.Entity<HospitalTypes>(x => x.ToTable("HospitalTypes"));
+            modelBuilder.Entity<HospitalFunctionTypes>(x => x.ToTable("HospitalFunctionTypes"));
 
             #endregion
 
@@ -82,6 +86,22 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<SMSEmailTemplates>(x => x.ToTable("SMSEmailTemplates"));
             modelBuilder.Entity<ContentReplaceCharacters>(x => x.ToTable("ContentReplaceCharacters"));
             modelBuilder.Entity<SystemComments>(x => x.ToTable("SystemComments"));
+            modelBuilder.Entity<UserFolders>(x => x.ToTable("UserFolders"));
+            modelBuilder.Entity<MedicalRecordHistories>(x => x.ToTable("MedicalRecordHistories"));
+            modelBuilder.Entity<ExaminationScheduleJobs>(x => x.ToTable("ExaminationScheduleJobs"));
+            modelBuilder.Entity<UserAllergies>(x => x.ToTable("UserAllergies"));
+            modelBuilder.Entity<NewFeeds>(x => x.ToTable("NewFeeds"));
+            modelBuilder.Entity<UserPregnancies>(x => x.ToTable("UserPregnancies"));
+            modelBuilder.Entity<UserPregnancyDetails>(x => x.ToTable("UserPregnancyDetails"));
+            modelBuilder.Entity<SystemFiles>(x => x.ToTable("SystemFiles"));
+            modelBuilder.Entity<DiagnoticTypes>(x => x.ToTable("DiagnoticTypes"));
+            modelBuilder.Entity<HospitalHistories>(x => x.ToTable("HospitalHistories"));
+            modelBuilder.Entity<UserVaccineProcesses>(x => x.ToTable("UserVaccineProcesses"));
+            modelBuilder.Entity<VNPayPaymentHistories>(x => x.ToTable("VNPayPaymentHistories"));
+            modelBuilder.Entity<ExaminationFormAdditionServiceMappings>(x => x.ToTable("ExaminationFormAdditionServiceMappings"));
+            modelBuilder.Entity<ExaminationScheduleMappingUsers>(x => x.ToTable("ExaminationScheduleMappingUsers"));
+
+            
 
             #region Configs
 
@@ -93,6 +113,9 @@ namespace Medical.AppDbContext
             modelBuilder.Entity<SystemConfigFee>(x => x.ToTable("SystemConfigFee"));
             modelBuilder.Entity<FaceBookAuthSettings>(x => x.ToTable("FaceBookAuthSettings"));
             modelBuilder.Entity<GoogleSettings>(x => x.ToTable("GoogleSettings"));
+            modelBuilder.Entity<SystemAdvertisements>(x => x.ToTable("SystemAdvertisements"));
+            modelBuilder.Entity<UserSystemExtensionPosts>(x => x.ToTable("UserSystemExtensionPosts"));
+            modelBuilder.Entity<HospitalHolidayConfigs>(x => x.ToTable("HospitalHolidayConfigs"));
 
             #endregion
 
@@ -108,6 +131,9 @@ namespace Medical.AppDbContext
 
         #region Config
 
+        public DbSet<HospitalHolidayConfigs> HospitalHolidayConfigs { get; set; }
+        public DbSet<UserSystemExtensionPosts> UserSystemExtensionPosts { get; set; }
+        public DbSet<SystemAdvertisements> SystemAdvertisements { get; set; }
         public DbSet<GoogleSettings> GoogleSettings { get; set; }
         public DbSet<FaceBookAuthSettings> FaceBookAuthSettings { get; set; }
         public DbSet<SystemConfiguartions> SystemConfiguartions { get; set; }
@@ -121,6 +147,10 @@ namespace Medical.AppDbContext
 
         #region Catalogue
 
+        public DbSet<HospitalTypes> HospitalTypes { get; set; }
+        public DbSet<HospitalFunctionTypes> HospitalFunctionTypes { get; set; }
+        public DbSet<AllergyTypes> AllergyTypes { get; set; }
+        public DbSet<VaccineTypes> VaccineTypes { get; set; }
         public DbSet<NotificationTemplates> NotificationTemplates { get; set; }
         public DbSet<Medicines> Medicines { get; set; }
         public DbSet<MedicalBills> MedicalBills { get; set; }
@@ -153,6 +183,21 @@ namespace Medical.AppDbContext
         public DbSet<Wards> Wards { get; set; }
 
         #endregion
+
+        public DbSet<ExaminationScheduleMappingUsers> ExaminationScheduleMappingUsers { get; set; }
+        public DbSet<ExaminationFormAdditionServiceMappings> ExaminationFormAdditionServiceMappings { get; set; }
+        public DbSet<VNPayPaymentHistories> VNPayPaymentHistories { get; set; }
+        public DbSet<UserVaccineProcesses> UserVaccineProcesses { get; set; }
+        public DbSet<HospitalHistories> HospitalHistories { get; set; }
+        public DbSet<DiagnoticTypes> DiagnoticTypes { get; set; }
+        public DbSet<SystemFiles> SystemFiles { get; set; }
+        public DbSet<UserPregnancies> UserPregnancies { get; set; }
+        public DbSet<UserPregnancyDetails> UserPregnancyDetails { get; set; }
+        public DbSet<NewFeeds> NewFeeds { get; set; }
+        public DbSet<UserAllergies> UserAllergies { get; set; }
+        public DbSet<ExaminationScheduleJobs> ExaminationScheduleJobs { get; set; }
+        public DbSet<UserFolders> UserFolders { get; set; }
+        public DbSet<MedicalRecordHistories> MedicalRecordHistories { get; set; }
 
         public DbSet<SystemComments> SystemComments { get; set; }
         public DbSet<SMSEmailTemplates> SMSEmailTemplates { get; set; }

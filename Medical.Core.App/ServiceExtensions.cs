@@ -53,9 +53,11 @@ namespace Medical.Core.App
             });
 
             services.AddTransient<ITokenManagerService, TokenManagerService>();
-
-
+            services.AddScoped<IExaminationScheduleMappingUserService, ExaminationScheduleMappingUserService>();
+            services.AddScoped<IExaminationFormAdditionServiceMappingService, ExaminationFormAdditionServiceMappingService>();
+            services.AddScoped<IVNPayPaymentHistoryService, VNPayPaymentHistoryService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IUserAllergyService, UserAllergyService>();
             services.AddScoped<IHospitalService, HospitalService>();
             services.AddScoped<IHospitalFileService, HospitalFileService>();
             services.AddScoped<IChannelMappingHospitalService, ChannelMappingHospitalService>();
@@ -85,10 +87,16 @@ namespace Medical.Core.App
             services.AddScoped<ISMSEmailTemplateService, SMSEmailTemplateService>();
             services.AddScoped<IContentReplaceCharacterService, ContentReplaceCharacterService>();
             services.AddScoped<ISystemCommentService, SystemCommentService>();
-
-
-
-
+            services.AddScoped<IUserFolderService, UserFolderService>();
+            services.AddScoped<IMedicalRecordHistoryService, MedicalRecordHistoryService>();
+            services.AddScoped<INewFeedService, NewFeedService>();
+            services.AddScoped<IUserPregnancyService, UserPregnancyService>();
+            services.AddScoped<IUserPregnancyDetailService, UserPregnancyDetailService>();
+            services.AddScoped<ISystemFileService, SystemFileService>();
+            services.AddScoped<IHospitalHistoryService, HospitalHistoryService>();
+            services.AddScoped<IUserVaccineProcessService, UserVaccineProcessService>();
+            services.AddScoped<IUserSystemExtensionPostService, UserSystemExtensionPostService>();
+            services.AddScoped<IHospitalHolidayConfigService, HospitalHolidayConfigService>();
 
             #region REPORT
 
@@ -110,7 +118,10 @@ namespace Medical.Core.App
 
             #region Catalogue Service
 
-            
+            services.AddScoped<IHospitalTypeService, HospitalTypeService>();
+            services.AddScoped<IHospitalFunctionTypeService, HospitalFunctionTypeService>();
+            services.AddScoped<IVaccineTypeService, VaccineTypeService>();
+            services.AddScoped<IAllergyTypeService, AllergyTypeService>();
             services.AddScoped<IMedicineService, MedicineService>();
             services.AddScoped<IMedicalBillService, MedicalBillService>();
             services.AddScoped<INotificationTypeService, NotificationTypeService>();
@@ -130,11 +141,13 @@ namespace Medical.Core.App
             services.AddScoped<INationService, NationService>();
             services.AddScoped<IRelationService, RelationService>();
             services.AddScoped<IPaymentMethodService, PaymentMethodService>();
-            
+            services.AddScoped<IDiagnoticTypeService, DiagnoticTypeService>();
+
             #endregion
 
             #region Configuration
 
+            services.AddScoped<ISystemAdvertisementService, SystemAdvertisementService>();
             services.AddScoped<IEmailConfigurationService, EmailConfigurationService>();
             services.AddScoped<IHospitalConfigFeeService, HospitalConfigFeeService>();
             services.AddScoped<ISMSConfigurationService, SMSConfigurationService>();

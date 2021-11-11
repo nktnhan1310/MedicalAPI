@@ -73,75 +73,113 @@ namespace Medical.Service
             double? fee = null;
             if (feeCaculateExaminationRequest != null)
             {
-                var configFeeHospital = await this.Queryable.Where(e => !e.Deleted && e.Active
-                && e.HospitalId == feeCaculateExaminationRequest.HospitalId
-                && e.PaymentMethodId == feeCaculateExaminationRequest.PaymentMethodId
-                && e.ServiceTypeId == feeCaculateExaminationRequest.ServiceTypeId
-                && (!feeCaculateExaminationRequest.SpecialistTypeId.HasValue || e.SpecialistTypeId == feeCaculateExaminationRequest.SpecialistTypeId.Value)
-                ).FirstOrDefaultAsync();
-
-                // Phí tiện ích hệ thống
-                var configFee = await this.unitOfWork.Repository<SystemConfigFee>().GetQueryable()
-                    .Where(e => !e.Deleted && e.Active).FirstOrDefaultAsync();
-
-
-
-                if (feeCaculateExaminationRequest.SpecialistTypeId.HasValue && feeCaculateExaminationRequest.SpecialistTypeId.Value > 0)
-                {
-                    var specialistTypeInfo = await this.unitOfWork.Repository<SpecialistTypes>().GetQueryable().Where(e => !e.Deleted && e.Active
+                // Lấy ra thông tin chi phí của chuyên khoa
+                var specialistTypeInfo = await this.unitOfWork.Repository<SpecialistTypes>().GetQueryable().Where(e => !e.Deleted && e.Active
                     && e.HospitalId == feeCaculateExaminationRequest.HospitalId
                     && e.Id == feeCaculateExaminationRequest.SpecialistTypeId
                     ).FirstOrDefaultAsync();
-                    if (specialistTypeInfo != null)
-                        price = specialistTypeInfo.Price;
-                }
-
-
-
-                if (!price.HasValue || price.Value <= 0)
+                if (specialistTypeInfo != null)
+                    price = (specialistTypeInfo.Price ?? 0);
+                // Lấy ra thông tin chi phí của dịch vụ (nếu có)
+                var examinationInfo = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable()
+                    .Where(e => e.Id == feeCaculateExaminationRequest.ExaminationFormId).FirstOrDefaultAsync();
+                // NẾU LÀ KHÁM THƯỜNG
+                if (feeCaculateExaminationRequest.AdditionServiceIds != null && feeCaculateExaminationRequest.AdditionServiceIds.Any())
                 {
-                    var serviceTypeMappingInfo = await this.unitOfWork.Repository<ServiceTypeMappingHospital>().GetQueryable().Where(e => !e.Deleted && e.Active
-                        && e.HospitalId == feeCaculateExaminationRequest.HospitalId
-                        && e.ServiceTypeId == feeCaculateExaminationRequest.ServiceTypeId
-                        ).FirstOrDefaultAsync();
-                    if (serviceTypeMappingInfo != null)
-                        price = serviceTypeMappingInfo.Price;
+                    // Lấy danh sách dịch vụ phát sinh
+                    var additionServiceInfos = await this.unitOfWork.Repository<AdditionServices>().GetQueryable()
+                        .Where(e => feeCaculateExaminationRequest.AdditionServiceIds.Contains(e.Id)).ToListAsync();
+                    //var additionServiceInfos = await this.unitOfWork.Repository<ExaminationFormAdditionServiceMappings>().GetQueryable()
+                    //    .Where(e => !e.Deleted && e.ExaminationFormId == examinationInfo.Id).ToListAsync();
+                    //if (additionServiceInfos != null && additionServiceInfos.Any())
+                        price += additionServiceInfos.Sum(e => e.Price ?? 0);
                 }
+                // Lấy ra thông tin chi phí của loại vaccine (nếu có)
+                if (feeCaculateExaminationRequest.VaccineTypeId.HasValue)
+                {
+                    var vaccineTypeInfo = await this.unitOfWork.Repository<VaccineTypes>().GetQueryable()
+                    .Where(e => e.Id == feeCaculateExaminationRequest.VaccineTypeId.Value).FirstOrDefaultAsync();
+                    if (vaccineTypeInfo != null && vaccineTypeInfo.Price.HasValue && vaccineTypeInfo.Price.Value > 0)
+                        price += (vaccineTypeInfo.Price ?? 0);
+                }
+
+
+                //var configFeeHospital = await this.Queryable.Where(e => !e.Deleted && e.Active
+                //&& e.HospitalId == feeCaculateExaminationRequest.HospitalId
+                //&& e.PaymentMethodId == feeCaculateExaminationRequest.PaymentMethodId
+                //&& e.ServiceTypeId == feeCaculateExaminationRequest.ServiceTypeId
+                //&& (!feeCaculateExaminationRequest.SpecialistTypeId.HasValue || e.SpecialistTypeId == feeCaculateExaminationRequest.SpecialistTypeId.Value)
+                //).FirstOrDefaultAsync();
+
+                // Phí tiện ích hệ thống
+                //var configFee = await this.unitOfWork.Repository<SystemConfigFee>().GetQueryable()
+                //    .Where(e => !e.Deleted && e.Active).FirstOrDefaultAsync();
+
+                //if (feeCaculateExaminationRequest.SpecialistTypeId.HasValue && feeCaculateExaminationRequest.SpecialistTypeId.Value > 0)
+                //{
+                //    var specialistTypeInfo = await this.unitOfWork.Repository<SpecialistTypes>().GetQueryable().Where(e => !e.Deleted && e.Active
+                //    && e.HospitalId == feeCaculateExaminationRequest.HospitalId
+                //    && e.Id == feeCaculateExaminationRequest.SpecialistTypeId
+                //    ).FirstOrDefaultAsync();
+                //    if (specialistTypeInfo != null)
+                //        price = specialistTypeInfo.Price;
+                //}
+
+                //if (feeCaculateExaminationRequest.VaccineTypeId.HasValue && feeCaculateExaminationRequest.VaccineTypeId.Value > 0)
+                //{
+                //    var vaccineTypeInfo = await this.unitOfWork.Repository<VaccineTypes>().GetQueryable().Where(e => !e.Deleted && e.Active
+                //    && e.HospitalId == feeCaculateExaminationRequest.HospitalId
+                //    && e.Id == feeCaculateExaminationRequest.VaccineTypeId
+                //    ).FirstOrDefaultAsync();
+                //    if (vaccineTypeInfo != null)
+                //        price = vaccineTypeInfo.Price;
+                //}
+
+
+                //if (!price.HasValue || price.Value <= 0)
+                //{
+                //    var serviceTypeMappingInfo = await this.unitOfWork.Repository<ServiceTypeMappingHospital>().GetQueryable().Where(e => !e.Deleted && e.Active
+                //        && e.HospitalId == feeCaculateExaminationRequest.HospitalId
+                //        && e.ServiceTypeId == feeCaculateExaminationRequest.ServiceTypeId
+                //        ).FirstOrDefaultAsync();
+                //    if (serviceTypeMappingInfo != null)
+                //        price = serviceTypeMappingInfo.Price;
+                //}
 
                 // Lấy phí của dịch vụ phát sinh (nếu có)
-                if (feeCaculateExaminationRequest.ExaminationFormId.HasValue && feeCaculateExaminationRequest.ExaminationFormId.Value > 0)
-                {
-                    var currentExaminationFormDetails = await this.unitOfWork.Repository<ExaminationFormDetails>().GetQueryable().Where(e => e.ExaminationFormId == feeCaculateExaminationRequest.ExaminationFormId.Value && !e.Deleted && !e.MedicalRecordDetailId.HasValue).ToListAsync();
-                    if (currentExaminationFormDetails != null && currentExaminationFormDetails.Any())
-                    {
-                        price += currentExaminationFormDetails.Sum(e => e.Price ?? 0);
-                    }
-                }
+                //if (feeCaculateExaminationRequest.ExaminationFormId.HasValue && feeCaculateExaminationRequest.ExaminationFormId.Value > 0)
+                //{
+                //    var currentExaminationFormDetails = await this.unitOfWork.Repository<ExaminationFormDetails>().GetQueryable().Where(e => e.ExaminationFormId == feeCaculateExaminationRequest.ExaminationFormId.Value && !e.Deleted && !e.MedicalRecordDetailId.HasValue).ToListAsync();
+                //    if (currentExaminationFormDetails != null && currentExaminationFormDetails.Any())
+                //    {
+                //        price += currentExaminationFormDetails.Sum(e => e.Price ?? 0);
+                //    }
+                //}
 
-                if (configFee != null)
-                {
-                    // Xét TH.a: Tính theo phần trăm
-                    if (configFee.IsCheckRate)
-                    {
-                        if (price.HasValue)
-                            fee = (price ?? 0) * (configFee.Rate / 100);
-                    }
-                    // Xét TH.b: Lấy phí cấu hình
-                    else
-                        fee = configFee.Fee;
-                }
-                if (configFeeHospital != null)
-                {
-                    // Xét TH.a: Tính theo phần trăm
-                    if (configFeeHospital.IsRate)
-                    {
-                        if (price.HasValue)
-                            fee += (price ?? 0) * (configFeeHospital.FeeRate / 100);
-                    }
-                    // Xét TH.b: Lấy phí cấu hình
-                    else
-                        fee += configFeeHospital.Fee;
-                }
+                //if (configFee != null)
+                //{
+                //    // Xét TH.a: Tính theo phần trăm
+                //    if (configFee.IsCheckRate)
+                //    {
+                //        if (price.HasValue)
+                //            fee = (price ?? 0) * (configFee.Rate / 100);
+                //    }
+                //    // Xét TH.b: Lấy phí cấu hình
+                //    else
+                //        fee = configFee.Fee;
+                //}
+                //if (configFeeHospital != null)
+                //{
+                //    // Xét TH.a: Tính theo phần trăm
+                //    if (configFeeHospital.IsRate)
+                //    {
+                //        if (price.HasValue)
+                //            fee += (price ?? 0) * (configFeeHospital.FeeRate / 100);
+                //    }
+                //    // Xét TH.b: Lấy phí cấu hình
+                //    else
+                //        fee += configFeeHospital.Fee;
+                //}
 
             }
             feeCaculateExamination.ExaminationPrice = price;

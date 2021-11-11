@@ -143,6 +143,55 @@ namespace Medical.Service
         }
 
         /// <summary>
+        /// Lấy thông tin user hệ thống theo filter
+        /// </summary>
+        /// <param name="searchDashBoardUserSystem"></param>
+        /// <returns></returns>
+        public async Task<double> GetTotalUserSystem(SearchDashBoardUserSystem searchDashBoardUserSystem)
+        {
+            return await Task.Run(() =>
+            {
+                DataTable dataTable = new DataTable();
+                SqlConnection connection = null;
+                SqlCommand command = null;
+                try
+                {
+                    SqlParameter[] sqlParameters = new SqlParameter[]
+                    {
+                        new SqlParameter("@HospitalId", searchDashBoardUserSystem.HospitalId),
+                        new SqlParameter("@UserGroupId", searchDashBoardUserSystem.UserGroupId),
+                        new SqlParameter("@IsLocked", searchDashBoardUserSystem.IsLocked),
+                        new SqlParameter("@IsDeleted", searchDashBoardUserSystem.IsDeleted),
+                        new SqlParameter("@IsActive", searchDashBoardUserSystem.IsActive),
+                        new SqlParameter("@TotalUser", SqlDbType.Float, 0),
+
+                    };
+                    connection = (SqlConnection)Context.Database.GetDbConnection();
+                    command = connection.CreateCommand();
+                    connection.Open();
+                    command.CommandText = "DashBoard_GetTotalUserSystemV2";
+                    command.Parameters.AddRange(sqlParameters);
+                    command.Parameters["@TotalUser"].Direction = ParameterDirection.Output;
+
+                    command.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
+                    sqlDataAdapter.Fill(dataTable);
+                    double totalUser = 0;
+                    double.TryParse(command.Parameters["@TotalUser"].Value.ToString(), out totalUser);
+                    return totalUser;
+                }
+                finally
+                {
+                    if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                        connection.Close();
+
+                    if (command != null)
+                        command.Dispose();
+                }
+            });
+        }
+
+        /// <summary>
         /// Lấy tổng user đã khám bệnh
         /// </summary>
         /// <param name="dashBoardRequest"></param>
@@ -267,6 +316,53 @@ namespace Medical.Service
                     if (double.TryParse(command.Parameters["@TotalCODPriceByYear"].Value.ToString(), out totalCODPriceByYear))
                         dashBoardResponse.TotalCODPriceByYear = totalCODPriceByYear;
                     return dashBoardResponse;
+                }
+                finally
+                {
+                    if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                        connection.Close();
+
+                    if (command != null)
+                        command.Dispose();
+                }
+            });
+        }
+
+        /// <summary>
+        /// Lấy thông tin chi phí của hệ thống theo filter
+        /// </summary>
+        /// <param name="searchDashBoardTotalPayment"></param>
+        /// <returns></returns>
+        public async Task<double> GetTotalPaymentV2(SearchDashBoardTotalPayment searchDashBoardTotalPayment)
+        {
+            return await Task.Run(() =>
+            {
+                DataTable dataTable = new DataTable();
+                SqlConnection connection = null;
+                SqlCommand command = null;
+                try
+                {
+                    SqlParameter[] sqlParameters = new SqlParameter[]
+                    {
+                        new SqlParameter("@HospitalId", searchDashBoardTotalPayment.HospitalId),
+                        new SqlParameter("@PaymentMethodId", searchDashBoardTotalPayment.PaymentMethodId),
+                        new SqlParameter("@Status", searchDashBoardTotalPayment.Status),
+                        new SqlParameter("@TotalAmount", SqlDbType.Float, 0),
+                        
+                    };
+                    connection = (SqlConnection)Context.Database.GetDbConnection();
+                    command = connection.CreateCommand();
+                    connection.Open();
+                    command.CommandText = "DashBoard_GetTotalPaymentV2";
+                    command.Parameters.AddRange(sqlParameters);
+                    command.Parameters["@TotalAmount"].Direction = ParameterDirection.Output;
+
+                    command.CommandType = CommandType.StoredProcedure;
+                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
+                    sqlDataAdapter.Fill(dataTable);
+                    double totalAmount = 0;
+                    double.TryParse(command.Parameters["@TotalAmount"].Value.ToString(), out totalAmount);
+                    return totalAmount;
                 }
                 finally
                 {

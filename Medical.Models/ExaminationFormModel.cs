@@ -2,6 +2,7 @@
 using Medical.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,6 +56,12 @@ namespace Medical.Models
         /// Có BHYT?
         /// </summary>
         public bool IsBHYT { get; set; }
+
+        /// <summary>
+        /// Loại BHYT
+        /// </summary>
+        public int? BHYTType { get; set; }
+
         /// <summary>
         /// phòng khám
         /// </summary>
@@ -62,7 +69,7 @@ namespace Medical.Models
         /// <summary>
         /// (Tái khám/Dịch vụ/...)
         /// </summary>
-        public int ServiceTypeId { get; set; }
+        //public int ServiceTypeId { get; set; }
         /// <summary>
         /// Ca khám
         /// </summary>
@@ -93,7 +100,53 @@ namespace Medical.Models
         /// </summary>
         public string Note { get; set; }
 
+
+        /// <summary>
+        /// Huyết áp
+        /// </summary>
+        public string BloodPressure { get; set; }
+
+        /// <summary>
+        /// Nhịp tim
+        /// </summary>
+        public string HeartBeat { get; set; }
+
+        /// <summary>
+        /// Đường huyết
+        /// </summary>
+        public string BloodSugar { get; set; }
+
+        /// <summary>
+        /// Cờ check có tái khám hay ko
+        /// </summary>
+        public bool IsReExamination { get; set; }
+
+        /// <summary>
+        /// Loại vaccine
+        /// </summary>
+        public int? VaccineTypeId { get; set; }
+
+        /// <summary>
+        /// Số thứ tự khám theo từng khung giờ
+        /// </summary>
+        public int? SystemIndex { get; set; }
+
+        /// <summary>
+        /// Từ giờ hiển thị
+        /// </summary>
+        public string FromTimeExaminationText { get; set; }
+
+        /// <summary>
+        /// Đến giờ hiển thị
+        /// </summary>
+        public string ToTimeExaminationText { get; set; }
+
         #region Extension Properties
+
+        /// <summary>
+        /// Kiểm tra có dịch vụ chọn vaccine ko
+        /// </summary>
+        public bool IsVaccineSelected { get; set; }
 
         /// <summary>
         /// Phí khám bệnh nếu có
@@ -106,6 +159,21 @@ namespace Medical.Models
         public int? BankInfoId { get; set; }
 
         /// <summary>
+        /// Số lần tiêm còn lại
+        /// </summary>
+        public int? TotalRemainInject { get; set; }
+
+        /// <summary>
+        /// Số lần phải tiêm của loại vaccine
+        /// </summary>
+        public int? NumberOfDoses { get; set; }
+
+        /// <summary>
+        /// Tổng số lần chích hiện tại
+        /// </summary>
+        public int? TotalCurrentInjections { get; set; }
+
+        /// <summary>
         /// Tên trạng thái
         /// </summary>
         public string StatusName
@@ -115,23 +183,49 @@ namespace Medical.Models
                 switch (Status)
                 {
                     case (int)CatalogueUtilities.ExaminationStatus.New:
-                        return "Lưu nháp";
+                        {
+                            //if (ServiceTypeCode == "CN")
+                            //    return "Chưa chích";
+                            return "Lưu nháp";
+                        }
                     case (int)CatalogueUtilities.ExaminationStatus.WaitConfirm:
                         return "Chờ xác nhận";
                     case (int)CatalogueUtilities.ExaminationStatus.WaitReExamination:
-                        return "Chờ xác nhận tái khám";
+                        {
+                            //if (ServiceTypeCode == "CN")
+                            //    return "Chờ xác nhận đợt chích tiếp theo";
+                            return "Chờ xác nhận tái khám";
+                        }
                     case (int)CatalogueUtilities.ExaminationStatus.Canceled:
                         return "Đã hủy";
                     case (int)CatalogueUtilities.ExaminationStatus.Confirmed:
                         return "Đã xác nhận thanh toán";
                     case (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination:
-                        return "Đã xác nhận thanh toán tái khám";
+                        {
+                            //if (ServiceTypeCode == "CN")
+                            //    return "Đã xác nhận thanh toán đợt chích tiếp theo";
+                            return "Đã xác nhận thanh toán tái khám";
+                        }
                     case (int)CatalogueUtilities.ExaminationStatus.FinishExamination:
-                        return "Hoàn thành";
+                        {
+                            //if (ServiceTypeCode == "CN")
+                            //    return "Đã chích";
+                            return "Hoàn thành";
+                        }
                     case (int)CatalogueUtilities.ExaminationStatus.PaymentFailed:
                         return "Thanh toán thất bại";
+                    case (int)CatalogueUtilities.ExaminationStatus.WaitRefund:
+                        return "Chờ hoàn tiền";
+                    case (int)CatalogueUtilities.ExaminationStatus.RefundSuccess:
+                        return "Đã hoàn tiền";
+                    case (int)CatalogueUtilities.ExaminationStatus.RefundFailed:
+                        return "Hoàn tiền thất bại";
                     case (int)CatalogueUtilities.ExaminationStatus.PaymentReExaminationFailed:
-                        return "Thanh toán tái khám thất bại";
+                        {
+                            //if (ServiceTypeCode == "CN")
+                            //    return "Thanh toán đợt chích tiếp theo thất bại";
+                            return "Thanh toán tái khám thất bại";
+                        }
                     default:
                         return string.Empty;
                 }
@@ -149,9 +243,24 @@ namespace Medical.Models
         public string HospitalAddress { get; set; }
 
         /// <summary>
+        /// Số điện thoại bệnh viện
+        /// </summary>
+        public string HospitalPhone { get; set; }
+
+        /// <summary>
+        /// Link Url Website của bệnh viện
+        /// </summary>
+        public string HospitalWebSite { get; set; }
+
+        /// <summary>
         /// Tên dịch vụ khám
         /// </summary>
-        public string ServiceTypeName { get; set; }
+        //public string ServiceTypeName { get; set; }
+
+        /// <summary>
+        /// Mã dịch vụ khám
+        /// </summary>
+        //public string ServiceTypeCode { get; set; }
 
         /// <summary>
         /// Mã hồ sơ
@@ -179,6 +288,26 @@ namespace Medical.Models
         public string DoctorDisplayName { get; set; }
 
         /// <summary>
+        /// Tên loại vaccine
+        /// </summary>
+        public string VaccineTypeName { get; set; }
+
+        /// <summary>
+        /// Ngày tiêm vaccine tiếp theo
+        /// </summary>
+        public DateTime? NextInjectionDate { get; set; }
+
+        /// <summary>
+        /// Thông báo ngày tiêm tiếp theo
+        /// </summary>
+        public string NextInjectionDateDisplay { get; set; }
+
+        /// <summary>
+        /// Khung thời gian khám bệnh
+        /// </summary>
+        public string ConfigTimeExaminationValue { get; set; }
+
+        /// <summary>
         /// Lịch sử tạo phiếu khám bệnh (lịch hẹn)
         /// </summary>
         public IList<ExaminationHistoryModel> ExaminationHistories { get; set; }
@@ -197,6 +326,15 @@ namespace Medical.Models
 
         public IList<HospitalFileModel> HospitalFiles { get; set; }
 
+        /// <summary>
+        /// Dịch vụ phát sinh
+        /// </summary>
+        public IList<ExaminationFormAdditionServiceMappingModel> ExaminationFormServiceMappings { get; set; }
+
+        /// <summary>
+        /// Dịch vụ phát sinh (nếu có)
+        /// </summary>
+        public List<int> AdditionServiceIds { get; set; }
 
         #endregion
     }

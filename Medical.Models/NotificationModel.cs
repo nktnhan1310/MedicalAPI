@@ -39,6 +39,11 @@ namespace Medical.Models
         /// </summary>
         public int? NotificationTemplateId { get; set; }
 
+        /// <summary>
+        /// Mã phiếu khám (nếu có)
+        /// </summary>
+        public string ExaminationFormId { get; set; }
+
         #region Extension Properties
 
         /// <summary>

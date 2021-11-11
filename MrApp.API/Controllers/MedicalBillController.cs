@@ -60,7 +60,7 @@ namespace MrApp.API.Controllers
                 MedicalBillId = medicalBillId
             };
             var pagedData = await this.medicalBillService.GetPagedListData(searchMedicalBill);
-            if(pagedData == null || !pagedData.Items.Any())
+            if (pagedData == null || !pagedData.Items.Any())
                 throw new AppException("Không tìm thấy thông tin đơn thuốc");
             return new AppDomainResult()
             {
@@ -143,7 +143,7 @@ namespace MrApp.API.Controllers
             {
                 momoConfiguration = momoConfigurationInfos.FirstOrDefault();
                 string orderInfo = "test";
-                string amount = updateMedicalBillStatus.TotalPrice.HasValue ? updateMedicalBillStatus.TotalPrice.Value.ToString() : "0";
+                string amount = updateMedicalBillStatus.TotalPrice.HasValue ? (updateMedicalBillStatus.TotalPrice.Value.ToString()) : "0";
                 string orderid = Guid.NewGuid().ToString();
                 string requestId = Guid.NewGuid().ToString();
                 string extraData = "";
@@ -190,7 +190,7 @@ namespace MrApp.API.Controllers
                         CreatedBy = LoginContext.Instance.CurrentUser.UserName,
                         Active = true,
                         Deleted = false,
-                        Amount = amount,
+                        Amount = Convert.ToInt64(amount),
                         RequestId = requestId,
                         OrderId = orderid,
                         OrderInfo = orderInfo,

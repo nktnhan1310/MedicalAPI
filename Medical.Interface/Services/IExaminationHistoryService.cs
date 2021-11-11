@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Medical.Interface.Services
 {
-    public interface IExaminationHistoryService : IDomainService<ExaminationHistories, BaseSearch>
+    public interface IExaminationHistoryService : IDomainService<ExaminationHistories, SearchExaminationFormHistory>
     {
     }
 }

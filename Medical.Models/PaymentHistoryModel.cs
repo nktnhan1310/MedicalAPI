@@ -48,7 +48,34 @@ namespace Medical.Models
         /// </summary>
         public int? MedicalBillId { get; set; }
 
+        /// <summary>
+        /// Trạng thái
+        /// 0 => Thanh toán đơn
+        /// 1 => Hoàn tiền
+        /// </summary>
+        public int? Status { get; set; }
+
         #region Extension Properties
+
+        /// <summary>
+        /// Tên trạng thái
+        /// </summary>
+        public string StatusName
+        {
+            get
+            {
+                switch (Status)
+                {
+                    case 0:
+                        return "Đã thanh toán";
+                    case 1:
+                        return "Hoàn tiền";
+                    default:
+                        break;
+                }
+                return string.Empty;
+            }
+        }
 
         /// <summary>
         /// Mã hồ sơ bệnh án

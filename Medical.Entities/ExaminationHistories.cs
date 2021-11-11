@@ -1,6 +1,8 @@
 ﻿using Medical.Entities.DomainEntity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Medical.Entities
@@ -51,6 +53,12 @@ namespace Medical.Entities
         public string ExaminationPaymentIndex { get; set; }
 
         /// <summary>
+        /// Cờ check chỉnh sửa hủy => trạng thái khác
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsEdit { get; set; }
+
+        /// <summary>
         /// Hành động (Tạo lịch hẹn,...)
         /// </summary>
         public int Action { get; set; }
@@ -67,5 +75,94 @@ namespace Medical.Entities
         /// Mô tả lịch hẹn
         /// </summary>
         public string Note { get; set; }
+
+        #region Extension Properties
+
+        /// <summary>
+        /// Tên bác sĩ
+        /// </summary>
+        [NotMapped]
+        public string HospitalName { get; set; }
+
+        /// <summary>
+        /// Địa chỉ bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalAddress { get; set; }
+
+        /// <summary>
+        /// Số điện thoại bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalPhone { get; set; }
+
+        /// <summary>
+        /// Link Url Website của bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalWebSite { get; set; }
+
+        /// <summary>
+        /// Tên dịch vụ khám
+        /// </summary>
+        [NotMapped]
+        public string ServiceTypeName { get; set; }
+
+        /// <summary>
+        /// Mã dịch vụ khám
+        /// </summary>
+        [NotMapped]
+        public string ServiceTypeCode { get; set; }
+
+        /// <summary>
+        /// Mã hồ sơ
+        /// </summary>
+        [NotMapped]
+        public string MedicalRecordCode { get; set; }
+
+        /// <summary>
+        /// Mã người bệnh
+        /// </summary>
+        [NotMapped]
+        public int? ClientId { get; set; }
+
+        /// <summary>
+        /// Tên bệnh nhân
+        /// </summary>
+        [NotMapped]
+        public string ClientName { get; set; }
+
+        /// <summary>
+        /// Phòng khám
+        /// </summary>
+        [NotMapped]
+        public string RoomExaminationName { get; set; }
+
+        /// <summary>
+        /// Chuyên khoa
+        /// </summary>
+        [NotMapped]
+        public string SpecialistTypeName { get; set; }
+
+        /// <summary>
+        /// Tên học vị + tên bác sĩ
+        /// </summary>
+        [NotMapped]
+        public string DoctorName { get; set; }
+
+        /// <summary>
+        /// Tên loại vaccine
+        /// </summary>
+        [NotMapped]
+        public string VaccineTypeName { get; set; }
+
+        /// <summary>
+        /// Mã của user
+        /// </summary>
+        [NotMapped]
+        public int? UserId { get; set; }
+
+        #endregion
+
     }
 }

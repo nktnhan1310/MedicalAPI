@@ -24,8 +24,18 @@ namespace Medical.Entities.Extensions
         public int? SpecialistTypeId { get; set; }
 
         /// <summary>
+        /// Loại vaccine
+        /// </summary>
+        public int? VaccineTypeId { get; set; }
+
+        /// <summary>
         /// Lấy theo lịch khám
         /// </summary>
         public int? ExaminationFormId { get; set; }
+
+        /// <summary>
+        /// Danh sách dịch vụ phát sinh
+        /// </summary>
+        public List<int> AdditionServiceIds { get; set; }
     }
 }

@@ -87,8 +87,39 @@ namespace Medical.Entities
         /// </summary>
         public long? TickEndReceiveExamination { get; set; }
 
+        /// <summary>
+        /// Loại bệnh viện
+        /// </summary>
+        public int? HospitalTypeId { get; set; }
+
+        /// <summary>
+        /// Chức năng của bệnh viện
+        /// </summary>
+        public int? HospitalFunctionTypeId { get; set; }
+
+        /// <summary>
+        /// Cò check làm việc thứ 7
+        /// </summary>
+        public bool IsSaturdayWorking { get; set; }
+
+        /// <summary>
+        /// Cờ check làm việc chủ nhật
+        /// </summary>
+        public bool IsSundayWorking { get; set; }
 
         #region Extension Properties
+
+        /// <summary>
+        /// Tên loại bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalTypeName { get; set; }
+
+        /// <summary>
+        /// Tên chức năng bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalFunctionTypeName { get; set; }
 
         /// <summary>
         /// Giá trị thời gian kết thúc khám bệnh (00:00:00)
@@ -130,9 +161,6 @@ namespace Medical.Entities
 
 
         #endregion
-
-
-
 
     }
 }

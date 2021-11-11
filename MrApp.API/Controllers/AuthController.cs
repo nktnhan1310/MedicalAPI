@@ -28,6 +28,7 @@ namespace MrApp.API.Controllers
         private readonly IUserGroupService userGroupService;
         private readonly IFaceBookAuthService faceBookAuthService;
         private readonly IGoogleAuthService googleAuthService;
+        private readonly IMedicalRecordService medicalRecordService;
 
         public AuthController(IServiceProvider serviceProvider, IConfiguration configuration, IMapper mapper, ILogger<AuthCoreController> logger) : base(serviceProvider, configuration, mapper, logger)
         {
@@ -35,6 +36,7 @@ namespace MrApp.API.Controllers
             userGroupService = serviceProvider.GetRequiredService<IUserGroupService>();
             faceBookAuthService = serviceProvider.GetRequiredService<IFaceBookAuthService>();
             googleAuthService = serviceProvider.GetRequiredService<IGoogleAuthService>();
+            medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
         }
 
         /// <summary>
@@ -90,8 +92,8 @@ namespace MrApp.API.Controllers
         /// <param name="register"></param>
         /// <returns></returns>
         [AllowAnonymous]
-        [HttpPost("register")]
-        public override async Task<AppDomainResult> Register([FromBody] RegisterModel register)
+        [HttpPost("app-register")]
+        public async new Task<AppDomainResult> Register([FromBody] AppRegisterModel register)
         {
             AppDomainResult appDomainResult = new AppDomainResult();
             if (ModelState.IsValid)
@@ -125,8 +127,41 @@ namespace MrApp.API.Controllers
                 if (!string.IsNullOrEmpty(messageUserCheck))
                     throw new AppException(messageUserCheck);
                 user.Password = SecurityUtils.HashSHA1(register.Password);
-                appDomainResult.Success = await userService.CreateAsync(user);
-                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                bool success = await userService.CreateAsync(user);
+                if (success)
+                {
+                    // Điền thông tin hồ sơ
+                    MedicalRecords medicalRecords = new MedicalRecords()
+                    {
+                        Address = register.Address,
+                        UserId = user.Id,
+                        Email = register.Email,
+                        Phone = register.Phone,
+                        JobId = register.JobId,
+                        DistrictId = register.DicstrictId,
+                        CityId = register.CityId,
+                        Gender = register.Gender,
+                        CertificateNo = register.IdentityCardNo,
+                        CountryId = register.CountryId,
+                        Created = DateTime.Now,
+                        CreatedBy = user.UserName,
+                        Active = true,
+                        Deleted = false,
+                        WardId = register.WardId,
+                        NationId = register.NationId,
+                        UserFullName = register.UserFullName,
+                        BirthDate = register.BirthDate,
+                        
+                    };
+                    bool successRecord = await this.medicalRecordService.CreateAsync(medicalRecords);
+                    appDomainResult.Success = successRecord;
+                    appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+                }
+                else
+                {
+                    appDomainResult.Success = false;
+                    appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
+                }
             }
             else
             {

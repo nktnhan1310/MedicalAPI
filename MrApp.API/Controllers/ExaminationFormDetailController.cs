@@ -60,7 +60,7 @@ namespace MrApp.API.Controllers
                 ExaminationFormDetailId = examinationFormDetailId
             };
             var pagedData = await this.examinationFormDetailService.GetPagedListData(searchExaminationFormDetail);
-            if(pagedData == null || !pagedData.Items.Any())
+            if (pagedData == null || !pagedData.Items.Any())
                 throw new AppException("Không có thông tin dịch vụ");
             return new AppDomainResult()
             {
@@ -142,7 +142,7 @@ namespace MrApp.API.Controllers
             {
                 momoConfiguration = momoConfigurationInfos.FirstOrDefault();
                 string orderInfo = "test";
-                string amount = updateExaminationFormDetailStatus.TotalPrice.HasValue ? updateExaminationFormDetailStatus.TotalPrice.Value.ToString() : "0";
+                string amount = updateExaminationFormDetailStatus.TotalPrice.HasValue ? (updateExaminationFormDetailStatus.TotalPrice.Value.ToString()) : "0";
                 string orderid = Guid.NewGuid().ToString();
                 string requestId = Guid.NewGuid().ToString();
                 string extraData = "";
@@ -188,7 +188,7 @@ namespace MrApp.API.Controllers
                         CreatedBy = LoginContext.Instance.CurrentUser.UserName,
                         Active = true,
                         Deleted = false,
-                        Amount = amount,
+                        Amount = Convert.ToInt64(amount),
                         RequestId = requestId,
                         OrderId = orderid,
                         OrderInfo = orderInfo,

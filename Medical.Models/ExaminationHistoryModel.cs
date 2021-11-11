@@ -2,6 +2,7 @@
 using Medical.Utilities;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -70,7 +71,84 @@ namespace Medical.Models
         /// </summary>
         public string Note { get; set; }
 
+        /// <summary>
+        /// Cờ check chỉnh sửa hủy => trạng thái khác
+        /// </summary>
+        [DefaultValue(false)]
+        public bool IsEdit { get; set; }
+
         #region Extension Properties
+
+        /// <summary>
+        /// Tên bác sĩ
+        /// </summary>
+        public string HospitalName { get; set; }
+
+        /// <summary>
+        /// Địa chỉ bệnh viện
+        /// </summary>
+        public string HospitalAddress { get; set; }
+
+        /// <summary>
+        /// Số điện thoại bệnh viện
+        /// </summary>
+        public string HospitalPhone { get; set; }
+
+        /// <summary>
+        /// Link Url Website của bệnh viện
+        /// </summary>
+        public string HospitalWebSite { get; set; }
+
+        /// <summary>
+        /// Tên dịch vụ khám
+        /// </summary>
+        public string ServiceTypeName { get; set; }
+
+        /// <summary>
+        /// Mã dịch vụ khám
+        /// </summary>
+        public string ServiceTypeCode { get; set; }
+
+        /// <summary>
+        /// Mã hồ sơ
+        /// </summary>
+        public string MedicalRecordCode { get; set; }
+
+        /// <summary>
+        /// Mã người bệnh
+        /// </summary>
+        public int? ClientId { get; set; }
+
+        /// <summary>
+        /// Tên bệnh nhân
+        /// </summary>
+        public string ClientName { get; set; }
+
+        /// <summary>
+        /// Phòng khám
+        /// </summary>
+        public string RoomExaminationName { get; set; }
+
+        /// <summary>
+        /// Chuyên khoa
+        /// </summary>
+        public string SpecialistTypeName { get; set; }
+
+        /// <summary>
+        /// Tên học vị + tên bác sĩ
+        /// </summary>
+        public string DoctorName { get; set; }
+
+        /// <summary>
+        /// Tên loại vaccine
+        /// </summary>
+        public string VaccineTypeName { get; set; }
+
+        /// <summary>
+        /// Mã của user
+        /// </summary>
+        public int? UserId { get; set; }
+
 
         /// <summary>
         /// Tên trạng thái
@@ -82,23 +160,49 @@ namespace Medical.Models
                 switch (Status)
                 {
                     case (int)CatalogueUtilities.ExaminationStatus.New:
-                        return "Lưu nháp";
+                        {
+                            //if (ServiceTypeCode == "CN")
+                            //    return "Chưa chích";
+                            return "Lưu nháp";
+                        }
                     case (int)CatalogueUtilities.ExaminationStatus.WaitConfirm:
                         return "Chờ xác nhận";
                     case (int)CatalogueUtilities.ExaminationStatus.WaitReExamination:
-                        return "Chờ xác nhận tái khám";
+                        {
+                            //if (ServiceTypeCode == "CN")
+                            //    return "Chờ xác nhận đợt chích tiếp theo";
+                            return "Chờ xác nhận tái khám";
+                        }
                     case (int)CatalogueUtilities.ExaminationStatus.Canceled:
                         return "Đã hủy";
                     case (int)CatalogueUtilities.ExaminationStatus.Confirmed:
                         return "Đã xác nhận thanh toán";
                     case (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination:
-                        return "Đã xác nhận thanh toán tái khám";
+                        {
+                            //if (ServiceTypeCode == "CN")
+                            //    return "Đã xác nhận thanh toán đợt chích tiếp theo";
+                            return "Đã xác nhận thanh toán tái khám";
+                        }
                     case (int)CatalogueUtilities.ExaminationStatus.FinishExamination:
-                        return "Hoàn thành";
+                        {
+                            //if (ServiceTypeCode == "CN")
+                            //    return "Đã chích";
+                            return "Hoàn thành";
+                        }
                     case (int)CatalogueUtilities.ExaminationStatus.PaymentFailed:
                         return "Thanh toán thất bại";
                     case (int)CatalogueUtilities.ExaminationStatus.PaymentReExaminationFailed:
-                        return "Thanh toán tái khám thất bại";
+                        {
+                            //if (ServiceTypeCode == "CN")
+                            //    return "Thanh toán đợt chích tiếp theo thất bại";
+                            return "Thanh toán tái khám thất bại";
+                        }
+                    case (int)CatalogueUtilities.ExaminationStatus.WaitRefund:
+                        return "Chờ hoàn tiền";
+                    case (int)CatalogueUtilities.ExaminationStatus.RefundSuccess:
+                        return "Đã hoàn tiền";
+                    case (int)CatalogueUtilities.ExaminationStatus.RefundFailed:
+                        return "Hoàn tiền thất bại";
                     default:
                         return string.Empty;
                 }
@@ -130,6 +234,10 @@ namespace Medical.Models
                         return "Trả lại phiếu";
                     case (int)CatalogueUtilities.ExaminationAction.ReturnReExamination:
                         return "Trả lại phiếu tái khám";
+                    case (int)CatalogueUtilities.ExaminationAction.Refund:
+                        return "Hoàn tiền";
+                    case (int)CatalogueUtilities.ExaminationAction.Delete:
+                        return "Xóa phiếu";
                     default:
                         return string.Empty;
                 }

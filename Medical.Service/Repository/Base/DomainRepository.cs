@@ -22,10 +22,11 @@ namespace Medical.Service
     public class DomainRepository<T> : IDomainRepository<T> where T : MedicalAppDomain
     {
         protected readonly IMedicalDbContext Context;
-
+        protected DbSet<T> Entities;
         public DomainRepository(IMedicalDbContext context)
         {
             Context = context;
+            Entities = Context.Set<T>();
         }
         public DomainRepository(IDbContextFactory dbContextFactory)
         {
@@ -67,6 +68,25 @@ namespace Medical.Service
         {
             Context.Set<T>().AddOrUpdate<T>(entity);
         }
+
+        /// <summary>  
+        /// Adds the range.  
+        /// </summary>  
+        /// <param name="entities">The entities.</param>  
+        public void AddRange(IList<T> entities)
+        {
+            Entities.AddRange(entities);
+        }
+
+        /// <summary>  
+        /// Removes the specified entity.  
+        /// </summary>  
+        /// <param name="entity">The entity.</param>  
+        public void RemoveRange(T entity)
+        {
+            Entities.Remove(entity);
+        }
+
 
         public virtual void Update(T entity)
         {
@@ -161,30 +181,35 @@ namespace Medical.Service
             {
                 PagedList<T> pagedList = new PagedList<T>();
                 DataTable dataTable = new DataTable();
-                SqlConnection connection = null;
-                SqlCommand command = null;
-                try
+                using (SqlConnection connection = new SqlConnection(Context.Database.GetConnectionString()))
                 {
-                    connection = (SqlConnection)Context.Database.GetDbConnection();
-                    command = connection.CreateCommand();
-                    connection.Open();
-                    command.CommandText = commandText;
-                    command.Parameters.AddRange(sqlParameters);
-                    command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
-                    command.CommandType = CommandType.StoredProcedure;
-                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
-                    sqlDataAdapter.Fill(dataTable);
-                    pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
-                    pagedList.Items = MappingDataTable.ConvertToList<T>(dataTable);
-                    return pagedList;
-                }
-                finally
-                {
-                    if (connection != null && connection.State == System.Data.ConnectionState.Open)
-                        connection.Close();
+                    using (var command = connection.CreateCommand())
+                    {
+                        //SqlCommand command = null;
+                        try
+                        {
+                            //connection = (SqlConnection)Context.Database.GetDbConnection();
+                            //command = connection.CreateCommand();
+                            connection.Open();
+                            command.CommandText = commandText;
+                            command.Parameters.AddRange(sqlParameters);
+                            command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
+                            command.CommandType = CommandType.StoredProcedure;
+                            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
+                            sqlDataAdapter.Fill(dataTable);
+                            pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
+                            pagedList.Items = MappingDataTable.ConvertToList<T>(dataTable);
+                            return pagedList;
+                        }
+                        finally
+                        {
+                            if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                                connection.Close();
 
-                    if (command != null)
-                        command.Dispose();
+                            if (command != null)
+                                command.Dispose();
+                        }
+                    }
                 }
             });
         }
@@ -197,31 +222,36 @@ namespace Medical.Service
             {
                 object obj = new object();
                 DataTable dataTable = new DataTable();
-                SqlConnection connection = null;
-                SqlCommand command = null;
-                try
+                using (SqlConnection connection = new SqlConnection(Context.Database.GetConnectionString()))
                 {
-                    connection = (SqlConnection)Context.Database.GetDbConnection();
-                    command = connection.CreateCommand();
-                    connection.Open();
-                    command.CommandText = commandText;
-                    command.Parameters.AddRange(sqlParameters);
-                    command.Parameters[outputName].Direction = ParameterDirection.Output;
-                    command.CommandType = CommandType.StoredProcedure;
-                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
-                    sqlDataAdapter.Fill(dataTable);
-                    var objectValue = command.Parameters[outputName].Value;
-                    if (objectValue != null)
-                        obj = objectValue.ToString();
-                    return obj;
-                }
-                finally
-                {
-                    if (connection != null && connection.State == System.Data.ConnectionState.Open)
-                        connection.Close();
+                    //connection = (SqlConnection)Context.Database.ConnectionString.GetDbConnection();
+                    using (SqlCommand command = connection.CreateCommand())
+                    {
+                        try
+                        {
+                            //connection = (SqlConnection)Context.Database.GetDbConnection();
+                            //command = connection.CreateCommand();
+                            connection.Open();
+                            command.CommandText = commandText;
+                            command.Parameters.AddRange(sqlParameters);
+                            command.Parameters[outputName].Direction = ParameterDirection.Output;
+                            command.CommandType = CommandType.StoredProcedure;
+                            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
+                            sqlDataAdapter.Fill(dataTable);
+                            var objectValue = command.Parameters[outputName].Value;
+                            if (objectValue != null)
+                                obj = objectValue.ToString();
+                            return obj;
+                        }
+                        finally
+                        {
+                            if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                                connection.Close();
 
-                    if (command != null)
-                        command.Dispose();
+                            if (command != null)
+                                command.Dispose();
+                        }
+                    }
                 }
             });
         }
@@ -233,29 +263,35 @@ namespace Medical.Service
             {
                 IList<T> listData = new List<T>();
                 DataTable dataTable = new DataTable();
-                SqlConnection connection = null;
-                SqlCommand command = null;
-                try
+                using (SqlConnection connection = new SqlConnection(Context.Database.GetConnectionString()))
                 {
-                    connection = (SqlConnection)Context.Database.GetDbConnection();
-                    command = connection.CreateCommand();
-                    connection.Open();
-                    command.CommandText = commandText;
-                    command.Parameters.AddRange(sqlParameters);
-                    command.CommandType = CommandType.StoredProcedure;
-                    SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
-                    sqlDataAdapter.Fill(dataTable);
-                    listData = MappingDataTable.ConvertToList<T>(dataTable);
-                    return listData;
-                }
-                finally
-                {
-                    if (connection != null && connection.State == System.Data.ConnectionState.Open)
-                        connection.Close();
+                    //SqlConnection connection = null;
+                    SqlCommand command = null;
+                    try
+                    {
+                        //connection = (SqlConnection)Context.Database.GetDbConnection();
+                        command = connection.CreateCommand();
+                        connection.Open();
+                        command.CommandText = commandText;
+                        command.Parameters.AddRange(sqlParameters);
+                        command.CommandType = CommandType.StoredProcedure;
+                        SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
+                        sqlDataAdapter.Fill(dataTable);
+                        listData = MappingDataTable.ConvertToList<T>(dataTable);
+                        return listData;
+                    }
+                    finally
+                    {
+                        if (connection != null && connection.State == System.Data.ConnectionState.Open)
+                            connection.Close();
 
-                    if (command != null)
-                        command.Dispose();
+                        if (command != null)
+                            command.Dispose();
+                    }
+
                 }
+                
+                
             });
         }
 

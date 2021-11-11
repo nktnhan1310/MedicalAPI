@@ -14,6 +14,15 @@ namespace Medical.Entities
 
         /// <summary>
         /// Loại file
+        /// </summary>
+        public int? TypeId { get; set; }
+
+        /// <summary>
+        /// Mã thư mục hình ảnh
+        /// </summary>
+        public int? FolderId { get; set; }
+        /// <summary>
+        /// Loại file
         /// 0 => HÌNH TOA THUỐC
         /// 1 => HÌNH XN
         /// 2 => HÌNH SIÊU ÂM

@@ -13,10 +13,16 @@ namespace Medical.Entities
         /// Mã bác sĩ
         /// </summary>
         public int DoctorId { get; set; }
+
         /// <summary>
-        /// Ngày khám
+        /// Từ ngày
         /// </summary>
-        public DateTime? ExaminationDate { get; set; }
+        public DateTime? FromDate { get; set; }
+
+        /// <summary>
+        /// Đến ngày
+        /// </summary>
+        public DateTime? ToDate { get; set; }
 
         /// <summary>
         /// Mã lịch trực

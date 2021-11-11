@@ -7,6 +7,7 @@ using Medical.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -14,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Medical.Service
@@ -21,7 +23,7 @@ namespace Medical.Service
     public class HospitalService : DomainService<Hospitals, SearchHospital>, IHospitalService
     {
         private readonly IConfiguration configuration;
-        public HospitalService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper)
+        public HospitalService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IServiceProvider serviceProvider) : base(unitOfWork, mapper)
         {
             this.configuration = configuration;
         }
@@ -37,6 +39,9 @@ namespace Medical.Service
             {
                 new SqlParameter("@PageIndex", baseSearch.PageIndex),
                 new SqlParameter("@PageSize", baseSearch.PageSize),
+
+                new SqlParameter("@HospitalTypeId", baseSearch.HospitalTypeId),
+                new SqlParameter("@HospitalFunctionTypeId", baseSearch.HospitalFunctionTypeId),
                 new SqlParameter("@Email", string.IsNullOrEmpty(baseSearch.Email) ? DBNull.Value : (object)baseSearch.Email),
                 new SqlParameter("@Phone", baseSearch.Phone),
                 new SqlParameter("@TotalVisitNo", baseSearch.TotalVisitNo),
@@ -58,7 +63,7 @@ namespace Medical.Service
             if (item != null)
             {
                 await unitOfWork.Repository<Hospitals>().CreateAsync(item);
-                await unitOfWork.SaveAsync();
+                //await unitOfWork.SaveAsync();
                 // Cập nhật thông tin dịch vụ bệnh viện
                 if (item.ServiceTypeMappingHospitals != null && item.ServiceTypeMappingHospitals.Any())
                 {
@@ -69,22 +74,10 @@ namespace Medical.Service
                         serviceTypeMappingHospital.CreatedBy = item.CreatedBy;
                         serviceTypeMappingHospital.Active = true;
                         serviceTypeMappingHospital.Id = 0;
-                        await unitOfWork.Repository<ServiceTypeMappingHospital>().CreateAsync(serviceTypeMappingHospital);
+                        unitOfWork.Repository<ServiceTypeMappingHospital>().Create(serviceTypeMappingHospital);
                     }
                 }
-                // Cập nhật thông tin Kênh bệnh viện
-                //if (item.ChannelMappingHospitals != null && item.ChannelMappingHospitals.Any())
-                //{
-                //    foreach (var channelMappingHospital in item.ChannelMappingHospitals)
-                //    {
-                //        channelMappingHospital.HospitalId = item.Id;
-                //        channelMappingHospital.Created = DateTime.Now;
-                //        channelMappingHospital.CreatedBy = item.CreatedBy;
-                //        channelMappingHospital.Active = true;
-                //        await unitOfWork.Repository<ChannelMappingHospital>().CreateAsync(channelMappingHospital);
-                //    }
-                //}
-                if(item.ChannelIds != null && item.ChannelIds.Any())
+                if (item.ChannelIds != null && item.ChannelIds.Any())
                 {
                     foreach (var channelId in item.ChannelIds)
                     {
@@ -98,7 +91,7 @@ namespace Medical.Service
                             HospitalId = item.Id,
                             Id = 0
                         };
-                        await unitOfWork.Repository<ChannelMappingHospital>().CreateAsync(channelMappingHospital);
+                        unitOfWork.Repository<ChannelMappingHospital>().Create(channelMappingHospital);
                     }
                 }
 
@@ -130,6 +123,21 @@ namespace Medical.Service
                 }
                 await unitOfWork.SaveAsync();
                 result = true;
+                string oldDataJson = JsonSerializer.Serialize<Hospitals>(item);
+
+                // Thêm lịch sử chỉnh sửa bệnh viện
+                HospitalHistories hospitalHistories = new HospitalHistories()
+                {
+                    Created = DateTime.Now,
+                    CreatedBy = item.CreatedBy,
+                    OldHospitalDataJson = oldDataJson,
+                    HospitalId = item.Id,
+                    Active = true,
+                    Deleted = false,
+                };
+                await this.unitOfWork.Repository<HospitalHistories>().CreateAsync(hospitalHistories);
+                await unitOfWork.SaveAsync();
+
             }
             return result;
         }
@@ -146,12 +154,15 @@ namespace Medical.Service
                  .AsNoTracking()
                  .Where(e => e.Id == item.Id && !e.Deleted)
                  .FirstOrDefaultAsync();
-
+            var currentMinutePerPatient = exists.MinutePerPatient;
+            string oldDataJson = string.Empty;
+            string newDataJson = string.Empty;
             if (exists != null)
             {
+                oldDataJson = JsonSerializer.Serialize<Hospitals>(exists);
                 exists = mapper.Map<Hospitals>(item);
-                unitOfWork.Repository<Hospitals>().Update(exists);
 
+                unitOfWork.Repository<Hospitals>().Update(exists);
                 // Cập nhật thông tin dịch vụ
                 if (item.ServiceTypeMappingHospitals != null && item.ServiceTypeMappingHospitals.Any())
                 {
@@ -174,6 +185,7 @@ namespace Medical.Service
                             serviceTypeMappingHospital.Created = DateTime.Now;
                             serviceTypeMappingHospital.CreatedBy = item.UpdatedBy;
                             serviceTypeMappingHospital.Id = 0;
+                            serviceTypeMappingHospital.Active = true;
                             await unitOfWork.Repository<ServiceTypeMappingHospital>().CreateAsync(serviceTypeMappingHospital);
                         }
                     }
@@ -228,7 +240,7 @@ namespace Medical.Service
                     {
                         foreach (var channelMappingHospital in channelMappingHospitals)
                         {
-                            
+
                             this.unitOfWork.Repository<ChannelMappingHospital>().Delete(channelMappingHospital);
                         }
                     }
@@ -288,6 +300,28 @@ namespace Medical.Service
                 }
                 await unitOfWork.SaveAsync();
                 result = true;
+
+                // Thêm lịch sử cập nhật lịch sử
+                newDataJson = JsonSerializer.Serialize<Hospitals>(exists);
+                HospitalHistories hospitalHistories = new HospitalHistories()
+                {
+                    Created = DateTime.Now,
+                    CreatedBy = item.UpdatedBy,
+                    HospitalId = item.Id,
+                    Deleted = false,
+                    Active = true,
+                    OldHospitalDataJson = oldDataJson,
+                    NewHospitalDataJson = newDataJson,
+                };
+                await this.unitOfWork.Repository<HospitalHistories>().CreateAsync(hospitalHistories);
+
+
+                // Cập nhật lại số lượng ca khám tối đa cho những lịch lớn hơn ngày hiện tại
+                if (item.MinutePerPatient != currentMinutePerPatient)
+                    await UpdateExaminationSchedule(exists);
+
+                await this.unitOfWork.SaveAsync();
+
             }
             return result;
         }
@@ -304,7 +338,9 @@ namespace Medical.Service
 
             bool isExistItem = await this.Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.Code == item.Code);
             if (isExistItem)
+            {
                 messages.Add("Mã bệnh viện đã tồn tại");
+            }
             // Kiểm tra trùng kênh đăng ký
             if (item.ChannelMappingHospitals != null && item.ChannelMappingHospitals.Any())
             {
@@ -344,5 +380,113 @@ namespace Medical.Service
             return result;
         }
 
+        /// <summary>
+        /// Cập nhật lại tất cả lịch lớn hơn ngày hiện tại, có cấu hình theo số phút khám của bệnh viện
+        /// </summary>
+        /// <param name="hospitalInfo"></param>
+        /// <returns></returns>
+        private async Task UpdateExaminationSchedule(Hospitals hospitalInfo)
+        {
+            var examinationSchedules = await this.unitOfWork.Repository<ExaminationSchedules>().GetQueryable()
+                .Where(e => !e.Deleted && e.Active && e.HospitalId == hospitalInfo.Id
+                && e.ExaminationDate >= DateTime.Now
+                && e.IsUseHospitalConfig
+                )
+                .ToListAsync();
+            // Lấy ra thông tin tất cả buổi cấu hình của bệnh viện
+            var sessionTypes = await this.unitOfWork.Repository<SessionTypes>().GetQueryable()
+                .Where(e => !e.Deleted && e.Active && e.HospitalId == hospitalInfo.Id).ToListAsync();
+            if (examinationSchedules != null && examinationSchedules.Any())
+            {
+                foreach (var examinationSchedule in examinationSchedules)
+                {
+                    if (hospitalInfo != null && hospitalInfo.MinutePerPatient > 0)
+                    {
+                        // Cập nhật lại giới hạn số người khám theo buổi cho lịch
+                        if (sessionTypes != null && sessionTypes.Any())
+                        {
+                            foreach (var sessionType in sessionTypes)
+                            {
+                                var totalMinuteExamination = (sessionType.ToTime ?? 0) - (sessionType.FromTime ?? 0);
+                                int maximumPatient = 0;
+                                maximumPatient = (totalMinuteExamination / hospitalInfo.MinutePerPatient);
+                                switch (sessionType.Code)
+                                {
+                                    // Lấy thông tin buổi sáng => tính tổng số bệnh nhân tối đa cho buổi sáng.
+                                    case "BS":
+                                        {
+                                            if (totalMinuteExamination > 0)
+                                            {
+                                                if (maximumPatient > 0) examinationSchedule.MaximumMorningExamination = maximumPatient;
+                                            }
+                                        }
+                                        break;
+                                    // Lấy thông tin buổi sáng => tính tổng số bệnh nhân tối đa cho buổi chiều.
+                                    case "BC":
+                                        {
+                                            if (totalMinuteExamination > 0)
+                                            {
+                                                if (maximumPatient > 0) examinationSchedule.MaximumAfternoonExamination = maximumPatient;
+                                            }
+                                        }
+                                        break;
+                                    // Lấy thông tin buổi chiều => tính tổng số bệnh nhân tối đa cho ngoài giờ.
+                                    default:
+                                        {
+                                            if (maximumPatient > 0) examinationSchedule.MaximumOtherExamination = maximumPatient;
+                                        }
+                                        break;
+                                }
+                            }
+
+                            examinationSchedule.Updated = DateTime.Now;
+                            examinationSchedule.UpdatedBy = hospitalInfo.UpdatedBy;
+
+                            Expression<Func<ExaminationSchedules, object>>[] expressions = new Expression<Func<ExaminationSchedules, object>>[]
+                            {
+                                e => e.MaximumAfternoonExamination,
+                                e => e.MaximumMorningExamination,
+                                e => e.MaximumOtherExamination,
+                                e => e.Updated,
+                                e => e.UpdatedBy
+                            };
+                            this.unitOfWork.Repository<ExaminationSchedules>().UpdateFieldsSave(examinationSchedule, expressions);
+                        }
+
+                        // Cập nhật lại số lượng khám theo chi tiết lịch
+                        var examinationScheduleDetails = await this.unitOfWork.Repository<ExaminationScheduleDetails>().GetQueryable()
+                            .Where(e => !e.Deleted && e.Active && e.ScheduleId == examinationSchedule.Id
+                            && e.IsUseHospitalConfig
+                            )
+                            .ToListAsync();
+                        if (examinationScheduleDetails != null && examinationScheduleDetails.Any())
+                        {
+                            foreach (var examinationScheduleDetail in examinationScheduleDetails)
+                            {
+                                var totalMinuteExamination = (examinationScheduleDetail.ToTime ?? 0) - (examinationScheduleDetail.FromTime ?? 0);
+                                if (totalMinuteExamination > 0)
+                                {
+                                    var maximumPatient = (totalMinuteExamination / hospitalInfo.MinutePerPatient);
+                                    if (maximumPatient > 0)
+                                    {
+                                        examinationScheduleDetail.MaximumExamination = maximumPatient;
+                                        examinationScheduleDetail.Updated = DateTime.Now;
+                                        examinationScheduleDetail.UpdatedBy = hospitalInfo.UpdatedBy;
+                                        Expression<Func<ExaminationScheduleDetails, object>>[] expressionDetails = new Expression<Func<ExaminationScheduleDetails, object>>[]
+                                        {
+                                            e => e.MaximumExamination,
+                                            e => e.Updated,
+                                            e => e.UpdatedBy
+                                        };
+                                        this.unitOfWork.Repository<ExaminationScheduleDetails>().UpdateFieldsSave(examinationScheduleDetail, expressionDetails);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                await this.unitOfWork.SaveAsync();
+            }
+        }
     }
 }

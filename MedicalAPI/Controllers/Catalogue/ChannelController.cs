@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Medical.Core.App.Controllers;
+using Medical.Utilities;
 
 namespace MedicalAPI.Controllers
 {

@@ -26,9 +26,17 @@ namespace Medical.Utilities
         public const string TEMP_FOLDER_NAME = "Temp";
         public const string MEDICAL_RECORD_FOLDER_NAME = "medicalrecord";
         public const string QR_CODE_FOLDER_NAME = "qrcode";
+        public const string BAR_CODE_FOLDER_NAME = "barcode";
+
         public const string USER_FOLDER_NAME = "user";
+        public const string NEW_FEED_FOLDER = "newfeed";
+        public const string SYSTEM_FOLDER = "system";
+        public const string TEMPLATE_FOLDER_NAME = "Template";
 
         public const string GET_TOTAL_NOTIFICATION = "get-total-notification";
+
+
+        public const string CN_SERVICE_TYPE = "CN";
 
         /// <summary>
         /// Danh mục quyền
@@ -59,10 +67,71 @@ namespace Medical.Utilities
         public const string NOTI_TEMPLATE_MEDICAL_RECORD_CREATE = "MEDICAL_RECORD_CREATE";
 
         /// <summary>
-        /// Tạo phiếu khám
+        /// Template thông báo cho user
         /// </summary>
-        public const string NOTI_TEMPLATE_EXAMINATION_FORM_CREATE = "EXAMINATION_FORM_CREATE";
+        public const string NOTI_TEMPLATE_EXAMINATION_FORM_CREATE = "NOTI_TEMPLATE_EXAMINATION_FORM_CREATE";
 
+        /// <summary>
+        /// Template thông báo cho bác sĩ
+        /// </summary>
+        public const string NOTI_TEMPLATE_EXAMINATION_FORM_DOCTOR_CREATE = "NOTI_TEMPLATE_EXAMINATION_FORM_DOCTOR_CREATE";
+
+        /// <summary>
+        /// Template thông báo bác sĩ cập nhật thông tin cho phiếu khám
+        /// </summary>
+        public const string NOTI_TEMPLATE_EXAMINATION_FORM_DOCTOR_UPDATE = "NOTI_TEMPLATE_EXAMINATION_FORM_DOCTOR_UPDATE";
+
+        /// <summary>
+        /// Template thông báo user cập nhật thông tin cho phiếu khám
+        /// </summary>
+        public const string NOTI_TEMPLATE_EXAMINATION_FORM_USER_UPDATE = "NOTI_TEMPLATE_EXAMINATION_FORM_USER_UPDATE";
+
+        /// <summary>
+        /// Template thông báo admin cập nhật thông tin phiếu khám
+        /// </summary>
+        public const string NOTI_TEMPLATE_EXAMINATION_FORM_ADMIN_UPDATE = "NOTI_TEMPLATE_EXAMINATION_FORM_ADMIN_UPDATE";
+
+        /// <summary>
+        /// Template thông báo khi thanh toán online
+        /// </summary>
+        public const string NOTI_TEMPLATE_EXAMINATION_FORM_PAYMENT_UPDATE = "NOTI_TEMPLATE_EXAMINATION_FORM_PAYMENT_UPDATE";
+
+        /// <summary>
+        /// Thông báo hủy lịch trực cho bác sĩ
+        /// </summary>
+        public const string NOTI_TEMPLATE_EXAMINATION_SCHEDULE_DT_DELETE = "NOTI_TEMPLATE_EXAMINATION_SCHEDULE_DT_DELETE";
+
+        /// <summary>
+        /// Thông báo hủy chi tiết ca trực cho bác sĩ
+        /// </summary>
+        public const string TEMPLATE_EXAMINATION_SCHEDULE_DETAIL_DT_DELETE = "TEMPLATE_EXAMINATION_SCHEDULE_DETAIL_DT_DELETE";
+
+        /// <summary>
+        /// Thông báo bác sĩ thay thế lịch trực
+        /// </summary>
+        public const string TEMPLATE_SCHEDULE_REPLACE_DT = "TEMPLATE_SCHEDULE_REPLACE_DT";
+
+        /// <summary>
+        /// Thông báo bác sĩ thay thế cho user
+        /// </summary>
+        public const string TEMPLATE_SCHEDULE_REPLACE_DOCTOR_USER = "TEMPLATE_SCHEDULE_REPLACE_DOCTOR_USER";
+
+        /// <summary>
+        /// Thông báo chúc mừng sinh nhật
+        /// </summary>
+        public const string TEMPLATE_HAPPY_BIRTHDATE = "TEMPLATE_HAPPY_BIRTHDATE";
+
+        /// <summary>
+        /// Thông báo thời gian khám kế tiếp (10,15,30 phút đên luợt khám của bạn)
+        /// </summary>
+        public const string TEMPLATE_NEXT_EXAMINATION_NOTIFY = "TEMPLATE_NEXT_EXAMINATION_NOTIFY";
+
+        #endregion
+
+        #region CATALOGUE IMPORT TEMPLATE
+
+        public const string ROOM_EXAMINATION_TEMPLATE_NAME = "RoomExaminationTemplate.xlsx";
+        public const string EXAMINATION_SCHEDULE_TEMPLATE_NAME = "ExaminationScheduleTemplate.xlsx";
 
         #endregion
 

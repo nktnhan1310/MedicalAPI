@@ -111,6 +111,14 @@ namespace Medical.Service.Services.DomainService
 
                 var items = Queryable.Where(GetExpression(baseSearch));
                 decimal itemCount = items.Count();
+                // Nếu giá trị danh sách lấy ra = 0 => Lấy danh sách theo item mặc định (nếu có)
+                if (itemCount == 0)
+                {
+                    baseSearch.HospitalId = 0;
+                    items = Queryable.Where(GetExpression(baseSearch));
+                    itemCount = items.Count();
+                }
+
                 pagedList = new PagedList<E>()
                 {
                     TotalItem = (int)itemCount,
@@ -125,7 +133,7 @@ namespace Medical.Service.Services.DomainService
         protected virtual Expression<Func<E, bool>> GetExpression(T baseSearch)
         {
             return e => !e.Deleted
-            && (!baseSearch.HospitalId.HasValue || e.HospitalId == baseSearch.HospitalId) 
+            && (!baseSearch.HospitalId.HasValue || e.HospitalId == baseSearch.HospitalId)
             && (string.IsNullOrEmpty(baseSearch.SearchContent)
                 || e.Code.Contains(baseSearch.SearchContent)
                 || e.Name.Contains(baseSearch.SearchContent)

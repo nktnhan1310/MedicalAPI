@@ -176,6 +176,8 @@ namespace Medical.Service
                 new SqlParameter("@SessionId", searchExaminationScheduleDetailV2.SessionId),
                 new SqlParameter("@DayOfWeek", searchExaminationScheduleDetailV2.DayOfWeek),
                 new SqlParameter("@ExaminationDate", searchExaminationScheduleDetailV2.ExaminationDate),
+                new SqlParameter("@ExaminationScheduleDetailId", searchExaminationScheduleDetailV2.ExaminationScheduleDetailId),
+                new SqlParameter("@DoctorTypeId", searchExaminationScheduleDetailV2.DoctorTypeId),
                 new SqlParameter("@OrderBy", searchExaminationScheduleDetailV2.OrderBy),
                 new SqlParameter("@SearchContent", searchExaminationScheduleDetailV2.SearchContent),
                 new SqlParameter("@TotalPage", SqlDbType.Int, 0),
