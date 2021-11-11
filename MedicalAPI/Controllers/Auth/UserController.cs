@@ -29,14 +29,22 @@ namespace MedicalAPI.Controllers
     {
         private readonly IUserService userService;
         private readonly IUserInGroupService userInGroupService;
+        private readonly IUserGroupService userGroupService;
         private readonly IUserFileService userFileService;
+        private readonly IMedicalRecordService medicalRecordService;
+        private readonly IMedicalRecordAdditionService medicalRecordAdditionService;
+
         private IConfiguration configuration;
         public UserController(IServiceProvider serviceProvider, ILogger<UserController> logger, IWebHostEnvironment env, IConfiguration configuration) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IUserService>();
             this.userService = serviceProvider.GetRequiredService<IUserService>();
             userInGroupService = serviceProvider.GetRequiredService<IUserInGroupService>();
+            userGroupService = serviceProvider.GetRequiredService<IUserGroupService>();
             userFileService = serviceProvider.GetRequiredService<IUserFileService>();
+            medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
+            medicalRecordAdditionService = serviceProvider.GetRequiredService<IMedicalRecordAdditionService>();
+
             this.configuration = configuration;
         }
 
@@ -130,6 +138,49 @@ namespace MedicalAPI.Controllers
                 throw new KeyNotFoundException("Item không tồn tại");
             }
             return appDomainResult;
+        }
+
+        /// <summary>
+        /// LẤY THÔNG TIN ACCOUNT + HỒ SƠ NGƯỜI BỆNH
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("get-by-id-extension")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetByIdExtension(int userId)
+        {
+            UserGeneralInfoModel userGeneralInfoModel = new UserGeneralInfoModel();
+            // LẤY THÔNG TIN CỦA USER
+            var userInfo = await this.domainService.GetByIdAsync(userId);
+            if (userInfo == null) throw new AppException("Không tìm thấy thông tin người dùng");
+            var userModel = mapper.Map<UserModel>(userInfo);
+            userModel.ConfirmPassWord = userInfo.Password;
+            // LẤY THÔNG TIN NHÓM CHỨC NĂNG (ROLE) CỦA USER
+            var userInGroups = await this.userInGroupService.GetAsync(e => !e.Deleted && e.UserId == userId);
+            if (userInGroups != null)
+                userModel.UserGroupIds = userInGroups.Select(e => e.UserGroupId).ToList();
+
+            // LẤY THÔNG TIN CỦA HỒ SƠ NGƯỜI BỆNH
+            var medicalRecordInfo = await this.medicalRecordService.GetSingleAsync(e => !e.Deleted && e.UserId == userId);
+            if(medicalRecordInfo == null) throw new AppException("Không tìm thấy thông tin hồ sơ người dùng");
+            var medicalRecordInfoModel = mapper.Map<MedicalRecordModel>(medicalRecordInfo);
+            var medicalAdditions = await this.medicalRecordAdditionService.GetAsync(e => !e.Deleted && e.MedicalRecordId == medicalRecordInfoModel.Id);
+            if (medicalAdditions != null)
+                medicalRecordInfoModel.MedicalRecordAdditions = mapper.Map<IList<MedicalRecordAdditionModel>>(medicalAdditions);
+
+            // LẤY THÔNG TIN FILE TỪ THÔNG TIN HỒ SƠ CỦA USER
+            var userFileInfos = await this.userFileService.GetAsync(e => !e.Deleted && e.UserId == userInfo.Id && e.MedicalRecordId == medicalRecordInfo.Id);
+            if (userFileInfos != null && userFileInfos.Any())
+                userGeneralInfoModel.UserFiles = mapper.Map<IList<UserFileModel>>(userFileInfos);
+
+            userGeneralInfoModel.User = userModel;
+            userGeneralInfoModel.MedicalRecord = medicalRecordInfoModel;
+            return new AppDomainResult()
+            {
+                Data = userGeneralInfoModel,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
         }
 
         /// <summary>
@@ -334,39 +385,196 @@ namespace MedicalAPI.Controllers
         }
 
         /// <summary>
-        /// Cập nhật 1 phần user
+        /// Thêm mới thông tin account + hồ sơ
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="itemModel"></param>
         /// <returns></returns>
-        [HttpPatch("{id}")]
-        [MedicalAppAuthorize(new string[] { CoreContants.Update })]
-        public override async Task<AppDomainResult> PatchItem(int id, [FromBody] UserModel itemModel)
+        [HttpPost("add-item-v2")]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public async Task<AppDomainResult> AddItemExtension([FromBody] UserGeneralInfoModel itemModel)
         {
-            AppDomainResult appDomainResult = new AppDomainResult();
-            bool success = false;
-            if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
-                itemModel.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
-            var item = mapper.Map<Users>(itemModel);
-            if (item != null)
-            {
+            if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
+            var itemUpdate = mapper.Map<UserGeneralInfo>(itemModel);
+            itemUpdate.User.Created = DateTime.Now;
+            itemUpdate.User.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+            itemUpdate.MedicalRecord.Created = DateTime.Now;
+            itemUpdate.MedicalRecord.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
 
-                Expression<Func<Users, object>>[] includeProperties = new Expression<Func<Users, object>>[]
+            // HASH PASSWORD LƯU XUỐNG DB
+            itemUpdate.User.Password = SecurityUtils.HashSHA1(itemModel.User.Password);
+
+            // KIỂM TRA DỮ LIỆU ĐẦU VÀO USER
+            string messageCheckUser = await this.domainService.GetExistItemMessage(itemUpdate.User);
+            if (!string.IsNullOrEmpty(messageCheckUser)) throw new AppException(messageCheckUser);
+            
+            // KIỂM TRA DỮ LIỆU ĐẦU VÀO HỒ SƠ
+            string messageCheckMedicalRecord = await this.medicalRecordService.GetExistItemMessage(itemUpdate.MedicalRecord);
+            if (!string.IsNullOrEmpty(messageCheckMedicalRecord)) throw new AppException(messageCheckMedicalRecord);
+
+            // CẬP NHẬT THÔNG TIN USER FILES
+            List<string> filePaths = new List<string>();
+            List<string> folderUploadPaths = new List<string>();
+            if (itemUpdate.UserFiles != null && itemUpdate.UserFiles.Any())
+            {
+                foreach (var file in itemUpdate.UserFiles)
                 {
-                        x => x.Active,
-                        x => x.Status
-                };
-                success = await this.domainService.UpdateFieldAsync(item, includeProperties);
-                appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                appDomainResult.Success = success;
-            }
-            else
-            {
-                appDomainResult.ResultCode = (int)HttpStatusCode.InternalServerError;
-                appDomainResult.Success = false;
+                    string folderUploadPath = string.Empty;
+                    var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
+                    if (isProduct)
+                        folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
+                    else
+                        folderUploadPath = Path.Combine(Directory.GetCurrentDirectory());
+                    string filePath = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, file.FileName);
+                    string folderUploadUrl = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, USER_FOLDER_NAME);
+                    string fileUploadPath = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, USER_FOLDER_NAME, Path.GetFileName(filePath));
+
+
+                    // Kiểm tra có tồn tại file trong temp chưa?
+                    if (System.IO.File.Exists(filePath) && !System.IO.File.Exists(fileUploadPath))
+                    {
+                        FileUtils.CreateDirectory(folderUploadUrl);
+                        FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
+                        folderUploadPaths.Add(fileUploadPath);
+                        string fileUrl = Path.Combine(UPLOAD_FOLDER_NAME, USER_FOLDER_NAME, Path.GetFileName(filePath));
+                        filePaths.Add(filePath);
+                        file.Created = DateTime.Now;
+                        file.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+                        file.Active = true;
+                        file.Deleted = false;
+                        file.FileName = Path.GetFileName(filePath);
+                        file.FileExtension = Path.GetExtension(filePath);
+                        file.UserId = itemUpdate.User.Id;
+                        file.MedicalRecordId = itemUpdate.MedicalRecord.Id;
+                        file.FileUrl = fileUrl;
+                    }
+                }
             }
 
-            return appDomainResult;
+            bool success = await this.userService.CreateUserGeneralInfo(itemUpdate);
+            // Remove file trong thư mục temp
+            if (filePaths.Any())
+            {
+                foreach (var filePath in filePaths)
+                {
+                    System.IO.File.Delete(filePath);
+                }
+            }
+
+            if (!success)
+            {
+                if (folderUploadPaths.Any())
+                {
+                    foreach (var folderUploadPath in folderUploadPaths)
+                    {
+                        System.IO.File.Delete(folderUploadPath);
+                    }
+                }
+                throw new Exception("Lỗi trong quá trình xử lý");
+            }
+            return new AppDomainResult()
+            {
+                ResultCode = (int)HttpStatusCode.OK,
+                Success = success
+            };
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin account + hồ sơ người bệnh
+        /// </summary>
+        /// <param name="itemModel"></param>
+        /// <returns></returns>
+        [HttpPut("update-item-v2")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Update })]
+        public async Task<AppDomainResult> UpdateItemExtension([FromBody] UserGeneralInfoModel itemModel)
+        {
+            if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
+            var itemUpdate = mapper.Map<UserGeneralInfo>(itemModel);
+            itemUpdate.User.Updated = DateTime.Now;
+            itemUpdate.User.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+            itemUpdate.MedicalRecord.Updated = DateTime.Now;
+            itemUpdate.MedicalRecord.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+            // KIỂM TRA DỮ LIỆU ĐẦU VÀO USER
+            string messageCheckUser = await this.domainService.GetExistItemMessage(itemUpdate.User);
+            if (!string.IsNullOrEmpty(messageCheckUser)) throw new AppException(messageCheckUser);
+            if (itemModel.User.IsResetPassword)
+                itemUpdate.User.Password = SecurityUtils.HashSHA1(itemModel.User.NewPassWord);
+
+            // KIỂM TRA DỮ LIỆU ĐẦU VÀO HỒ SƠ
+            string messageCheckMedicalRecord = await this.medicalRecordService.GetExistItemMessage(itemUpdate.MedicalRecord);
+            if (!string.IsNullOrEmpty(messageCheckMedicalRecord)) throw new AppException(messageCheckMedicalRecord);
+
+            // THÊM MỚI THÔNG TIN FILE CỦA USER
+            List<string> filePaths = new List<string>();
+            List<string> folderUploadPaths = new List<string>();
+            if (itemUpdate.UserFiles != null && itemUpdate.UserFiles.Any())
+            {
+                foreach (var file in itemUpdate.UserFiles)
+                {
+                    // ------- START GET URL FOR FILE
+                    string folderUploadPath = string.Empty;
+                    var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
+                    if (isProduct)
+                        folderUploadPath = configuration.GetValue<string>("MySettings:FolderUpload");
+                    else
+                        folderUploadPath = Path.Combine(Directory.GetCurrentDirectory());
+                    string filePath = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, TEMP_FOLDER_NAME, file.FileName);
+                    string folderUploadUrl = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, USER_FOLDER_NAME);
+                    string fileUploadPath = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, USER_FOLDER_NAME, Path.GetFileName(filePath));
+                    // Kiểm tra có tồn tại file trong temp chưa?
+                    if (System.IO.File.Exists(filePath) && !System.IO.File.Exists(fileUploadPath))
+                    {
+                        FileUtils.CreateDirectory(folderUploadUrl);
+                        FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
+                        folderUploadPaths.Add(fileUploadPath);
+                        string fileUrl = Path.Combine(UPLOAD_FOLDER_NAME, USER_FOLDER_NAME, Path.GetFileName(filePath));
+                        // ------- END GET URL FOR FILE
+                        filePaths.Add(filePath);
+                        file.Created = DateTime.Now;
+                        file.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+                        file.Active = true;
+                        file.Deleted = false;
+                        file.FileName = Path.GetFileName(filePath);
+                        file.FileExtension = Path.GetExtension(filePath);
+                        file.UserId = itemUpdate.User.Id;
+                        file.MedicalRecordId = itemUpdate.MedicalRecord.Id;
+                        file.ContentType = ContentFileTypeUtilities.GetMimeType(filePath);
+                        file.FileUrl = fileUrl;
+                    }
+                    else
+                    {
+                        file.Updated = DateTime.Now;
+                        file.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+                    }
+                }
+            }
+            bool success = await this.userService.UpdateUserGeneralInfo(itemUpdate);
+
+            // Remove file trong thư mục temp
+            if (filePaths.Any())
+            {
+                foreach (var filePath in filePaths)
+                {
+                    System.IO.File.Delete(filePath);
+                }
+            }
+
+            if (!success)
+            {
+                if (folderUploadPaths.Any())
+                {
+                    foreach (var folderUploadPath in folderUploadPaths)
+                    {
+                        System.IO.File.Delete(folderUploadPath);
+                    }
+                }
+                throw new Exception("Lỗi trong quá trình xử lý");
+            }
+            
+            return new AppDomainResult()
+            {
+                ResultCode = (int)HttpStatusCode.OK,
+                Success = success
+            };
         }
 
         /// <summary>
@@ -386,6 +594,18 @@ namespace MedicalAPI.Controllers
                     baseSearch.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
                 PagedList<Users> pagedData = await this.domainService.GetPagedListData(baseSearch);
                 PagedList<UserModel> pagedDataModel = mapper.Map<PagedList<UserModel>>(pagedData);
+                if (pagedDataModel != null && pagedDataModel.Items.Any())
+                {
+                    foreach (var item in pagedDataModel.Items)
+                    {
+                        var userInGroupInfo = await this.userInGroupService.GetSingleAsync(e => !e.Deleted && e.UserId == item.Id);
+                        if (userInGroupInfo != null)
+                        {
+                            var userGroupInfo = await this.userGroupService.GetSingleAsync(e => e.Id == userInGroupInfo.UserGroupId);
+                            if (userGroupInfo != null) item.UserGroupName = userGroupInfo.Name;
+                        }
+                    }
+                }
                 appDomainResult = new AppDomainResult
                 {
                     Data = pagedDataModel,
@@ -397,6 +617,34 @@ namespace MedicalAPI.Controllers
                 throw new AppException(ModelState.GetErrorMessage());
 
             return appDomainResult;
+        }
+
+        /// <summary>
+        /// Lấy thông tin số lần vi phạm/số lần hủy phiếu/ số lần chỉnh sửa phiếu
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        [HttpGet("get-total-examination-caculate")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetTotalExaminationCaculate(int? userId)
+        {
+            if (!userId.HasValue || userId.Value <= 0) throw new AppException("Không tìm thấy user id");
+            var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.Active && e.Id == userId);
+            Users userInfo = null;
+            if (userInfos != null && userInfos.Any())
+                userInfo = userInfos.FirstOrDefault();
+            else throw new AppException("Không tìm thấy thông tin user");
+            return new AppDomainResult
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                Data = new
+                {
+                    TotalViolations = userInfo != null ? userInfo.TotalViolations : 0,
+                    TotalCancelExamination = userInfo != null ? userInfo.TotalCancelExaminations : 0,
+                    TotalEditExamination = userInfo != null ? userInfo.TotalEditExaminations : 0,
+                }
+            };
         }
 
         #region Contants

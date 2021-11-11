@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,7 +41,7 @@ namespace Medical.Service
 
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
-                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+                //new SqlParameter("@TotalPage", SqlDbType.Int, 0),
                 new SqlParameter("@TotalUserExamination", SqlDbType.Int, 0),
 
             };
@@ -62,14 +63,16 @@ namespace Medical.Service
                     connection.Open();
                     command.CommandText = commandText;
                     command.Parameters.AddRange(sqlParameters);
-                    command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
+                    //command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
                     command.Parameters["@TotalUserExamination"].Direction = ParameterDirection.Output;
                     command.CommandType = CommandType.StoredProcedure;
                     SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
                     sqlDataAdapter.Fill(dataTable);
-                    pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
+                    //pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
                     pagedList.TotalUserExamination = int.Parse(command.Parameters["@TotalUserExamination"].Value.ToString());
                     pagedList.Items = MappingDataTable.ConvertToList<ReportUserExaminationForm>(dataTable);
+                    if (pagedList.Items != null && pagedList.Items.Any())
+                        pagedList.TotalItem = pagedList.Items.FirstOrDefault().TotalItem;
                     return pagedList;
                 }
                 finally

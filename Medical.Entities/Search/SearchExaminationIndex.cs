@@ -13,7 +13,7 @@ namespace Medical.Entities
         /// <summary>
         /// Mã dịch vụ
         /// </summary>
-        public int ServiceTypeId { get; set; }
+        public int ExaminationScheduleDetailId { get; set; }
         /// <summary>
         /// Tìm theo ngày khám
         /// </summary>

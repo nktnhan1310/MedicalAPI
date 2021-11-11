@@ -29,12 +29,14 @@ namespace MedicalAPI.Controllers
         protected IWebHostEnvironment env;
         private readonly IDashBoardService dashBoardService;
         private readonly IServiceTypeService serviceTypeService;
+        private readonly IHospitalService hospitalService;
         public DashboardController(IServiceProvider serviceProvider, ILogger<DashboardController> logger, IWebHostEnvironment env)
         {
             this.logger = logger;
             this.env = env;
             dashBoardService = serviceProvider.GetRequiredService<IDashBoardService>();
             serviceTypeService = serviceProvider.GetRequiredService<IServiceTypeService>();
+            hospitalService = serviceProvider.GetRequiredService<IHospitalService>();
         }
 
         /// <summary>
@@ -76,7 +78,7 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> GetSynthesysReport([FromQuery] DashBoardSynthesisRequest dashBoardSynthesisRequest)
         {
             dashBoardSynthesisRequest.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.HasValue ? LoginContext.Instance.CurrentUser.HospitalId : dashBoardSynthesisRequest.HospitalId;
-           
+
             var listResults = await this.dashBoardService.GetSynthesisReport(dashBoardSynthesisRequest);
             return new AppDomainResult()
             {
@@ -288,6 +290,28 @@ namespace MedicalAPI.Controllers
         }
 
         /// <summary>
+        /// Lấy thông tin số lượng user hệ thống theo filter
+        /// </summary>
+        /// <param name="searchDashBoardUserSystem"></param>
+        /// <returns></returns>
+        [HttpGet("get-total-user-system-v2")]
+        public async Task<AppDomainResult> GetTotalUserSystemV2([FromQuery] SearchDashBoardUserSystem searchDashBoardUserSystem)
+        {
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId.Value > 0)
+                searchDashBoardUserSystem.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
+            double totalUser = await this.dashBoardService.GetTotalUserSystem(searchDashBoardUserSystem);
+            return new AppDomainResult()
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                Data = new
+                {
+                    TotalUser = totalUser
+                }
+            };
+        }
+
+        /// <summary>
         /// Lấy tổng số người active cùng 1 thời gian
         /// </summary>
         /// <returns></returns>
@@ -311,13 +335,16 @@ namespace MedicalAPI.Controllers
         /// <summary>
         /// Tổng tiền thanh toán qua App/COD theo ngày tháng năm
         /// </summary>
+        /// <param name="hospitalId"></param>
         /// <returns></returns>
-        [HttpGet("get-total-payment")]
-        public async Task<AppDomainResult> GetTotalPayment()
+        [HttpGet("get-total-payment/hospitalId")]
+        public async Task<AppDomainResult> GetTotalPayment(int? hospitalId)
         {
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId.Value > 0)
+                hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             DashBoardRequest dashBoardRequest = new DashBoardRequest()
             {
-                HospitalId = LoginContext.Instance.CurrentUser != null ? LoginContext.Instance.CurrentUser.HospitalId : null,
+                HospitalId = hospitalId,
                 ExaminationDate = DateTime.Now,
                 MonthValue = DateTime.Now.Month,
                 YearValue = DateTime.Now.Year,
@@ -348,6 +375,59 @@ namespace MedicalAPI.Controllers
             };
         }
 
+        /// <summary>
+        /// Lấy thông tin chi phí đã thanh toán/hoàn tiền của hệ thống/bệnh viện
+        /// </summary>
+        /// <param name="searchDashBoardTotalPayment"></param>
+        /// <returns></returns>
+        [HttpGet("get-total-payment-system")]
+        public async Task<AppDomainResult> GetTotalPaymentV2([FromQuery] SearchDashBoardTotalPayment searchDashBoardTotalPayment)
+        {
+            double totalAmount = 0;
+            if (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId.Value > 0)
+                searchDashBoardTotalPayment.HospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
+            totalAmount = await this.dashBoardService.GetTotalPaymentV2(searchDashBoardTotalPayment);
+            return new AppDomainResult()
+            {
+                Success = true,
+                Data = new
+                {
+                    TotalAmount = totalAmount,
+                    TotalAmountDisplay = totalAmount.ToString("n2")
+                },
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
 
+        /// <summary>
+        /// Lấy tổng số bệnh viện đang có trên hệ thống/active + unactive
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-total-hospital-system")]
+        public async Task<AppDomainResult> GetTotalHospitalConnect()
+        {
+            var hospitalInfos = await this.hospitalService.GetAsync(e => !e.Deleted);
+            int totalHospitalCount = 0;
+            int totalHospitalActive = 0;
+            int totalHospitalUnActive = 0;
+            if (hospitalInfos != null && hospitalInfos.Any())
+            {
+                totalHospitalCount = hospitalInfos.Count();
+                totalHospitalActive = hospitalInfos.Where(e => e.Active).Count();
+                totalHospitalUnActive = hospitalInfos.Where(e => !e.Active).Count();
+            }
+
+            return new AppDomainResult()
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                Data = new
+                {
+                    TotalHospitalCount = totalHospitalCount,
+                    TotalHospitalActive = totalHospitalActive,
+                    TotalHospitalUnActive = totalHospitalUnActive
+                }
+            };
+        }
     }
 }

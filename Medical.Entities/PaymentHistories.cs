@@ -49,6 +49,13 @@ namespace Medical.Entities
         /// </summary>
         public int? MedicalBillId { get; set; }
 
+        /// <summary>
+        /// Trạng thái
+        /// 0 => Thanh toán đơn
+        /// 1 => Hoàn tiền
+        /// </summary>
+        public int? Status { get; set; }
+
         #region Extension Properties
 
         /// <summary>

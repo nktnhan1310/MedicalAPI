@@ -35,12 +35,10 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Med
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Extensions.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Interface.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Utilities.dll
-E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Models.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Entities.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Extensions.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Interface.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Utilities.pdb
-E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\bin\netcoreapp3.1\Medical.Models.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\obj\Debug\netcoreapp3.1\Medical.Service.csproj.CopyComplete
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\obj\Debug\netcoreapp3.1\Medical.Service.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\Medical.Service\obj\Debug\netcoreapp3.1\Medical.Service.pdb

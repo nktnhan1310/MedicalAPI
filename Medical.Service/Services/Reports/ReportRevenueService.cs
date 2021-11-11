@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,7 +36,7 @@ namespace Medical.Service
                 new SqlParameter("@HospitalId", baseSearch.HospitalId),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
-                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+                //new SqlParameter("@TotalPage", SqlDbType.Int, 0),
                 new SqlParameter("@TotalAppPrice", SqlDbType.Float, 0),
 
             };
@@ -57,16 +58,18 @@ namespace Medical.Service
                     connection.Open();
                     command.CommandText = commandText;
                     command.Parameters.AddRange(sqlParameters);
-                    command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
+                    //command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
                     command.Parameters["@TotalAppPrice"].Direction = ParameterDirection.Output;
                     command.CommandType = CommandType.StoredProcedure;
                     SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
                     sqlDataAdapter.Fill(dataTable);
-                    pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
+                    //pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
                     double totalRevenueValue = 0;
                     if (command.Parameters["@TotalAppPrice"] != null && double.TryParse(command.Parameters["@TotalAppPrice"].Value.ToString(), out totalRevenueValue))
                         pagedList.TotalRevenueValue = totalRevenueValue;
                     pagedList.Items = MappingDataTable.ConvertToList<ReportRevenue>(dataTable);
+                    if (pagedList.Items != null && pagedList.Items.Any())
+                        pagedList.TotalItem = pagedList.Items.FirstOrDefault().TotalItem;
                     return pagedList;
                 }
                 finally

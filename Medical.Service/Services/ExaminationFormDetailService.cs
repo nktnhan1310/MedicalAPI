@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
 using Medical.Entities;
+using Medical.Extensions;
 using Medical.Interface;
+using Medical.Interface.DbContext;
 using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
 using Medical.Service.Services.DomainService;
 using Medical.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -20,9 +23,11 @@ namespace Medical.Service
     public class ExaminationFormDetailService : CoreHospitalService<ExaminationFormDetails, SearchExaminationFormDetail>, IExaminationFormDetailService
     {
         private readonly ISMSConfigurationService sMSConfigurationService;
-        public ExaminationFormDetailService(IMedicalUnitOfWork unitOfWork, IMapper mapper, ISMSConfigurationService sMSConfigurationService) : base(unitOfWork, mapper)
+        public ExaminationFormDetailService(IMedicalUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper
+            , IServiceProvider serviceProvider
+            ) : base(unitOfWork, medicalDbContext, mapper)
         {
-            this.sMSConfigurationService = sMSConfigurationService;
+            this.sMSConfigurationService = serviceProvider.GetRequiredService<ISMSConfigurationService>();
         }
 
         protected override string GetStoreProcName()
@@ -51,7 +56,7 @@ namespace Medical.Service
                 new SqlParameter("@IsFromMedicalRecordDetail", baseSearch.IsFromMedicalRecordDetail),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
-                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+                //new SqlParameter("@TotalPage", SqlDbType.Int, 0),
 
 
             };
@@ -65,21 +70,21 @@ namespace Medical.Service
         /// <returns></returns>
         public override async Task<bool> CreateAsync(ExaminationFormDetails item)
         {
-            bool result = false;
-            if (item != null)
+            if (item == null) throw new AppException("Item không tồn tại");
+            using (var contextTransactionTask = this.medicalDbContext.Database.BeginTransactionAsync())
             {
-                if (item.ExaminationFormId.HasValue)
+                try
                 {
                     var examinationFormInfo = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable().Where(e => e.Id == item.ExaminationFormId).FirstOrDefaultAsync();
                     var additionServiceInfo = await this.unitOfWork.Repository<AdditionServices>().GetQueryable().Where(e => e.Id == item.AdditionServiceId).FirstOrDefaultAsync();
-                    if(examinationFormInfo != null)
+                    if (examinationFormInfo != null)
                     {
                         item.MedicalRecordId = examinationFormInfo.RecordId;
                         var medicalRecordInfo = await this.unitOfWork.Repository<MedicalRecords>().GetQueryable().Where(e => e.Id == examinationFormInfo.RecordId).FirstOrDefaultAsync();
                         item.UserId = medicalRecordInfo.UserId;
                         item.ExaminationDate = examinationFormInfo.ExaminationDate;
                     }
-                    if(additionServiceInfo != null)
+                    if (additionServiceInfo != null)
                     {
                         item.Price = additionServiceInfo.Price;
                     }
@@ -87,10 +92,17 @@ namespace Medical.Service
                     item.Status = (int)CatalogueUtilities.AdditionServiceStatus.New;
                     await this.unitOfWork.Repository<ExaminationFormDetails>().CreateAsync(item);
                     await this.unitOfWork.SaveAsync();
-                    result = true;
+                    var contextTransaction = await contextTransactionTask;
+                    await contextTransaction.CommitAsync();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    var contextTransaction = await contextTransactionTask;
+                    contextTransaction.Rollback();
+                    return false;
                 }
             }
-            return result;
         }
 
         /// <summary>

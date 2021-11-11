@@ -35,6 +35,7 @@ namespace Medical.Interface
         Task<bool> SaveAsync(E item);
         Task<bool> SaveAsync(IList<E> items);
         Task<bool> DeleteAsync(int id);
+        Task<bool> DeleteAsync(List<int> ids);
         Task<IList<E>> GetAllAsync();
         Task<E> GetByIdAsync(int id, Expression<Func<E, E>> select);
         Task<IList<E>> GetAllAsync(Expression<Func<E, E>> select);
@@ -45,6 +46,18 @@ namespace Medical.Interface
         Task<IList<E>> GetAsync(Expression<Func<E, bool>> expression, bool useProjectTo);
         Task<IList<E>> GetAsync(Expression<Func<E, bool>>[] expression, bool useProjectTo);
 
+        #region Single
+
+        Task<E> GetSingleAsync(Expression<Func<E, bool>> expression, Expression<Func<E, E>> select);
+        Task<E> GetSingleAsync(Expression<Func<E, bool>>[] expression, Expression<Func<E, E>> select);
+        Task<E> GetSingleAsync(Expression<Func<E, bool>> expression);
+        Task<E> GetSingleAsync(Expression<Func<E, bool>>[] expression);
+        Task<E> GetSingleAsync(Expression<Func<E, bool>> expression, bool useProjectTo);
+        Task<E> GetSingleAsync(Expression<Func<E, bool>>[] expression, bool useProjectTo);
+
+        #endregion
+
+        Task<int> CountAsync(Expression<Func<E, bool>> expression);
         Task<bool> UpdateAsync(E item);
         Task<bool> UpdateAsync(IList<E> items);
         Task<bool> CreateAsync(E item);

@@ -58,6 +58,10 @@
               "target": "Package",
               "version": "[1.54.0, )"
             },
+            "Hangfire.Core": {
+              "target": "Package",
+              "version": "[1.7.23, )"
+            },
             "Microsoft.AspNetCore.Http.Abstractions": {
               "target": "Package",
               "version": "[2.2.0, )"

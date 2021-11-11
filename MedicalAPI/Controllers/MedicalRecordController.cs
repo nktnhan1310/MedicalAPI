@@ -17,6 +17,7 @@ using Medical.Core.App.Controllers;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.SignalR;
 
 namespace MedicalAPI.Controllers
 {
@@ -29,19 +30,30 @@ namespace MedicalAPI.Controllers
         private readonly IMedicalRecordAdditionService medicalRecordAdditionService;
         private readonly IRelationService relationService;
         private readonly IMedicalRecordService medicalRecordService;
-        private readonly IMedicalRecordFileService medicalRecordFileService;
+        //private readonly IMedicalRecordFileService medicalRecordFileService;
         private readonly IConfiguration configuration;
         private readonly IUserService userService;
+        private readonly INotificationService notificationService;
+        private readonly IUserFileService userFileService;
 
-        public MedicalRecordController(IServiceProvider serviceProvider, ILogger<BaseController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>> logger, IWebHostEnvironment env, IConfiguration configuration) : base(serviceProvider, logger, env)
+        private IHubContext<NotificationAppHub> appHubContext;
+
+        public MedicalRecordController(IServiceProvider serviceProvider, ILogger<BaseController<MedicalRecords, MedicalRecordModel, SearchMedicalRecord>> logger
+            , IWebHostEnvironment env
+            , IConfiguration configuration
+            , IHubContext<NotificationAppHub> appHubContext
+            ) : base(serviceProvider, logger, env)
         {
             this.domainService = serviceProvider.GetRequiredService<IMedicalRecordService>();
             medicalRecordAdditionService = serviceProvider.GetRequiredService<IMedicalRecordAdditionService>();
             relationService = serviceProvider.GetRequiredService<IRelationService>();
             medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
             this.configuration = configuration;
-            medicalRecordFileService = serviceProvider.GetRequiredService<IMedicalRecordFileService>();
+            //medicalRecordFileService = serviceProvider.GetRequiredService<IMedicalRecordFileService>();
             userService = serviceProvider.GetRequiredService<IUserService>();
+            notificationService = serviceProvider.GetRequiredService<INotificationService>();
+            userFileService = serviceProvider.GetRequiredService<IUserFileService>();
+            this.appHubContext = appHubContext;
         }
 
         /// <summary>
@@ -52,9 +64,9 @@ namespace MedicalAPI.Controllers
         [MedicalAppAuthorize(new string[] { CoreContants.View })]
         public async Task<AppDomainResult> GetUserCustomerInfo(string userName)
         {
-            var userCustomerInfos = await this.userService.GetAsync(e => 
+            var userCustomerInfos = await this.userService.GetAsync(e =>
             !e.Deleted && e.Active && !e.IsLocked && !e.HospitalId.HasValue && !e.IsAdmin
-            && (string.IsNullOrEmpty(userName) 
+            && (string.IsNullOrEmpty(userName)
             || (e.Phone.Contains(userName) || e.Email.Contains(userName) || e.UserName.Contains(userName)
             || e.UserFullName.Contains(userName)
             ))
@@ -89,7 +101,7 @@ namespace MedicalAPI.Controllers
             if (!userId.HasValue || userId.Value == 0)
                 throw new AppException("Không tìm thấy thông tin user");
             var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.Active && !e.IsLocked && e.Id == userId);
-            if(userInfos != null && userInfos.Any())
+            if (userInfos != null && userInfos.Any())
             {
                 userInfo = userInfos.Select(e => new UserModel()
                 {
@@ -148,9 +160,9 @@ namespace MedicalAPI.Controllers
                     var medicalAdditions = await this.medicalRecordAdditionService.GetAsync(e => !e.Deleted && e.MedicalRecordId == id);
                     if (medicalAdditions != null)
                         itemModel.MedicalRecordAdditions = mapper.Map<IList<MedicalRecordAdditionModel>>(medicalAdditions);
-                    var medicalFiles = await this.medicalRecordFileService.GetAsync(e => !e.Deleted && e.MedicalRecordId == id);
+                    var medicalFiles = await this.userFileService.GetAsync(e => !e.Deleted && e.MedicalRecordId == id);
                     if (medicalFiles != null)
-                        itemModel.MedicalRecordFiles = mapper.Map<IList<MedicalRecordFileModel>>(medicalFiles);
+                        itemModel.UserFiles = mapper.Map<IList<UserFileModel>>(medicalFiles);
                     appDomainResult = new AppDomainResult()
                     {
                         Success = true,
@@ -196,11 +208,10 @@ namespace MedicalAPI.Controllers
                     List<string> filePaths = new List<string>();
                     List<string> folderUploadPaths = new List<string>();
 
-                    if (item.MedicalRecordFiles != null && item.MedicalRecordFiles.Any())
+                    if (item.UserFiles != null && item.UserFiles.Any())
                     {
-                        foreach (var file in item.MedicalRecordFiles)
+                        foreach (var file in item.UserFiles)
                         {
-
                             // Kiểm tra có tồn tại file trong temp chưa?
                             string folderUploadPath = string.Empty;
                             var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
@@ -253,6 +264,15 @@ namespace MedicalAPI.Controllers
                     }
                     else
                     {
+                        // Remove file trong thư mục temp
+                        if (filePaths.Any())
+                        {
+                            foreach (var filePath in filePaths)
+                            {
+                                System.IO.File.Delete(filePath);
+                            }
+                        }
+                        // Xóa file trong thư mục upload
                         if (folderUploadPaths.Any())
                         {
                             foreach (var folderUploadPath in folderUploadPaths)
@@ -260,6 +280,7 @@ namespace MedicalAPI.Controllers
                                 System.IO.File.Delete(folderUploadPath);
                             }
                         }
+                        throw new Exception("Lỗi trong quá trình xử lý");
                     }
                     appDomainResult.Success = success;
                 }
@@ -300,9 +321,9 @@ namespace MedicalAPI.Controllers
                     List<string> filePaths = new List<string>();
                     List<string> folderUploadPaths = new List<string>();
 
-                    if (item.MedicalRecordFiles != null && item.MedicalRecordFiles.Any())
+                    if (item.UserFiles != null && item.UserFiles.Any())
                     {
-                        foreach (var file in item.MedicalRecordFiles)
+                        foreach (var file in item.UserFiles)
                         {
                             string folderUploadPath = string.Empty;
                             var isProduct = configuration.GetValue<bool>("MySettings:IsProduct");
@@ -315,7 +336,7 @@ namespace MedicalAPI.Controllers
                             string folderUploadUrl = Path.Combine(folderUploadPath, UPLOAD_FOLDER_NAME, MEDICAL_RECORD_FOLDER_NAME);
                             string fileUploadPath = Path.Combine(folderUploadUrl, Path.GetFileName(filePath));
                             // Kiểm tra có tồn tại file trong temp chưa?
-                            if (System.IO.File.Exists(filePath) && !System.IO.File.Exists(folderUploadUrl))
+                            if (System.IO.File.Exists(filePath) && !System.IO.File.Exists(fileUploadPath))
                             {
                                 FileUtils.CreateDirectory(folderUploadUrl);
                                 FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
@@ -336,6 +357,21 @@ namespace MedicalAPI.Controllers
                     success = await this.domainService.CreateAsync(item);
                     if (success)
                     {
+                        if (item.UserId > 0)
+                        {
+                            await notificationService.CreateCustomNotificationUser(null, null
+                            , new List<int>() { item.UserId }
+                            , string.Empty
+                            , string.Empty
+                            , LoginContext.Instance.CurrentUser.UserName
+                            , null
+                            , false
+                            , "USER"
+                            , CoreContants.NOTI_TEMPLATE_MEDICAL_RECORD_CREATE
+                            );
+                            await appHubContext.Clients.All.SendAsync(CoreContants.GET_TOTAL_NOTIFICATION);
+                        }
+
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                         // Remove file trong thư mục temp
                         if (filePaths.Any())

@@ -7,5 +7,10 @@ namespace Medical.Entities
     public class ReportAppDomain
     {
         public long RowNumber { get; set; }
+
+        /// <summary>
+        /// Tổng số item của báo cáo
+        /// </summary>
+        public long TotalItem { get; set; }
     }
 }

@@ -71,7 +71,7 @@ namespace Medical.Service
                 new SqlParameter("@PageSize", baseSearch.PageSize),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
-                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+                //new SqlParameter("@TotalPage", SqlDbType.Int, 0),
             };
             return parameters;
         }
@@ -97,12 +97,12 @@ namespace Medical.Service
                     connection.Open();
                     command.CommandText = commandText;
                     command.Parameters.AddRange(sqlParameters);
-                    command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
                     command.CommandType = CommandType.StoredProcedure;
                     SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
                     sqlDataAdapter.Fill(dataTable);
-                    pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
                     pagedList.Items = MappingDataTable.ConvertToList<R>(dataTable);
+                    if (pagedList.Items != null && pagedList.Items.Any())
+                        pagedList.TotalItem = pagedList.Items.FirstOrDefault().TotalItem;
                     return pagedList;
                 }
                 finally

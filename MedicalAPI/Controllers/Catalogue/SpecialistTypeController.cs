@@ -46,8 +46,6 @@ namespace MedicalAPI.Controllers
 
         public const string SPECIAL_LIST_TEMPLATE_NAME = "SpecialListTypeTemplate.xlsx";
 
-        
-
         #endregion
 
     }

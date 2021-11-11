@@ -15,7 +15,17 @@ namespace Medical.Models
         /// <summary>
         /// Mã thông tin chi tiết dịch vụ phát sinh
         /// </summary>
-        public int? ExaminationFormDetailId { get; set; }
+        //public int? ExaminationFormDetailId { get; set; }
+
+        /// <summary>
+        /// Loại file
+        /// </summary>
+        public int? TypeId { get; set; }
+
+        /// <summary>
+        /// Mã folder
+        /// </summary>
+        public int? FolderId { get; set; }
 
         /// <summary>
         /// Loại file

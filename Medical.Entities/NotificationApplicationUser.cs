@@ -26,5 +26,6 @@ namespace Medical.Entities
         /// </summary>
         public int? UserGroupId { get; set; }
         public bool IsRead { get; set; }
+
     }
 }

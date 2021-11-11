@@ -86,6 +86,21 @@ namespace Medical.Entities
         /// </summary>
         public string AllergyInformation { get; set; }
 
+        /// <summary>
+        /// Chiều cao
+        /// </summary>
+        public double? Height { get; set; }
+
+        /// <summary>
+        /// Cân nặng
+        /// </summary>
+        public double? Weight { get; set; }
+
+        /// <summary>
+        /// Nhóm máu
+        /// </summary>
+        public string BloodType { get; set; }
+
         #region Extension Properties
 
         /// <summary>
@@ -125,6 +140,20 @@ namespace Medical.Entities
         public string NationName { get; set; }
 
         /// <summary>
+        /// Số tuổi hiện tại của user
+        /// </summary>
+        [NotMapped]
+        public int? Age
+        {
+            get
+            {
+                if (BirthDate.HasValue) return DateTime.Now.Year - BirthDate.Value.Year;
+
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Thông tin người thân (nếu có)
         /// </summary>
         [NotMapped]
@@ -133,8 +162,14 @@ namespace Medical.Entities
         /// <summary>
         /// List file theo hồ sơ
         /// </summary>
+        //[NotMapped]
+        //public IList<MedicalRecordFiles> MedicalRecordFiles { get; set; }
+
+        /// <summary>
+        /// File của user
+        /// </summary>
         [NotMapped]
-        public IList<MedicalRecordFiles> MedicalRecordFiles { get; set; }
+        public IList<UserFiles> UserFiles { get; set; }
 
         /// <summary>
         /// Chi tiết hồ sơ khám bệnh (Hồ sơ bệnh án)

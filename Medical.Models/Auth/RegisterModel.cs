@@ -55,4 +55,17 @@ namespace Medical.Models
         public string UserFullName { get; set; }
 
     }
+
+    public class AppRegisterModel: RegisterModel
+    {
+        public int Gender { get; set; }
+        public int? CountryId { get; set; }
+        public int? CityId { get; set; }
+        public int? DicstrictId { get; set; }
+        public int? WardId { get; set; }
+        public int? NationId { get; set; }
+        public int? JobId { get; set; }
+        public string Address { get; set; }
+        public DateTime? BirthDate { get; set; }
+    }
 }

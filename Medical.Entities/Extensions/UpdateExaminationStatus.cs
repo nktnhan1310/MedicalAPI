@@ -22,11 +22,6 @@ namespace Medical.Entities.Extensions
         public int? PaymentMethodId { get; set; }
 
         /// <summary>
-        /// Tổng số tiền cần thanh toán
-        /// </summary>
-        public double? TotalPrice { get; set; }
-
-        /// <summary>
         /// Mã ngân hàng
         /// </summary>
         public int? BankInfoId { get; set; }
@@ -57,15 +52,35 @@ namespace Medical.Entities.Extensions
         public int? DoctorId { get; set; }
 
         /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        public int? VaccineTypeId { get; set; }
+
+        /// <summary>
         /// Chuẩn đoán của bác sĩ
         /// </summary>
         public string DoctorComment { get; set; }
+
+        /// <summary>
+        /// Loại chuẩn đoán
+        /// </summary>
+        public int? DiagnoticTypeId { get; set; }
+
+        /// <summary>
+        /// Tên bệnh
+        /// </summary>
+        public string DiagnoticSickName { get; set; }
 
         /// <summary>
         /// Nhập comment xác nhận/hủy
         /// </summary>
         [StringLength(1000)]
         public string Comment { get; set; }
+
+        /// <summary>
+        /// Mã phiếu đổi
+        /// </summary>
+        public int? ExaminationFormChangedId { get; set; }
 
         /// <summary>
         /// Người thao tác
@@ -83,16 +98,32 @@ namespace Medical.Entities.Extensions
         public string Prescription { get; set; }
 
         /// <summary>
+        /// Huyết áp
+        /// </summary>
+        public string BloodPressure { get; set; }
+
+        /// <summary>
+        /// Nhịp tim
+        /// </summary>
+        public string HeartBeat { get; set; }
+
+        /// <summary>
+        /// Đường huyết
+        /// </summary>
+        public string BloodSugar { get; set; }
+
+
+        /// <summary>
         /// List file toa thuốc/xét nghiệm/ siêu âm...
         /// </summary>
-        public IList<MedicalRecordDetailFiles> MedicalRecordDetailFiles { get; set; }
+        public IList<UserFiles> MedicalRecordDetailFiles { get; set; }
 
         [DefaultValue(false)]
         public bool HasMedicalBill { get; set; }
 
-        /// <summary>
-        /// Toa thuốc
-        /// </summary>
-        public MedicalBills MedicalBills { get; set; }
+        ///// <summary>
+        ///// Toa thuốc
+        ///// </summary>
+        //public MedicalBills MedicalBills { get; set; }
     }
 }

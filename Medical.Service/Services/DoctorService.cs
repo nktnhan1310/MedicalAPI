@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using Medical.Entities;
+using Medical.Extensions;
+using Medical.Interface.DbContext;
 using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
@@ -17,7 +19,7 @@ namespace Medical.Service
 {
     public class DoctorService : DomainService<Doctors, SearchDoctor>, IDoctorService
     {
-        public DoctorService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        public DoctorService(IMedicalUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper) : base(unitOfWork, medicalDbContext, mapper)
         {
         }
 
@@ -35,9 +37,10 @@ namespace Medical.Service
                 new SqlParameter("@DegreeId", baseSearch.DegreeId),
                 new SqlParameter("@HospitalId", baseSearch.HospitalId),
                 new SqlParameter("@SpecialListTypeId", baseSearch.SpecialListTypeId),
+                new SqlParameter("@TypeId", baseSearch.TypeId),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
-                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+                //new SqlParameter("@TotalPage", SqlDbType.Int, 0),
             };
             return parameters;
         }
@@ -49,28 +52,39 @@ namespace Medical.Service
         /// <returns></returns>
         public override async Task<bool> CreateAsync(Doctors item)
         {
-            bool result = false;
-            if (item != null)
+            if (item == null) throw new AppException("Item không tồn tại");
+            using (var contextTransactionTask = this.medicalDbContext.Database.BeginTransactionAsync())
             {
-                // Lưu thông tin bác sĩ
-                await unitOfWork.Repository<Doctors>().CreateAsync(item);
-                await unitOfWork.SaveAsync();
-                // Cập nhật thông tin chuyên khoa của bác sĩ
-                if (item.DoctorDetails != null && item.DoctorDetails.Any())
+                try
                 {
-                    foreach (var doctorDetail in item.DoctorDetails)
+                    // Lưu thông tin bác sĩ
+                    await unitOfWork.Repository<Doctors>().CreateAsync(item);
+                    await unitOfWork.SaveAsync();
+                    // Cập nhật thông tin chuyên khoa của bác sĩ
+                    if (item.DoctorDetails != null && item.DoctorDetails.Any())
                     {
-                        doctorDetail.DoctorId = item.Id;
-                        doctorDetail.Created = DateTime.Now;
-                        doctorDetail.Active = true;
-                        doctorDetail.Id = 0;
-                        await unitOfWork.Repository<DoctorDetails>().CreateAsync(doctorDetail);
+                        foreach (var doctorDetail in item.DoctorDetails)
+                        {
+                            doctorDetail.DoctorId = item.Id;
+                            doctorDetail.Created = DateTime.Now;
+                            doctorDetail.Active = true;
+                            doctorDetail.Id = 0;
+                            unitOfWork.Repository<DoctorDetails>().Create(doctorDetail);
+                        }
                     }
+
+                    await this.unitOfWork.SaveAsync();
+                    var contextTransaction = await contextTransactionTask;
+                    await contextTransaction.CommitAsync();
+                    return true;
                 }
-                await unitOfWork.SaveAsync();
-                result = true;
+                catch (Exception)
+                {
+                    var contextTransaction = await contextTransactionTask;
+                    contextTransaction.Rollback();
+                    return false;
+                }
             }
-            return result;
         }
 
         /// <summary>
@@ -85,41 +99,53 @@ namespace Medical.Service
                  .AsNoTracking()
                  .Where(e => e.Id == item.Id && !e.Deleted)
                  .FirstOrDefaultAsync();
+            if (exists == null) throw new AppException("Không tìm thấy thông tin item");
 
-            if (exists != null)
+            using (var contextTransactionTask = this.medicalDbContext.Database.BeginTransactionAsync())
             {
-                exists = mapper.Map<Doctors>(item);
-                unitOfWork.Repository<Doctors>().Update(exists);
-
-                // Cập nhật thông tin chuyên khoa của bác sĩ
-                if (item.DoctorDetails != null && item.DoctorDetails.Any())
+                try
                 {
-                    foreach (var doctorDetail in item.DoctorDetails)
+                    exists = mapper.Map<Doctors>(item);
+                    unitOfWork.Repository<Doctors>().Update(exists);
+
+                    // Cập nhật thông tin chuyên khoa của bác sĩ
+                    if (item.DoctorDetails != null && item.DoctorDetails.Any())
                     {
-                        var existDoctorDetail = await unitOfWork.Repository<DoctorDetails>().GetQueryable()
-                                                             .AsNoTracking()
-                                                             .Where(e => e.Id == doctorDetail.Id && !e.Deleted)
-                                                             .FirstOrDefaultAsync();
-                        if (existDoctorDetail != null)
+                        foreach (var doctorDetail in item.DoctorDetails)
                         {
-                            existDoctorDetail = mapper.Map<DoctorDetails>(doctorDetail);
-                            existDoctorDetail.DoctorId = exists.Id;
-                            existDoctorDetail.Updated = DateTime.Now;
-                            unitOfWork.Repository<DoctorDetails>().Update(existDoctorDetail);
-                        }
-                        else
-                        {
-                            doctorDetail.DoctorId = exists.Id;
-                            doctorDetail.Created = DateTime.Now;
-                            doctorDetail.Id = 0;
-                            await unitOfWork.Repository<DoctorDetails>().CreateAsync(doctorDetail);
+                            var existDoctorDetail = await unitOfWork.Repository<DoctorDetails>().GetQueryable()
+                                                                 .AsNoTracking()
+                                                                 .Where(e => e.Id == doctorDetail.Id && !e.Deleted)
+                                                                 .FirstOrDefaultAsync();
+                            if (existDoctorDetail != null)
+                            {
+                                existDoctorDetail = mapper.Map<DoctorDetails>(doctorDetail);
+                                existDoctorDetail.DoctorId = exists.Id;
+                                existDoctorDetail.Updated = DateTime.Now;
+                                unitOfWork.Repository<DoctorDetails>().Update(existDoctorDetail);
+                            }
+                            else
+                            {
+                                doctorDetail.DoctorId = exists.Id;
+                                doctorDetail.Created = DateTime.Now;
+                                doctorDetail.Id = 0;
+                                await unitOfWork.Repository<DoctorDetails>().CreateAsync(doctorDetail);
+                            }
                         }
                     }
+
+                    await this.unitOfWork.SaveAsync();
+                    var contextTransaction = await contextTransactionTask;
+                    await contextTransaction.CommitAsync();
+                    return true;
                 }
-                await unitOfWork.SaveAsync();
-                result = true;
+                catch (Exception)
+                {
+                    var contextTransaction = await contextTransactionTask;
+                    contextTransaction.Rollback();
+                    return false;
+                }
             }
-            return result;
         }
 
         /// <summary>
@@ -133,7 +159,7 @@ namespace Medical.Service
             string result = string.Empty;
             if (Queryable.Any(e => !e.Deleted && e.HospitalId == item.HospitalId && e.Id != item.Id && e.Code == item.Code))
                 return "Mã bác sĩ đã tồn tại";
-            if(Queryable.Any(e => !e.Deleted && e.UserId.HasValue && e.HospitalId == item.HospitalId && e.Id != item.Id && e.UserId == item.UserId))
+            if (Queryable.Any(e => !e.Deleted && e.UserId.HasValue && e.HospitalId == item.HospitalId && e.Id != item.Id && e.UserId == item.UserId))
                 return "Tài khoản đã được chọn";
             if (item.DoctorDetails != null && item.DoctorDetails.Any())
             {
@@ -176,6 +202,8 @@ namespace Medical.Service
                 new SqlParameter("@SessionId", searchExaminationScheduleDetailV2.SessionId),
                 new SqlParameter("@DayOfWeek", searchExaminationScheduleDetailV2.DayOfWeek),
                 new SqlParameter("@ExaminationDate", searchExaminationScheduleDetailV2.ExaminationDate),
+                new SqlParameter("@ExaminationScheduleDetailId", searchExaminationScheduleDetailV2.ExaminationScheduleDetailId),
+                new SqlParameter("@DoctorTypeId", searchExaminationScheduleDetailV2.DoctorTypeId),
                 new SqlParameter("@OrderBy", searchExaminationScheduleDetailV2.OrderBy),
                 new SqlParameter("@SearchContent", searchExaminationScheduleDetailV2.SearchContent),
                 new SqlParameter("@TotalPage", SqlDbType.Int, 0),

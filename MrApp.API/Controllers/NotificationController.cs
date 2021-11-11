@@ -67,71 +67,98 @@ namespace MrApp.API.Controllers
         [Authorize]
         public async Task<AppDomainResult> GetNotifications()
         {
-            List<NotificationModel> notificationModels = new List<NotificationModel>();
-            var userNotificationApplications = await this.notificationApplicationUserService.GetAsync(e => !e.Deleted
-            && e.ToUserId == LoginContext.Instance.CurrentUser.UserId
-            );
-            if (userNotificationApplications != null && userNotificationApplications.Any())
-            {
-                List<Notifications> notifications = new List<Notifications>();
-                var notificationReadIds = userNotificationApplications.Where(e => e.IsRead).Select(e => e.NotificationId).Distinct().ToList();
-                var notificationUnReadIds = userNotificationApplications.Where(e => !e.IsRead).Select(e => e.NotificationId).Distinct().ToList();
-                if (notificationReadIds != null && notificationReadIds.Any())
-                {
-                    Expression<Func<Notifications, Notifications>> select = e => new Notifications()
-                    {
-                        Id = e.Id,
-                        Active = e.Active,
-                        IsRead = true,
-                        Content = e.Content,
-                        Created = e.Created,
-                        CreatedBy = e.CreatedBy,
-                        Title = e.Title,
-                    };
-                    var notificationReadInfos = await this.notificationService.GetAsync(e => !e.Deleted && notificationReadIds.Contains(e.Id), select);
-                    notifications.AddRange(notificationReadInfos);
-                }
-                if (notificationUnReadIds != null && notificationUnReadIds.Any())
-                {
-                    Expression<Func<Notifications, Notifications>> select = e => new Notifications()
-                    {
-                        Id = e.Id,
-                        Active = e.Active,
-                        IsRead = false,
-                        Content = e.Content,
-                        Created = e.Created,
-                        CreatedBy = e.CreatedBy,
-                        Title = e.Title,
-                    };
-                    var notificationUnReadInfos = await this.notificationService.GetAsync(e => !e.Deleted && notificationUnReadIds.Contains(e.Id), select);
-                    notifications.AddRange(notificationUnReadInfos);
-                }
-                notificationModels = mapper.Map<List<NotificationModel>>(notifications);
+            AppDomainResult appDomainResult = new AppDomainResult();
 
-            }
-            else throw new AppException("Người dùng hiện tại không có thông báo");
-            return new AppDomainResult()
+            if (ModelState.IsValid)
             {
-                Data = notificationModels,
-                Success = true,
-                ResultCode = (int)HttpStatusCode.OK
-            };
+                SearchNotification baseSearch = new SearchNotification();
+                baseSearch.PageIndex = 1;
+                baseSearch.PageSize = 20;
+                //if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
+                //    baseSearch.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
+                baseSearch.ToUserId = LoginContext.Instance.CurrentUser.UserId;
+                PagedList<Notifications> pagedData = await this.notificationService.GetPagedListData(baseSearch);
+                PagedList<NotificationModel> pagedDataModel = mapper.Map<PagedList<NotificationModel>>(pagedData);
+                if (pagedDataModel != null && pagedDataModel.Items.Any())
+                {
+                    foreach (var item in pagedDataModel.Items)
+                    {
+                        var notificationApplicationUserInfos = await notificationApplicationUserService.GetAsync(e => e.NotificationId == item.Id);
+                        if (notificationApplicationUserInfos != null && notificationApplicationUserInfos.Any())
+                        {
+                            item.IsRead = notificationApplicationUserInfos.FirstOrDefault().IsRead;
+                            item.Content = notificationApplicationUserInfos.OrderByDescending(e => e.Created).FirstOrDefault().NotificationContent;
+                        }
+                    }
+                }
+                appDomainResult = new AppDomainResult
+                {
+                    Data = pagedDataModel,
+                    Success = true,
+                    ResultCode = (int)HttpStatusCode.OK
+                };
+            }
+            else
+                throw new AppException(ModelState.GetErrorMessage());
+
+            return appDomainResult;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="baseSearch"></param>
+        /// <returns></returns>
+        [HttpGet("get-paged-data")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
+        public async Task<AppDomainResult> GetPagedData([FromQuery] SearchNotification baseSearch)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+
+            if (ModelState.IsValid)
+            {
+                baseSearch.ToUserId = LoginContext.Instance.CurrentUser.UserId;
+                PagedList<Notifications> pagedData = await this.notificationService.GetPagedListData(baseSearch);
+                PagedList<NotificationModel> pagedDataModel = mapper.Map<PagedList<NotificationModel>>(pagedData);
+                if (pagedDataModel != null && pagedDataModel.Items.Any())
+                {
+                    foreach (var item in pagedDataModel.Items)
+                    {
+                        var notificationApplicationUserInfos = await notificationApplicationUserService.GetAsync(e => e.NotificationId == item.Id);
+                        if (notificationApplicationUserInfos != null && notificationApplicationUserInfos.Any())
+                        {
+                            item.IsRead = notificationApplicationUserInfos.FirstOrDefault().IsRead;
+                            item.Content = notificationApplicationUserInfos.OrderByDescending(e => e.Created).FirstOrDefault().NotificationContent;
+                        }
+                    }
+                }
+                appDomainResult = new AppDomainResult
+                {
+                    Data = pagedDataModel,
+                    Success = true,
+                    ResultCode = (int)HttpStatusCode.OK
+                };
+            }
+            else
+                throw new AppException(ModelState.GetErrorMessage());
+
+            return appDomainResult;
         }
 
         /// <summary>
         /// Kiểm tra user đọc thông báo chưa
         /// </summary>
         /// <param name="notificationId"></param>
-        /// <param name="isReadAll"></param>
         /// <returns></returns>
         [HttpGet("read-notification")]
         [Authorize]
-        public async Task<AppDomainResult> ReadNotification([FromQuery] int? notificationId, bool isReadAll = false)
+        public async Task<AppDomainResult> ReadNotification([FromQuery] int? notificationId)
         {
-            bool success = false;
+            bool success = true;
             var notificationUsers = await this.notificationApplicationUserService.GetAsync(e => !e.Deleted
             && e.ToUserId == LoginContext.Instance.CurrentUser.UserId
-            && (isReadAll || (!notificationId.HasValue || e.NotificationId == notificationId))
+            && (!notificationId.HasValue || e.NotificationId == notificationId)
+            && !LoginContext.Instance.CurrentUser.HospitalId.HasValue
             );
             if (notificationUsers != null && notificationUsers.Any())
             {
@@ -150,6 +177,61 @@ namespace MrApp.API.Controllers
             {
                 Success = success,
                 ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
+        /// Đọc thông báo user
+        /// </summary>
+        /// <param name="notificationIds"></param>
+        /// <returns></returns>
+        [HttpPost("read-user-notifications")]
+        public async Task<AppDomainResult> ReadNotifications([FromBody] List<int> notificationIds)
+        {
+            bool success = true;
+            var notificationUsers = await this.notificationApplicationUserService.GetAsync(e => !e.Deleted
+            && e.ToUserId == LoginContext.Instance.CurrentUser.UserId
+            && ((notificationIds == null || !notificationIds.Any()) || notificationIds.Contains(e.NotificationId))
+            && !LoginContext.Instance.CurrentUser.HospitalId.HasValue
+            );
+            if (notificationUsers != null && notificationUsers.Any())
+            {
+                foreach (var item in notificationUsers)
+                {
+                    item.IsRead = true;
+                    Expression<Func<NotificationApplicationUser, object>>[] includeProperties = new Expression<Func<NotificationApplicationUser, object>>[]
+                    {
+                        e => e.IsRead
+                    };
+                    success &= await this.notificationApplicationUserService.UpdateFieldAsync(item, includeProperties);
+                }
+            }
+            else throw new AppException("Không có thông tin thông báo");
+            return new AppDomainResult()
+            {
+                Success = success,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
+        /// Xóa thông báo của user
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete("delete-user-notifications")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Delete })]
+        public async Task<AppDomainResult> DeleteUserNotifications([FromBody] List<int> itemIds)
+        {
+            bool success = false;
+            var currentUserId = LoginContext.Instance.CurrentUser.UserId;
+            if (itemIds != null && itemIds.Any())
+            {
+                success = await this.notificationService.DeleteUserNotifications(itemIds, currentUserId, null);
+            }
+            return new AppDomainResult()
+            {
+                Success = success,
+                ResultCode = (int)HttpStatusCode.OK,
             };
         }
 

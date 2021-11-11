@@ -11,6 +11,6 @@ namespace Medical.Interface.Services.Base
 {
     public interface ICatalogueHospitalService<E, T> : ICoreHospitalService<E, T> where E : MedicalCatalogueAppDomainHospital where T : BaseHospitalSearch
     {
-        Task<AppDomainImportResult> ImportTemplateFile(Stream stream, string createdBy, int? hospitalId);
+        Task<AppDomainImportResult> ImportTemplateFile(Stream stream, int? hospitalId);
     }
 }

@@ -2,7 +2,9 @@
 using AutoMapper.QueryableExtensions;
 using Medical.Entities;
 using Medical.Entities.DomainEntity;
+using Medical.Extensions;
 using Medical.Interface;
+using Medical.Interface.DbContext;
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
 using Microsoft.Data.SqlClient;
@@ -21,6 +23,8 @@ namespace Medical.Service
     {
         protected readonly IUnitOfWork unitOfWork;
         protected readonly IMapper mapper;
+        protected IMedicalDbContext medicalDbContext;
+
         protected IQueryable<E> Queryable
         {
             get
@@ -32,6 +36,13 @@ namespace Medical.Service
         {
             this.unitOfWork = unitOfWork;
             this.mapper = mapper;
+        }
+
+        public DomainService(IUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper)
+        {
+            this.unitOfWork = unitOfWork;
+            this.mapper = mapper;
+            this.medicalDbContext = medicalDbContext;
         }
 
         public virtual void LoadReferences(IList<E> items)
@@ -112,7 +123,7 @@ namespace Medical.Service
             }
         }
 
-        
+
         public virtual IList<E> GetAll()
         {
             return GetAll(null);
@@ -154,7 +165,7 @@ namespace Medical.Service
                 new SqlParameter("@PageSize", baseSearch.PageSize),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
-                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+                //new SqlParameter("@TotalPage", SqlDbType.Int, 0),
             };
             return parameters;
         }
@@ -330,7 +341,7 @@ namespace Medical.Service
             return true;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public virtual async Task<bool> DeleteAsync(int id)
         {
             var exists = Queryable
                 .AsNoTracking()
@@ -348,6 +359,36 @@ namespace Medical.Service
             }
         }
 
+        public virtual async Task<bool> DeleteAsync(List<int> ids)
+        {
+            var existItems = await Queryable
+                .AsNoTracking()
+                .Where(e => ids.Contains(e.Id))
+                .ToListAsync();
+            if (existItems != null && existItems.Any())
+            {
+                foreach (var existItem in existItems)
+                {
+                    existItem.Deleted = true;
+                    existItem.Updated = DateTime.Now;
+                    existItem.UpdatedBy = LoginContext.Instance.CurrentUser != null ? LoginContext.Instance.CurrentUser.UserName : string.Empty;
+                    Expression<Func<E, object>>[] includeProperties = new Expression<Func<E, object>>[]
+                    {
+                        e => e.Deleted,
+                        e => e.Updated,
+                        e => e.UpdatedBy
+                    };
+                    unitOfWork.Repository<E>().UpdateFieldsSave(existItem, includeProperties);
+                }
+                await unitOfWork.SaveAsync();
+                return true;
+            }
+            else
+            {
+                throw new Exception("No item was existed");
+            }
+        }
+
         public async Task<IList<E>> GetAllAsync()
         {
             return await Queryable.AsNoTracking().ToListAsync();
@@ -355,7 +396,7 @@ namespace Medical.Service
 
         public virtual async Task<E> GetByIdAsync(int id)
         {
-            return await Queryable.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+            return await Queryable.Where(e => !e.Deleted && e.Id == id).AsNoTracking().FirstOrDefaultAsync();
 
         }
 
@@ -363,6 +404,7 @@ namespace Medical.Service
         {
             var query = unitOfWork.Repository<E>()
                .GetQueryable()
+               .Where(e => !e.Deleted)
                .AsNoTracking();
             if (select != null)
             {
@@ -411,6 +453,37 @@ namespace Medical.Service
                 .ToListAsync();
         }
 
+        public async Task<E> GetSingleAsync(Expression<Func<E, bool>> expression, Expression<Func<E, E>> select)
+        {
+            return await unitOfWork.Repository<E>()
+                 .GetQueryable()
+                 .Where(expression)
+                 .Select(select)
+                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<E> GetSingleAsync(Expression<Func<E, bool>> expression)
+        {
+            return await unitOfWork.Repository<E>()
+                .GetQueryable()
+                .Where(expression)
+                .FirstOrDefaultAsync();
+        }
+
+        public async Task<E> GetSingleAsync(Expression<Func<E, bool>> expression, bool useProjectTo)
+        {
+            if (useProjectTo)
+                return await unitOfWork.Repository<E>()
+                .GetQueryable()
+                .ProjectTo<E>(mapper.ConfigurationProvider)
+                .Where(expression)
+                .FirstOrDefaultAsync();
+            return await unitOfWork.Repository<E>()
+                .GetQueryable()
+                .ProjectTo<E>(mapper.ConfigurationProvider)
+                .Where(expression)
+                .FirstOrDefaultAsync();
+        }
 
         public E GetById(int id, IConfigurationProvider mapperConfiguration)
         {
@@ -487,6 +560,22 @@ namespace Medical.Service
             return await queryable.ToListAsync();
         }
 
+        public async Task<int> CountAsync(Expression<Func<E, bool>> expression)
+        {
+            return await this.Queryable.Where(expression).CountAsync();
+        }
+
+        public async Task<int> CountAsync(Expression<Func<E, bool>>[] expressions)
+        {
+            var queryable = Queryable.Where(e => !e.Deleted);
+            foreach (var expression in expressions)
+            {
+                queryable = queryable.Where(expression);
+            }
+
+            return await queryable.CountAsync();
+        }
+
         public async Task<IList<E>> GetAsync(Expression<Func<E, bool>>[] expressions, bool useProjectTo)
         {
             var queryable = Queryable.Where(e => !e.Deleted);
@@ -501,6 +590,46 @@ namespace Medical.Service
             return await queryable.ToListAsync();
         }
 
+
+        public async Task<E> GetSingleAsync(Expression<Func<E, bool>>[] expressions, Expression<Func<E, E>> select)
+        {
+            var queryable = Queryable.Where(e => !e.Deleted);
+            foreach (var expression in expressions)
+            {
+                queryable = queryable.Where(expression);
+            }
+            if (select != null)
+            {
+                queryable = queryable.Select(select);
+            }
+            return await queryable.FirstOrDefaultAsync();
+        }
+
+        public async Task<E> GetSingleAsync(Expression<Func<E, bool>>[] expressions)
+        {
+            var queryable = Queryable.Where(e => !e.Deleted);
+            foreach (var expression in expressions)
+            {
+                queryable = queryable.Where(expression);
+            }
+
+            return await queryable.FirstOrDefaultAsync();
+        }
+
+        public async Task<E> GetSingleAsync(Expression<Func<E, bool>>[] expressions, bool useProjectTo)
+        {
+            var queryable = Queryable.Where(e => !e.Deleted);
+            foreach (var expression in expressions)
+            {
+                queryable = queryable.Where(expression);
+            }
+            if (useProjectTo)
+            {
+                queryable = queryable.ProjectTo<E>(mapper.ConfigurationProvider);
+            }
+            return await queryable.FirstOrDefaultAsync();
+        }
+
         public virtual async Task<string> GetExistItemMessage(E item)
         {
             return await Task.Run(() =>
@@ -512,6 +641,7 @@ namespace Medical.Service
                 return result;
             });
         }
+
 
     }
 }

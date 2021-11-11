@@ -76,56 +76,20 @@ namespace MedicalAPI.Controllers
                     success = await this.domainService.CreateAsync(item);
                     if (success)
                     {
-                        // ------------------------- TẠO NOTIFY CHO USER
-                        var defaultTemplateCreateDoctors = await this.notificationTemplateService.GetAsync(e => e.Code == CoreContants.NOTI_TEMPLATE_DOCTOR_CREATE);
-                        var notificationTypeHospitals = await this.notificationTypeService.GetAsync(e => e.Code == CatalogueUtilities.NotificationType.HOS.ToString());
-                        NotificationTemplates notificationTemplates = null;
-                        int? notificationTemplateId = null;
-                        int? notificationTypeId = null;
-                        if(defaultTemplateCreateDoctors != null && defaultTemplateCreateDoctors.Any())
+                        if (item.UserId.HasValue && item.UserId.Value > 0)
                         {
-                            notificationTemplates = defaultTemplateCreateDoctors.FirstOrDefault();
-                            notificationTemplateId = defaultTemplateCreateDoctors.FirstOrDefault().Id;
-                        }
-                        if (notificationTypeHospitals != null && notificationTypeHospitals.Any())
-                            notificationTypeId = notificationTypeHospitals.FirstOrDefault().Id;
-                        Notifications notifications = new Notifications()
-                        {
-                            Active = true,
-                            Deleted = false,
-                            Created = DateTime.Now,
-                            CreatedBy = LoginContext.Instance.CurrentUser.UserName,
-                            FromUserId = LoginContext.Instance.CurrentUser.UserId,
-                            IsRead = false,
-                            IsSendNotify = false,
-                            HospitalId = LoginContext.Instance.CurrentUser.HospitalId,
-                            NotificationTemplateId = notificationTemplateId,
-                            NotificationTypeId = notificationTypeId,
-                            WebUrl = string.Empty,
-                            AppUrl = string.Empty
-                        };
-                        bool successNotify = await this.notificationService.CreateAsync(notifications);
-
-                        // Tạo notify cho user
-                        if(item.UserId.HasValue && item.UserId.Value > 0)
-                        {
-                            NotificationApplicationUser notificationApplicationUser = new NotificationApplicationUser()
-                            {
-                                Active = true,
-                                Deleted = false,
-                                Created = DateTime.Now,
-                                CreatedBy = LoginContext.Instance.CurrentUser.UserName,
-                                NotificationId = notifications.Id,
-                                HospitalId = LoginContext.Instance.CurrentUser.HospitalId,
-                                ToUserId = item.UserId,
-                                IsRead = false,
-                            };
-                        }
-
-
-                        // HUB GỬI NOTIFY
-                        if (successNotify)
+                            await notificationService.CreateCustomNotificationUser(null, LoginContext.Instance.CurrentUser.HospitalId
+                            , new List<int>() { item.UserId.Value }
+                            , string.Format("/hospital/doctor")
+                            , string.Empty
+                            , LoginContext.Instance.CurrentUser.UserName
+                            , null
+                            , false
+                            , "USER"
+                            , CoreContants.NOTI_TEMPLATE_DOCTOR_CREATE
+                            );
                             await hubContext.Clients.All.SendAsync(CoreContants.GET_TOTAL_NOTIFICATION);
+                        }
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
                     }
                     else
@@ -158,7 +122,7 @@ namespace MedicalAPI.Controllers
             {
                 groupDoctorIds = doctorGroupRoleInfos.Select(e => e.Id).ToList();
                 var userInGroupDoctors = await this.userInGroupService.GetAsync(e => !e.Deleted && groupDoctorIds.Contains(e.UserGroupId));
-                if(userInGroupDoctors != null && userInGroupDoctors.Any())
+                if (userInGroupDoctors != null && userInGroupDoctors.Any())
                 {
                     var userInGroupDoctorIds = userInGroupDoctors.Select(e => e.UserId).Distinct().ToList();
                     // Lấy tất cả user đã được phân bố cho bệnh viện

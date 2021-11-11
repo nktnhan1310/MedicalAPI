@@ -114,17 +114,23 @@
             <param name="itemModel"></param>
             <returns></returns>
         </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.AddMultipleItem(System.Collections.Generic.IList{`1})">
+            <summary>
+            Thêm mới nhiều item
+            </summary>
+            <param name="itemModels"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.UpdateMultipleItem(System.Collections.Generic.IList{`1})">
+            <summary>
+            Cập nhật list item
+            </summary>
+            <param name="itemModels"></param>
+            <returns></returns>
+        </member>
         <member name="M:Medical.Core.App.Controllers.BaseController`3.UpdateItem(System.Int32,`1)">
             <summary>
             Cập nhật thông tin item
-            </summary>
-            <param name="id"></param>
-            <param name="itemModel"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Medical.Core.App.Controllers.BaseController`3.PatchItem(System.Int32,`1)">
-            <summary>
-            Cập nhật 1 phần item
             </summary>
             <param name="id"></param>
             <param name="itemModel"></param>
@@ -135,6 +141,13 @@
             Xóa item
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.BaseController`3.Delete(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Xóa nhiều lựa chọn
+            </summary>
+            <param name="itemIds"></param>
             <returns></returns>
         </member>
         <member name="M:Medical.Core.App.Controllers.BaseController`3.GetPagedData(`2)">
@@ -184,17 +197,23 @@
             <param name="itemModel"></param>
             <returns></returns>
         </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.AddMultipleItem(System.Collections.Generic.IList{`1})">
+            <summary>
+            Thêm mới nhiều item
+            </summary>
+            <param name="itemModels"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.UpdateMultipleItem(System.Collections.Generic.IList{`1})">
+            <summary>
+            Cập nhật thông tin list item
+            </summary>
+            <param name="itemModels"></param>
+            <returns></returns>
+        </member>
         <member name="M:Medical.Core.App.Controllers.CatalogueController`3.UpdateItem(System.Int32,`1)">
             <summary>
             Cập nhật thông tin item
-            </summary>
-            <param name="id"></param>
-            <param name="itemModel"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.PatchItem(System.Int32,`1)">
-            <summary>
-            Cập nhật 1 phần item
             </summary>
             <param name="id"></param>
             <param name="itemModel"></param>
@@ -205,6 +224,13 @@
             Xóa item
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueController`3.Delete(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Xóa nhiều lựa chọn
+            </summary>
+            <param name="itemIds"></param>
             <returns></returns>
         </member>
         <member name="M:Medical.Core.App.Controllers.CatalogueController`3.GetPagedData(`2)">
@@ -254,17 +280,23 @@
             <param name="itemModel"></param>
             <returns></returns>
         </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.AddMultipleItem(System.Collections.Generic.IList{`1})">
+            <summary>
+            Thêm mới nhiều item
+            </summary>
+            <param name="itemModels"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.UpdateMultipleItem(System.Collections.Generic.IList{`1})">
+            <summary>
+            Cập nhật thông tin list item
+            </summary>
+            <param name="itemModels"></param>
+            <returns></returns>
+        </member>
         <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.UpdateItem(System.Int32,`1)">
             <summary>
             Cập nhật thông tin item
-            </summary>
-            <param name="id"></param>
-            <param name="itemModel"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.PatchItem(System.Int32,`1)">
-            <summary>
-            Cập nhật 1 phần item
             </summary>
             <param name="id"></param>
             <param name="itemModel"></param>
@@ -275,6 +307,13 @@
             Xóa item
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.Delete(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Xóa nhiều lựa chọn
+            </summary>
+            <param name="itemIds"></param>
             <returns></returns>
         </member>
         <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.GetPagedData(`2)">
@@ -325,17 +364,23 @@
             <param name="itemModel"></param>
             <returns></returns>
         </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.AddMultipleItem(System.Collections.Generic.IList{`1})">
+            <summary>
+            Thêm mới nhiều item
+            </summary>
+            <param name="itemModels"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.UpdateMultipleItem(System.Collections.Generic.IList{`1})">
+            <summary>
+            Cập nhật list item
+            </summary>
+            <param name="itemModels"></param>
+            <returns></returns>
+        </member>
         <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.UpdateItem(System.Int32,`1)">
             <summary>
             Cập nhật thông tin item
-            </summary>
-            <param name="id"></param>
-            <param name="itemModel"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.PatchItem(System.Int32,`1)">
-            <summary>
-            Cập nhật 1 phần item
             </summary>
             <param name="id"></param>
             <param name="itemModel"></param>
@@ -346,6 +391,13 @@
             Xóa item
             </summary>
             <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.Delete(System.Collections.Generic.List{System.Int32})">
+            <summary>
+            Xóa nhiều lựa chọn
+            </summary>
+            <param name="itemIds"></param>
             <returns></returns>
         </member>
         <member name="M:Medical.Core.App.Controllers.CoreHospitalController`3.GetPagedData(`2)">
@@ -373,6 +425,20 @@
             <summary>
             Lấy thông tin quyền của chức năng
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.OneSignalCoreController.TestPushNotification(Medical.Utilities.CreateNotificationModel)">
+            <summary>
+            TEST đẩy thử notification cho user
+            </summary>
+            <param name="createNotificationModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.OneSignalCoreController.UpdateUserPlayerId(Medical.Models.OneSignalDataModel)">
+            <summary>
+            Đẩy thông tin dữ liệu của one signal => Lưu xuống db
+            </summary>
+            <param name="oneSignalDataModel"></param>
             <returns></returns>
         </member>
         <member name="M:Medical.Core.App.Controllers.ReportCoreController`3.GetPagedListReport(`2)">

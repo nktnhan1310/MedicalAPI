@@ -14,6 +14,6 @@ namespace Medical.Entities
         /// <summary>
         /// Danh sách file chi tiết hồ sơ bệnh án
         /// </summary>
-        public IList<MedicalRecordDetailFiles> MedicalRecordDetailFiles { get; set; }
+        public IList<UserFiles> UserFiles { get; set; }
     }
 }

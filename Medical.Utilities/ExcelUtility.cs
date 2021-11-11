@@ -1,4 +1,5 @@
-﻿using OfficeOpenXml;
+﻿using Microsoft.Extensions.Configuration;
+using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Chart;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace Medical.Utilities
 {
     public class ExcelUtility
     {
+
         #region Constructors
 
         public ExcelUtility()

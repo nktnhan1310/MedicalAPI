@@ -17,6 +17,17 @@ namespace Medical.Entities
         /// </summary>
         public double? Price { get; set; }
 
+        /// <summary>
+        /// Trưởng khoa
+        /// </summary>
+        public int? ManagerId { get; set; }
+
+        /// <summary>
+        /// Danh sách bác sĩ/y tá/điều dưỡng thuộc chuyên khoa
+        /// </summary>
+        [NotMapped]
+        public IList<Doctors> Doctors { get; set; }
+
         #region Extension Properties
 
         /// <summary>
@@ -29,6 +40,12 @@ namespace Medical.Entities
         /// </summary>
         [NotMapped]
         public int TotalExaminationForms { get; set; }
+
+        /// <summary>
+        /// Tên trưởng khoa
+        /// </summary>
+        [NotMapped]
+        public string ManagerFullName { get; set; }
 
         #endregion
 

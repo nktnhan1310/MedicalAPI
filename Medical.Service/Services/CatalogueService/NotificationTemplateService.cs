@@ -13,7 +13,7 @@ namespace Medical.Service
 {
     public class NotificationTemplateService : CatalogueHospitalService<NotificationTemplates, BaseHospitalSearch>, INotificationTemplateService
     {
-        public NotificationTemplateService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        public NotificationTemplateService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
         }
 

@@ -94,7 +94,7 @@ namespace MedicalAPI.Controllers
             {
                 momoConfiguration = momoConfigurationInfos.FirstOrDefault();
                 string orderInfo = "test";
-                string amount = updateExaminationFormDetailStatus.TotalPrice.HasValue ? updateExaminationFormDetailStatus.TotalPrice.Value.ToString() : "0";
+                string amount = updateExaminationFormDetailStatus.TotalPrice.HasValue ? (updateExaminationFormDetailStatus.TotalPrice.Value.ToString()) : "0";
                 string orderid = Guid.NewGuid().ToString();
                 string requestId = Guid.NewGuid().ToString();
                 string extraData = "";
@@ -140,7 +140,7 @@ namespace MedicalAPI.Controllers
                         CreatedBy = LoginContext.Instance.CurrentUser.UserName,
                         Active = true,
                         Deleted = false,
-                        Amount = amount,
+                        Amount = Convert.ToInt64(amount),
                         RequestId = requestId,
                         OrderId = orderid,
                         OrderInfo = orderInfo,
@@ -154,6 +154,5 @@ namespace MedicalAPI.Controllers
             else throw new AppException("Không lấy được cấu hình thanh toán momo");
             return momoResponseModel;
         }
-
     }
 }

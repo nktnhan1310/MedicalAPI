@@ -43,10 +43,11 @@ namespace Medical.Models
         /// Trạng thái
         /// </summary>
         public int? Status { get; set; }
+
         /// <summary>
-        /// Tuổi
+        /// Ngày sinh
         /// </summary>
-        public int? Age { get; set; }
+        public DateTime? BirthDate { get; set; }
 
         /// <summary>
         /// Phải là admin không
@@ -98,7 +99,27 @@ namespace Medical.Models
         [DefaultValue(false)]
         public bool IsLoginGoogle { get; set; }
 
+        /// <summary>
+        /// Số lần chỉnh sửa phiếu
+        /// </summary>
+        public int? TotalEditExaminations { get; set; }
+
+        /// <summary>
+        /// Số lần chỉnh sửa phiếu
+        /// </summary>
+        public int? TotalCancelExaminations { get; set; }
+
+        /// <summary>
+        /// Mã user
+        /// </summary>
+        public string UserCode { get; set; }
+
         #region Extension Properties
+
+        /// <summary>
+        /// Tên nhóm của user
+        /// </summary>
+        public string UserGroupName { get; set; }
 
         /// <summary>
         /// Có reset mật khẩu không
@@ -136,7 +157,7 @@ namespace Medical.Models
         /// 1 => Nam
         /// </summary>
         [DefaultValue(false)]
-        public bool Gender { get; set; }
+        public int Gender { get; set; }
 
         /// <summary>
         /// List id nhóm người dùng được chọn

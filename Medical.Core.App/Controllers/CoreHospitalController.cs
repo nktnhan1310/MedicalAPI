@@ -30,6 +30,7 @@ namespace Medical.Core.App.Controllers
         protected IDomainService<E, F> domainService;
         protected IWebHostEnvironment env;
         private readonly IUserService userService;
+        protected IHospitalService hospitalService;
 
         public CoreHospitalController(IServiceProvider serviceProvider, ILogger<CoreHospitalController<E, T, F>> logger, IWebHostEnvironment env)
         {
@@ -38,6 +39,7 @@ namespace Medical.Core.App.Controllers
             this.mapper = serviceProvider.GetService<IMapper>();
             this.serviceProvider = serviceProvider;
             userService = serviceProvider.GetRequiredService<IUserService>();
+            hospitalService = serviceProvider.GetRequiredService<IHospitalService>();
         }
 
         /// <summary>
@@ -91,6 +93,11 @@ namespace Medical.Core.App.Controllers
                     || (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId == item.HospitalId)))
                 {
                     var itemModel = mapper.Map<T>(item);
+                    if (itemModel.HospitalId.HasValue && itemModel.HospitalId.Value > 0)
+                    {
+                        var hospitalInfo = await this.hospitalService.GetByIdAsync(itemModel.HospitalId.Value);
+                        itemModel.HospitalName = hospitalInfo.Name;
+                    }
                     appDomainResult = new AppDomainResult()
                     {
                         Success = true,
@@ -120,8 +127,8 @@ namespace Medical.Core.App.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
-                if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
-                    itemModel.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
+                if (LoginContext.Instance.CurrentUser != null)
+                    itemModel.HospitalId = LoginContext.Instance.CurrentUser.HospitalId ?? 0;
                 itemModel.Created = DateTime.Now;
                 itemModel.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
                 itemModel.Active = true;
@@ -143,9 +150,70 @@ namespace Medical.Core.App.Controllers
                     throw new AppException("Item không tồn tại");
             }
             else
-            {
                 throw new AppException(ModelState.GetErrorMessage());
+            return appDomainResult;
+        }
+
+        /// <summary>
+        /// Thêm mới nhiều item
+        /// </summary>
+        /// <param name="itemModels"></param>
+        /// <returns></returns>
+        [HttpPost("add-multiple-item")]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public virtual async Task<AppDomainResult> AddMultipleItem([FromBody] IList<T> itemModels)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
+            var items = mapper.Map<IList<E>>(itemModels);
+            foreach (var item in items)
+            {
+                item.Created = DateTime.Now;
+                item.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+                if (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId.Value > 0)
+                    item.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
+                // Kiểm tra item có tồn tại chưa?
+                var messageUserCheck = await this.domainService.GetExistItemMessage(item);
+                if (!string.IsNullOrEmpty(messageUserCheck))
+                    throw new AppException(messageUserCheck);
+
             }
+            success = await this.domainService.CreateAsync(items);
+            if (!success) throw new Exception("Lỗi trong quá trình xử lý");
+            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            appDomainResult.Success = success;
+            return appDomainResult;
+        }
+
+        /// <summary>
+        /// Cập nhật list item
+        /// </summary>
+        /// <param name="itemModels"></param>
+        /// <returns></returns>
+        [HttpPut("update-multiple-item")]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public virtual async Task<AppDomainResult> UpdateMultipleItem([FromBody] IList<T> itemModels)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
+            var items = mapper.Map<IList<E>>(itemModels);
+            foreach (var item in items)
+            {
+                item.Updated = DateTime.Now;
+                item.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+                if (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId.Value > 0)
+                    item.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
+                // Kiểm tra item có tồn tại chưa?
+                var messageUserCheck = await this.domainService.GetExistItemMessage(item);
+                if (!string.IsNullOrEmpty(messageUserCheck))
+                    throw new AppException(messageUserCheck);
+            }
+            success = await this.domainService.UpdateAsync(items);
+            if (!success) throw new Exception("Lỗi trong quá trình xử lý");
+            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            appDomainResult.Success = success;
             return appDomainResult;
         }
 
@@ -165,6 +233,7 @@ namespace Medical.Core.App.Controllers
             {
                 if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                     itemModel.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
+                itemModel.Id = id;
                 itemModel.Updated = DateTime.Now;
                 itemModel.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
                 var item = mapper.Map<E>(itemModel);
@@ -191,43 +260,6 @@ namespace Medical.Core.App.Controllers
         }
 
         /// <summary>
-        /// Cập nhật 1 phần item
-        /// </summary>
-        /// <param name="id"></param>
-        /// <param name="itemModel"></param>
-        /// <returns></returns>
-        [HttpPatch("{id}")]
-        [MedicalAppAuthorize(new string[] { CoreContants.Update })]
-        public virtual async Task<AppDomainResult> PatchItem(int id, [FromBody] T itemModel)
-        {
-            AppDomainResult appDomainResult = new AppDomainResult();
-            bool success = false;
-            if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
-                itemModel.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
-            itemModel.Updated = DateTime.Now;
-            itemModel.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
-            var item = mapper.Map<E>(itemModel);
-            if (item != null)
-            {
-                Expression<Func<E, object>>[] includeProperties = new Expression<Func<E, object>>[]
-                {
-                        x => x.Active,
-                };
-                success = await this.domainService.UpdateFieldAsync(item, includeProperties);
-                if (success)
-                    appDomainResult.ResultCode = (int)HttpStatusCode.OK;
-                else
-                    throw new Exception("Lỗi trong quá trình xử lý");
-                appDomainResult.Success = success;
-            }
-            else
-                throw new KeyNotFoundException("Item không tồn tại");
-
-            return appDomainResult;
-        }
-
-
-        /// <summary>
         /// Xóa item
         /// </summary>
         /// <param name="id"></param>
@@ -248,6 +280,32 @@ namespace Medical.Core.App.Controllers
                 throw new Exception("Lỗi trong quá trình xử lý");
 
             return appDomainResult;
+        }
+
+        /// <summary>
+        /// Xóa nhiều lựa chọn
+        /// </summary>
+        /// <param name="itemIds"></param>
+        /// <returns></returns>
+        [HttpDelete("delete-multiples")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Delete })]
+        public virtual async Task<AppDomainResult> Delete([FromBody] List<int> itemIds)
+        {
+            if (itemIds == null || !itemIds.Any()) throw new AppException("Không tìm thấy thông tin id");
+
+            var existItems = await this.domainService.GetAsync(e => !e.Deleted && itemIds.Contains(e.Id)
+            && (!LoginContext.Instance.CurrentUser.HospitalId.HasValue || e.HospitalId == LoginContext.Instance.CurrentUser.HospitalId)
+            );
+            if (existItems == null || !existItems.Any()) throw new AppException("Không tìm thấy thông tin item");
+            bool success = true;
+            success &= await this.domainService.DeleteAsync(itemIds);
+            if (!success) throw new Exception("Lỗi trong quá trình xử lý");
+
+            return new AppDomainResult()
+            {
+                Success = success,
+                ResultCode = (int)HttpStatusCode.OK
+            };
         }
 
         /// <summary>

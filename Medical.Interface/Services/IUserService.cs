@@ -14,5 +14,29 @@ namespace Medical.Interface.Services
         Task<string> CheckCurrentUserPassword(int userId, string password, string newPasssword);
         Task<bool> UpdateUserToken(int userId, string token, bool isLogin = false);
         Task<bool> UpdateUserPassword(int userId, string newPassword);
+
+        /// <summary>
+        /// Thêm mới thông tin account + hồ sơ người bệnh
+        /// </summary>
+        /// <param name="userGeneralInfo"></param>
+        /// <returns></returns>
+        Task<bool> CreateUserGeneralInfo(UserGeneralInfo userGeneralInfo);
+
+        /// <summary>
+        /// Cập nhật thông tin account + người bệnh
+        /// </summary>
+        /// <param name="userGeneralInfo"></param>
+        /// <returns></returns>
+        Task<bool> UpdateUserGeneralInfo(UserGeneralInfo userGeneralInfo);
+
+        #region CRON JOBS
+        
+        /// <summary>
+        /// JOB TẠO NOTIFI CHÚC MỪNG SINH NHẬT
+        /// </summary>
+        /// <returns></returns>
+        Task HappyBirthDateJob();
+
+        #endregion
     }
 }

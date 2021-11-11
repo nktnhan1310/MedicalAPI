@@ -11,5 +11,9 @@ namespace Medical.Models
     /// </summary>
     public class ServiceTypeModel : MedicalCatalogueAppDomainModel
     {
+        /// <summary>
+        /// Cờ check có bảo hiểm y tế hay ko
+        /// </summary>
+        public bool IsBHYT { get; set; }
     }
 }

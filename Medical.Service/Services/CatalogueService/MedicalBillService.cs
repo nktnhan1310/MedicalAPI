@@ -7,6 +7,7 @@ using Medical.Service.Services.DomainService;
 using Medical.Utilities;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -22,7 +23,9 @@ namespace Medical.Service
     {
         private readonly ISMSConfigurationService sMSConfigurationService;
 
-        public MedicalBillService(IMedicalUnitOfWork unitOfWork, IMapper mapper, ISMSConfigurationService sMSConfigurationService) : base(unitOfWork, mapper)
+        public MedicalBillService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration
+            , ISMSConfigurationService sMSConfigurationService
+            ) : base(unitOfWork, mapper, configuration)
         {
             this.sMSConfigurationService = sMSConfigurationService;
         }
@@ -49,12 +52,8 @@ namespace Medical.Service
                 new SqlParameter("@DoctorId", baseSearch.DoctorId),
                 new SqlParameter("@MedicalBillId", baseSearch.MedicalBillId),
                 new SqlParameter("@CreatedDate", baseSearch.CreatedDate),
-
-
-
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
-                new SqlParameter("@OrderBy", baseSearch.OrderBy),
-                new SqlParameter("@TotalPage", SqlDbType.Int, 0)
+                new SqlParameter("@OrderBy", baseSearch.OrderBy)
             };
             return sqlParameters;
         }

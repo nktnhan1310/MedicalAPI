@@ -9,6 +9,6 @@ namespace Medical.Interface.Services
 {
     public interface IMedicalRecordDetailService : ICoreHospitalService<MedicalRecordDetails, SearchMedicalRecordDetail>
     {
-        Task<bool> UpdateMedicalRecordDetailFileAsync(int medicalRecordDetailId, IList<MedicalRecordDetailFiles> medicalRecordDetailFiles);
+        Task<bool> UpdateMedicalRecordDetailFileAsync(int medicalRecordDetailId, IList<UserFiles> medicalRecordDetailFiles);
     }
 }

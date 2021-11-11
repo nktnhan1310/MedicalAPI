@@ -8,6 +8,8 @@ using Medical.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -24,7 +26,7 @@ namespace MedicalAPI.Controllers
     [ApiController]
     public class MomoPaymentController : ControllerBase
     {
-        public const string SecretKey = "nqQiVSgDMy809JoPF6OzP5OdBUB550Y4";
+        public const string SecretKey = "iLSO7piswvetiHeGv8bdPaJ02B5vxywt";
         private IMapper mapper;
         private IMomoPaymentService momoPaymentService;
         private IMomoConfigurationService momoConfigurationService;
@@ -32,14 +34,31 @@ namespace MedicalAPI.Controllers
         private ILogger<MomoPaymentController> logger;
         private IExaminationFormDetailService examinationFormDetailService;
         private IMedicalBillService medicalBillService;
+        private INotificationService notificationService;
+        private IMedicalRecordService medicalRecordService;
+        private IHubContext<NotificationHub> hubContext;
+        private IHubContext<NotificationAppHub> appHubContext;
+        private IConfiguration configuration;
+        private IHttpContextAccessor httpContextAccessor;
 
-        public MomoPaymentController(IServiceProvider serviceProvider, IMapper mapper, ILogger<MomoPaymentController> logger)
+        public MomoPaymentController(IServiceProvider serviceProvider, IMapper mapper, ILogger<MomoPaymentController> logger
+            , IHubContext<NotificationHub> hubContext
+            , IHubContext<NotificationAppHub> appHubContext
+            , IConfiguration configuration
+            , IHttpContextAccessor httpContextAccessor
+            )
         {
             momoPaymentService = serviceProvider.GetRequiredService<IMomoPaymentService>();
             momoConfigurationService = serviceProvider.GetRequiredService<IMomoConfigurationService>();
             examinationFormService = serviceProvider.GetRequiredService<IExaminationFormService>();
             examinationFormDetailService = serviceProvider.GetRequiredService<IExaminationFormDetailService>();
             medicalBillService = serviceProvider.GetRequiredService<IMedicalBillService>();
+            notificationService = serviceProvider.GetRequiredService<INotificationService>();
+            medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
+            this.configuration = configuration;
+            this.hubContext = hubContext;
+            this.appHubContext = appHubContext;
+            this.httpContextAccessor = httpContextAccessor;
             this.mapper = mapper;
             this.logger = logger;
         }
@@ -55,8 +74,8 @@ namespace MedicalAPI.Controllers
 
             //request params need to request to MoMo system
             string endpoint = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
-            string partnerCode = "MOMO5RGX20191128";
-            string accessKey = "M8brj9K6E22vXoDB";
+            string partnerCode = "MOMOXX5E20210630";
+            string accessKey = "2Fkmo9xwo2UZxooQ";
             //string serectkey = "nqQiVSgDMy809JoPF6OzP5OdBUB550Y4";
             string orderInfo = "test";
             string returnUrl = "https://s.mrapp.vn/api/momo-payment/get-momo-return-result";
@@ -66,8 +85,6 @@ namespace MedicalAPI.Controllers
             string orderid = Guid.NewGuid().ToString();
             string requestId = Guid.NewGuid().ToString();
             string extraData = "";
-
-
 
             //Before sign HMAC SHA256 signature
             string rawHash = "partnerCode=" +
@@ -98,7 +115,6 @@ namespace MedicalAPI.Controllers
                 { "extraData", extraData },
                 { "requestType", "captureMoMoWallet" },
                 { "signature", signature }
-
             };
             string responseFromMomo = crypto.SendPaymentRequest(endpoint, message.ToString());
             var momoResponseModel = JsonConvert.DeserializeObject<MomoResponseModel>(responseFromMomo);
@@ -110,7 +126,7 @@ namespace MedicalAPI.Controllers
                     CreatedBy = "system",
                     Active = true,
                     Deleted = false,
-                    Amount = amount,
+                    Amount = Convert.ToInt64(amount),
                     RequestId = requestId,
                     OrderId = orderid,
                     OrderInfo = orderInfo,
@@ -118,6 +134,78 @@ namespace MedicalAPI.Controllers
                 };
                 success = await this.momoPaymentService.CreateAsync(momoPayments);
             }
+
+            return new AppDomainResult()
+            {
+                Data = momoResponseModel,
+                Success = success,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        [HttpGet("test-momo-refund")]
+        public async Task<AppDomainResult> TestMomoRefund(string orderId, long transId)
+        {
+            bool success = false;
+
+            //request params need to request to MoMo system
+            string endpoint = "https://test-payment.momo.vn/v2/gateway/api/refund";
+            string partnerCode = "MOMOXX5E20210630";
+            string accessKey = "2Fkmo9xwo2UZxooQ";
+            //string serectkey = "nqQiVSgDMy809JoPF6OzP5OdBUB550Y4";
+            string orderInfo = "test";
+            string returnUrl = "https://s.mrapp.vn/api/momo-payment/get-momo-return-result";
+            string notifyurl = "https://mrapp.monamedia.net/api/momo-payment/get-momo-notify-result";
+
+            string amount = "55000";
+            string requestId = Guid.NewGuid().ToString();
+            string extraData = "";
+            string lang = "vn";
+            string description = "Khach hoan tien giao dich";
+
+            //Before sign HMAC SHA256 signature
+            string rawHash = "accessKey" + accessKey + "&amount=" +
+                amount +"&description=" +
+                description +"&orderId=" +
+                orderId + "partnerCode=" +
+                partnerCode  + "&requestId=" +
+                requestId  + "&transId=" +
+                transId;
+            MomoUtilities crypto = new MomoUtilities();
+            //sign signature SHA256
+            string signature = crypto.SignSHA256(rawHash, SecretKey);
+
+            //build body json request
+            JObject message = new JObject
+            {
+                { "partnerCode", partnerCode },
+                { "orderId", orderId },
+                { "requestId", requestId },
+                { "amount", amount },
+                { "transId", transId },
+                { "lang", lang },
+                { "description", description },
+                { "signature", signature }
+            };
+            string responseFromMomo = crypto.SendPaymentRequest(endpoint, message.ToString());
+            this.logger.LogInformation(string.Format("MOMO REFUND INFORMATION: {0}", responseFromMomo));
+            var momoResponseModel = JsonConvert.DeserializeObject<MomoResponseModel>(responseFromMomo);
+            //if (momoResponseModel != null && momoResponseModel.errorCode == 0)
+            //{
+            //    MomoPayments momoPayments = new MomoPayments()
+            //    {
+            //        Created = DateTime.Now,
+            //        CreatedBy = "system",
+            //        Active = true,
+            //        Deleted = false,
+            //        Amount = Convert.ToInt64(amount),
+            //        RequestId = requestId,
+            //        OrderId = orderid,
+            //        OrderInfo = orderInfo,
+            //        Signature = signature,
+            //    };
+            //    success = await this.momoPaymentService.CreateAsync(momoPayments);
+            //}
 
             return new AppDomainResult()
             {
@@ -164,7 +252,7 @@ namespace MedicalAPI.Controllers
                             {
                                 case (int)CatalogueUtilities.MedicalBillStatus.WaitPayment:
                                     {
-                                        if (momoRequestBody.errorCode != 0)
+                                        if (momoRequestBody.resultCode != 0)
                                             status = (int)CatalogueUtilities.MedicalBillStatus.PaymentFailed;
                                         else status = (int)CatalogueUtilities.MedicalBillStatus.Wait;
                                     }
@@ -201,7 +289,7 @@ namespace MedicalAPI.Controllers
                             {
                                 case (int)CatalogueUtilities.AdditionServiceStatus.WaitConfirmPayment:
                                     {
-                                        if (momoRequestBody.errorCode != 0)
+                                        if (momoRequestBody.resultCode != 0)
                                             status = (int)CatalogueUtilities.AdditionServiceStatus.PaymentFailed;
                                         else status = (int)CatalogueUtilities.AdditionServiceStatus.WaitForService;
                                     }
@@ -233,19 +321,23 @@ namespace MedicalAPI.Controllers
                         if (examinationFormInfos != null && examinationFormInfos.Any())
                         {
                             var examinationFormInfo = examinationFormInfos.FirstOrDefault();
+                            var medicalRecordInfos = await medicalRecordService.GetAsync(e => e.Id == examinationFormInfo.RecordId, e => new MedicalRecords()
+                            {
+                                UserId = e.UserId
+                            });
                             int status = 0;
                             switch (examinationFormInfo.Status)
                             {
                                 case (int)CatalogueUtilities.ExaminationStatus.WaitConfirm:
                                     {
-                                        if(momoRequestBody.errorCode != 0)
+                                        if (momoRequestBody.resultCode != 0)
                                             status = (int)CatalogueUtilities.ExaminationStatus.PaymentFailed;
                                         else status = (int)CatalogueUtilities.ExaminationStatus.Confirmed;
                                     }
                                     break;
                                 case (int)CatalogueUtilities.ExaminationStatus.WaitReExamination:
                                     {
-                                        if (momoRequestBody.errorCode != 0)
+                                        if (momoRequestBody.resultCode != 0)
                                             status = (int)CatalogueUtilities.ExaminationStatus.PaymentReExaminationFailed;
                                         else status = (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination;
                                     }
@@ -262,13 +354,29 @@ namespace MedicalAPI.Controllers
                                     Status = status,
                                 };
                                 await this.examinationFormService.UpdateExaminationStatus(updateExaminationStatus);
+                                if (medicalRecordInfos != null && medicalRecordInfos.Any())
+                                {
+                                    await notificationService.CreateCustomNotificationUser(null, examinationFormInfo.HospitalId
+                                        , new List<int>() { medicalRecordInfos.FirstOrDefault().UserId }
+                                        , string.Format("/medical/examination/{0}", examinationFormInfo.Id)
+                                        , string.Empty
+                                        , LoginContext.Instance.CurrentUser.UserName
+                                        , examinationFormInfo.Id
+                                        , false
+                                        , "USER"
+                                        , CoreContants.NOTI_TEMPLATE_EXAMINATION_FORM_PAYMENT_UPDATE
+                                        );
+
+                                }
+                                await hubContext.Clients.All.SendAsync(CoreContants.GET_TOTAL_NOTIFICATION);
+                                await appHubContext.Clients.All.SendAsync(CoreContants.GET_TOTAL_NOTIFICATION);
                             }
                         }
 
                     }
                     // Cập nhật thông tin giao dịch momo
-                    momoCheckInfo.ErrorCode = momoRequestBody.errorCode;
-                    momoCheckInfo.LocalMessage = momoRequestBody.localMessage;
+                    momoCheckInfo.ResultCode = momoRequestBody.resultCode;
+                    momoCheckInfo.Message = momoRequestBody.message;
                     momoCheckInfo.OrderType = momoRequestBody.orderType;
                     momoCheckInfo.Message = momoRequestBody.message;
                     momoCheckInfo.PayType = momoRequestBody.payType;
@@ -277,6 +385,8 @@ namespace MedicalAPI.Controllers
                     momoCheckInfo.Updated = DateTime.Now;
                     momoCheckInfo.UpdatedBy = "system";
                     success = await this.momoPaymentService.UpdateAsync(momoCheckInfo);
+
+
                 }
                 // Nếu không có => lỗi
                 else
@@ -292,8 +402,7 @@ namespace MedicalAPI.Controllers
                         OrderId = momoRequestBody.orderId,
                         OrderInfo = momoRequestBody.orderInfo,
                         Signature = momoRequestBody.signature,
-                        ErrorCode = momoRequestBody.errorCode,
-                        LocalMessage = momoRequestBody.localMessage,
+                        ResultCode = momoRequestBody.resultCode,
                         OrderType = momoRequestBody.orderType,
                         Message = momoRequestBody.message,
                         PayType = momoRequestBody.payType,
@@ -319,7 +428,7 @@ namespace MedicalAPI.Controllers
         /// Lấy thông tin thanh toán của momo
         /// </summary>
         /// <returns></returns>
-        [HttpPost("get-momo-notify-result")]
+        [HttpPost("get-momo-result-ipn")]
         [Consumes("application/json")]
         public async Task<AppDomainResult> GetMoMoNotifyResult([FromBody] MomoRequestBody momoRequestBody)
         {
@@ -353,7 +462,7 @@ namespace MedicalAPI.Controllers
                             {
                                 case (int)CatalogueUtilities.MedicalBillStatus.WaitPayment:
                                     {
-                                        if (momoRequestBody.errorCode != 0)
+                                        if (momoRequestBody.resultCode != 0)
                                             status = (int)CatalogueUtilities.MedicalBillStatus.PaymentFailed;
                                         else status = (int)CatalogueUtilities.MedicalBillStatus.Wait;
                                     }
@@ -389,7 +498,7 @@ namespace MedicalAPI.Controllers
                             {
                                 case (int)CatalogueUtilities.AdditionServiceStatus.WaitConfirmPayment:
                                     {
-                                        if (momoRequestBody.errorCode != 0)
+                                        if (momoRequestBody.resultCode != 0)
                                             status = (int)CatalogueUtilities.AdditionServiceStatus.PaymentFailed;
                                         else status = (int)CatalogueUtilities.AdditionServiceStatus.WaitForService;
                                     }
@@ -425,14 +534,14 @@ namespace MedicalAPI.Controllers
                             {
                                 case (int)CatalogueUtilities.ExaminationStatus.WaitConfirm:
                                     {
-                                        if (momoRequestBody.errorCode != 0)
+                                        if (momoRequestBody.resultCode != 0)
                                             status = (int)CatalogueUtilities.ExaminationStatus.PaymentFailed;
                                         else status = (int)CatalogueUtilities.ExaminationStatus.Confirmed;
                                     }
                                     break;
                                 case (int)CatalogueUtilities.ExaminationStatus.WaitReExamination:
                                     {
-                                        if (momoRequestBody.errorCode != 0)
+                                        if (momoRequestBody.resultCode != 0)
                                             status = (int)CatalogueUtilities.ExaminationStatus.PaymentReExaminationFailed;
                                         else status = (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination;
                                     }
@@ -454,8 +563,7 @@ namespace MedicalAPI.Controllers
 
                     }
                     // Cập nhật thông tin giao dịch momo
-                    momoCheckInfo.ErrorCode = momoRequestBody.errorCode;
-                    momoCheckInfo.LocalMessage = momoRequestBody.localMessage;
+                    momoCheckInfo.ResultCode = momoRequestBody.resultCode;
                     momoCheckInfo.OrderType = momoRequestBody.orderType;
                     momoCheckInfo.Message = momoRequestBody.message;
                     momoCheckInfo.PayType = momoRequestBody.payType;
@@ -479,8 +587,7 @@ namespace MedicalAPI.Controllers
                         OrderId = momoRequestBody.orderId,
                         OrderInfo = momoRequestBody.orderInfo,
                         Signature = momoRequestBody.signature,
-                        ErrorCode = momoRequestBody.errorCode,
-                        LocalMessage = momoRequestBody.localMessage,
+                        ResultCode = momoRequestBody.resultCode,
                         OrderType = momoRequestBody.orderType,
                         Message = momoRequestBody.message,
                         PayType = momoRequestBody.payType,

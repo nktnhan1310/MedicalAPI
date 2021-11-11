@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -57,6 +57,7 @@ namespace MedicalAPI
 
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         readonly string SignalROrigins = "SignalROrigins";
+        readonly string AppSignalROrigins = "AppSignalROrigins";
 
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -101,7 +102,16 @@ namespace MedicalAPI
                    .SetIsOriginAllowed(hostName => true)
                    ;
                 });
-
+                options.AddPolicy(AppSignalROrigins,
+                builder =>
+                {
+                    builder
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials()
+                   .SetIsOriginAllowed(hostName => true)
+                   ;
+                });
 
             });
 
@@ -117,7 +127,7 @@ namespace MedicalAPI
             {
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
-            
+
 
             // configure strongly typed settings objects
             var appSettingsSection = Configuration.GetSection("AppSettings");
@@ -210,8 +220,17 @@ namespace MedicalAPI
             {
                 FileProvider = new PhysicalFileProvider(
                      Path.Combine(env.ContentRootPath, "certificates")),
-                RequestPath = "/.well-known/pki-validation"
+                RequestPath = "/.well-known/pki-validation",
+                ServeUnknownFileTypes = true
             });
+
+            //app.UseDirectoryBrowser(new DirectoryBrowserOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //Path.Combine(env.ContentRootPath, "certificates")),
+            //    RequestPath = "/.well-known-test/pki-validation"
+            //});
+
 
             app.UseStaticHttpContext();
 
@@ -240,16 +259,27 @@ namespace MedicalAPI
                 c.RoutePrefix = "admin";
             });
 
+            //----------------------------------------- CRON JOB
+            // CRON JOB HỦY PHIẾU KHÁM KHI USER QUA NGÀY NHƯNG KHÔNG ĐẾN KHÁM (1 ngày quét 1 lần lúc đêm)
+            RecurringJob.AddOrUpdate<IExaminationFormService>("CheckExistExaminationJob", job => job.UpdateCurrentExaminationJob(), Cron.Daily(0, 0), TimeZoneInfo.Local);
+            // TẠO NOTIFY CHÚC MỪNG SINH NHẬT CHO USER (1 ngày quét 1 lần lúc đêm)
+            RecurringJob.AddOrUpdate<IUserService>("HappyBirthDateJob", job => job.HappyBirthDateJob(), Cron.Daily(1, 0), TimeZoneInfo.Local);
+            // TẠO NOTIFY THÔNG BÁO THỜI GIAN KHÁM TIẾP THEO (10/15/30p thông báo 1 lần) (SERVICE QUÉT THEO TỪNG PHÚT)
+            RecurringJob.AddOrUpdate<IExaminationFormService>("RemindUserExamination", job => job.RemindUserExamination(30), Cron.Minutely, TimeZoneInfo.Local);
 
-            RecurringJob.AddOrUpdate<IExaminationFormService>("CheckExistExaminationJob", job => job.UpdateCurrentExaminationJob(), "0 0 * * *", TimeZoneInfo.Local);
+            
+
+            // CRON JOB CLEAR DATA CỦA NOTIFICATION USER (1 TUẦN CHECK CHẠY CLEAR DATA 1 LẦN)
+            RecurringJob.AddOrUpdate<INotificationService>("ClearNotificationDataJob", job => job.ClearNotificationDataJob(), Cron.Weekly(DayOfWeek.Sunday, 1, 0), TimeZoneInfo.Local);
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
                 endpoints.MapHangfireDashboard();
                 endpoints.MapHub<NotificationHub>("/hubs/notifications").RequireCors(SignalROrigins);
+                endpoints.MapHub<NotificationAppHub>("/hubs/app-notifications").RequireCors(AppSignalROrigins);
             });
-            
+
 
 
         }

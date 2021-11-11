@@ -87,8 +87,69 @@ namespace Medical.Entities
         /// </summary>
         public long? TickEndReceiveExamination { get; set; }
 
+        /// <summary>
+        /// Loại bệnh viện
+        /// </summary>
+        public int? HospitalTypeId { get; set; }
+
+        /// <summary>
+        /// Chức năng của bệnh viện
+        /// </summary>
+        public int? HospitalFunctionTypeId { get; set; }
+
+        /// <summary>
+        /// Cò check làm việc thứ 7
+        /// </summary>
+        public bool IsSaturdayWorking { get; set; }
+
+        /// <summary>
+        /// Cờ check làm việc chủ nhật
+        /// </summary>
+        public bool IsSundayWorking { get; set; }
+
+        #region Manager INFO
+
+        /// <summary>
+        /// Tên giám đốc
+        /// </summary>
+        public string ManagerName { get; set; }
+
+        /// <summary>
+        /// Địa chỉ giám đốc
+        /// </summary>
+        public string ManagerAddress { get; set; }
+
+        /// <summary>
+        /// Số điện thoại giám đốc
+        /// </summary>
+        public string ManagerPhone { get; set; }
+
+        /// <summary>
+        /// Email giám đốc
+        /// </summary>
+        public string ManagerEmail { get; set; }
+
+        /// <summary>
+        /// Ngày tham gia MrAPP
+        /// </summary>
+        public DateTime? JoinInDate { get; set; }
+
+        #endregion
+
 
         #region Extension Properties
+
+        /// <summary>
+        /// Tên loại bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalTypeName { get; set; }
+
+        /// <summary>
+        /// Tên chức năng bệnh viện
+        /// </summary>
+        [NotMapped]
+        public string HospitalFunctionTypeName { get; set; }
 
         /// <summary>
         /// Giá trị thời gian kết thúc khám bệnh (00:00:00)
@@ -130,9 +191,6 @@ namespace Medical.Entities
 
 
         #endregion
-
-
-
 
     }
 }

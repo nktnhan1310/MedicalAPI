@@ -14,6 +14,11 @@ namespace Medical.Models
         public int? MedicalRecordId { get; set; }
 
         /// <summary>
+        /// Mã hồ sơ bệnh án
+        /// </summary>
+        public string Code { get; set; }
+
+        /// <summary>
         /// Mã lịch hẹn
         /// </summary>
         public int? ExaminationFormId { get; set; }
@@ -34,6 +39,11 @@ namespace Medical.Models
         public DateTime? ReExaminationDate { get; set; }
 
         /// <summary>
+        /// Cờ check tái khám
+        /// </summary>
+        public bool IsReExamination { get; set; }
+
+        /// <summary>
         /// Chuyên khoa khám
         /// </summary>
         public int? SpecialistTypeId { get; set; }
@@ -41,12 +51,17 @@ namespace Medical.Models
         /// <summary>
         /// Dịch vụ khám
         /// </summary>
-        public int? ServiceType { get; set; }
+        public int? ServiceTypeId { get; set; }
 
         /// <summary>
         /// Link file qrcode thông tin
         /// </summary>
         public string QrCodeUrlFile { get; set; }
+
+        /// <summary>
+        /// Link barcode thông tin hồ sơ bệnh án
+        /// </summary>
+        public string BarCodeUrl { get; set; }
 
         /// <summary>
         /// Cờ check hiển thị toa thuốc
@@ -60,9 +75,34 @@ namespace Medical.Models
         public string DoctorComment { get; set; }
 
         /// <summary>
+        /// Tên bệnh
+        /// </summary>
+        public string DiagnoticSickName { get; set; }
+
+        /// <summary>
+        /// Tên danh sách chuẩn đoán
+        /// </summary>
+        public int? DiagnoticTypeId { get; set; }
+
+        /// <summary>
         /// Thông tin giờ khám
         /// </summary>
         public int? ExaminationScheduleDetailId { get; set; }
+
+        /// <summary>
+        /// Khung giờ tái khám
+        /// </summary>
+        public int? ReExaminationScheduleDetailId { get; set; }
+
+        /// <summary>
+        /// Mã phòng khám
+        /// </summary>
+        public int? RoomExaminationId { get; set; }
+
+        /// <summary>
+        /// Mã phòng tái khám (nếu có)
+        /// </summary>
+        public int? ReRoomExaminationId { get; set; }
 
         /// <summary>
         /// STT khám bệnh
@@ -84,7 +124,57 @@ namespace Medical.Models
         /// </summary>
         public int? TypeId { get; set; }
 
+        /// <summary>
+        /// Huyết áp
+        /// </summary>
+        public string BloodPressure { get; set; }
+
+        /// <summary>
+        /// Nhịp tim
+        /// </summary>
+        public string HeartBeat { get; set; }
+
+        /// <summary>
+        /// Đường huyết
+        /// </summary>
+        public string BloodSugar { get; set; }
+
+        /// <summary>
+        /// Ghi chú
+        /// </summary>
+        public string Note { get; set; }
+
+        /// <summary>
+        /// Loại vaccine
+        /// </summary>
+        public int? VaccineTypeId { get; set; }
+
+        /// <summary>
+        /// Từ giờ hiển thị
+        /// </summary>
+        public string FromTimeExaminationText { get; set; }
+        
+        /// <summary>
+        /// Đến giờ hiển thị
+        /// </summary>
+        public string ToTimeExaminationText { get; set; }
+
+        /// <summary>
+        /// ID bác sĩ
+        /// </summary>
+        public int? DoctorId { get; set; }
+
+        /// <summary>
+        /// Bác sĩ khi tái khám
+        /// </summary>
+        public int? ReExaminationDoctorId { get; set; }
+
         #region Extension Properties
+
+        /// <summary>
+        /// Tên loại chuẩn đoán
+        /// </summary>
+        public string DiagnoticTypeName { get; set; }
 
         /// <summary>
         /// Mã hồ sơ khám
@@ -95,6 +185,17 @@ namespace Medical.Models
         /// Địa chỉ bệnh viện
         /// </summary>
         public string HospitalAddress { get; set; }
+
+        /// <summary>
+        /// Số điện thoại bệnh viện
+        /// </summary>
+        public string HospitalPhone { get; set; }
+
+        /// <summary>
+        /// Website bệnh viện
+        /// </summary>
+        public string HospitalWebSite { get; set; }
+
 
         /// <summary>
         /// Chuyên khoa
@@ -109,7 +210,7 @@ namespace Medical.Models
         /// <summary>
         /// File toa thuốc/xét nghiệm/siêu âm/....
         /// </summary>
-        public IList<MedicalRecordDetailFileModel> MedicalRecordDetailFiles { get; set; }
+        public IList<UserFileModel> UserFiles { get; set; }
 
         /// <summary>
         /// Toa thuốc
@@ -144,7 +245,12 @@ namespace Medical.Models
         /// <summary>
         /// Tên hiển thị của bác sĩ
         /// </summary>
-        public string DoctorDislayName { get; set; }
+        public string DoctorDisplayName { get; set; }
+
+        /// <summary>
+        /// Tên loại vaccine
+        /// </summary>
+        public string VaccineTypeName { get; set; }
 
 
         #endregion

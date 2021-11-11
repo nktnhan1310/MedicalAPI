@@ -22,6 +22,11 @@ namespace Medical.Entities
         public double? Price { get; set; }
 
         /// <summary>
+        /// Cờ check dịch vụ có BHYT ko?
+        /// </summary>
+        public bool IsBHYT { get; set; }
+
+        /// <summary>
         /// Tổng số lượt khám/ngày
         /// </summary>
         public int TotalVisitNo { get; set; }

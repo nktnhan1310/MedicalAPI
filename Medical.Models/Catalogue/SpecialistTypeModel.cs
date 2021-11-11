@@ -16,6 +16,16 @@ namespace Medical.Models
         /// </summary>
         public double? Price { get; set; }
 
+        /// <summary>
+        /// Mã Trưởng khoa
+        /// </summary>
+        public int? ManagerId { get; set; }
+
+        /// <summary>
+        /// Danh sách bác sĩ/y tá/điều dưỡng thuộc chuyên khoa
+        /// </summary>
+        public IList<DoctorModel> Doctors { get; set; }
+
         #region Extension Properties
 
         /// <summary>
@@ -26,6 +36,11 @@ namespace Medical.Models
         /// Số lượng phiếu khám bệnh trong ngày
         /// </summary>
         public int TotalExaminationForms { get; set; }
+
+        /// <summary>
+        /// Tên trưởng khoa
+        /// </summary>
+        public string ManagerName { get; set; }
 
         #endregion
     }

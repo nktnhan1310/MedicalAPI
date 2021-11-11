@@ -23,5 +23,10 @@ namespace Medical.Models
         /// 0 => AVATAR CỦA HỒ SƠ
         /// </summary>
         public int FileType { get; set; }
+
+        /// <summary>
+        /// Mã folder
+        /// </summary>
+        public int? FolderId { get; set; }
     }
 }

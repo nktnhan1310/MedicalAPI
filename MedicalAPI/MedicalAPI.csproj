@@ -8,13 +8,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="certificates\34CA88E5D84255B6D4A6E370B500ED70.txt" />
     <None Remove="Controllers\Auth\PermitObjectController.cs~RF71a514.TMP" />
     <None Remove="Controllers\Auth\UserController.cs~RF15d6792.TMP" />
     <None Remove="Template\CatalogueHospitalTemplate.xlsx" />
+    <None Remove="Template\ExaminationScheduleTemplate.xlsx" />
+    <None Remove="Template\RoomExaminationTemplate.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="certificates\34CA88E5D84255B6D4A6E370B500ED70.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Template\CatalogueHospitalTemplate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Template\ExaminationScheduleTemplate.xlsx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Template\RoomExaminationTemplate.xlsx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -22,6 +34,7 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="BarcodeLib" Version="2.4.0" />
     <PackageReference Include="EntityFramework" Version="6.4.4" />
     <PackageReference Include="EPPlus.Core" Version="1.5.4" />
     <PackageReference Include="ExcelMapper" Version="5.2.298" />
@@ -31,8 +44,6 @@
     <PackageReference Include="Hangfire.SqlServer" Version="1.7.23" />
     <PackageReference Include="LazyCache.AspNetCore" Version="2.1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Core" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
@@ -47,6 +58,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="OneSignal.RestAPIv3.Client" Version="1.2.0" />
     <PackageReference Include="QRCoder" Version="1.4.1" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
@@ -87,7 +99,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="certificates\0ABCF9D817DF8B74941816E88D833A06.txt">
+    <None Update="certificates\34CA88E5D84255B6D4A6E370B500ED70.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Template\CatalogueTemplate.xlsx">

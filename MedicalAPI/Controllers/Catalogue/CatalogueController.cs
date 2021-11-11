@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Medical.Entities;
 using Medical.Extensions;
+using Medical.Interface;
 using Medical.Interface.Services;
 using Medical.Models;
 using Medical.Utilities;
@@ -46,6 +47,9 @@ namespace MedicalAPI.Controllers.Catalogue
         private ISystemConfigFeeService systemConfigFeeService;
         private IDoctorService doctorService;
         private IMedicalRecordService medicalRecordService;
+        private IVaccineTypeService vaccineTypeService;
+        private IDiagnoticTypeService diagnoticTypeService;
+        private IAdditionServiceDetailService additionServiceDetailService;
 
         #endregion
 
@@ -78,6 +82,9 @@ namespace MedicalAPI.Controllers.Catalogue
             systemConfigFeeService = serviceProvider.GetRequiredService<ISystemConfigFeeService>();
             doctorService = serviceProvider.GetRequiredService<IDoctorService>();
             medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
+            vaccineTypeService = serviceProvider.GetRequiredService<IVaccineTypeService>();
+            diagnoticTypeService = serviceProvider.GetRequiredService<IDiagnoticTypeService>();
+            additionServiceDetailService = serviceProvider.GetRequiredService<IAdditionServiceDetailService>();
 
             #region Configuration
 
@@ -512,6 +519,30 @@ namespace MedicalAPI.Controllers.Catalogue
             return appDomainResult;
         }
 
+        /// <summary>
+        /// Lấy danh sách dịch vụ phát sinh của bệnh viện
+        /// </summary>
+        /// <param name="hospitalId"></param>
+        /// <param name="searchContent"></param>
+        /// <returns></returns>
+        [HttpGet("get-diagnotic-type-catalogue/hospitalId")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
+        public async Task<AppDomainResult> GetDiagnoticTypeCatalogue(int? hospitalId, string searchContent)
+        {
+            var diagnoticTypes = await this.diagnoticTypeService.GetAsync(e => !e.Deleted && e.Active
+            && (!hospitalId.HasValue || e.HospitalId == hospitalId)
+            && (string.IsNullOrEmpty(searchContent) ||
+            (e.Code.Contains(searchContent)
+            || e.Name.Contains(searchContent)
+            ))
+            );
+            return new AppDomainResult()
+            {
+                Data = mapper.Map<IList<DiagnoticTypeModel>>(diagnoticTypes),
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
 
         /// <summary>
         /// Lấy danh sách dịch vụ phát sinh của bệnh viện
@@ -535,6 +566,33 @@ namespace MedicalAPI.Controllers.Catalogue
             return new AppDomainResult()
             {
                 Data = mapper.Map<IList<AdditionServiceModel>>(additionServices),
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+        /// <summary>
+        /// Lấy danh sách chi tiết dịch vụ phát sinh
+        /// </summary>
+        /// <param name="hospitalId"></param>
+        /// <param name="additionServiceIds"></param>
+        /// <param name="searchContent"></param>
+        /// <returns></returns>
+        [HttpGet("get-addition-service-detail-catalogue/hospitalId")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
+        public async Task<AppDomainResult> GetAdditionServiceDetailCatalogue(int? hospitalId, List<int> additionServiceIds, string searchContent)
+        {
+            //if (additionServiceIds == null || !additionServiceIds.Any()) throw new AppException("Vui lòng chọn loại dịch vụ");
+            var additionServiceDetailInfos = await this.additionServiceDetailService.GetAsync(e => !e.Deleted
+            && (!e.HospitalId.HasValue || e.HospitalId == hospitalId.Value)
+            && (additionServiceIds == null || !additionServiceIds.Any() || (e.AdditionServiceId.HasValue && additionServiceIds.Contains(e.AdditionServiceId.Value)))
+            );
+            IList<AdditionServiceDetailModel> additionServiceDetailModels = new List<AdditionServiceDetailModel>();
+            if (additionServiceDetailInfos != null && additionServiceDetailInfos.Any())
+                additionServiceDetailModels = mapper.Map<IList<AdditionServiceDetailModel>>(additionServiceDetailInfos);
+            return new AppDomainResult()
+            {
+                Data = additionServiceDetailModels,
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK
             };
@@ -568,19 +626,67 @@ namespace MedicalAPI.Controllers.Catalogue
         }
 
         /// <summary>
+        /// Lấy thông tin danh sách loại vaccine
+        /// </summary>
+        /// <param name="hospitalId"></param>
+        /// <param name="targetId"></param>
+        /// <param name="searchContent"></param>
+        /// <returns></returns>
+        [HttpGet("get-vaccine-type-catalogue/hospitalId")]
+        [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
+        public async Task<AppDomainResult> GetVaccineTypeCatalogue(int? hospitalId, int? targetId, string searchContent)
+        {
+            var vaccineTypes = await this.vaccineTypeService.GetAsync(e => !e.Deleted && e.Active
+            && (!hospitalId.HasValue || e.HospitalId == hospitalId)
+            && (!targetId.HasValue || e.TargetIdValues.Contains(targetId.Value.ToString()))
+            && (string.IsNullOrEmpty(searchContent) ||
+            (e.Code.Contains(searchContent)
+            || e.Name.Contains(searchContent)
+            ))
+            );
+            var vaccineTypeModels = mapper.Map<IList<VaccineTypeModel>>(vaccineTypes);
+            var targetTypes = Enum.GetValues(typeof(CatalogueUtilities.TargetType))
+                            .Cast<CatalogueUtilities.TargetType>()
+                            .Select(e => new
+                            {
+                                Id = (int)e,
+                                Code = e.ToString(),
+                                Name =
+                                (int)e == (int)CatalogueUtilities.TargetType.Child ? "Trẻ em" :
+                                (int)e == (int)CatalogueUtilities.TargetType.Youth ? "Thanh thiếu niên" :
+                                (int)e == (int)CatalogueUtilities.TargetType.Adult ? "Người lớn" :
+                                (int)e == (int)CatalogueUtilities.TargetType.Pregnant ? "Phụ nữ mang thai" : "Người già"
+                                ,
+                                VaccineTypes = vaccineTypeModels.Where(x => x.TargetIds.Contains((int)e)).ToList()
+                            })
+                            .ToList();
+            if (targetTypes != null && targetTypes.Any() && targetId.HasValue)
+                targetTypes = targetTypes.Where(e => e.Id == targetId.Value).ToList();
+            return new AppDomainResult()
+            {
+                Data = targetTypes,
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
+
+
+        /// <summary>
         /// Lấy danh sách Phòng khám của bệnh viện
         /// </summary>
         /// <param name="hospitalId"></param>
+        /// <param name="specialistTypeId"></param>
         /// <param name="searchContent"></param>
         /// <returns></returns>
-        [HttpGet("get-room-examination-catalogue/hospitalId")]
+        [HttpGet("get-room-examination-catalogue/hospitalId/specialistTypeId")]
         [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
-        public async Task<AppDomainResult> GetRoomExaminationCatalogue(int? hospitalId, string searchContent)
+        public async Task<AppDomainResult> GetRoomExaminationCatalogue(int? hospitalId, int? specialistTypeId, string searchContent)
         {
             if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                 hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             var roomExaminations = await this.roomExaminationService.GetAsync(e => !e.Deleted && e.Active
             && (!hospitalId.HasValue || e.HospitalId == hospitalId.Value)
+            && (!specialistTypeId.HasValue || e.SpecialistTypeId == specialistTypeId.Value)
             && (string.IsNullOrEmpty(searchContent) ||
             (e.Code.Contains(searchContent)
             || e.Name.Contains(searchContent)
@@ -598,16 +704,18 @@ namespace MedicalAPI.Controllers.Catalogue
         /// Lấy danh sách bác sĩ theo bệnh viện
         /// </summary>
         /// <param name="hospitalId"></param>
+        /// <param name="typeId"></param>
         /// <param name="searchContent"></param>
         /// <returns></returns>
         [HttpGet("get-doctor-catalogue/hospitalId")]
         [MedicalAppAuthorize(new string[] { CoreContants.ViewAll })]
-        public async Task<AppDomainResult> GetDoctorCatalogue(int? hospitalId, string searchContent)
+        public async Task<AppDomainResult> GetDoctorCatalogue(int? hospitalId, int? typeId, string searchContent)
         {
             if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                 hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             var doctors = await this.doctorService.GetAsync(e => !e.Deleted && e.Active
             && (!hospitalId.HasValue || e.HospitalId == hospitalId.Value)
+            && (!typeId.HasValue || (e.TypeId == 0 && e.TypeId == 0) || e.TypeId != 0)
             && (string.IsNullOrEmpty(searchContent) ||
             (e.Code.Contains(searchContent)
             || e.FirstName.Contains(searchContent)

@@ -92,6 +92,21 @@ namespace Medical.Models
         /// </summary>
         public string AllergyInformation { get; set; }
 
+        /// <summary>
+        /// Chiều cao
+        /// </summary>
+        public double? Height { get; set; }
+
+        /// <summary>
+        /// Cân nặng
+        /// </summary>
+        public double? Weight { get; set; }
+
+        /// <summary>
+        /// Nhóm máu
+        /// </summary>
+        public string BloodType { get; set; }
+
         #region Extension Properties
 
         /// <summary>
@@ -125,6 +140,11 @@ namespace Medical.Models
         public string NationName { get; set; }
 
         /// <summary>
+        /// Trả ra số tuổi của user
+        /// </summary>
+        public int? Age { get; set; }
+
+        /// <summary>
         /// Thông tin người thân (nếu có)
         /// </summary>
         public IList<MedicalRecordAdditionModel> MedicalRecordAdditions { get; set; }
@@ -132,7 +152,9 @@ namespace Medical.Models
         /// <summary>
         /// Thông tin file của hồ sơ bệnh án
         /// </summary>
-        public IList<MedicalRecordFileModel> MedicalRecordFiles { get; set; }
+        //public IList<MedicalRecordFileModel> MedicalRecordFiles { get; set; }
+        public IList<UserFileModel> UserFiles { get; set; }
+
 
         /// <summary>
         /// Lịch sử khám

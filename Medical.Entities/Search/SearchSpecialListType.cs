@@ -11,5 +11,9 @@ namespace Medical.Entities
         /// </summary>
         public DateTime? ExaminationDate { get; set; }
 
+        /// <summary>
+        /// Tìm theo mã trưởng khoa
+        /// </summary>
+        public int? ManagerId { get; set; }
     }
 }

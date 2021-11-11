@@ -2,6 +2,8 @@
 using Ganss.Excel;
 using Medical.Entities;
 using Medical.Entities.DomainEntity;
+using Medical.Extensions;
+using Medical.Interface.DbContext;
 using Medical.Interface.Services.Base;
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
@@ -30,7 +32,7 @@ namespace Medical.Service.Services.DomainService
             this.configuration = configuration;
         }
 
-        public CatalogueHospitalService(IUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        protected CatalogueHospitalService(IUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper) : base(unitOfWork, medicalDbContext, mapper)
         {
         }
 
@@ -111,6 +113,14 @@ namespace Medical.Service.Services.DomainService
 
                 var items = Queryable.Where(GetExpression(baseSearch));
                 decimal itemCount = items.Count();
+                // Nếu giá trị danh sách lấy ra = 0 => Lấy danh sách theo item mặc định (nếu có)
+                if (itemCount == 0)
+                {
+                    baseSearch.HospitalId = 0;
+                    items = Queryable.Where(GetExpression(baseSearch));
+                    itemCount = items.Count();
+                }
+
                 pagedList = new PagedList<E>()
                 {
                     TotalItem = (int)itemCount,
@@ -125,7 +135,7 @@ namespace Medical.Service.Services.DomainService
         protected virtual Expression<Func<E, bool>> GetExpression(T baseSearch)
         {
             return e => !e.Deleted
-            && (!baseSearch.HospitalId.HasValue || e.HospitalId == baseSearch.HospitalId) 
+            && (!baseSearch.HospitalId.HasValue || e.HospitalId == baseSearch.HospitalId)
             && (string.IsNullOrEmpty(baseSearch.SearchContent)
                 || e.Code.Contains(baseSearch.SearchContent)
                 || e.Name.Contains(baseSearch.SearchContent)
@@ -139,7 +149,7 @@ namespace Medical.Service.Services.DomainService
         /// <param name="stream"></param>
         /// <param name="createdBy"></param>
         /// <returns></returns>
-        public virtual async Task<AppDomainImportResult> ImportTemplateFile(Stream stream, string createdBy, int? hospitalId)
+        public virtual async Task<AppDomainImportResult> ImportTemplateFile(Stream stream, int? hospitalId)
         {
             AppDomainImportResult appDomainImportResult = new AppDomainImportResult();
             var dataTable = SetDataTable();
@@ -195,7 +205,7 @@ namespace Medical.Service.Services.DomainService
                                 Deleted = false,
                                 Active = true,
                                 Created = DateTime.Now,
-                                CreatedBy = createdBy,
+                                CreatedBy = LoginContext.Instance.CurrentUser.UserName,
                                 HospitalId = hospitalId.HasValue ? hospitalId.Value : hospitalInfo.Id
                             };
                             codeImports.Add(catalogueMapper.Code);

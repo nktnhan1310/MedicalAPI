@@ -1,4 +1,5 @@
 ﻿using Medical.Models.DomainModel;
+using Medical.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -61,7 +62,33 @@ namespace Medical.Models
         /// </summary>
         public int? UserId { get; set; }
 
+        /// <summary>
+        /// Chức nhanh nhân viên (bác sĩ/y tá/điều dưỡng)
+        /// </summary>
+        public int TypeId { get; set; }
+
         #region Extension Properties
+
+        /// <summary>
+        /// Tên chức danh của nhân viên (bác sĩ/y tá/điều dưỡng)
+        /// </summary>
+        public string TypeName
+        {
+            get
+            {
+                switch (TypeId)
+                {
+                    case (int)CatalogueUtilities.DoctorType.Doctor:
+                        return "Bác sĩ";
+                    case (int)CatalogueUtilities.DoctorType.Nurse:
+                        return "Y tá";
+                    case (int)CatalogueUtilities.DoctorType.Nursing:
+                        return "Điều dưỡng";
+                    default:
+                        return string.Empty;
+                }
+            }
+        }
 
         /// <summary>
         /// Tên đầy đủ của bác sĩ

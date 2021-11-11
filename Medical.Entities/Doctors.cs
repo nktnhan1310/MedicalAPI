@@ -32,7 +32,7 @@ namespace Medical.Entities
         /// </summary>
         public int Gender { get; set; }
         /// <summary>
-        /// Trình độ (GS,PGS,ThS,...)
+        /// Học vấn (GS,PGS,ThS,...)
         /// </summary>
         public int? DegreeId { get; set; }
 
@@ -58,6 +58,11 @@ namespace Medical.Entities
         /// Thông tin user
         /// </summary>
         public int? UserId { get; set; }
+
+        /// <summary>
+        /// Loại nhân viên
+        /// </summary>
+        public int TypeId { get; set; }
 
         #region Extension Properties
 

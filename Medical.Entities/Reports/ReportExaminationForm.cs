@@ -38,5 +38,6 @@ namespace Medical.Entities
         /// Tổng lịch hẹn đã xác nhận tái khám
         /// </summary>
         public int TotalConfirmedReExaminationForm { get; set; }
+
     }
 }

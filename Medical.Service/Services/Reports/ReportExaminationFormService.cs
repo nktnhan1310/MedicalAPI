@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,7 +35,7 @@ namespace Medical.Service
                 new SqlParameter("@HospitalId", baseSearch.HospitalId),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
-                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+                //new SqlParameter("@TotalPage", SqlDbType.Int, 0),
                 new SqlParameter("@TotalNewForm", SqlDbType.Int, 0),
                 new SqlParameter("@TotalWaitConfirmForm", SqlDbType.Int, 0),
                 new SqlParameter("@TotalConfirmedForm", SqlDbType.Int, 0),
@@ -60,7 +61,7 @@ namespace Medical.Service
                     connection.Open();
                     command.CommandText = commandText;
                     command.Parameters.AddRange(sqlParameters);
-                    command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
+                    //command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
                     command.Parameters["@TotalNewForm"].Direction = ParameterDirection.Output;
                     command.Parameters["@TotalWaitConfirmForm"].Direction = ParameterDirection.Output;
                     command.Parameters["@TotalConfirmedForm"].Direction = ParameterDirection.Output;
@@ -71,7 +72,7 @@ namespace Medical.Service
                     command.CommandType = CommandType.StoredProcedure;
                     SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
                     sqlDataAdapter.Fill(dataTable);
-                    pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
+                    //pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
                     int totalNewForm = 0;
                     int totalWaitConfirmForm = 0;
                     int totalConfirmedForm = 0;
@@ -92,6 +93,9 @@ namespace Medical.Service
                     if (command.Parameters["@TotalConfirmedReExaminationForm"] != null && int.TryParse(command.Parameters["@TotalConfirmedReExaminationForm"].Value.ToString(), out totalConfirmedReExaminationForm))
                         pagedList.TotalConfirmedReExaminationForm = totalConfirmedReExaminationForm;
                     pagedList.Items = MappingDataTable.ConvertToList<ReportExaminationForm>(dataTable);
+                    if (pagedList.Items != null && pagedList.Items.Any())
+                        pagedList.TotalItem = pagedList.Items.FirstOrDefault().TotalItem;
+
                     return pagedList;
                 }
                 finally

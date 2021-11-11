@@ -1,6 +1,7 @@
 ﻿using Medical.Interface.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
@@ -14,14 +15,17 @@ namespace Medical.Service
     {
         private readonly IDistributedCache _cache;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IUserService userService;
         //private readonly IOptions<JwtOptions> _jwtOptions;
 
         public TokenManagerService(IDistributedCache cache,
                 IHttpContextAccessor httpContextAccessor
+                //IServiceProvider serviceProvider
             )
         {
             _cache = cache;
             _httpContextAccessor = httpContextAccessor;
+            //userService = serviceProvider.GetRequiredService<IUserService>();
         }
 
         public async Task<bool> IsCurrentActiveToken()
@@ -30,8 +34,14 @@ namespace Medical.Service
         public async Task DeactivateCurrentAsync()
             => await DeactivateAsync(GetCurrentAsync());
 
+        //public async Task<bool> IsActiveAsync(string token)
+        //    => await _cache.GetStringAsync(GetKey(token)) == null;
+
         public async Task<bool> IsActiveAsync(string token)
-            => await _cache.GetStringAsync(GetKey(token)) == null;
+        {
+            bool result = await _cache.GetStringAsync(GetKey(token)) == null;
+            return result;
+        }
 
         public async Task DeactivateAsync(string token)
             => await _cache.SetStringAsync(GetKey(token),

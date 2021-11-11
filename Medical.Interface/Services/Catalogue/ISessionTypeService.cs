@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Medical.Interface.Services
 {
-    public interface ISessionTypeService : ICatalogueService<SessionTypes, BaseSearch>
+    public interface ISessionTypeService : ICatalogueHospitalService<SessionTypes, BaseHospitalSearch>
     {
     }
 }

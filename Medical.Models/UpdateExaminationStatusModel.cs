@@ -44,6 +44,11 @@ namespace Medical.Models
         public int? BankInfoId { get; set; }
 
         /// <summary>
+        /// Mã bác sĩ
+        /// </summary>
+        public int? VaccineTypeId { get; set; }
+
+        /// <summary>
         /// Tổng số tiền cần thanh toán
         /// </summary>
         public double? TotalPrice { get; set; }
@@ -73,6 +78,16 @@ namespace Medical.Models
         /// </summary>
         public string DoctorComment { get; set; }
 
+        /// <summary>
+        /// Loại chuẩn đoán
+        /// </summary>
+        public int? DiagnoticTypeId { get; set; }
+
+        /// <summary>
+        /// Tên bệnh
+        /// </summary>
+        public string DiagnoticSickName { get; set; }
+
         [DefaultValue(false)]
         public bool HasMedicalBill { get; set; }
 
@@ -87,7 +102,22 @@ namespace Medical.Models
         /// </summary>
         public string Prescription { get; set; }
 
-        public IList<MedicalRecordDetailFileModel> MedicalRecordDetailFiles { get; set; }
+        /// <summary>
+        /// Huyết áp
+        /// </summary>
+        public string BloodPressure { get; set; }
+
+        /// <summary>
+        /// Nhịp tim
+        /// </summary>
+        public string HeartBeat { get; set; }
+
+        /// <summary>
+        /// Đường huyết
+        /// </summary>
+        public string BloodSugar { get; set; }
+
+        public IList<UserFileModel> MedicalRecordDetailFiles { get; set; }
 
         /// <summary>
         /// Toa thuốc khám bệnh nếu có

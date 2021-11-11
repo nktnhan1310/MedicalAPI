@@ -87,24 +87,28 @@ namespace Medical.Entities
                             var configTimeExaminationProperties = configTimeExamination.Split('_').ToArray();
                             if (configTimeExaminationProperties != null && configTimeExaminationProperties.Any())
                             {
-                                int configTimeExaminationId = 0;
                                 int roomExaminationTryParseId = 0;
+                                int examinationScheduleDetailTryParseId = 0;
                                 int? roomExaminationId = null;
+                                int? examinationScheduleDetailId = null;
+
                                 DateTime examinationDate;
-                                if (!DateTime.TryParse(configTimeExaminationProperties[1], out examinationDate))
+                                if (!DateTime.TryParse(configTimeExaminationProperties[0], out examinationDate))
                                     continue;
-                                int.TryParse(configTimeExaminationProperties[0], out configTimeExaminationId);
-                                if (int.TryParse(configTimeExaminationProperties[6], out roomExaminationTryParseId))
+                                if (int.TryParse(configTimeExaminationProperties[4], out roomExaminationTryParseId))
                                     roomExaminationId = roomExaminationTryParseId;
+                                if (int.TryParse(configTimeExaminationProperties[7], out examinationScheduleDetailTryParseId))
+                                    examinationScheduleDetailId = examinationScheduleDetailTryParseId;
                                 results.Add(new ConfigTimeExaminationDayOfWeek()
                                 {
-                                    ConfigTimeExaminationId = configTimeExaminationId,
                                     ExaminationDate = examinationDate,
-                                    SessionTypeName = configTimeExaminationProperties[2],
-                                    DayOfWeekName = configTimeExaminationProperties[3],
-                                    ConfigTimeExaminationValue = configTimeExaminationProperties[4],
-                                    RoomName = configTimeExaminationProperties[5],
-                                    RoomExaminationId = roomExaminationId
+                                    SessionTypeName = configTimeExaminationProperties[1],
+                                    DayOfWeekName = configTimeExaminationProperties[2],
+                                    RoomName = configTimeExaminationProperties[3],
+                                    RoomExaminationId = roomExaminationId,
+                                    ExaminationFromTimeText = configTimeExaminationProperties[5],
+                                    ExaminationToTimeText = configTimeExaminationProperties[6],
+                                    ExaminationScheduleDetailId = examinationScheduleDetailId
                                 });
                             }
 

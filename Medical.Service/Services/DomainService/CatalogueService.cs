@@ -2,6 +2,7 @@
 using Ganss.Excel;
 using Medical.Entities;
 using Medical.Entities.DomainEntity;
+using Medical.Interface.DbContext;
 using Medical.Interface.Services.Base;
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
@@ -27,6 +28,10 @@ namespace Medical.Service.Services.DomainService
         public CatalogueService(IUnitOfWork unitOfWork, IMapper mapper , IConfiguration configuration) : base(unitOfWork, mapper)
         {
             this.configuration = configuration;
+        }
+
+        protected CatalogueService(IUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper) : base(unitOfWork, medicalDbContext, mapper)
+        {
         }
 
         public override async Task<bool> SaveAsync(E item)

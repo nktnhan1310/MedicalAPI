@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Ganss.Excel;
 using Medical.Entities;
+using Medical.Extensions;
 using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
 using Medical.Service.Services.DomainService;
@@ -44,9 +45,9 @@ namespace Medical.Service.Services
                 new SqlParameter("@PageSize", baseSearch.PageSize),
                 new SqlParameter("@HospitalId", baseSearch.HospitalId),
                 new SqlParameter("@ExaminationDate", baseSearch.ExaminationDate),
+                new SqlParameter("@ManagerId", baseSearch.ManagerId),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("OrderBy", baseSearch.OrderBy),
-                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
             };
             return parameters;
         }
@@ -56,6 +57,13 @@ namespace Medical.Service.Services
             PagedList<SpecialistTypes> pagedList = new PagedList<SpecialistTypes>();
             SqlParameter[] parameters = GetSqlParameters(baseSearch);
             pagedList = await this.unitOfWork.Repository<SpecialistTypes>().ExcuteQueryPagingAsync(this.GetStoreProcName(), parameters);
+            // Lấy theo danh sách chuyên khoa mặc định của hệ thống
+            if (pagedList.TotalItem == 0)
+            {
+                baseSearch.HospitalId = 0;
+                SqlParameter[] parameterDefaults = GetSqlParameters(baseSearch);
+                pagedList = await this.unitOfWork.Repository<SpecialistTypes>().ExcuteQueryPagingAsync(this.GetStoreProcName(), parameterDefaults);
+            }
             pagedList.PageIndex = baseSearch.PageIndex;
             pagedList.PageSize = baseSearch.PageSize;
             return pagedList;
@@ -67,7 +75,7 @@ namespace Medical.Service.Services
         /// <param name="stream"></param>
         /// <param name="createdBy"></param>
         /// <returns></returns>
-        public override async Task<AppDomainImportResult> ImportTemplateFile(Stream stream, string createdBy, int? hospitalId)
+        public override async Task<AppDomainImportResult> ImportTemplateFile(Stream stream, int? hospitalId)
         {
             AppDomainImportResult appDomainImportResult = new AppDomainImportResult();
             var dataTable = SetDataTable();
@@ -95,21 +103,30 @@ namespace Medical.Service.Services
                         IList<string> errors = new List<string>();
                         if (string.IsNullOrEmpty(catalogueMapper.HospitalCode))
                             errors.Add("Vui lòng nhập mã bệnh viện");
-                        if(!existHospitals.Any(x => x.Code == catalogueMapper.HospitalCode))
-                            errors.Add("Mã bệnh viện không tồn tại");
+                        if (hospitalId.HasValue && hospitalId.Value > 0)
+                            hospitalInfo = await existHospitals.Where(e => e.Id == hospitalId.Value).FirstOrDefaultAsync();
                         else
-                            hospitalInfo = await existHospitals.Where(e => e.Code == catalogueMapper.HospitalCode).FirstOrDefaultAsync();
+                        {
+                            if (!existHospitals.Any(x => x.Code == catalogueMapper.HospitalCode))
+                                errors.Add("Mã bệnh viện không tồn tại");
+                            else
+                                hospitalInfo = await existHospitals.Where(e => e.Code == catalogueMapper.HospitalCode).FirstOrDefaultAsync();
+                        }
+
                         if (hospitalInfo == null)
                             errors.Add("Thông tin bệnh viện không tồn tại");
                         if (string.IsNullOrEmpty(catalogueMapper.Code))
                             errors.Add("Vui lòng nhập mã chuyên khoa");
-                        if (hospitalInfo != null && (existItems.Any(x => x.HospitalId == hospitalInfo.Id && x.Code == catalogueMapper.Code) 
-                            || specialistTypeImports.Any(x => x.HospitalId == hospitalInfo.Id &&  x.Code == catalogueMapper.Code)))
+
+
+
+                        if (hospitalInfo != null && (existItems.Any(x => x.HospitalId == hospitalInfo.Id && x.Code == catalogueMapper.Code)
+                            || specialistTypeImports.Any(x => x.HospitalId == hospitalInfo.Id && x.Code == catalogueMapper.Code)))
                             errors.Add("Mã chuyên khoa đã tồn tại");
                         if (string.IsNullOrEmpty(catalogueMapper.Name))
                             errors.Add("Vui lòng nhập tên chuyên khoa");
                         price = TryParseUtilities.TryParseDouble(catalogueMapper.Price);
-                        if(price == null)
+                        if (price == null)
                             errors.Add("Giá khám không hợp lệ");
 
                         if (errors.Any())
@@ -130,7 +147,7 @@ namespace Medical.Service.Services
                                 Active = true,
                                 Created = DateTime.Now,
                                 HospitalId = hospitalId.HasValue ? hospitalId.Value : hospitalInfo.Id,
-                                CreatedBy = createdBy,
+                                CreatedBy = LoginContext.Instance.CurrentUser.UserName,
                                 Price = price,
                             };
                             specialistTypeImports.Add(item);
@@ -175,9 +192,14 @@ namespace Medical.Service.Services
         public override async Task<string> GetExistItemMessage(SpecialistTypes item)
         {
             string result = string.Empty;
-            bool isExistCode = await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.HospitalId == item.HospitalId && x.Code == item.Code);
+            var isExistCode = await Queryable.AnyAsync(x => !x.Deleted && x.Id != item.Id && x.HospitalId == item.HospitalId && x.Code == item.Code);
+            var isExistManager = await Queryable.AnyAsync(e => !e.Deleted && e.Id != item.Id && e.HospitalId == item.HospitalId 
+            && e.ManagerId.HasValue
+            && e.ManagerId == item.ManagerId);
             if (isExistCode)
                 return "Mã đã tồn tại!";
+            if (isExistManager)
+                return "Trưởng khoa đã tồn tại";
             return result;
         }
     }

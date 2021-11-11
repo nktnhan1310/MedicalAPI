@@ -56,7 +56,15 @@ namespace Medical.Entities.DomainEntity
         /// </summary>
         public bool Active { get; set; }
 
-        
+        #region Extension Properties
+
+        /// <summary>
+        /// Tổng số item của trang danh sách
+        /// </summary>
+        [NotMapped]
+        public int TotalItem { get; set; }
+
+        #endregion
 
     }
 }

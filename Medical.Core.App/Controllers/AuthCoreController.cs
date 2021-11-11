@@ -665,10 +665,10 @@ namespace Medical.Core.App.Controllers
                 //Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
                 Subject = new ClaimsIdentity(new Claim[]
                             {
-                                new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(userLoginModel))
+                                new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(userLoginModel)),
+                                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                             }),
                 Expires = DateTime.Now.AddDays(1),
-                //Expires = DateTime.Now.AddMinutes(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);

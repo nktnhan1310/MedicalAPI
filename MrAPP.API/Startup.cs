@@ -1,3 +1,5 @@
+using Hangfire;
+using Hangfire.SqlServer;
 using Medical.AppDbContext;
 using Medical.Core.App;
 using Medical.Extensions;
@@ -139,6 +141,23 @@ namespace MrApp.API
             services.AddSignalR();
 
             //services.AddControllers();
+
+            // Add Hangfire services.
+            services.AddHangfire(configuration => configuration
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                .UseSqlServerStorage(Configuration.GetConnectionString("HangFire"), new SqlServerStorageOptions
+                {
+                    CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+                    SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+                    QueuePollInterval = TimeSpan.Zero,
+                    UseRecommendedIsolationLevel = true,
+                    UsePageLocksOnDequeue = true,
+                    DisableGlobalLocks = true
+                }));
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -173,7 +192,7 @@ namespace MrApp.API
             app.UseMiddleware<ErrorHandlerMiddleware>();
             app.UseMiddleware<JwtMiddleware>();
             app.UseAuthorization();
-
+            app.UseHangfireServer();
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
@@ -189,7 +208,8 @@ namespace MrApp.API
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<NotificationHub>("/hubs/notifications");
+                endpoints.MapHangfireDashboard();
+                endpoints.MapHub<NotificationAppHub>("/hubs/notifications");
             });
 
 

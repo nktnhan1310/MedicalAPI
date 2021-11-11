@@ -56,7 +56,7 @@ namespace MedicalAPI.Controllers.Reports
             parameter.Add("TotalCanceledForm", pagedListReport.TotalCanceledForm);
             parameter.Add("TotalWaitReExaminationForm", pagedListReport.TotalWaitReExaminationForm);
             parameter.Add("TotalConfirmedReExaminationForm", pagedListReport.TotalConfirmedReExaminationForm);
-            parameter.Add("TotalExamination", pagedListReport.TotalNewForm + pagedListReport.TotalWaitConfirmForm + pagedListReport.TotalConfirmedForm + pagedListReport.TotalWaitReExaminationForm + pagedListReport.TotalWaitReExaminationForm + pagedListReport.TotalConfirmedReExaminationForm);
+            parameter.Add("TotalExamination", pagedListReport.TotalNewForm + pagedListReport.TotalWaitConfirmForm + pagedListReport.TotalConfirmedForm + pagedListReport.TotalWaitReExaminationForm + pagedListReport.TotalCanceledForm + pagedListReport.TotalConfirmedReExaminationForm);
 
             return parameter;
         }

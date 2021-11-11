@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -30,18 +31,21 @@ namespace MrApp.API.Controllers
     {
         private readonly IMedicalRecordAdditionService medicalRecordAdditionService;
         private readonly IMedicalRecordService medicalRecordService;
-        private readonly IMedicalRecordFileService medicalRecordFileService;
+        //private readonly IMedicalRecordFileService medicalRecordFileService;
         private readonly IMedicalRecordDetailService medicalRecordDetailService;
-        private readonly IMedicalRecordDetailFileService medicalRecordDetailFileService;
+        //private readonly IMedicalRecordDetailFileService medicalRecordDetailFileService;
         private readonly IUserService userService;
+        private readonly IUserFileService userFileService;
 
         public MedicalRecordController(IServiceProvider serviceProvider, ILogger<BaseController> logger, IWebHostEnvironment env, IMapper mapper, IConfiguration configuration) : base(serviceProvider, logger, env, mapper, configuration)
         {
             this.medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
             medicalRecordAdditionService = serviceProvider.GetRequiredService<IMedicalRecordAdditionService>();
-            medicalRecordFileService = serviceProvider.GetRequiredService<IMedicalRecordFileService>();
+            //medicalRecordFileService = serviceProvider.GetRequiredService<IMedicalRecordFileService>();
             medicalRecordDetailService = serviceProvider.GetRequiredService<IMedicalRecordDetailService>();
-            medicalRecordDetailFileService = serviceProvider.GetRequiredService<IMedicalRecordDetailFileService>();
+            //medicalRecordDetailFileService = serviceProvider.GetRequiredService<IMedicalRecordDetailFileService>();
+            userFileService = serviceProvider.GetRequiredService<IUserFileService>();
+
             userService = serviceProvider.GetRequiredService<IUserService>();
         }
 
@@ -62,9 +66,11 @@ namespace MrApp.API.Controllers
                 UserId = LoginContext.Instance.CurrentUser.UserId,
             };
             var pagedItems = await this.medicalRecordService.GetPagedListData(searchMedicalRecord);
+
             IList<MedicalRecords> medicalRecordInfos = new List<MedicalRecords>();
             if (pagedItems != null && pagedItems.Items.Any())
                 medicalRecordInfos = pagedItems.Items.ToList();
+
             //var medicalRecordInfos = await this.medicalRecordService.GetAsync(e => e.UserId == LoginContext.Instance.CurrentUser.UserId);
             if (medicalRecordInfos != null && medicalRecordInfos.Any())
             {
@@ -75,9 +81,9 @@ namespace MrApp.API.Controllers
                 if (medicalAdditions != null)
                     medicalRecordModel.MedicalRecordAdditions = mapper.Map<IList<MedicalRecordAdditionModel>>(medicalAdditions);
                 // Lấy thông tin file hồ sơ bệnh án
-                var medicalFiles = await this.medicalRecordFileService.GetAsync(e => !e.Deleted && e.MedicalRecordId == medicalRecordInfo.Id);
+                var medicalFiles = await this.userFileService.GetAsync(e => !e.Deleted && e.MedicalRecordId == medicalRecordInfo.Id);
                 if (medicalFiles != null)
-                    medicalRecordModel.MedicalRecordFiles = mapper.Map<IList<MedicalRecordFileModel>>(medicalFiles);
+                    medicalRecordModel.UserFiles = mapper.Map<IList<UserFileModel>>(medicalFiles);
 
                 // Lấy thông tin chi tiết hồ sơ bệnh án
                 var medicalRecordDetails = await this.medicalRecordDetailService.GetAsync(e => !e.Deleted && e.MedicalRecordId == medicalRecordInfo.Id);
@@ -89,8 +95,8 @@ namespace MrApp.API.Controllers
                     {
                         foreach (var detail in medicalRecordModel.MedicalRecordDetails)
                         {
-                            var detailFiles = await this.medicalRecordDetailFileService.GetAsync(e => !e.Deleted && e.MedicalRecordDetailId == detail.Id);
-                            detail.MedicalRecordDetailFiles = mapper.Map<IList<MedicalRecordDetailFileModel>>(detailFiles);
+                            var detailFiles = await this.userFileService.GetAsync(e => !e.Deleted && e.MedicalRecordDetailId == detail.Id);
+                            detail.UserFiles = mapper.Map<IList<UserFileModel>>(detailFiles);
                         }
                     }
                 }
@@ -99,7 +105,7 @@ namespace MrApp.API.Controllers
             else
             {
                 var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.Active && !e.IsLocked && e.Id == LoginContext.Instance.CurrentUser.UserId);
-                if(userInfos != null && userInfos.Any())
+                if (userInfos != null && userInfos.Any())
                 {
                     var userInfo = userInfos.FirstOrDefault();
                     MedicalRecords medicalRecords = new MedicalRecords()
@@ -111,6 +117,9 @@ namespace MrApp.API.Controllers
                         Active = true,
                         Deleted = false,
                         UserId = LoginContext.Instance.CurrentUser.UserId,
+                        Gender = userInfo.Gender,
+                        BirthDate = userInfo.BirthDate,
+                        Address = userInfo.Address,
                         UserFullName = userInfo.FirstName + " " + userInfo.LastName
                     };
                     bool success = await this.medicalRecordService.CreateAsync(medicalRecords);
@@ -156,27 +165,26 @@ namespace MrApp.API.Controllers
                     var messageUserCheck = await this.medicalRecordService.GetExistItemMessage(item);
                     if (!string.IsNullOrEmpty(messageUserCheck))
                         throw new AppException(messageUserCheck);
-
                     List<string> filePaths = new List<string>();
                     List<string> folderUploadPaths = new List<string>();
-                    if (item.MedicalRecordFiles != null && item.MedicalRecordFiles.Any())
+                    if (item.UserFiles != null && item.UserFiles.Any())
                     {
-                        foreach (var file in item.MedicalRecordFiles)
+                        foreach (var file in item.UserFiles)
                         {
                             string filePath = Path.Combine(env.ContentRootPath, CoreContants.UPLOAD_FOLDER_NAME, CoreContants.TEMP_FOLDER_NAME, file.FileName);
                             // ------- START GET URL FOR FILE
                             string folderUploadPath = string.Empty;
                             var folderUpload = configuration.GetValue<string>("MySettings:FolderUpload");
-                            folderUploadPath = Path.Combine(folderUpload, CoreContants.UPLOAD_FOLDER_NAME, MEDICAL_RECORD_FOLDER_NAME);
+                            folderUploadPath = Path.Combine(folderUpload, CoreContants.UPLOAD_FOLDER_NAME, CoreContants.MEDICAL_RECORD_FOLDER_NAME);
                             string fileUploadPath = Path.Combine(folderUploadPath, Path.GetFileName(filePath));
                             // Kiểm tra có tồn tại file trong temp chưa?
                             if (System.IO.File.Exists(filePath) && !System.IO.File.Exists(fileUploadPath))
                             {
-                                
+
                                 FileUtils.CreateDirectory(folderUploadPath);
                                 FileUtils.SaveToPath(fileUploadPath, System.IO.File.ReadAllBytes(filePath));
                                 folderUploadPaths.Add(fileUploadPath);
-                                string fileUrl = Path.Combine(CoreContants.UPLOAD_FOLDER_NAME, MEDICAL_RECORD_FOLDER_NAME, Path.GetFileName(filePath));
+                                string fileUrl = Path.Combine(CoreContants.UPLOAD_FOLDER_NAME, CoreContants.MEDICAL_RECORD_FOLDER_NAME, Path.GetFileName(filePath));
                                 // ------- END GET URL FOR FILE
                                 filePaths.Add(filePath);
                                 file.Created = DateTime.Now;
@@ -185,6 +193,7 @@ namespace MrApp.API.Controllers
                                 file.Deleted = false;
                                 file.FileName = Path.GetFileName(filePath);
                                 file.FileExtension = Path.GetExtension(filePath);
+                                file.UserId = LoginContext.Instance.CurrentUser.UserId;
                                 file.MedicalRecordId = item.Id;
                                 file.ContentType = ContentFileTypeUtilities.GetMimeType(filePath);
                                 file.FileUrl = fileUrl;
@@ -196,7 +205,7 @@ namespace MrApp.API.Controllers
                             }
                         }
                     }
-                    success = await this.medicalRecordService.UpdateAsync(item);
+                    success = await this.medicalRecordService.UpdateMedicalRecordExtension(item);
                     if (success)
                     {
                         appDomainResult.ResultCode = (int)HttpStatusCode.OK;
@@ -230,13 +239,61 @@ namespace MrApp.API.Controllers
             return appDomainResult;
         }
 
+        /// <summary>
+        /// Cập nhật thông tin chẩn đoán của user
+        /// </summary>
+        /// <param name="diagnose">Nội dung chẩn đoán</param>
+        /// <returns></returns>
+        [HttpPut("update-medical-record-diagnose")]
+        [MedicalAppAuthorize(new string[] { CoreContants.Update })]
+        public async Task<AppDomainResult> UpdateDiagnose (string diagnose)
+        {
+            if (string.IsNullOrEmpty(diagnose)) throw new AppException("Vui lòng nhập thông tin chẩn đoán");
+            var medicalRecordInfo = await this.medicalRecordService.GetSingleAsync(e => e.UserId == LoginContext.Instance.CurrentUser.UserId);
+            if (medicalRecordInfo == null) throw new AppException("Bạn không có thông tin hồ sơ");
+            medicalRecordInfo.Updated = DateTime.Now;
+            medicalRecordInfo.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+            medicalRecordInfo.MedicalHistory = diagnose;
+            Expression<Func<MedicalRecords, object>>[] includeProperties = new Expression<Func<MedicalRecords, object>>[]
+            {
+                e => e.Updated,
+                e => e.UpdatedBy,
+                e => e.MedicalHistory
+            };
+            bool success = await this.medicalRecordService.UpdateFieldAsync(medicalRecordInfo, includeProperties);
 
+            return new AppDomainResult()
+            {
+                Success = success,
+                ResultCode = (int)HttpStatusCode.OK
+            };
+        }
 
-        #region Contants
+        /// <summary>
+        /// Lấy thông tin số lần vi phạm/số lần hủy phiếu/ số lần chỉnh sửa phiếu
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("get-total-examination-caculate")]
+        [MedicalAppAuthorize(new string[] { CoreContants.View })]
+        public async Task<AppDomainResult> GetTotalExaminationCaculate()
+        {
+            var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.Active && e.Id == LoginContext.Instance.CurrentUser.UserId);
+            Users userInfo = null;
+            if (userInfos != null && userInfos.Any())
+                userInfo = userInfos.FirstOrDefault();
+            else throw new AppException("Không tìm thấy thông tin user");
 
-        public const string MEDICAL_RECORD_FOLDER_NAME = "medicalrecord";
-
-        #endregion
-
+            return new AppDomainResult
+            {
+                Success = true,
+                ResultCode = (int)HttpStatusCode.OK,
+                Data = new
+                {
+                    TotalViolations = userInfo != null ? userInfo.TotalViolations : 0,
+                    TotalCancelExamination = userInfo != null ? userInfo.TotalCancelExaminations : 0,
+                    TotalEditExamination = userInfo != null ? userInfo.TotalEditExaminations : 0,
+                }
+            };
+        }
     }
 }

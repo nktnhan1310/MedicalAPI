@@ -22,5 +22,10 @@ namespace Medical.Entities
         /// 0 => AVATAR CỦA HỒ SƠ
         /// </summary>
         public int FileType { get; set; }
+
+        /// <summary>
+        /// Mã thư mục hình ảnh
+        /// </summary>
+        public int? FolderId { get; set; }
     }
 }

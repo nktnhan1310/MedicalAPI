@@ -20,6 +20,11 @@ namespace Medical.Entities
         /// Theo nhom người dùng
         /// </summary>
         public int? UserGroupId { get; set; }
+
+        /// <summary>
+        /// Tìm kiếm theo thông tin bệnh viện
+        /// </summary>
+        public bool? IsHospital { get; set; }
     }
 
 }
