@@ -218,6 +218,69 @@ namespace Medical.Core.App.Controllers
         }
 
         /// <summary>
+        /// Thêm mới nhiều item
+        /// </summary>
+        /// <param name="itemModels"></param>
+        /// <returns></returns>
+        [HttpPost("add-multiple-item")]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public virtual async Task<AppDomainResult> AddMultipleItem([FromBody] IList<T> itemModels)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
+            var items = mapper.Map<IList<E>>(itemModels);
+            foreach (var item in items)
+            {
+                item.Created = DateTime.Now;
+                item.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+                if (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId.Value > 0)
+                    item.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
+                // Kiểm tra item có tồn tại chưa?
+                var messageUserCheck = await this.domainService.GetExistItemMessage(item);
+                if (!string.IsNullOrEmpty(messageUserCheck))
+                    throw new AppException(messageUserCheck);
+
+            }
+            success = await this.domainService.CreateAsync(items);
+            if (!success) throw new Exception("Lỗi trong quá trình xử lý");
+            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            appDomainResult.Success = success;
+            return appDomainResult;
+        }
+
+        /// <summary>
+        /// Cập nhật list item
+        /// </summary>
+        /// <param name="itemModels"></param>
+        /// <returns></returns>
+        [HttpPut("update-multiple-item")]
+        [MedicalAppAuthorize(new string[] { CoreContants.AddNew })]
+        public virtual async Task<AppDomainResult> UpdateMultipleItem([FromBody] IList<T> itemModels)
+        {
+            AppDomainResult appDomainResult = new AppDomainResult();
+            bool success = false;
+            if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
+            var items = mapper.Map<IList<E>>(itemModels);
+            foreach (var item in items)
+            {
+                item.Updated = DateTime.Now;
+                item.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+                if (LoginContext.Instance.CurrentUser.HospitalId.HasValue && LoginContext.Instance.CurrentUser.HospitalId.Value > 0)
+                    item.HospitalId = LoginContext.Instance.CurrentUser.HospitalId;
+                // Kiểm tra item có tồn tại chưa?
+                var messageUserCheck = await this.domainService.GetExistItemMessage(item);
+                if (!string.IsNullOrEmpty(messageUserCheck))
+                    throw new AppException(messageUserCheck);
+            }
+            success = await this.domainService.UpdateAsync(items);
+            if (!success) throw new Exception("Lỗi trong quá trình xử lý");
+            appDomainResult.ResultCode = (int)HttpStatusCode.OK;
+            appDomainResult.Success = success;
+            return appDomainResult;
+        }
+
+        /// <summary>
         /// Cập nhật thông tin item
         /// </summary>
         /// <param name="id"></param>

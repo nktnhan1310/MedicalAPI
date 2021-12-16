@@ -1,6 +1,10 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "PGCux4341/xiQ7RfgsfBNvjcn25QehoBp4Kf3nhaCJR0XGWDd8C8alNMZ6NdN/GRaSrdoQ32UFpGRM7ulEBARA==",
+=======
+  "dgSpecHash": "2uJ1IzsqwCIubFzaxjPAC+FwiVQe0MGU37io6xIAIody1XdkfyOlOw5pjNlfYJFf2S62KU5WpA8HA09vVyJ/zA==",
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
   "success": true,
   "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\Medical.Utilities\\Medical.Utilities.csproj",
   "expectedPackageFiles": [

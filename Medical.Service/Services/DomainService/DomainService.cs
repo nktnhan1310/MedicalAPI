@@ -370,6 +370,7 @@ namespace Medical.Service
                 foreach (var existItem in existItems)
                 {
                     existItem.Deleted = true;
+<<<<<<< HEAD
                     existItem.Updated = DateTime.Now;
                     existItem.UpdatedBy = LoginContext.Instance.CurrentUser != null ? LoginContext.Instance.CurrentUser.UserName : string.Empty;
                     Expression<Func<E, object>>[] includeProperties = new Expression<Func<E, object>>[]
@@ -379,6 +380,9 @@ namespace Medical.Service
                         e => e.UpdatedBy
                     };
                     unitOfWork.Repository<E>().UpdateFieldsSave(existItem, includeProperties);
+=======
+                    unitOfWork.Repository<E>().Update(existItem);
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 }
                 await unitOfWork.SaveAsync();
                 return true;

@@ -443,4 +443,7 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\Me
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.xml
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.pdb
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.genruntimeconfig.cache
+<<<<<<< HEAD
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\obj\Debug\netcoreapp3.1\MedicalAPI.csproj.AssemblyReference.cache
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608

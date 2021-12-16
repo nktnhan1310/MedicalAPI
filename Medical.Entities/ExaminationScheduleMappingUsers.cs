@@ -21,6 +21,9 @@ namespace Medical.Entities
         /// Mã tài khoản
         /// </summary>
         public int? UserId { get; set; }
+<<<<<<< HEAD
         public Guid? ImportScheduleId { get; set; }
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
     }
 }

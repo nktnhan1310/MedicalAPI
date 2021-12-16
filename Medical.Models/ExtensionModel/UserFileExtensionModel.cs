@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
 using System.ComponentModel.DataAnnotations;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using System.Text;
 
 namespace Medical.Models
@@ -16,6 +19,7 @@ namespace Medical.Models
         /// </summary>
         public IList<UserFileModel> UserFiles { get; set; }
     }
+<<<<<<< HEAD
 
     
     public class UserFileRequestUpdateModel
@@ -31,4 +35,6 @@ namespace Medical.Models
         [Required(ErrorMessage = "Vui lòng chọn folder cần cập nhật")]
         public int? UpdateFolderId { get; set; }
     }
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 }

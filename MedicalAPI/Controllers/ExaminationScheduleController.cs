@@ -178,6 +178,11 @@ namespace MedicalAPI.Controllers
         public async Task<AppDomainResult> AddMultipleSchedule([FromBody] ExaminationScheduleExtensionModel examinationScheduleExtensionModel)
         {
             if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
+<<<<<<< HEAD
+=======
+            bool success = true;
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             if (examinationScheduleExtensionModel.ExaminationScheduleDetails != null && examinationScheduleExtensionModel.ExaminationScheduleDetails.Any())
             {
                 foreach (var examinationScheduleDetail in examinationScheduleExtensionModel.ExaminationScheduleDetails)
@@ -204,6 +209,7 @@ namespace MedicalAPI.Controllers
 
             if (!itemUpdate.HospitalId.HasValue || itemUpdate.HospitalId.Value <= 0) throw new AppException("Chưa chọn thông tin bệnh viện");
 
+<<<<<<< HEAD
             var successTask = this.examinationScheduleService.AddMultipleExaminationSchedule(new List<ExaminationScheduleExtensions>() { itemUpdate }, itemUpdate.HospitalId ?? 0);
             return new AppDomainResult()
             {
@@ -224,6 +230,11 @@ namespace MedicalAPI.Controllers
             if (roomIds == null) throw new AppException("Không tìm thấy thông tin phòng hợp lệ");
             bool success = await this.examinationScheduleService.DeleteRoomExaminationSchedule(roomIds);
             if (!success) throw new Exception("Lỗi trong quá trình xử lý");
+=======
+            
+
+            success = await this.examinationScheduleService.AddMultipleExaminationSchedule(new List<ExaminationScheduleExtensions>() { itemUpdate }, itemUpdate.HospitalId ?? 0);
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             return new AppDomainResult()
             {
                 Success = success,
@@ -232,6 +243,7 @@ namespace MedicalAPI.Controllers
         }
 
         /// <summary>
+<<<<<<< HEAD
         /// LẤY DANH SÁCH PHÒNG KHÁM THEO THÔNG TIN CA TRỰC
         /// </summary>
         /// <param name="searchRoomExaminationSchedule"></param>
@@ -276,6 +288,8 @@ namespace MedicalAPI.Controllers
         }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Down load template file import
         /// </summary>
         /// <returns></returns>
@@ -328,7 +342,11 @@ namespace MedicalAPI.Controllers
             if (LoginContext.Instance.CurrentUser != null && LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                 hospitalId = LoginContext.Instance.CurrentUser.HospitalId.Value;
             if (!hospitalId.HasValue || hospitalId.Value <= 0) throw new AppException("Không tìm thấy thông tin bệnh viện");
+<<<<<<< HEAD
             appDomainImportResult = await this.examinationScheduleService.ImportExaminationSchedule(fileStream, hospitalId.Value);
+=======
+            appDomainImportResult = await this.examinationScheduleService.ImportExaminationSchedule(fileStream, LoginContext.Instance.CurrentUser.UserName, hospitalId.Value);
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             if (appDomainImportResult.ResultFile != null)
             {
                 var webRoot = env.ContentRootPath;

@@ -108,10 +108,13 @@ namespace Medical.Utilities
             /// Thanh toán qua VNPay
             /// </summary>
             VNPAY = 3,
+<<<<<<< HEAD
             /// <summary>
             /// Chuyển khoản
             /// </summary>
             TRANSFER = 4
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
 
         /// <summary>
@@ -300,7 +303,11 @@ namespace Medical.Utilities
             /// X-quang
             /// </summary>
             Xray = 5
+<<<<<<< HEAD
 
+=======
+            
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
 
         /// <summary>
@@ -498,6 +505,7 @@ namespace Medical.Utilities
         }
 
         /// <summary>
+<<<<<<< HEAD
         /// Loại chính sách
         /// </summary>
         public enum PolicyType
@@ -552,6 +560,8 @@ namespace Medical.Utilities
         }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Loại folder
         /// </summary>
         public enum FolderType

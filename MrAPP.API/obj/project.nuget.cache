@@ -1,6 +1,10 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "dgSpecHash": "l9WYEfk1Lj3X7poNdzJAhFGYPHmOlWfXP0zo0/nUJjwdLQJKt6dDtBKBEI7uhusfybmcFomLyP34NDoze7fJhg==",
+=======
+  "dgSpecHash": "uWaRxvNQS0yFI8m66E9EjLjZ90/VI479hZiKD1SD2pkuEdPkeicmhGcYqRPh3puLa7Thap0h1Dty0Yp4sRGCRw==",
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
   "success": true,
   "projectFilePath": "E:\\MonaMedia\\MedicalExamination\\MedicalAPI\\MrApp.API\\MrApp.API.csproj",
   "expectedPackageFiles": [

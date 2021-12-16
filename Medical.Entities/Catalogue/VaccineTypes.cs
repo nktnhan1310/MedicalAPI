@@ -23,6 +23,7 @@ namespace Medical.Entities
         /// </summary>
         public int? Index { get; set; }
 
+<<<<<<< HEAD
         ///// <summary>
         ///// Khoảng cách mỗi liều
         ///// 0 => Ngày
@@ -36,6 +37,21 @@ namespace Medical.Entities
         ///// Giá trị
         ///// </summary>
         //public int? NumberOfDateTypeValue { get; set; }
+=======
+        /// <summary>
+        /// Khoảng cách mỗi liều
+        /// 0 => Ngày
+        /// 1 => Tuần
+        /// 2 => Tháng
+        /// 3 => Năm
+        /// </summary>
+        public int? DateTypeId { get; set; }
+
+        /// <summary>
+        /// Giá trị
+        /// </summary>
+        public int? NumberOfDateTypeValue { get; set; }
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
         /// <summary>
         /// Số liều thuốc
@@ -50,12 +66,15 @@ namespace Medical.Entities
         #region Extension Properties
 
         /// <summary>
+<<<<<<< HEAD
         /// Chi tiết loại vaccine
         /// </summary>
         [NotMapped]
         public IList<VaccineTypeDetails> VaccineTypeDetails { get; set; }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Danh sách đối tượng tiêm chủng
         /// </summary>
         [NotMapped]

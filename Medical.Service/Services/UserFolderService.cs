@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Medical.Entities;
 using Medical.Entities.Search;
+<<<<<<< HEAD
 using Medical.Extensions;
 using Medical.Interface.DbContext;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
@@ -18,7 +21,11 @@ namespace Medical.Service.Services
 {
     public class UserFolderService : DomainService<UserFolders, SearchUserFolder>, IUserFolderService
     {
+<<<<<<< HEAD
         public UserFolderService(IMedicalUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper) : base(unitOfWork, medicalDbContext, mapper)
+=======
+        public UserFolderService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         {
         }
 
@@ -69,7 +76,11 @@ namespace Medical.Service.Services
                 PageSize = baseSearch.PageSize,
             };
             // Lấy tổng số hình ảnh trong folder
+<<<<<<< HEAD
             if (pagedList != null && pagedList.Items.Any())
+=======
+            if(pagedList != null && pagedList.Items.Any())
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             {
                 foreach (var item in pagedList.Items)
                 {
@@ -122,7 +133,11 @@ namespace Medical.Service.Services
                             Year = e.Key.Year,
                             UserFolders = e.ToList()
                         }).OrderByDescending(e => e.Year).ThenByDescending(e => e.Month).ToList();
+<<<<<<< HEAD
 
+=======
+                            
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                         break;
                     case 1:
@@ -160,7 +175,11 @@ namespace Medical.Service.Services
             {
                 foreach (var item in pagedList.Items)
                 {
+<<<<<<< HEAD
                     if (item.UserFolders != null && item.UserFolders.Any())
+=======
+                    if(item.UserFolders != null && item.UserFolders.Any())
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     {
                         foreach (var userFolder in item.UserFolders)
                         {
@@ -175,6 +194,7 @@ namespace Medical.Service.Services
 
         public override async Task<bool> CreateAsync(UserFolders item)
         {
+<<<<<<< HEAD
             if (item == null) throw new AppException("Vui lòng chọn thông tin item");
             using (var contextTransactionTask = this.medicalDbContext.Database.BeginTransactionAsync())
             {
@@ -203,10 +223,30 @@ namespace Medical.Service.Services
                 }
             }
            
+=======
+            bool result = false;
+            if (item != null)
+            {
+                await this.unitOfWork.Repository<UserFolders>().CreateAsync(item);
+                await this.unitOfWork.SaveAsync();
+                if (item.UserFiles != null && item.UserFiles.Any())
+                {
+                    foreach (var file in item.UserFiles)
+                    {
+                        file.FolderId = item.Id;
+                        await this.unitOfWork.Repository<UserFiles>().CreateAsync(file);
+                    }
+                }
+                await this.unitOfWork.SaveAsync();
+                result = true;
+            }
+            return result;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
 
         public override async Task<bool> UpdateAsync(UserFolders item)
         {
+<<<<<<< HEAD
             var existFolders = await this.unitOfWork.Repository<UserFolders>().GetQueryable().Where(e => e.Id == item.Id).FirstOrDefaultAsync();
             if (existFolders == null) throw new AppException("Thông tin item không tồn tại");
 
@@ -248,13 +288,49 @@ namespace Medical.Service.Services
                     return false;
                 }
             }
+=======
+            bool result = false;
+            var existFolders = await this.unitOfWork.Repository<UserFolders>().GetQueryable().Where(e => e.Id == item.Id).FirstOrDefaultAsync();
+            if (existFolders != null)
+            {
+                existFolders = mapper.Map<UserFolders>(item);
+                this.unitOfWork.Repository<UserFolders>().Update(existFolders);
+
+                if (item.UserFiles != null && item.UserFiles.Any())
+                {
+                    foreach (var file in item.UserFiles)
+                    {
+                        var existUserFile = await this.unitOfWork.Repository<UserFiles>().GetQueryable().Where(e => e.Id == file.Id).FirstOrDefaultAsync();
+                        if(existUserFile == null)
+                        {
+                            file.FolderId = item.Id;
+                            await this.unitOfWork.Repository<UserFiles>().CreateAsync(file);
+                        }
+                        else
+                        {
+                            existUserFile = mapper.Map<UserFiles>(file);
+                            existUserFile.FolderId = item.Id;
+                            this.unitOfWork.Repository<UserFiles>().Update(existUserFile);
+                        }
+                        
+                    }
+                }
+                await this.unitOfWork.SaveAsync();
+                result = true;
+            }
+            return result;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
 
         public override async Task<string> GetExistItemMessage(UserFolders item)
         {
             List<string> messages = new List<string>();
             string result = string.Empty;
+<<<<<<< HEAD
             bool isExistFolderName = await Queryable.AnyAsync(e => !e.Deleted && e.Active
+=======
+            bool isExistFolderName = await Queryable.AnyAsync(e => !e.Deleted && e.Active 
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             && e.FolderName.ToLower().Contains(item.FolderName.ToLower())
              && e.Id != item.Id);
             if (isExistFolderName)

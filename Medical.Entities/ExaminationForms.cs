@@ -82,6 +82,7 @@ namespace Medical.Entities
         public int? VaccineTypeId { get; set; }
 
 
+
         /// <summary>
         /// Số thứ tự khám bệnh
         /// </summary>

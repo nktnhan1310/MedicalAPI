@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using Medical.Entities;
+<<<<<<< HEAD
 using Medical.Extensions;
 using Medical.Interface;
 using Medical.Interface.DbContext;
+=======
+using Medical.Interface;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +14,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+<<<<<<< HEAD
 using System.Linq.Expressions;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,11 +25,16 @@ namespace Medical.Service
 {
     public class UserAllergyService : DomainService<UserAllergies, SearchUserAllergy>, IUserAllergyService
     {
+<<<<<<< HEAD
         public UserAllergyService(IMedicalUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper) : base(unitOfWork, medicalDbContext, mapper)
+=======
+        public UserAllergyService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         {
         }
 
         /// <summary>
+<<<<<<< HEAD
         /// Thêm mới dị ứng cho user
         /// </summary>
         /// <param name="item"></param>
@@ -162,6 +174,8 @@ namespace Medical.Service
         }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Lấy danh sách phân trang nhóm dị ứng của người dùng
         /// </summary>
         /// <param name="baseSearch"></param>
@@ -181,12 +195,20 @@ namespace Medical.Service
             pagedList = new PagedList<UserAllergies>()
             {
                 TotalItem = (int)itemCount,
+<<<<<<< HEAD
                 Items = await items.OrderBy(e => e.AllergyTypeId).ThenBy(baseSearch.OrderBy).Skip(skip).Take(baseSearch.PageSize).ToListAsync(),
+=======
+                Items = await items.OrderBy(baseSearch.OrderBy).Skip(skip).Take(baseSearch.PageSize).ToListAsync(),
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 PageIndex = baseSearch.PageIndex,
                 PageSize = baseSearch.PageSize,
             };
 
+<<<<<<< HEAD
             if (pagedList.Items != null && pagedList.Items.Any())
+=======
+            if(pagedList.Items != null && pagedList.Items.Any())
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             {
                 foreach (var item in pagedList.Items)
                 {
@@ -197,6 +219,7 @@ namespace Medical.Service
                     if (userInfo != null) item.UserFullName = userInfo.LastName + " " + userInfo.FirstName;
                 }
             }
+<<<<<<< HEAD
             else
             {
                 // LẤY RA TẤT CẢ NHÓM DỊ ỨNG TẠO CHO USER
@@ -265,5 +288,12 @@ namespace Medical.Service
                 result = string.Join(" ", messages);
             return result;
         }
+=======
+
+            return pagedList;
+        }
+
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
     }
 }

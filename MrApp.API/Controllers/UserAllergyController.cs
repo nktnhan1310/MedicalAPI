@@ -30,16 +30,22 @@ namespace MrApp.API.Controllers
         private IUserAllergyService userAllergyService;
         private IUserService userService;
         private IAllergyTypeService allergyTypeService;
+<<<<<<< HEAD
         private IAllergyDescriptionTypeService allergyDescriptionTypeService;
         private IUserAllergyDetailService userAllergyDetailService;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
         public UserAllergyController(IServiceProvider serviceProvider, ILogger<BaseController> logger, IWebHostEnvironment env, IMapper mapper, IConfiguration configuration) : base(serviceProvider, logger, env, mapper, configuration)
         {
             userAllergyService = serviceProvider.GetRequiredService<IUserAllergyService>();
             userService = serviceProvider.GetRequiredService<IUserService>();
             allergyTypeService = serviceProvider.GetRequiredService<IAllergyTypeService>();
+<<<<<<< HEAD
             allergyDescriptionTypeService = serviceProvider.GetRequiredService<IAllergyDescriptionTypeService>();
             userAllergyDetailService = serviceProvider.GetRequiredService<IUserAllergyDetailService>();
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
 
         /// <summary>
@@ -75,6 +81,7 @@ namespace MrApp.API.Controllers
         public async Task<AppDomainResult> Create([FromBody] UserAllergyModel userAllergyModel)
         {
             bool success = false;
+<<<<<<< HEAD
             if (!ModelState.IsValid) throw new AppException(ModelState.GetErrorMessage());
 
 
@@ -91,6 +98,20 @@ namespace MrApp.API.Controllers
             success = await this.userAllergyService.CreateAsync(itemUpdate);
             if (!success)
                 throw new Exception("Lỗi trong quá trình xử lý");
+=======
+            if (ModelState.IsValid)
+            {
+                var itemUpdate = mapper.Map<UserAllergies>(userAllergyModel);
+                itemUpdate.Active = true;
+                itemUpdate.Created = DateTime.Now;
+                itemUpdate.UserId = LoginContext.Instance.CurrentUser.UserId;
+                itemUpdate.CreatedBy = LoginContext.Instance.CurrentUser.UserName;
+                success = await this.userAllergyService.CreateAsync(itemUpdate);
+                if (!success)
+                    throw new Exception("Lỗi trong quá trình xử lý");
+            }
+            else throw new AppException(ModelState.GetErrorMessage());
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
             return new AppDomainResult()
             {
@@ -112,11 +133,19 @@ namespace MrApp.API.Controllers
             bool success = false;
             if (ModelState.IsValid)
             {
+<<<<<<< HEAD
                 var existUserAllergies = await this.userAllergyService.GetAsync(e => !e.Deleted
                 && e.Active && e.UserId == LoginContext.Instance.CurrentUser.UserId
                 && e.Id == id
                 );
                 if (existUserAllergies == null || !existUserAllergies.Any())
+=======
+                var existUserAllergies = await this.userAllergyService.GetAsync(e => !e.Deleted 
+                && e.Active && e.UserId == LoginContext.Instance.CurrentUser.UserId
+                && e.Id == id
+                );
+                if(existUserAllergies == null || !existUserAllergies.Any())
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     throw new Exception("Không tìm thấy thông tin nhóm dị ứng");
 
                 var itemUpdate = mapper.Map<UserAllergies>(userAllergyModel);
@@ -125,11 +154,14 @@ namespace MrApp.API.Controllers
                 itemUpdate.Updated = DateTime.Now;
                 itemUpdate.UserId = LoginContext.Instance.CurrentUser.UserId;
                 itemUpdate.UpdatedBy = LoginContext.Instance.CurrentUser.UserName;
+<<<<<<< HEAD
 
                 // KIỂM TRA SỰ TỒN TẠI CỦA DỊ ỨNG NGƯỜI DÙNG
                 var errorMessage = await this.userAllergyService.GetExistItemMessage(itemUpdate);
                 if (!string.IsNullOrEmpty(errorMessage)) throw new AppException(errorMessage);
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 success = await this.userAllergyService.UpdateAsync(itemUpdate);
                 if (!success)
                     throw new Exception("Lỗi trong quá trình xử lý");
@@ -154,8 +186,12 @@ namespace MrApp.API.Controllers
         {
             if (id <= 0) throw new AppException("Thông tin id không hợp lệ");
             UserAllergyModel userAllergyModel = null;
+<<<<<<< HEAD
             IList<AllergyDescriptionTypeModel> allergyDescriptionTypeModels = new List<AllergyDescriptionTypeModel>();
             var userAllergyInfos = await this.userAllergyService.GetAsync(e => !e.Deleted && e.Active
+=======
+            var userAllergyInfos = await this.userAllergyService.GetAsync(e => !e.Deleted && e.Active 
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             && e.UserId == LoginContext.Instance.CurrentUser.UserId
             && e.Id == id
             );
@@ -170,6 +206,7 @@ namespace MrApp.API.Controllers
                 var userInfos = await this.userService.GetAsync(e => !e.Deleted && e.Active && e.Id == LoginContext.Instance.CurrentUser.UserId);
                 if (userInfos != null && userInfos.Any())
                     userAllergyModel.UserFullName = userInfos.FirstOrDefault().LastName + " " + userInfos.FirstOrDefault().FirstName;
+<<<<<<< HEAD
 
                 // Lấy thông tin chi tiết mô tả của user cập nhật
                 var userAllergyDetails = await this.userAllergyDetailService.GetAsync(e => !e.Deleted && e.UserAllergyId == userAllergyModel.Id);
@@ -183,6 +220,8 @@ namespace MrApp.API.Controllers
                 if (allergyDescriptionTypes != null && allergyDescriptionTypes.Any())
                     allergyDescriptionTypeModels = mapper.Map<IList<AllergyDescriptionTypeModel>>(allergyDescriptionTypes);
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             }
             else throw new AppException("Không tìm thấy thông tin nhóm dị ứng");
 
@@ -190,11 +229,15 @@ namespace MrApp.API.Controllers
             {
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK,
+<<<<<<< HEAD
                 Data = new
                 {
                     UserAllergyModel = userAllergyModel,
                     AllergyDescriptionTypes = allergyDescriptionTypeModels
                 }
+=======
+                Data = userAllergyModel
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             };
         }
 
@@ -208,7 +251,11 @@ namespace MrApp.API.Controllers
         public async Task<AppDomainResult> Delete(int id)
         {
             bool success = false;
+<<<<<<< HEAD
             var existItems = await this.userAllergyService.GetAsync(e => !e.Deleted && e.Active
+=======
+            var existItems = await this.userAllergyService.GetAsync(e => !e.Deleted && e.Active 
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             && e.UserId == LoginContext.Instance.CurrentUser.UserId
             && e.Id == id
             );

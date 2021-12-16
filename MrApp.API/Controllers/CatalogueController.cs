@@ -51,7 +51,11 @@ namespace MrApp.API.Controllers
         private IVaccineTypeService vaccineTypeService;
         private IDiagnoticTypeService diagnoticTypeService;
         private IServiceTypeMappingHospitalService serviceTypeMappingHospitalService;
+<<<<<<< HEAD
         private IAdditionServiceDetailService additionServiceDetailService;
+=======
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
         #endregion
 
@@ -88,7 +92,10 @@ namespace MrApp.API.Controllers
             vaccineTypeService = serviceProvider.GetRequiredService<IVaccineTypeService>();
             diagnoticTypeService = serviceProvider.GetRequiredService<IDiagnoticTypeService>();
             serviceTypeMappingHospitalService = serviceProvider.GetRequiredService<IServiceTypeMappingHospitalService>();
+<<<<<<< HEAD
             additionServiceDetailService = serviceProvider.GetRequiredService<IAdditionServiceDetailService>();
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
             #region Configuration
 
@@ -577,6 +584,7 @@ namespace MrApp.API.Controllers
         }
 
         /// <summary>
+<<<<<<< HEAD
         /// Lấy danh sách chi tiết dịch vụ phát sinh
         /// </summary>
         /// <param name="hospitalId"></param>
@@ -604,6 +612,8 @@ namespace MrApp.API.Controllers
         }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Lấy thông tin danh sách loại vaccine
         /// </summary>
         /// <param name="hospitalId"></param>

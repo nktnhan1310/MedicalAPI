@@ -22,10 +22,19 @@ namespace Medical.Service
 {
     public class UserService : DomainService<Users, SearchUser>, IUserService
     {
+<<<<<<< HEAD
         private IMedicalRecordService medicalRecordService;
         private INotificationService notificationService;
         public UserService(IMedicalUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper, IServiceProvider serviceProvider) : base(unitOfWork, medicalDbContext, mapper)
         {
+=======
+        private IMedicalDbContext medicalDbContext;
+        private IMedicalRecordService medicalRecordService;
+        private INotificationService notificationService;
+        public UserService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IMedicalDbContext medicalDbContext, IServiceProvider serviceProvider) : base(unitOfWork, mapper)
+        {
+            this.medicalDbContext = medicalDbContext;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             this.medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
             this.notificationService = serviceProvider.GetRequiredService<INotificationService>();
         }
@@ -238,11 +247,17 @@ namespace Medical.Service
                     }
                 }
 
+<<<<<<< HEAD
                 // Kiểm tra những item không có trong role chọn => Xóa đi
                 var existGroupOlds = await this.unitOfWork.Repository<UserInGroups>().GetQueryable().Where(e => !item.UserGroupIds.Contains(e.UserGroupId) && e.UserId == existItem.Id).ToListAsync();
                 if (existGroupOlds != null)
                 {
                     foreach (var existGroupOld in existGroupOlds)
+=======
+                    // Kiểm tra những item không có trong role chọn => Xóa đi
+                    var existGroupOlds = await this.unitOfWork.Repository<UserInGroups>().GetQueryable().Where(e => !item.UserGroupIds.Contains(e.UserGroupId) && e.UserId == existItem.Id).ToListAsync();
+                    if (existGroupOlds != null)
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     {
                         this.unitOfWork.Repository<UserInGroups>().Delete(existGroupOld);
                     }
@@ -370,6 +385,135 @@ namespace Medical.Service
                     return false;
                 }
             }
+        }
+
+        /// <summary>
+        /// Cập nhật thông tin chung của hồ sơ
+        /// </summary>
+        /// <param name="userGeneralInfo"></param>
+        /// <returns></returns>
+        public async Task<bool> UpdateUserGeneralInfo(UserGeneralInfo userGeneralInfo)
+        {
+            bool success = true;
+            if (userGeneralInfo == null) throw new AppException("Không tìm thấy thông tin cập nhật");
+            // KIỂM TRA THÔNG TIN USER + HỒ SƠ NGƯỜI BỆNH CỦA USER
+            if (userGeneralInfo.User == null) throw new AppException("Không tìm thấy thông tin user");
+            if (userGeneralInfo.MedicalRecord == null) throw new AppException("Không tìm thấy thông tin hồ sơ người bệnh");
+            using (var contextTransaction = await medicalDbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // CẬP NHẬT THÔNG TIN USER
+                    userGeneralInfo.User.Active = true;
+                    success &= await this.UpdateAsync(userGeneralInfo.User);
+                    // CẬP NHẬT THÔNG TIN HỒ SƠ
+                    userGeneralInfo.MedicalRecord.UserId = userGeneralInfo.User.Id;
+                    userGeneralInfo.MedicalRecord.BirthDate = userGeneralInfo.User.BirthDate;
+                    userGeneralInfo.MedicalRecord.Phone = userGeneralInfo.User.Phone;
+                    userGeneralInfo.MedicalRecord.Email = userGeneralInfo.User.Email;
+                    userGeneralInfo.MedicalRecord.Address = userGeneralInfo.User.Address;
+                    userGeneralInfo.MedicalRecord.UserFullName = userGeneralInfo.User.FirstName + " " + userGeneralInfo.User.LastName;
+                    userGeneralInfo.MedicalRecord.Active = true;
+                    success &= await this.medicalRecordService.UpdateAsync(userGeneralInfo.MedicalRecord);
+
+                    // CẬP NHẬT THÔNG TIN FILE CỦA USER
+                    if (userGeneralInfo.UserFiles != null && userGeneralInfo.UserFiles.Any())
+                    {
+                        foreach (var userFile in userGeneralInfo.UserFiles)
+                        {
+                            var existUserFile = await this.unitOfWork.Repository<UserFiles>().GetQueryable()
+                                .Where(e => !e.Deleted && e.UserId == userGeneralInfo.User.Id && e.MedicalRecordId == userGeneralInfo.MedicalRecord.Id).FirstOrDefaultAsync();
+
+                            if (existUserFile == null)
+                            {
+                                userFile.Created = DateTime.Now;
+                                userFile.CreatedBy = userGeneralInfo.User.CreatedBy;
+                                userFile.UserId = userGeneralInfo.User.Id;
+                                userFile.MedicalRecordId = userGeneralInfo.MedicalRecord.Id;
+                                userFile.Active = true;
+                                userFile.Id = 0;
+                                this.unitOfWork.Repository<UserFiles>().Create(userFile);
+                            }
+                            else
+                            {
+                                existUserFile = mapper.Map<UserFiles>(userFile);
+                                existUserFile.Updated = DateTime.Now;
+                                existUserFile.UpdatedBy = userGeneralInfo.User.UpdatedBy;
+                                existUserFile.UserId = userGeneralInfo.User.Id;
+                                existUserFile.MedicalRecordId = userGeneralInfo.MedicalRecord.Id;
+                                existUserFile.Active = true;
+                                this.unitOfWork.Repository<UserFiles>().Update(existUserFile);
+                            }
+                        }
+                        await this.unitOfWork.SaveAsync();
+                    }
+                    await contextTransaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    success = false;
+                    contextTransaction.Rollback();
+                }
+            }
+            return success;
+        }
+
+        /// <summary>
+        /// Tạo mới thông tin user + hồ sơ người bệnh
+        /// </summary>
+        /// <param name="userGeneralInfo"></param>
+        /// <returns></returns>
+        public async Task<bool> CreateUserGeneralInfo(UserGeneralInfo userGeneralInfo)
+        {
+            bool result = true;
+            if (userGeneralInfo == null) throw new AppException("Không tìm thấy thông tin thêm mới");
+
+            // KIỂM TRA THÔNG TIN USER + HỒ SƠ NGƯỜI BỆNH CỦA USER
+            if (userGeneralInfo.User == null) throw new AppException("Không tìm thấy thông tin user");
+            if (userGeneralInfo.MedicalRecord == null) throw new AppException("Không tìm thấy thông tin hồ sơ người bệnh");
+            using (var contextTransaction = await this.medicalDbContext.Database.BeginTransactionAsync())
+            {
+                try
+                {
+                    // THÊM MỚI THÔNG TIN USER
+                    userGeneralInfo.User.Active = true;
+                    result &= await this.CreateAsync(userGeneralInfo.User);
+
+                    // THÊM MỚI THÔNG TIN HỒ SƠ
+                    userGeneralInfo.MedicalRecord.UserId = userGeneralInfo.User.Id;
+                    userGeneralInfo.MedicalRecord.BirthDate = userGeneralInfo.User.BirthDate;
+                    userGeneralInfo.MedicalRecord.Phone = userGeneralInfo.User.Phone;
+                    userGeneralInfo.MedicalRecord.Email = userGeneralInfo.User.Email;
+                    userGeneralInfo.MedicalRecord.Address = userGeneralInfo.User.Address;
+                    userGeneralInfo.MedicalRecord.UserFullName = userGeneralInfo.User.FirstName + " " + userGeneralInfo.User.LastName;
+                    userGeneralInfo.MedicalRecord.Active = true;
+                    result &= await this.medicalRecordService.CreateAsync(userGeneralInfo.MedicalRecord);
+
+                    // THÊM MỚI THÔNG TIN FILE CHO HỒ SƠ (NẾU CÓ)
+                    if (userGeneralInfo.UserFiles != null && userGeneralInfo.UserFiles.Any())
+                    {
+                        foreach (var userFile in userGeneralInfo.UserFiles)
+                        {
+                            userFile.Created = DateTime.Now;
+                            userFile.CreatedBy = userGeneralInfo.User.CreatedBy;
+                            userFile.UserId = userGeneralInfo.User.Id;
+                            userFile.MedicalRecordId = userGeneralInfo.MedicalRecord.Id;
+                            userFile.Active = true;
+                            userFile.Id = 0;
+                            await this.unitOfWork.Repository<UserFiles>().CreateAsync(userFile);
+                        }
+                        await this.unitOfWork.SaveAsync();
+                    }
+
+                    await contextTransaction.CommitAsync();
+                }
+                catch (Exception)
+                {
+                    result = false;
+                    contextTransaction.Rollback();
+                }
+            }
+            return result;
         }
 
         /// <summary>

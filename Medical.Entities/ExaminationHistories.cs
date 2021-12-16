@@ -162,6 +162,7 @@ namespace Medical.Entities
         [NotMapped]
         public int? UserId { get; set; }
 
+<<<<<<< HEAD
         /// <summary>
         /// Từ giờ
         /// </summary>
@@ -178,6 +179,8 @@ namespace Medical.Entities
         [NotMapped]
         public string ToTimeExaminationText { get; set; }
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         #endregion
 
     }

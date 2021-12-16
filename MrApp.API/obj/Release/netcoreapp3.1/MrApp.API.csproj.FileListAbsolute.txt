@@ -139,5 +139,8 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\S
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\Microsoft.Win32.SystemEvents.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\runtimes\unix\lib\netcoreapp3.0\System.Drawing.Common.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
+<<<<<<< HEAD
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\OneSignal.RestAPIv3.Client.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MrApp.API\bin\Release\netcoreapp3.1\RestSharp.dll
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608

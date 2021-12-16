@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+<<<<<<< HEAD
 using System.ComponentModel;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using System.Text;
 
 namespace Medical.Entities
@@ -16,6 +19,9 @@ namespace Medical.Entities
         /// Mã user
         /// </summary>
         public int? UserId { get; set; }
+<<<<<<< HEAD
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
     }
 }

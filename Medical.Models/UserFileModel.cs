@@ -38,6 +38,7 @@ namespace Medical.Models
         /// Mã folder
         /// </summary>
         public int? FolderId { get; set; }
+<<<<<<< HEAD
 
         /// <summary>
         /// Tháng tạo
@@ -60,5 +61,7 @@ namespace Medical.Models
                 return Created.Year;
             }
         }
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
     }
 }

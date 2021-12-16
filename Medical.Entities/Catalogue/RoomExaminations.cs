@@ -30,7 +30,10 @@ namespace Medical.Entities
         /// <summary>
         /// Số lượng bác sĩ ở phòng
         /// </summary>
-        public int TotalDoctor { get; set; }
+        [NotMapped]
+        public string SpecialistTypeName { get; set; }
+
+        #endregion
 
         #region Extension Properties
 

@@ -54,7 +54,11 @@ namespace MrApp.API.Controllers
         private readonly IAdditionServiceType additionServiceType;
         private readonly IRoomExaminationService roomExaminationService;
         private readonly IDegreeTypeService degreeTypeService;
+<<<<<<< HEAD
         private readonly IExaminationFormAdditionServiceDetailMappingService examinationFormAdditionServiceDetailMappingService;
+=======
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         public ExaminationFormController(IServiceProvider serviceProvider, ILogger<BaseController> logger, IWebHostEnvironment env, IMapper mapper, IConfiguration configuration
             , IHttpContextAccessor httpContextAccessor
             ) : base(serviceProvider, logger, env, mapper, configuration)
@@ -81,8 +85,11 @@ namespace MrApp.API.Controllers
             additionServiceType = serviceProvider.GetRequiredService<IAdditionServiceType>();
             roomExaminationService = serviceProvider.GetRequiredService<IRoomExaminationService>();
             degreeTypeService = serviceProvider.GetRequiredService<IDegreeTypeService>();
+<<<<<<< HEAD
             examinationFormAdditionServiceDetailMappingService = serviceProvider.GetRequiredService<IExaminationFormAdditionServiceDetailMappingService>();
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             this.httpContextAccessor = httpContextAccessor;
         }
 
@@ -609,6 +616,7 @@ namespace MrApp.API.Controllers
                     }
                 }
 
+<<<<<<< HEAD
                 // Lấy ra thông tin chi tiết của dịch vụ (nếu có)
                 var additionServiceDetailInfos = await this.examinationFormAdditionServiceDetailMappingService
                     .GetAsync(e => !e.Deleted && e.ExaminationFormId == item.Id);
@@ -618,6 +626,8 @@ namespace MrApp.API.Controllers
                     itemModel.ExaminationFormAdditionServiceDetailMappings = mapper.Map<IList<ExaminationFormAdditionServiceDetailMappingModel>>(additionServiceDetailInfos);
                 }
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 // Lây thông tin lịch sử
                 //var examinationHistories = await this.examinationHistoryService.GetAsync(e => !e.Deleted && e.ExaminationFormId == item.Id);
                 //if (examinationHistories != null && examinationHistories.Any())
@@ -904,6 +914,7 @@ namespace MrApp.API.Controllers
                                 totalInjections = medicalRecordDetailChecks.Count();
                         }
 
+<<<<<<< HEAD
                         //if (item.NumberOfDoses.HasValue && item.NumberOfDoses.Value > 0 && totalInjections < item.NumberOfDoses.Value)
                         //{
                         //    item.TotalRemainInject = item.NumberOfDoses.Value - totalInjections;
@@ -949,6 +960,53 @@ namespace MrApp.API.Controllers
                         //}
                         //else
                         //    item.NextInjectionDateDisplay = string.Format("Đã tiêm ngày {0}", item.ExaminationDate.ToString("dd/MM/yyyy"));
+=======
+                        if (item.NumberOfDoses.HasValue && item.NumberOfDoses.Value > 0 && totalInjections < item.NumberOfDoses.Value)
+                        {
+                            item.TotalRemainInject = item.NumberOfDoses.Value - totalInjections;
+                            // Lấy thông tin loại vaccine => tính toán ra ngày tiêm tiếp theo
+                            var vaccineTypeInfo = await this.vaccineTypeService.GetByIdAsync(item.VaccineTypeId.Value);
+                            if (vaccineTypeInfo != null && vaccineTypeInfo.DateTypeId.HasValue)
+                            {
+                                switch (vaccineTypeInfo.DateTypeId.Value)
+                                {
+                                    // Ngày
+                                    case 0:
+                                        {
+                                            item.NextInjectionDate = item.ExaminationDate.AddDays(vaccineTypeInfo.NumberOfDateTypeValue ?? 0);
+                                        }
+                                        break;
+                                    // Tuần
+                                    case 1:
+                                        {
+                                            item.NextInjectionDate = item.ExaminationDate.AddDays((vaccineTypeInfo.NumberOfDateTypeValue ?? 0) * 7);
+                                        }
+                                        break;
+                                    // Tháng
+                                    case 2:
+                                        {
+                                            item.NextInjectionDate = item.ExaminationDate.AddMonths(vaccineTypeInfo.NumberOfDateTypeValue ?? 0);
+                                        }
+                                        break;
+                                    // Năm
+                                    case 3:
+                                        {
+                                            item.NextInjectionDate = item.ExaminationDate.AddYears(vaccineTypeInfo.NumberOfDateTypeValue ?? 0);
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+
+                            if (item.NextInjectionDate.HasValue)
+                            {
+                                item.NextInjectionDateDisplay = string.Format("Tiêm mũi {0} ngày {1}", item.TotalCurrentInjections += 1, item.NextInjectionDate.Value.ToString("dd/MM/yyyy"));
+                            }
+                        }
+                        else
+                            item.NextInjectionDateDisplay = string.Format("Đã tiêm ngày {0}", item.ExaminationDate.ToString("dd/MM/yyyy"));
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     }
                 }
                 appDomainResult = new AppDomainResult

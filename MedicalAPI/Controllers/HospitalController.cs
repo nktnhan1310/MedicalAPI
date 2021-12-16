@@ -89,7 +89,44 @@ namespace MedicalAPI.Controllers
             AppDomainResult appDomainResult = new AppDomainResult();
             if (LoginContext.Instance.CurrentUser.HospitalId.HasValue)
                 id = LoginContext.Instance.CurrentUser.HospitalId.Value;
+<<<<<<< HEAD
             var item = await this.domainService.GetByIdAsync(id);
+=======
+            var item = await this.domainService.GetByIdAsync(id, e => new Hospitals()
+            {
+                Id = e.Id,
+                Updated = e.Updated,
+                UpdatedBy = e.UpdatedBy,
+                Deleted = e.Deleted,
+                Active = e.Active,
+                Address = e.Address,
+                IsProvideInformation = e.IsProvideInformation,
+                TotalVisitNo = e.TotalVisitNo,
+                CallPortDescription = e.CallPortDescription,
+                IsHasCallPort = e.IsHasCallPort,
+                ChannelMappingHospitals = new List<ChannelMappingHospital>(),
+                Code = e.Code,
+                Name = e.Name,
+                Email = e.Email,
+                ExpertFullName = e.ExpertFullName,
+                ExpertPhone = e.ExpertPhone,
+                IsHasItExpert = e.IsHasItExpert,
+                HospitalFiles = new List<HospitalFiles>(),
+                MinutePerPatient = e.MinutePerPatient,
+                NoCallPortDescription = e.NoCallPortDescription,
+                Phone = e.Phone,
+                ServiceTypeMappingHospitals = new List<ServiceTypeMappingHospital>(),
+                Slogan = e.Slogan,
+                WebSiteUrl = e.WebSiteUrl,
+                TickEndReceiveExamination = e.TickEndReceiveExamination,
+                HospitalFunctionTypeId = e.HospitalFunctionTypeId,
+                HospitalTypeId = e.HospitalTypeId,
+                Created = e.Created,
+                CreatedBy = e.CreatedBy,
+                ProvideDate = e.ProvideDate,
+                BankInfos = new List<BankInfos>()
+            });
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             if (item != null)
             {
                 // Lấy thông tin kênh đăng ký bệnh viện

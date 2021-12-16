@@ -58,9 +58,22 @@ namespace Medical.Service
         /// <returns></returns>
         public async Task<bool> UpdateMedicalRecordDetailFileAsync(int medicalRecordDetailId, IList<UserFiles> medicalRecordDetailFiles)
         {
+<<<<<<< HEAD
             int? userId = null;
             var medicalRecordId = await this.unitOfWork.Repository<MedicalRecordDetails>().GetQueryable().Where(e => e.Id == medicalRecordDetailId).Select(e => e.MedicalRecordId).FirstOrDefaultAsync();
             if (medicalRecordId.HasValue && medicalRecordId.Value > 0)
+=======
+            bool result = false;
+            int? userId = null;
+            var medicalRecordId = await this.unitOfWork.Repository<MedicalRecordDetails>().GetQueryable().Where(e => e.Id == medicalRecordDetailId).Select(e => e.MedicalRecordId).FirstOrDefaultAsync();
+            if(medicalRecordId.HasValue && medicalRecordId.Value > 0)
+            {
+                userId = await this.unitOfWork.Repository<MedicalRecords>().GetQueryable().Where(e => e.Id == medicalRecordId.Value).Select(e => e.UserId).FirstOrDefaultAsync();
+            }
+
+
+            if (medicalRecordDetailFiles != null && medicalRecordDetailFiles.Any())
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             {
                 userId = await this.unitOfWork.Repository<MedicalRecords>().GetQueryable().Where(e => e.Id == medicalRecordId.Value).Select(e => e.UserId).FirstOrDefaultAsync();
             }
@@ -116,6 +129,7 @@ namespace Medical.Service
             {
                 try
                 {
+<<<<<<< HEAD
                     await this.unitOfWork.Repository<MedicalRecordDetails>().CreateAsync(item);
                     await this.unitOfWork.SaveAsync();
 
@@ -133,17 +147,36 @@ namespace Medical.Service
                             file.UserId = userId;
                             await this.unitOfWork.Repository<UserFiles>().CreateAsync(file);
                         }
+=======
+                    var existMedicalRecordDetailFile = await this.unitOfWork.Repository<UserFiles>().GetQueryable()
+                        .Where(e => !e.Deleted
+                        && e.MedicalRecordDetailId == medicalRecordDetailId
+                        && e.Id == medicalRecordDetailFile.Id
+                        ).FirstOrDefaultAsync();
+                    if (existMedicalRecordDetailFile != null)
+                    {
+                        medicalRecordDetailFile.MedicalRecordDetailId = medicalRecordDetailId;
+                        existMedicalRecordDetailFile = mapper.Map<UserFiles>(medicalRecordDetailFile);
+                        existMedicalRecordDetailFile.UserId = userId;
+                        this.unitOfWork.Repository<UserFiles>().Update(existMedicalRecordDetailFile);
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     }
 
                     // Cập nhật thông tin đơn thuốc
                     if (item.MedicalBills != null && item.MedicalBills.Any())
                     {
+<<<<<<< HEAD
                         foreach (var medicalBill in item.MedicalBills)
                         {
                             medicalBill.Created = DateTime.Now;
                             medicalBill.CreatedBy = item.CreatedBy;
                             await this.unitOfWork.Repository<MedicalBills>().CreateAsync(medicalBill);
                         }
+=======
+                        medicalRecordDetailFile.MedicalRecordDetailId = medicalRecordDetailId;
+                        medicalRecordDetailFile.UserId = userId;
+                        await this.unitOfWork.Repository<UserFiles>().CreateAsync(medicalRecordDetailFile);
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     }
                     await this.unitOfWork.SaveAsync();
                     var contextTransaction = await contextTransactionTask;
@@ -160,18 +193,75 @@ namespace Medical.Service
         }
 
         /// <summary>
+<<<<<<< HEAD
+=======
+        /// Thêm mới tiểu sử bệnh án
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public override async Task<bool> CreateAsync(MedicalRecordDetails item)
+        {
+            bool success = false;
+            if (item != null)
+            {
+                await this.unitOfWork.Repository<MedicalRecordDetails>().CreateAsync(item);
+                await this.unitOfWork.SaveAsync();
+
+                // Lấy ID USER
+                int? userId = null;
+                var medicalRecordInfo = await this.unitOfWork.Repository<MedicalRecords>().GetQueryable().Where(e => e.Id == item.MedicalRecordId).FirstOrDefaultAsync();
+                if(medicalRecordInfo != null) userId = medicalRecordInfo.UserId;
+
+                // Thêm file cho tiểu sử bệnh án
+                if (item.UserFiles != null && item.UserFiles.Any())
+                {
+                    foreach (var file in item.UserFiles)
+                    {
+                        file.MedicalRecordDetailId = item.Id;
+                        file.UserId = userId;
+                        await this.unitOfWork.Repository<UserFiles>().CreateAsync(file);
+                    }
+                }
+
+                // Cập nhật thông tin đơn thuốc
+                if (item.MedicalBills != null && item.MedicalBills.Any())
+                {
+                    foreach (var medicalBill in item.MedicalBills)
+                    {
+                        medicalBill.Created = DateTime.Now;
+                        medicalBill.CreatedBy = item.CreatedBy;
+                        await this.unitOfWork.Repository<MedicalBills>().CreateAsync(medicalBill);
+                    }
+                }
+                await this.unitOfWork.SaveAsync();
+                success = true;
+            }
+
+            return success;
+        }
+
+        /// <summary>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Cập nhật tiểu sử bệnh án
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
         public override async Task<bool> UpdateAsync(MedicalRecordDetails item)
         {
+<<<<<<< HEAD
             var existItem = await this.unitOfWork.Repository<MedicalRecordDetails>().GetQueryable().Where(e => e.Id == item.Id).FirstOrDefaultAsync();
             if (existItem == null) throw new AppException("Thông tin item không tồn tại");
 
             using (var contextTransactionTask = this.medicalDbContext.Database.BeginTransactionAsync())
             {
                 try
+=======
+            bool success = false;
+            if (item != null)
+            {
+                var existItem = await this.unitOfWork.Repository<MedicalRecordDetails>().GetQueryable().Where(e => e.Id == item.Id).FirstOrDefaultAsync();
+                if (existItem != null)
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 {
                     existItem = mapper.Map<MedicalRecordDetails>(item);
                     this.unitOfWork.Repository<MedicalRecordDetails>().Update(item);
@@ -206,12 +296,20 @@ namespace Medical.Service
                     }
 
                     // Cập nhật thông tin đơn thuốc
+<<<<<<< HEAD
                     if (item.MedicalBills != null && item.MedicalBills.Any())
+=======
+                    if(item.MedicalBills != null && item.MedicalBills.Any())
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     {
                         foreach (var medicalBill in item.MedicalBills)
                         {
                             var existMedicalBill = await this.unitOfWork.Repository<MedicalBills>().GetQueryable().Where(e => e.Id == medicalBill.Id).FirstOrDefaultAsync();
+<<<<<<< HEAD
                             if (existMedicalBill != null)
+=======
+                            if(existMedicalBill != null)
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                             {
                                 existMedicalBill = mapper.Map<MedicalBills>(medicalBill);
                                 existMedicalBill.MedicalRecordDetailId = existItem.Id;
@@ -224,6 +322,7 @@ namespace Medical.Service
                             }
                         }
                     }
+<<<<<<< HEAD
 
                     await this.unitOfWork.SaveAsync();
                     var contextTransaction = await contextTransactionTask;
@@ -237,6 +336,13 @@ namespace Medical.Service
                     return false;
                 }
             }
+=======
+                    success = true;
+                }
+            }
+
+            return success;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
 
     }

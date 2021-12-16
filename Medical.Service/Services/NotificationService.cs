@@ -422,9 +422,13 @@ namespace Medical.Service
 
                                         if (!string.IsNullOrEmpty(examinationFormInfo.ExaminationIndex)
                                             && examinationFormInfo.Status == (int)CatalogueUtilities.ExaminationStatus.Confirmed
+<<<<<<< HEAD
                                             && (paymentMethodInfo == null || paymentMethodInfo.Code == CatalogueUtilities.PaymentMethod.COD.ToString()
                                             || paymentMethodInfo.Code == CatalogueUtilities.PaymentMethod.TRANSFER.ToString()
                                             )
+=======
+                                            && (paymentMethodInfo == null || paymentMethodInfo.Code == CatalogueUtilities.PaymentMethod.COD.ToString())
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                                             )
                                         {
                                             notificationContent += string.Format(". STT khám: {0}", examinationFormInfo.ExaminationIndex);
@@ -497,6 +501,7 @@ namespace Medical.Service
                         // 5. THÔNG BÁO HỦY LỊCH TRỰC CỦA BÁC SĨ => Thông báo cho user + doctor
                         case CoreContants.NOTI_TEMPLATE_EXAMINATION_SCHEDULE_DT_DELETE:
                             {
+<<<<<<< HEAD
 
                             }
                             break;
@@ -572,6 +577,83 @@ namespace Medical.Service
                                     var examinationFormInfos = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable()
                                         .Where(e => examinationformIds.Contains(e.Id)).ToListAsync();
 
+=======
+
+                            }
+                            break;
+                        // 6. THÔNG BÁO HỦY CHI TIẾT CA TRỰC CHO BÁC SĨ => Thông báo cho user + doctor
+                        case CoreContants.TEMPLATE_EXAMINATION_SCHEDULE_DETAIL_DT_DELETE:
+                            {
+                                if (examinationformIds != null && examinationformIds.Any())
+                                {
+                                    var examinationFormInfos = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable()
+                                        .Where(e => !e.Deleted && examinationformIds.Contains(e.Id)).ToListAsync();
+                                    if (examinationFormInfos != null && examinationFormInfos.Any())
+                                    {
+                                        foreach (var examinationFormInfo in examinationFormInfos)
+                                        {
+                                            // Gửi thông báo cho bác sĩ
+                                            var doctorExaminationInfo = await this.unitOfWork.Repository<Doctors>()
+                                                .GetQueryable().Where(e => !e.Deleted && e.Id == examinationFormInfo.DoctorId).FirstOrDefaultAsync();
+
+                                            var examinationScheduleDetailInfo = await this.unitOfWork.Repository<ExaminationScheduleDetails>()
+                                                .GetQueryable().Where(e => !e.Deleted && e.Id == examinationFormInfo.ExaminationScheduleDetailId).FirstOrDefaultAsync();
+
+                                            if (doctorExaminationInfo != null)
+                                            {
+                                                // Tạo thông báo cho bác sĩ
+                                                NotificationApplicationUser notificationApplicationUser = new NotificationApplicationUser()
+                                                {
+                                                    Active = true,
+                                                    Deleted = false,
+                                                    IsRead = false,
+                                                    Created = DateTime.Now,
+                                                    CreatedBy = createdBy,
+                                                    HospitalId = hospitalId,
+                                                    NotificationContent = string.Format(notifyTemplateInfo.Content, examinationFormInfo.ExaminationDate.ToString("dd/MM/yyyy"), examinationScheduleDetailInfo.FromTimeText + " - " + examinationScheduleDetailInfo.ToTimeText),
+                                                    NotificationId = notifications.Id,
+                                                    ToUserId = doctorExaminationInfo.UserId,
+                                                };
+                                                await this.unitOfWork.Repository<NotificationApplicationUser>().CreateAsync(notificationApplicationUser);
+                                            }
+                                            // Gửi thông báo cho khách
+                                            var medicalRecordInfo = await this.unitOfWork.Repository<MedicalRecords>().GetQueryable()
+                                                .Where(e => !e.Deleted && e.Id == examinationFormInfo.RecordId).FirstOrDefaultAsync();
+                                            if (medicalRecordInfo != null)
+                                            {
+                                                // Tạo thông báo cho user
+                                                NotificationApplicationUser notificationApplicationUser = new NotificationApplicationUser()
+                                                {
+                                                    Active = true,
+                                                    Deleted = false,
+                                                    IsRead = false,
+                                                    Created = DateTime.Now,
+                                                    CreatedBy = createdBy,
+                                                    HospitalId = hospitalId,
+                                                    NotificationContent = string.Format("Lịch khám ngày {0} với ca khám {1} đã bị hủy. Quý khách vui lòng chờ hoàn tiền nếu đã thanh toán", examinationFormInfo.ExaminationDate.ToString("dd/MM/yyyy"), examinationScheduleDetailInfo.FromTimeText + " - " + examinationScheduleDetailInfo.ToTimeText),
+                                                    NotificationId = notifications.Id,
+                                                    ToUserId = medicalRecordInfo.UserId,
+                                                };
+                                                await this.unitOfWork.Repository<NotificationApplicationUser>().CreateAsync(notificationApplicationUser);
+                                            }
+
+                                        }
+                                    }
+
+                                    // Lưu thông tin thông báo cho user
+                                    await this.unitOfWork.SaveAsync();
+                                }
+                            }
+                            break;
+                        // 7. THÔNG BÁO THỜI GIAN KHÁM TIẾP THEO CỦA USER
+                        case CoreContants.TEMPLATE_NEXT_EXAMINATION_NOTIFY:
+                            {
+                                if (examinationformIds != null && examinationformIds.Any())
+                                {
+                                    var examinationFormInfos = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable()
+                                        .Where(e => examinationformIds.Contains(e.Id)).ToListAsync();
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                                 }
                             }
                             break;
@@ -603,7 +685,11 @@ namespace Medical.Service
                 SqlCommand command = null;
                 try
                 {
+<<<<<<< HEAD
                     connection = (SqlConnection)medicalDbContext.Database.GetDbConnection();
+=======
+                    connection = (SqlConnection)Context.Database.GetDbConnection();
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     command = connection.CreateCommand();
                     connection.Open();
                     command.CommandText = "Nofification_ClearData";

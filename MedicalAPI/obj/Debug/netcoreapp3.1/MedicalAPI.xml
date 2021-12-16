@@ -722,6 +722,7 @@
             <param name="examinationScheduleExtensionModel"></param>
             <returns></returns>
         </member>
+<<<<<<< HEAD
         <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.DeleteRoomExaminationShedule(System.Collections.Generic.List{System.Int32})">
             <summary>
             Xóa tất cả ca trực theo danh sách phòng được chọn
@@ -743,6 +744,8 @@
             <param name="searchExaminationScheduleDetail"></param>
             <returns></returns>
         </member>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         <member name="M:MedicalAPI.Controllers.ExaminationScheduleController.DownloadTemplateImport">
             <summary>
             Down load template file import

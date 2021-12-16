@@ -337,6 +337,7 @@ namespace Medical.Models
         public IList<ExaminationFormAdditionServiceMappingModel> ExaminationFormServiceMappings { get; set; }
 
         /// <summary>
+<<<<<<< HEAD
         /// Danh sách chi tiết dịch vụ phát sinh (nếu có)
         /// </summary>
         public IList<ExaminationFormAdditionServiceDetailMappingModel> ExaminationFormAdditionServiceDetailMappings { get; set; }
@@ -350,6 +351,11 @@ namespace Medical.Models
         /// Danh sách chi tiết dịch vụ phát sinh (nếu có)
         /// </summary>
         public List<int> AdditionServiceDetailIds { get; set; }
+=======
+        /// Dịch vụ phát sinh (nếu có)
+        /// </summary>
+        public List<int> AdditionServiceIds { get; set; }
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
         #endregion
     }

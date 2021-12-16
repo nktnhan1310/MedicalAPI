@@ -10,7 +10,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
+<<<<<<< HEAD
 using System.Linq.Expressions;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using System.Text;
 using System.Threading.Tasks;
 
@@ -70,6 +73,7 @@ namespace Medical.Service
         }
 
         /// <summary>
+<<<<<<< HEAD
         /// Cập nhật folder cho file
         /// </summary>
         /// <param name="userFileIds"></param>
@@ -115,6 +119,8 @@ namespace Medical.Service
         }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Lấy danh sách file filter theo tháng hoặc năm
         /// </summary>
         /// <param name="baseSearch"></param>

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Medical.Entities;
+<<<<<<< HEAD
 using Medical.Extensions;
 using Medical.Interface;
 using Medical.Interface.DbContext;
@@ -12,11 +13,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+=======
+using Medical.Interface;
+using Medical.Interface.UnitOfWork;
+using Medical.Service.Services.DomainService;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.Text;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
 namespace Medical.Service
 {
     public class AllergyTypeService : CatalogueService<AllergyTypes, BaseSearch>, IAllergyTypeService
     {
+<<<<<<< HEAD
         public AllergyTypeService(IMedicalUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper) : base(unitOfWork, medicalDbContext, mapper)
         {
         }
@@ -129,5 +140,10 @@ namespace Medical.Service
                 return "Mã đã tồn tại!";
             return result;
         }
+=======
+        public AllergyTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
+        {
+        }
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
     }
 }

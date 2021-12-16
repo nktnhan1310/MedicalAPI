@@ -198,6 +198,7 @@ namespace Medical.Service
                             connection.Open();
                             command.CommandText = commandText;
                             command.Parameters.AddRange(sqlParameters);
+<<<<<<< HEAD
                             //command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
                             command.CommandType = CommandType.StoredProcedure;
                             SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
@@ -205,6 +206,14 @@ namespace Medical.Service
                             pagedList.Items = MappingDataTable.ConvertToList<T>(dataTable);
                             if (pagedList.Items != null && pagedList.Items.Any())
                                 pagedList.TotalItem = pagedList.Items.FirstOrDefault().TotalItem;
+=======
+                            command.Parameters["@TotalPage"].Direction = ParameterDirection.Output;
+                            command.CommandType = CommandType.StoredProcedure;
+                            SqlDataAdapter sqlDataAdapter = new SqlDataAdapter(command);
+                            sqlDataAdapter.Fill(dataTable);
+                            pagedList.TotalItem = int.Parse(command.Parameters["@TotalPage"].Value.ToString());
+                            pagedList.Items = MappingDataTable.ConvertToList<T>(dataTable);
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                             return pagedList;
                         }
                         finally

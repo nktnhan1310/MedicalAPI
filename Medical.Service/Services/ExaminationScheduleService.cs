@@ -30,6 +30,7 @@ namespace Medical.Service
         private INotificationService notificationService;
         private IHubContext<NotificationHub> hubContext;
         private IHubContext<NotificationAppHub> appHubContext;
+<<<<<<< HEAD
 
         public ExaminationScheduleService(IMedicalUnitOfWork unitOfWork
             , IMedicalDbContext medicalDbContext
@@ -42,6 +43,18 @@ namespace Medical.Service
         {
             this.configuration = configuration;
             this.notificationService = serviceProvider.GetRequiredService<INotificationService>();
+=======
+        private IMedicalDbContext medicalDbContext;
+        public ExaminationScheduleService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration
+            , IServiceProvider serviceProvider
+            , IHubContext<NotificationHub> hubContext
+            , IHubContext<NotificationAppHub> appHubContext
+            ) : base(unitOfWork, mapper)
+        {
+            this.configuration = configuration;
+            this.notificationService = serviceProvider.GetRequiredService<INotificationService>();
+            this.medicalDbContext = serviceProvider.GetRequiredService<IMedicalDbContext>();
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             this.hubContext = hubContext;
             this.appHubContext = appHubContext;
         }
@@ -80,7 +93,11 @@ namespace Medical.Service
             bool result = false;
             if (item != null)
             {
+<<<<<<< HEAD
                 using (var contextTransactionTask = medicalDbContext.Database.BeginTransactionAsync())
+=======
+                using (var contextTransaction = await medicalDbContext.Database.BeginTransactionAsync())
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 {
                     try
                     {
@@ -215,8 +232,12 @@ namespace Medical.Service
                                     DoctorId = nurseInfoSelected.Id,
                                     HospitalId = item.HospitalId,
                                     ExaminationScheduleId = item.Id,
+<<<<<<< HEAD
                                     UserId = nurseInfoSelected.UserId ?? 0,
                                     ImportScheduleId = item.ImportScheduleId
+=======
+                                    UserId = nurseInfoSelected.UserId ?? 0
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                                 };
                                 this.unitOfWork.Repository<ExaminationScheduleMappingUsers>().Create(examinationScheduleMappingUsers);
                             }
@@ -248,13 +269,21 @@ namespace Medical.Service
                             }
                         }
                         await unitOfWork.SaveAsync();
+<<<<<<< HEAD
                         var contextTransaction = await contextTransactionTask;
+=======
+
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                         await contextTransaction.CommitAsync();
                         return true;
                     }
                     catch (Exception)
                     {
+<<<<<<< HEAD
                         var contextTransaction = await contextTransactionTask;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                         contextTransaction.Rollback();
                         return false;
                     }
@@ -271,7 +300,11 @@ namespace Medical.Service
         /// <returns></returns>
         public override async Task<bool> UpdateAsync(ExaminationSchedules item)
         {
+<<<<<<< HEAD
             using (var contextTransactionTask = medicalDbContext.Database.BeginTransactionAsync())
+=======
+            using (var contextTransaction = await medicalDbContext.Database.BeginTransactionAsync())
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             {
                 try
                 {
@@ -423,7 +456,10 @@ namespace Medical.Service
                                 {
                                     existScheduleMappingUser.Updated = DateTime.Now;
                                     existScheduleMappingUser.UpdatedBy = item.UpdatedBy;
+<<<<<<< HEAD
                                     existScheduleMappingUser.ImportScheduleId = importScheduleId;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                                     this.unitOfWork.Repository<ExaminationScheduleMappingUsers>().Update(existScheduleMappingUser);
                                 }
                                 else
@@ -437,8 +473,12 @@ namespace Medical.Service
                                         DoctorId = nurseInfoSelected.Id,
                                         HospitalId = item.HospitalId,
                                         UserId = nurseInfoSelected.UserId,
+<<<<<<< HEAD
                                         ExaminationScheduleId = item.Id,
                                         ImportScheduleId = importScheduleId,
+=======
+                                        ExaminationScheduleId = item.Id
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                                     };
                                     this.unitOfWork.Repository<ExaminationScheduleMappingUsers>().Create(examinationScheduleMappingUsers);
                                 }
@@ -447,13 +487,18 @@ namespace Medical.Service
                             // XÓA CÁC Y TÁ/ĐIỀU DƯỠNG KHÔNG TỒN TẠI TRONG CA TRỰC
                             var existGroupOlds = await this.unitOfWork.Repository<ExaminationScheduleMappingUsers>().GetQueryable()
                                 .Where(e => !item.NurseIds.Contains(e.DoctorId) && e.ExaminationScheduleId == item.Id).ToListAsync();
+<<<<<<< HEAD
                             if (existGroupOlds != null && existGroupOlds.Any())
+=======
+                            if(existGroupOlds != null && existGroupOlds.Any())
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                             {
                                 foreach (var existGroupOld in existGroupOlds)
                                 {
                                     this.unitOfWork.Repository<ExaminationScheduleMappingUsers>().Delete(existGroupOld);
                                 }
                             }
+<<<<<<< HEAD
 
                         }
                         else
@@ -658,6 +703,212 @@ namespace Medical.Service
                                     }
                                     await this.unitOfWork.SaveAsync();
 
+=======
+
+                        }
+                        else
+                        {
+                            // LẤY HẾT THÔNG TIN Y TÁ/ĐIỀU DƯỠNG HIỆN TẠI CỦA LỊCH TRỰC => XÓA
+                            var currentExaminationScheduleMappingUsers = await this.unitOfWork.Repository<ExaminationScheduleMappingUsers>().GetQueryable()
+                                .Where(e => e.ExaminationScheduleId == item.Id).ToListAsync();
+                            if (currentExaminationScheduleMappingUsers != null && currentExaminationScheduleMappingUsers.Any())
+                            {
+                                foreach (var currentExaminationScheduleMappingUser in currentExaminationScheduleMappingUsers)
+                                {
+                                    this.unitOfWork.Repository<ExaminationScheduleMappingUsers>().Delete(currentExaminationScheduleMappingUser);
+                                }
+                            }
+                        }
+
+                        // Cập nhật thông tin chi tiết ca
+                        if (item.ExaminationScheduleDetails != null && item.ExaminationScheduleDetails.Any())
+                        {
+                            foreach (var examinationScheduleDetail in item.ExaminationScheduleDetails)
+                            {
+                                var existExaminationScheduleDetail = await unitOfWork.Repository<ExaminationScheduleDetails>().GetQueryable()
+                                                                     .AsNoTracking()
+                                                                     .Where(e => e.Id == examinationScheduleDetail.Id && !e.Deleted)
+                                                                     .FirstOrDefaultAsync();
+                                // Kiểm tra khung giờ có tối đa bao nhiu bệnh nhân dụa trên số phút khám mỗi ca của bệnh viện.
+                                //if (hospitalInfo != null && hospitalInfo.MinutePerPatient > 0
+                                //    //&& examinationScheduleDetail.IsUseHospitalConfig
+                                //    && item.IsUseHospitalConfig
+                                //    && !examinationScheduleDetail.Deleted
+                                //    )
+                                //{
+                                //    var totalMinuteExamination = (examinationScheduleDetail.ToTime ?? 0) - (examinationScheduleDetail.FromTime ?? 0);
+                                //    if (totalMinuteExamination > 0)
+                                //    {
+                                //        var maximumPatient = (totalMinuteExamination / hospitalInfo.MinutePerPatient);
+                                //        if (maximumPatient > 0) examinationScheduleDetail.MaximumExamination = maximumPatient;
+                                //    }
+                                //}
+
+                                if (existExaminationScheduleDetail != null)
+                                {
+                                    // TRƯỜNG HỢP CHI TIẾT CA TRỰC BỊ XÓA (THAY ĐỔI TOÀN PHẦN)
+                                    // => THỰC HIỆN HOÀN TIỀN CHO LỊCH ĐÃ XÁC NHẬN/ĐÃ XÁC NHẬN TÁI KHÁM
+                                    if (examinationScheduleDetail.Deleted)
+                                    {
+                                        // Lấy ra tất cả phiếu đăng kí ca trực này (Đã xác nhận/Đã xác nhận tái khám)
+                                        var examinationFormRefunds = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable()
+                                            .Where(e => !e.Deleted && e.ExaminationScheduleDetailId == examinationScheduleDetail.Id
+                                            && (e.Status == (int)CatalogueUtilities.ExaminationStatus.Confirmed
+                                            || e.Status == (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination
+                                            || e.Status == (int)CatalogueUtilities.ExaminationStatus.New
+                                            || e.Status == (int)CatalogueUtilities.ExaminationStatus.PaymentFailed
+                                            || e.Status == (int)CatalogueUtilities.ExaminationStatus.PaymentReExaminationFailed
+                                            || e.Status == (int)CatalogueUtilities.ExaminationStatus.WaitReExamination
+                                            || e.Status == (int)CatalogueUtilities.ExaminationStatus.WaitConfirm
+                                            )
+                                            ).ToListAsync();
+                                        // Cập nhật lại trạng thái hoàn tiền cho phiếu
+                                        if (examinationFormRefunds != null && examinationFormRefunds.Any())
+                                        {
+                                            foreach (var examinationFormRefund in examinationFormRefunds)
+                                            {
+                                                if (examinationFormRefund.Status == (int)CatalogueUtilities.ExaminationStatus.Confirmed
+                                                    || examinationFormRefund.Status == (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination
+                                                    )
+                                                    examinationFormRefund.Status = (int)CatalogueUtilities.ExaminationStatus.WaitRefund;
+                                                else examinationFormRefund.Status = (int)CatalogueUtilities.ExaminationStatus.Canceled;
+                                                examinationFormRefund.Updated = DateTime.Now;
+                                                examinationFormRefund.UpdatedBy = item.UpdatedBy;
+                                                Expression<Func<ExaminationForms, object>>[] includeProperties = new Expression<Func<ExaminationForms, object>>[]
+                                                {
+                                            e => e.Status,
+                                            e => e.Updated,
+                                            e => e.UpdatedBy
+                                                };
+                                                this.unitOfWork.Repository<ExaminationForms>().UpdateFieldsSave(examinationFormRefund, includeProperties);
+                                                examinationFormDeletedIds.Add(examinationFormRefund.Id);
+                                            }
+                                        }
+                                        continue;
+                                    }
+
+                                    // TRƯỜNG HỢP THAY ĐỔI CẤU HÌNH TỪ GIỜ ĐẾN GIỜ CỦA LỊCH TRỰC => TÍNH TOÁN LẠI GIỚI HẠN NGƯỜI KHÁM CHO CHI TIẾT CA TRỰC
+                                    // => HỦY PHIẾU CỦA NHỮNG USER THEO SỐ THỨ TỰ PHIẾU > Tổng số ca giới hạn mới
+                                    if (existExaminationScheduleDetail.FromTime != examinationScheduleDetail.FromTime
+                                        || existExaminationScheduleDetail.ToTime != examinationScheduleDetail.ToTime
+                                        && !examinationScheduleDetail.Deleted
+                                        )
+                                    {
+                                        // Lấy ra số thứ tự khám tối đa đã đăng kí ca khám này
+                                        var examinationFormCheckIndexs = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable()
+                                            .Where(e => !e.Deleted && e.ExaminationScheduleDetailId == existExaminationScheduleDetail.Id
+                                            && e.SystemIndex.HasValue
+                                            && e.SystemIndex.Value > examinationScheduleDetail.MaximumExamination
+                                            ).ToListAsync();
+                                        // Hủy tất cả lịch đăng kí đang ngoài giới hạn
+                                        if (examinationFormCheckIndexs != null && examinationFormCheckIndexs.Any())
+                                        {
+                                            foreach (var examinationFormCheckIndex in examinationFormCheckIndexs)
+                                            {
+                                                // NẾU ĐÃ THANH TOÁN (ĐÃ XÁC NHẬN/ĐÃ XÁC NHẬN TÁI KHÁM) => CHUYỂN VỀ TRẠNG THÁI CHỜ HOÀN TIỀN
+                                                if (examinationFormCheckIndex.Status == (int)CatalogueUtilities.ExaminationStatus.Confirmed
+                                                    || examinationFormCheckIndex.Status == (int)CatalogueUtilities.ExaminationStatus.ConfirmedReExamination
+                                                    )
+                                                    examinationFormCheckIndex.Status = (int)CatalogueUtilities.ExaminationStatus.WaitRefund;
+                                                // NHỮNG TRẠNG THÁI CÒN LẠI => CHUYỂN VỀ TRẠNG THÁI HỦY PHIẾU
+                                                else examinationFormCheckIndex.Status = (int)CatalogueUtilities.ExaminationStatus.Canceled;
+                                                examinationFormCheckIndex.Updated = DateTime.Now;
+                                                examinationFormCheckIndex.UpdatedBy = item.UpdatedBy;
+                                                Expression<Func<ExaminationForms, object>>[] includeProperties = new Expression<Func<ExaminationForms, object>>[]
+                                                {
+                                            e => e.Status,
+                                            e => e.Updated,
+                                            e => e.UpdatedBy
+                                                };
+                                                this.unitOfWork.Repository<ExaminationForms>().UpdateFieldsSave(examinationFormCheckIndex, includeProperties);
+                                                examinationFormOverRatedIds.Add(examinationFormCheckIndex.Id);
+                                            }
+                                        }
+                                        examinationScheduleDetailChangeIds.Add(existExaminationScheduleDetail.Id);
+                                    }
+                                    existExaminationScheduleDetail = mapper.Map<ExaminationScheduleDetails>(examinationScheduleDetail);
+                                    existExaminationScheduleDetail.ScheduleId = exists.Id;
+                                    existExaminationScheduleDetail.Updated = DateTime.Now;
+                                    existExaminationScheduleDetail.ImportScheduleId = importScheduleId;
+                                    unitOfWork.Repository<ExaminationScheduleDetails>().Update(examinationScheduleDetail);
+                                }
+                                else
+                                {
+                                    if (examinationScheduleDetail.Deleted) continue;
+                                    examinationScheduleDetail.ScheduleId = exists.Id;
+                                    examinationScheduleDetail.Created = DateTime.Now;
+                                    examinationScheduleDetail.Id = 0;
+                                    examinationScheduleDetail.ImportScheduleId = importScheduleId;
+                                    unitOfWork.Repository<ExaminationScheduleDetails>().Create(examinationScheduleDetail);
+                                    continue;
+                                }
+                                // Nếu lịch có bác sĩ thay thế => không cần cập nhật bác sĩ thay thế trong khung giờ
+                                if (item.ReplaceDoctorId.HasValue && item.ReplaceDoctorId.Value > 0) continue;
+
+
+
+                                // Cập nhật lại phiếu đăng kí với bác sĩ thay thế
+                                var examinationFormUpdateDoctor = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable()
+                                    .Where(e => !e.Deleted && e.Active && e.ExaminationScheduleDetailId.HasValue
+                                    && e.ExaminationScheduleDetailId == examinationScheduleDetail.Id
+                                    ).FirstOrDefaultAsync();
+                                // Bác sĩ thay thế của ca trực
+                                if (examinationFormUpdateDoctor != null && examinationScheduleDetail.ReplaceDoctorId.HasValue
+                                    && examinationScheduleDetail.ReplaceDoctorId.Value > 0)
+                                {
+                                    examinationFormUpdateDoctor.DoctorId = examinationScheduleDetail.ReplaceDoctorId;
+                                    examinationFormUpdateDoctor.Updated = DateTime.Now;
+                                    examinationFormUpdateDoctor.UpdatedBy = item.UpdatedBy;
+                                    Expression<Func<ExaminationForms, object>>[] includeProperties = new Expression<Func<ExaminationForms, object>>[]
+                                    {
+                                e => e.DoctorId,
+                                e => e.Updated,
+                                e => e.UpdatedBy
+                                    };
+                                    this.unitOfWork.Repository<ExaminationForms>().UpdateFieldsSave(examinationFormUpdateDoctor, includeProperties);
+
+
+                                    // THÔNG BÁO CA TRỰC CHO BÁC SĨ THAY THẾ + BÁC SĨ CŨ - WEBAPP
+
+                                    // THÔNG BÁO CHO USER ĐỔI BÁC SĨ THAY THẾ - APP MOBILE
+
+                                }
+                            }
+                        }
+                        await unitOfWork.SaveAsync();
+                        // Cập nhật lại thông tin phiếu đăng kí nếu LỊCH có bác sĩ thay thế
+                        if (item.ReplaceDoctorId.HasValue && item.ReplaceDoctorId.Value > 0)
+                        {
+                            var examinationScheduleDetails = await this.unitOfWork.Repository<ExaminationScheduleDetails>().GetQueryable()
+                                .Where(e => !e.Deleted && e.Active && e.ScheduleId == item.Id)
+                                .Select(e => new ExaminationScheduleDetails()
+                                {
+                                    Id = e.Id
+                                }).ToListAsync();
+                            if (examinationScheduleDetails != null && examinationScheduleDetails.Any())
+                            {
+                                examinationScheduleDetailIds = examinationScheduleDetails.Select(e => e.Id).ToList();
+                                var examinationFormUpdateDoctors = await this.unitOfWork.Repository<ExaminationForms>().GetQueryable()
+                                    .Where(e => !e.Deleted && e.Active && e.ExaminationScheduleDetailId.HasValue
+                                    && examinationScheduleDetailIds.Contains(e.ExaminationScheduleDetailId.Value)).ToListAsync();
+                                if (examinationFormUpdateDoctors != null && examinationFormUpdateDoctors.Any())
+                                {
+                                    foreach (var examinationFormUpdateDoctor in examinationFormUpdateDoctors)
+                                    {
+                                        examinationFormUpdateDoctor.DoctorId = item.ReplaceDoctorId;
+                                        examinationFormUpdateDoctor.Updated = DateTime.Now;
+                                        examinationFormUpdateDoctor.UpdatedBy = item.UpdatedBy;
+                                        Expression<Func<ExaminationForms, object>>[] includeProperties = new Expression<Func<ExaminationForms, object>>[]
+                                        {
+                                e => e.Updated,
+                                e => e.DoctorId,
+                                e => e.UpdatedBy
+                                        };
+                                        this.unitOfWork.Repository<ExaminationForms>().UpdateFieldsSave(examinationFormUpdateDoctor, includeProperties);
+                                    }
+                                    await this.unitOfWork.SaveAsync();
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                                     // THÔNG BÁO CHO BÁC SĨ THAY THẾ + BÁC SĨ LỊCH CŨ
 
@@ -712,13 +963,20 @@ namespace Medical.Service
 
 
                     }
+<<<<<<< HEAD
                     var contextTransaction = await contextTransactionTask;
+=======
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     await contextTransaction.CommitAsync();
                     return true;
                 }
                 catch (Exception)
                 {
+<<<<<<< HEAD
                     var contextTransaction = await contextTransactionTask;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     contextTransaction.Rollback();
                     return false;
                 }
@@ -748,6 +1006,7 @@ namespace Medical.Service
                 throw new Exception(id + " not exists");
             }
         }
+<<<<<<< HEAD
 
         /// <summary>
         /// Xóa thông tin nhiều lịch
@@ -852,11 +1111,53 @@ namespace Medical.Service
                 //&& e.ExaminationDate.Date >= fromDate.Date
                 //&& e.ExaminationDate.Date <= toDate.Date
                 && examinationScheduleExtension.ExaminationDates.Contains(e.ExaminationDate.Date)
+=======
+
+        /// <summary>
+        /// Thêm mới nhanh lịch trực của bác sĩ
+        /// </summary>
+        /// <param name="examinationScheduleExtensions"></param>
+        /// <returns></returns>
+        public async Task<bool> AddMultipleExaminationSchedule(IList<ExaminationScheduleExtensions> examinationScheduleExtensions
+            , int hospitalId, bool isImport = false)
+        {
+            bool result = true;
+            // Danh sách lịch trực được đăng kí
+            DataTable dataTableSchedule = SetDataTable("ExaminationSchedules");
+            IList<ExaminationSchedules> examinationSchedules = new List<ExaminationSchedules>();
+            // Danh sách chi tiết ca trực
+            DataTable dataTableScheduleDetail = SetDataTable("ExaminationScheduleDetails");
+            IList<ExaminationScheduleDetails> examinationScheduleDetails = new List<ExaminationScheduleDetails>();
+
+            // Lấy thông tin bệnh viện
+            var hospitalInfo = await this.unitOfWork.Repository<Hospitals>().GetQueryable().Where(e => e.Id == hospitalId).FirstOrDefaultAsync();
+            // Lấy ra thông tin tất cả buổi cấu hình của bệnh viện
+            var sessionTypes = await this.unitOfWork.Repository<SessionTypes>().GetQueryable()
+                .Where(e => !e.Deleted && e.Active && e.HospitalId == hospitalId).ToListAsync();
+
+            foreach (var examinationScheduleExtension in examinationScheduleExtensions)
+            {
+                // Kiểm tra dữ liệu từ ngày/đến ngày
+                if (!examinationScheduleExtension.FromDate.HasValue || !examinationScheduleExtension.ToDate.HasValue)
+                    throw new AppException("Vui lòng chọn từ ngày/đến ngày");
+                if (examinationScheduleExtension.FromDate.Value.Date > examinationScheduleExtension.ToDate.Value.Date)
+                    throw new AppException("Vui lòng chọn từ ngày nhỏ hơn đến ngày");
+                TimeSpan ts = new TimeSpan(0, 0, 0, 0);
+                // Từ ngày
+                DateTime fromDate = examinationScheduleExtension.FromDate.Value.Date + ts;
+                // Đến ngày
+                DateTime toDate = examinationScheduleExtension.ToDate.Value.Date + ts;
+
+                // Lấy ra danh sách ca trực của bác sĩ từ ngày đến ngày
+                var examinationScheduleChecks = await this.Queryable.Where(e => !e.Deleted && e.ExaminationDate.Date >= fromDate.Date
+                && e.ExaminationDate.Date <= toDate.Date
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 && e.DoctorId == examinationScheduleExtension.DoctorId
                 && e.HospitalId == examinationScheduleExtension.HospitalId
                 ).ToListAsync();
                 // Nếu tồn tại lịch trong khoảng ngày => trả ra FE
                 if (examinationScheduleChecks != null && examinationScheduleChecks.Any() && !isImport)
+<<<<<<< HEAD
                 {
                     var listExaminationDate_s = examinationScheduleChecks.Select(e => e.ExaminationDate.ToString("dd/MM/yyyy")).ToList();
                     throw new AppException(string.Format("Lịch khám của ngày {0} đã tồn tại", string.Join(", ", listExaminationDate_s)));
@@ -892,6 +1193,43 @@ namespace Medical.Service
                     // Ngược lại => theo cấu hình của lịch
                     if (examinationSchedule.IsUseHospitalConfig)
                     {
+=======
+                {
+                    var listExaminationDate_s = examinationScheduleChecks.Select(e => e.ExaminationDate.ToString("dd/MM/yyyy")).ToList();
+                    throw new AppException(string.Format("Lịch khám của ngày {0} đã tồn tại", string.Join(", ", listExaminationDate_s)));
+                }
+                bool isUseHospitalConfig = true;
+                if ((examinationScheduleExtension.MaximumMorningExamination.HasValue && examinationScheduleExtension.MaximumMorningExamination.Value > 0)
+                    || (examinationScheduleExtension.MaximumOtherExamination.HasValue && examinationScheduleExtension.MaximumOtherExamination.Value > 0)
+                    || (examinationScheduleExtension.MaximumAfternoonExamination.HasValue && examinationScheduleExtension.MaximumAfternoonExamination.Value > 0)
+                    )
+                    isUseHospitalConfig = false;
+
+                while (fromDate.Date <= toDate.Date)
+                {
+                    ExaminationSchedules examinationSchedule = new ExaminationSchedules()
+                    {
+                        Deleted = false,
+                        Active = true,
+                        DoctorId = examinationScheduleExtension.DoctorId ?? 0,
+                        HospitalId = examinationScheduleExtension.HospitalId,
+                        ExaminationDate = fromDate,
+                        SpecialistTypeId = examinationScheduleExtension.SpecialistTypeId ?? 0,
+                        MaximumMorningExamination = examinationScheduleExtension.MaximumMorningExamination,
+                        MaximumOtherExamination = examinationScheduleExtension.MaximumOtherExamination,
+                        MaximumAfternoonExamination = examinationScheduleExtension.MaximumAfternoonExamination,
+                        Created = DateTime.Now,
+                        CreatedBy = examinationScheduleExtension.CreatedBy,
+                        ExaminationScheduleDetails = examinationScheduleExtension.ExaminationScheduleDetails,
+                        IsUseHospitalConfig = !isImport ? examinationScheduleExtension.IsUseHospitalConfig : isUseHospitalConfig,
+                        ImportScheduleId = Guid.NewGuid()
+                    };
+
+                    // Nếu theo cấu hình của bệnh viện thì tính theo số phút được cấu hình ở thông tin bệnh viện
+                    // Ngược lại => theo cấu hình của lịch
+                    if (examinationSchedule.IsUseHospitalConfig)
+                    {
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                         if (hospitalInfo != null && hospitalInfo.MinutePerPatient > 0)
                         {
                             foreach (var detail in examinationScheduleExtension.ExaminationScheduleDetails)
@@ -942,6 +1280,45 @@ namespace Medical.Service
                                 }
                             }
 
+<<<<<<< HEAD
+=======
+                            //if (sessionTypes != null && sessionTypes.Any())
+                            //{
+                            //    foreach (var sessionType in sessionTypes)
+                            //    {
+                            //        var totalMinuteExamination = (sessionType.ToTime ?? 0) - (sessionType.FromTime ?? 0);
+                            //        int maximumPatient = 0;
+                            //        maximumPatient = (totalMinuteExamination / hospitalInfo.MinutePerPatient);
+                            //        switch (sessionType.Code)
+                            //        {
+                            //            // Lấy thông tin buổi sáng => tính tổng số bệnh nhân tối đa cho buổi sáng.
+                            //            case "BS":
+                            //                {
+                            //                    if (totalMinuteExamination > 0)
+                            //                    {
+                            //                        if (maximumPatient > 0) examinationSchedule.MaximumMorningExamination = maximumPatient;
+                            //                    }
+                            //                }
+                            //                break;
+                            //            // Lấy thông tin buổi sáng => tính tổng số bệnh nhân tối đa cho buổi chiều.
+                            //            case "BC":
+                            //                {
+                            //                    if (totalMinuteExamination > 0)
+                            //                    {
+                            //                        if (maximumPatient > 0) examinationSchedule.MaximumAfternoonExamination = maximumPatient;
+                            //                    }
+                            //                }
+                            //                break;
+                            //            // Lấy thông tin buổi chiều => tính tổng số bệnh nhân tối đa cho ngoài giờ.
+                            //            default:
+                            //                {
+                            //                    if (maximumPatient > 0) examinationSchedule.MaximumOtherExamination = maximumPatient;
+                            //                }
+                            //                break;
+                            //        }
+                            //    }
+                            //}
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                         }
                     }
 
@@ -952,6 +1329,21 @@ namespace Medical.Service
                             detail.Created = DateTime.Now;
                             detail.Active = true;
 
+<<<<<<< HEAD
+=======
+                            // Kiểm tra khung giờ có tối đa bao nhiu bệnh nhân dụa trên số phút khám mỗi ca của bệnh viện.
+                            //if (hospitalInfo != null && hospitalInfo.MinutePerPatient > 0 
+                            //    //&& detail.IsUseHospitalConfig
+                            //    )
+                            //{
+                            //    var totalMinuteExamination = (detail.ToTime ?? 0) - (detail.FromTime ?? 0);
+                            //    if (totalMinuteExamination > 0)
+                            //    {
+                            //        var maximumPatient = (totalMinuteExamination / hospitalInfo.MinutePerPatient);
+                            //        if (maximumPatient > 0) detail.MaximumExamination = maximumPatient;
+                            //    }
+                            //}
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                             detail.ImportScheduleId = examinationSchedule.ImportScheduleId;
                             // Thêm giá trị vào datatable detail
                             dataTableScheduleDetail.Rows.Add(detail.Id, detail.ScheduleId, detail.RoomExaminationId, DateTime.Now, examinationSchedule.CreatedBy, null, null, false, true, detail.MaximumExamination, null, detail.FromTime, detail.FromTimeText, detail.ToTime, detail.ToTimeText, detail.IsUseHospitalConfig, detail.SessionTypeId, detail.ImportScheduleId);
@@ -959,8 +1351,13 @@ namespace Medical.Service
                     }
                     // Thêm giá trị vào datatable
                     dataTableSchedule.Rows.Add(examinationSchedule.Id, examinationSchedule.DoctorId, examinationSchedule.ExaminationDate, DateTime.Now, examinationSchedule.CreatedBy, null, null, false, true, hospitalId, examinationSchedule.SpecialistTypeId, examinationSchedule.MaximumAfternoonExamination, examinationSchedule.MaximumMorningExamination, examinationSchedule.MaximumOtherExamination, null, examinationSchedule.IsUseHospitalConfig, examinationSchedule.ImportScheduleId);
+<<<<<<< HEAD
                 }
 
+=======
+                    fromDate = fromDate.AddDays(1);
+                }
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             }
 
             // Bulk Insert bảng lịch
@@ -972,6 +1369,7 @@ namespace Medical.Service
                     bc.DestinationTableName = "ExaminationSchedules";
                     bc.BulkCopyTimeout = 4000;
                     await bc.WriteToServerAsync(dataTableSchedule);
+<<<<<<< HEAD
                 }
             }
             // Bulk Insert bảng chi tiết ca trực
@@ -985,6 +1383,21 @@ namespace Medical.Service
                     await bc.WriteToServerAsync(dataTableScheduleDetail);
                 }
             }
+=======
+                }
+            }
+            // Bulk Insert bảng chi tiết ca trực
+            if (dataTableScheduleDetail != null && dataTableScheduleDetail.Rows.Count > 0)
+            {
+                var connectionString = string.Format(configuration.GetConnectionString("MedicalDbContext"));
+                using (SqlBulkCopy bc = new SqlBulkCopy(connectionString))
+                {
+                    bc.DestinationTableName = "ExaminationScheduleDetails";
+                    bc.BulkCopyTimeout = 4000;
+                    await bc.WriteToServerAsync(dataTableScheduleDetail);
+                }
+            }
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             result = true;
             return result;
         }
@@ -996,7 +1409,11 @@ namespace Medical.Service
         /// <param name="createdBy"></param>
         /// <param name="hospitalId"></param>
         /// <returns></returns>
+<<<<<<< HEAD
         public async Task<AppDomainImportResult> ImportExaminationSchedule(Stream stream, int hospitalId)
+=======
+        public async Task<AppDomainImportResult> ImportExaminationSchedule(Stream stream, string createdBy, int hospitalId)
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         {
             AppDomainImportResult appDomainImportResult = new AppDomainImportResult();
             IList<ExaminationScheduleExtensions> examinationScheduleExtensionResult = new List<ExaminationScheduleExtensions>();
@@ -1351,6 +1768,7 @@ namespace Medical.Service
                                 totalSuccess += 1;
                                 lock (examinationScheduleExtensionResult)
                                 {
+<<<<<<< HEAD
                                     List<DateTime> examinationDates = new List<DateTime>();
                                     TimeSpan ts = new TimeSpan(0, 0, 0, 0);
                                     var fromDate = item.FromDate.Value.Date + ts;
@@ -1362,10 +1780,16 @@ namespace Medical.Service
                                         fromDate = fromDate.AddDays(1);
                                     }
                                     item.ExaminationDates = examinationDates;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                                     examinationScheduleExtensionResult.Add(item);
                                 }
                             }
                         });
+<<<<<<< HEAD
+=======
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     }
                 }
                 ws.Column(12).Hidden = false;
@@ -1611,6 +2035,7 @@ namespace Medical.Service
             return pagedList;
         }
 
+<<<<<<< HEAD
         /// <summary>
         /// Xóa tất cả ca trực theo thông tin phòng khám được chọn
         /// </summary>
@@ -1654,6 +2079,8 @@ namespace Medical.Service
 
         }
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         #region Private Methods
 
         /// <summary>
@@ -1672,6 +2099,7 @@ namespace Medical.Service
             return table;
         }
 
+<<<<<<< HEAD
         /// <summary>
         /// CẬP NHẬT LẠI TRẠNG THÁI CỦA PHIẾU ĐĂNG KÍ KHÁM
         /// </summary>
@@ -1750,6 +2178,8 @@ namespace Medical.Service
             }
         }
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         #endregion
 
     }

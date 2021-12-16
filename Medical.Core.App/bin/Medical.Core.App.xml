@@ -285,6 +285,7 @@
             Thêm mới nhiều item
             </summary>
             <param name="itemModels"></param>
+<<<<<<< HEAD
             <returns></returns>
         </member>
         <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.UpdateMultipleItem(System.Collections.Generic.IList{`1})">
@@ -296,6 +297,19 @@
         </member>
         <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.UpdateItem(System.Int32,`1)">
             <summary>
+=======
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.UpdateMultipleItem(System.Collections.Generic.IList{`1})">
+            <summary>
+            Cập nhật thông tin list item
+            </summary>
+            <param name="itemModels"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Medical.Core.App.Controllers.CatalogueCoreHospitalController`3.UpdateItem(System.Int32,`1)">
+            <summary>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             Cập nhật thông tin item
             </summary>
             <param name="id"></param>

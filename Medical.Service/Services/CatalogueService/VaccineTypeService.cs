@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Medical.Entities;
+<<<<<<< HEAD
 using Medical.Extensions;
 using Medical.Interface;
 using Medical.Interface.UnitOfWork;
@@ -11,11 +12,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+=======
+using Medical.Interface;
+using Medical.Interface.UnitOfWork;
+using Medical.Service.Services.DomainService;
+using System;
+using System.Collections.Generic;
+using System.Text;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
 namespace Medical.Service
 {
     public class VaccineTypeService : CatalogueHospitalService<VaccineTypes, BaseHospitalSearch>, IVaccineTypeService
     {
+<<<<<<< HEAD
         public VaccineTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration) : base(unitOfWork, mapper, configuration)
         {
         }
@@ -105,5 +115,10 @@ namespace Medical.Service
                 }
             }
         }
+=======
+        public VaccineTypeService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+        {
+        }
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
     }
 }

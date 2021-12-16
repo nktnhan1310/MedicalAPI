@@ -28,11 +28,14 @@ namespace Medical.Models
         public DateTime? ToDate { get; set; }
 
         /// <summary>
+<<<<<<< HEAD
         /// Tên dị ứng khác (USER tự nhập)
         /// </summary>
         public string OtherName { get; set; }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Mô tả
         /// </summary>
         public string Description { get; set; }
@@ -40,11 +43,14 @@ namespace Medical.Models
         #region Extension Properties
 
         /// <summary>
+<<<<<<< HEAD
         /// Danh sách mô tả dị ứng mà user đã chọn
         /// </summary>
         public List<int> DescriptionTypeIds { get; set; }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Tên loại dị ứng
         /// </summary>
         public string AllergyTypeName { get; set; }

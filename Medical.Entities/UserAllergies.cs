@@ -29,15 +29,19 @@ namespace Medical.Entities
         public DateTime? ToDate { get; set; }
 
         /// <summary>
+<<<<<<< HEAD
         /// Tên dị ứng khác (USER tự nhập)
         /// </summary>
         public string OtherName { get; set; }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Mô tả
         /// </summary>
         public string Description { get; set; }
 
+<<<<<<< HEAD
         /// <summary>
         /// Danh sách mô tả dị ứng mà user check
         /// </summary>
@@ -53,6 +57,11 @@ namespace Medical.Entities
         public List<int> DescriptionTypeIds { get; set; }
 
         /// <summary>
+=======
+        #region Extension Properties
+
+        /// <summary>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Tên loại dị ứng
         /// </summary>
         [NotMapped]

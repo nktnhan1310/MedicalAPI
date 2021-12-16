@@ -106,6 +106,7 @@ namespace Medical.Entities
         /// Cờ check làm việc chủ nhật
         /// </summary>
         public bool IsSundayWorking { get; set; }
+<<<<<<< HEAD
 
         #region Manager INFO
 
@@ -136,6 +137,8 @@ namespace Medical.Entities
 
         #endregion
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
         #region Extension Properties
 

@@ -18,11 +18,14 @@ namespace Medical.Entities
         public int? HospitalId { get; set; }
 
         /// <summary>
+<<<<<<< HEAD
         /// Danh sách ngày của lịch trực
         /// </summary>
         public List<DateTime> ExaminationDates { get; set; }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Từ ngày
         /// </summary>
         public DateTime? FromDate { get; set; }

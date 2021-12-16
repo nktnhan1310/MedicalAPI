@@ -134,6 +134,7 @@ namespace Medical.Models
         /// </summary>
         public bool IsSundayWorking { get; set; }
 
+<<<<<<< HEAD
         #region Manager INFO
 
         /// <summary>
@@ -163,6 +164,8 @@ namespace Medical.Models
 
         #endregion
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         #region Extension Properties
 
         /// <summary>

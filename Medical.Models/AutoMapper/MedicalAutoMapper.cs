@@ -15,9 +15,12 @@ namespace Medical.Models.AutoMapper
         {
             #region Extension
 
+<<<<<<< HEAD
             CreateMap<ExaminationScheduleDetailInfoModel, ExaminationScheduleDetailInfo>().ReverseMap();
             CreateMap<NurseInfoModel, NurseInfo>().ReverseMap();
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             CreateMap<UserFileExtensionModel, UserFileExtensions>().ReverseMap();
             CreateMap<PagedList<UserFileExtensionModel>, PagedList<UserFileExtensions>>().ReverseMap();
 
@@ -26,6 +29,7 @@ namespace Medical.Models.AutoMapper
 
             #endregion
 
+<<<<<<< HEAD
             CreateMap<VaccineTypeDetailModel, VaccineTypeDetails>().ReverseMap();
             CreateMap<PagedList<VaccineTypeDetailModel>, PagedList<VaccineTypeDetails>>().ReverseMap();
 
@@ -47,6 +51,8 @@ namespace Medical.Models.AutoMapper
             CreateMap<AppPartnerModel, AppPartners>().ReverseMap();
             CreateMap<PagedList<AppPartnerModel>, PagedList<AppPartners>>().ReverseMap();
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             CreateMap<ExaminationScheduleMappingUserModel, ExaminationScheduleMappingUsers>().ReverseMap();
             CreateMap<PagedList<ExaminationScheduleMappingUserModel>, PagedList<ExaminationScheduleMappingUsers>>().ReverseMap();
 
@@ -221,9 +227,12 @@ namespace Medical.Models.AutoMapper
 
             #region Catalogue
 
+<<<<<<< HEAD
             CreateMap<AppPartnerModel, AppPartners>().ReverseMap();
             CreateMap<PagedList<AppPartnerModel>, PagedList<AppPartners>>().ReverseMap();
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             CreateMap<HospitalTypeModel, HospitalTypes>().ReverseMap();
             CreateMap<PagedList<HospitalTypeModel>, PagedList<HospitalTypes>>().ReverseMap();
 

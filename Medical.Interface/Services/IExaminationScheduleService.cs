@@ -31,6 +31,7 @@ namespace Medical.Interface.Services
         /// Import danh sách ca trực của bệnh viện cho từng bác sĩ
         /// </summary>
         /// <param name="stream"></param>
+<<<<<<< HEAD
         /// <param name="hospitalId"></param>
         /// <returns></returns>
         Task<AppDomainImportResult> ImportExaminationSchedule(Stream stream, int hospitalId);
@@ -41,5 +42,11 @@ namespace Medical.Interface.Services
         /// <param name="roomIds"></param>
         /// <returns></returns>
         Task<bool> DeleteRoomExaminationSchedule(List<int> roomIds);
+=======
+        /// <param name="createdBy"></param>
+        /// <param name="hospitalId"></param>
+        /// <returns></returns>
+        Task<AppDomainImportResult> ImportExaminationSchedule(Stream stream, string createdBy, int hospitalId);
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
     }
 }

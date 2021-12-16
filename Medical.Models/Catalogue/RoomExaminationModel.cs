@@ -28,11 +28,14 @@ namespace Medical.Models
         /// </summary>
         public string ExaminationAreaDescription { get; set; }
 
+<<<<<<< HEAD
         /// <summary>
         /// Số lượng bác sĩ ở phòng
         /// </summary>
         public int TotalDoctor { get; set; }
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         #region Extension Properties
 
         /// <summary>

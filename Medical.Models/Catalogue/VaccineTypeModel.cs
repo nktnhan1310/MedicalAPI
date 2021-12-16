@@ -23,6 +23,7 @@ namespace Medical.Models
         /// </summary>
         //public int? VaccineTypeId { get; set; }
 
+<<<<<<< HEAD
         ///// <summary>
         ///// Khoảng cách mỗi liều
         ///// 0 => Ngày
@@ -36,6 +37,21 @@ namespace Medical.Models
         ///// Giá trị
         ///// </summary>
         //public int? NumberOfDateTypeValue { get; set; }
+=======
+        /// <summary>
+        /// Khoảng cách mỗi liều
+        /// 0 => Ngày
+        /// 1 => Tuần
+        /// 2 => Tháng
+        /// 3 => Năm
+        /// </summary>
+        public int? DateTypeId { get; set; }
+
+        /// <summary>
+        /// Giá trị
+        /// </summary>
+        public int? NumberOfDateTypeValue { get; set; }
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
         /// <summary>
         /// Số liều thuốc
@@ -50,11 +66,14 @@ namespace Medical.Models
         #region Extension Properties
 
         /// <summary>
+<<<<<<< HEAD
         /// Danh sách chi tiết của loại vaccine
         /// </summary>
         public IList<VaccineTypeDetailModel> VaccineTypeDetails { get; set; }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Danh sách đối tượng tiêm chủng
         /// </summary>
         public List<int> TargetIds { get; set; }

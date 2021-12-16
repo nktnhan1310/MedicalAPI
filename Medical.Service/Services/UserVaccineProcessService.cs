@@ -37,7 +37,11 @@ namespace Medical.Service
 
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
+<<<<<<< HEAD
                 //new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+=======
+                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             };
             return parameters;
         }

@@ -2,7 +2,10 @@
 using Medical.Entities;
 using Medical.Extensions;
 using Medical.Interface;
+<<<<<<< HEAD
 using Medical.Interface.DbContext;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using Medical.Interface.UnitOfWork;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +20,11 @@ namespace Medical.Service
 {
     public class UserPregnancyService : DomainService<UserPregnancies, SearchUserPregnancy>, IUserPregnancyService
     {
+<<<<<<< HEAD
         public UserPregnancyService(IMedicalUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper) : base(unitOfWork, medicalDbContext, mapper)
+=======
+        public UserPregnancyService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         {
         }
 
@@ -39,7 +46,11 @@ namespace Medical.Service
 
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
+<<<<<<< HEAD
                 //new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+=======
+                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             };
             return parameters;
         }
@@ -51,6 +62,7 @@ namespace Medical.Service
         /// <returns></returns>
         public override async Task<bool> CreateAsync(UserPregnancies item)
         {
+<<<<<<< HEAD
             if (item == null) throw new AppException("Không tìm thấy thông tin item");
             using (var contextTransactionTask = this.medicalDbContext.Database.BeginTransactionAsync())
             {
@@ -81,6 +93,27 @@ namespace Medical.Service
                     return false;
                 }
             }
+=======
+            bool result = false;
+            if (item == null) throw new AppException("Không tìm thấy thông tin item");
+
+            this.unitOfWork.Repository<UserPregnancies>().Create(item);
+            await this.unitOfWork.SaveAsync();
+            if (item.UserPregnancyDetails != null && item.UserPregnancyDetails.Any())
+            {
+                foreach (var detail in item.UserPregnancyDetails)
+                {
+                    detail.Created = DateTime.Now;
+                    detail.CreatedBy = item.CreatedBy;
+                    detail.UserPregnancyId = item.Id;
+                    detail.Active = true;
+                    this.unitOfWork.Repository<UserPregnancyDetails>().Create(detail);
+                }
+                await this.unitOfWork.SaveAsync();
+            }
+            result = true;
+            return result;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
 
         /// <summary>
@@ -90,6 +123,7 @@ namespace Medical.Service
         /// <returns></returns>
         public override async Task<bool> UpdateAsync(UserPregnancies item)
         {
+<<<<<<< HEAD
             var existItem = await this.unitOfWork.Repository<UserPregnancies>().GetQueryable()
                 .Where(e => e.Id == item.Id).FirstOrDefaultAsync();
             if (existItem == null) throw new AppException("Không tìm thấy thông tin item");
@@ -137,6 +171,45 @@ namespace Medical.Service
                     return false;
                 }
             }
+=======
+            bool result = false;
+            var existItem = await this.unitOfWork.Repository<UserPregnancies>().GetQueryable()
+                .Where(e => e.Id == item.Id).FirstOrDefaultAsync();
+            if (existItem != null)
+            {
+                existItem = mapper.Map<UserPregnancies>(item);
+                if (item.UserPregnancyDetails != null && item.UserPregnancyDetails.Any())
+                {
+                    foreach (var detail in item.UserPregnancyDetails)
+                    {
+                        var existDetail = await this.unitOfWork.Repository<UserPregnancyDetails>().GetQueryable()
+                            .Where(e => e.Id == detail.Id).FirstOrDefaultAsync();
+                        if (existDetail != null)
+                        {
+                            existDetail = mapper.Map<UserPregnancyDetails>(detail);
+                            detail.Updated = DateTime.Now;
+                            detail.UpdatedBy = item.UpdatedBy;
+                            detail.UserPregnancyId = item.Id;
+                            detail.Active = true;
+
+                            this.unitOfWork.Repository<UserPregnancyDetails>().Update(existDetail);
+                        }
+                        else
+                        {
+                            detail.Created = DateTime.Now;
+                            detail.CreatedBy = item.UpdatedBy;
+                            detail.UserPregnancyId = item.Id;
+                            detail.Active = true;
+
+                            this.unitOfWork.Repository<UserPregnancyDetails>().Create(detail);
+                        }
+                    }
+                }
+                await this.unitOfWork.SaveAsync();
+                result = true;
+            }
+            return result;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
     }
 }

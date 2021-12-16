@@ -49,7 +49,11 @@ namespace MedicalAPI.Controllers.Catalogue
         private IMedicalRecordService medicalRecordService;
         private IVaccineTypeService vaccineTypeService;
         private IDiagnoticTypeService diagnoticTypeService;
+<<<<<<< HEAD
         private IAdditionServiceDetailService additionServiceDetailService;
+=======
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
         #endregion
 
@@ -84,7 +88,11 @@ namespace MedicalAPI.Controllers.Catalogue
             medicalRecordService = serviceProvider.GetRequiredService<IMedicalRecordService>();
             vaccineTypeService = serviceProvider.GetRequiredService<IVaccineTypeService>();
             diagnoticTypeService = serviceProvider.GetRequiredService<IDiagnoticTypeService>();
+<<<<<<< HEAD
             additionServiceDetailService = serviceProvider.GetRequiredService<IAdditionServiceDetailService>();
+=======
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
             #region Configuration
 

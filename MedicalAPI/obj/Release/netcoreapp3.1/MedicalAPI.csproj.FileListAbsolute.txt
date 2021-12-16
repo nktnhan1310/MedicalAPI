@@ -237,5 +237,8 @@ E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\runtimes\win\lib\netcoreapp3.0\System.Drawing.Common.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Template\RoomExaminationTemplate.xlsx
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\Template\ExaminationScheduleTemplate.xlsx
+<<<<<<< HEAD
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\OneSignal.RestAPIv3.Client.dll
 E:\MonaMedia\MedicalExamination\MedicalAPI\MedicalAPI\bin\Release\netcoreapp3.1\RestSharp.dll
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608

@@ -48,6 +48,9 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
+                    b.Property<bool>("IsVaccineSelected")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -66,7 +69,56 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("AdditionServiceDetails");
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Medical.Entities.AdditionServices", b =>
+=======
+            modelBuilder.Entity("Medical.Entities.AllergyTypes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AllergyTypes");
+                });
+
+            modelBuilder.Entity("Medical.Entities.AppointmentSchedules", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -539,7 +591,58 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("Channels");
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Medical.Entities.Cities", b =>
+=======
+            modelBuilder.Entity("Medical.Entities.DiagnoticTypes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DiagnoticTypes");
+                });
+
+            modelBuilder.Entity("Medical.Entities.Districts", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -670,6 +773,9 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<int>("SessionId")
                         .HasColumnType("int");
 
+                    b.Property<int>("TypeId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
 
@@ -739,7 +845,55 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("ContentReplaceCharacters");
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Medical.Entities.Countries", b =>
+=======
+            modelBuilder.Entity("Medical.Entities.ExaminationFormAdditionServiceMappings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("AdditionServiceId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Amount")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ExaminationFormId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExaminationFormAdditionServiceMappings");
+                });
+
+            modelBuilder.Entity("Medical.Entities.ExaminationFormDetails", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -794,6 +948,15 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("BHYTType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BloodPressure")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BloodSugar")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Code")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -829,16 +992,31 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("DegreeTypes");
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Medical.Entities.DeviceApps", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+=======
+                    b.Property<int>("FromTimeExamination")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FromTimeExaminationText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HeartBeat")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -848,12 +1026,51 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+=======
+                    b.Property<bool>("IsReExamination")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime?>("ReExaminationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RecordId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RoomExaminationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SpecialistTypeId")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<int>("DeviceTypeId")
                         .HasColumnType("int");
 
+<<<<<<< HEAD
                     b.Property<string>("PlayerId")
                         .HasColumnType("nvarchar(max)");
+=======
+                    b.Property<int?>("SystemIndex")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ToTimeExamination")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ToTimeExaminationText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TypeId")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -862,7 +1079,11 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+<<<<<<< HEAD
                     b.Property<int>("UserId")
+=======
+                    b.Property<int?>("VaccineTypeId")
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -894,9 +1115,38 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+=======
+                    b.Property<int?>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ExaminationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ExaminationFormId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExaminationIndex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExaminationPaymentIndex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ExaminationScheduleDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsEdit")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReExaminationDate")
+                        .HasColumnType("datetime2");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<int?>("HospitalId")
                         .HasColumnType("int");
@@ -927,6 +1177,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<int?>("CityId")
                         .HasColumnType("int");
 
@@ -938,6 +1189,8 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -948,14 +1201,46 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+=======
+                    b.Property<int?>("FromTime")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FromTimeText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("ImportScheduleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsUseHospitalConfig")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MaximumExamination")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReplaceDoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoomExaminationId")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("SessionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ToTime")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ToTimeText")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -969,7 +1254,49 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("Districts");
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Medical.Entities.DoctorDetails", b =>
+=======
+            modelBuilder.Entity("Medical.Entities.ExaminationScheduleJobs", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("ExaminationFormId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("JobId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ExaminationScheduleJobs");
+                });
+
+            modelBuilder.Entity("Medical.Entities.ExaminationSchedules", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -994,6 +1321,24 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<double?>("Price")
                         .HasColumnType("float");
+
+                    b.Property<Guid?>("ImportScheduleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsUseHospitalConfig")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MaximumAfternoonExamination")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaximumMorningExamination")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MaximumOtherExamination")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReplaceDoctorId")
+                        .HasColumnType("int");
 
                     b.Property<int>("SpecialistTypeId")
                         .HasColumnType("int");
@@ -2914,7 +3259,11 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("MomoConfigurations");
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Medical.Entities.MomoPayments", b =>
+=======
+            modelBuilder.Entity("Medical.Entities.HospitalFunctionTypes", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -2924,8 +3273,14 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<long>("Amount")
                         .HasColumnType("bigint");
+=======
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -2937,6 +3292,7 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<int?>("ExaminationFormDetailId")
                         .HasColumnType("int");
 
@@ -2948,6 +3304,210 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<int?>("MedicalBillId")
                         .HasColumnType("int");
+=======
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HospitalFunctionTypes");
+                });
+
+            modelBuilder.Entity("Medical.Entities.HospitalHistories", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NewHospitalDataJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldHospitalDataJson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HospitalHistories");
+                });
+
+            modelBuilder.Entity("Medical.Entities.HospitalHolidayConfigs", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("FromDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ToDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HospitalHolidayConfigs");
+                });
+
+            modelBuilder.Entity("Medical.Entities.HospitalTypes", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HospitalTypes");
+                });
+
+            modelBuilder.Entity("Medical.Entities.Hospitals", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("CallPortDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("ExpertFullName")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ExpertPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("HospitalFunctionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("HospitalTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsHasCallPort")
+                        .HasColumnType("bit");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<string>("Message")
                         .HasColumnType("nvarchar(max)");
@@ -2955,8 +3515,19 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<string>("OrderId")
                         .HasColumnType("nvarchar(max)");
 
+<<<<<<< HEAD
                     b.Property<string>("OrderInfo")
                         .HasColumnType("nvarchar(max)");
+=======
+                    b.Property<bool>("IsSaturdayWorking")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSundayWorking")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("MinutePerPatient")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<string>("OrderType")
                         .HasColumnType("nvarchar(max)");
@@ -3224,10 +3795,21 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+<<<<<<< HEAD
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+=======
+                    b.Property<int?>("FolderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MedicalRecordDetailId")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+
+                    b.Property<int?>("TypeId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -3251,7 +3833,20 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<string>("AppUrl")
+=======
+                    b.Property<string>("BarCodeUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BloodPressure")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BloodSugar")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Code")
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Created")
@@ -3264,12 +3859,38 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<string>("ExaminationFormIds")
+=======
+                    b.Property<string>("DiagnoticSickName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DiagnoticTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DoctorComment")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("DoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ExaminationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ExaminationFormId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ExaminationIndex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExaminationPaymentIndex")
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("FromUserId")
                         .HasColumnType("int");
 
+<<<<<<< HEAD
                     b.Property<int?>("HospitalId")
                         .HasColumnType("int");
 
@@ -3277,10 +3898,73 @@ namespace Medical.AppDbContext.Migrations
                         .HasColumnType("bit");
 
                     b.Property<int?>("NotificationTemplateId")
+=======
+                    b.Property<int>("FromTimeExamination")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FromTimeExaminationText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("HasMedicalBills")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("HeartBeat")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsReExamination")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("MedicalRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PaymentMethodId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<string>("QrCodeUrlFile")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ReExaminationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("ReExaminationDoctorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ReExaminationScheduleDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReFromTimeExaminationText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ReRoomExaminationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ReToTimeExaminationText")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RoomExaminationId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ServiceTypeId")
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                         .HasColumnType("int");
 
                     b.Property<int?>("NotificationTypeId")
                         .HasColumnType("int");
+
+                    b.Property<int>("ToTimeExamination")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ToTimeExaminationText")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TypeId")
                         .HasColumnType("int");
@@ -3292,8 +3976,13 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+<<<<<<< HEAD
                     b.Property<string>("WebUrl")
                         .HasColumnType("nvarchar(max)");
+=======
+                    b.Property<int?>("VaccineTypeId")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.HasKey("Id");
 
@@ -3335,7 +4024,17 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
+<<<<<<< HEAD
                     b.Property<int>("Status")
+=======
+                    b.Property<int?>("FolderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MedicalRecordAdditionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MedicalRecordId")
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
@@ -3353,7 +4052,11 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("OTPHistories");
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Medical.Entities.PaymentHistories", b =>
+=======
+            modelBuilder.Entity("Medical.Entities.MedicalRecordHistories", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -3363,10 +4066,112 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<int?>("AdditionServiceId")
                         .HasColumnType("int");
 
                     b.Property<int?>("BankInfoId")
+                        .HasColumnType("int");
+
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+<<<<<<< HEAD
+                    b.Property<double?>("ExaminationFee")
+                        .HasColumnType("float");
+
+                    b.Property<int?>("ExaminationFormDetailId")
+                        .HasColumnType("int");
+=======
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MedicalRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("SurgeryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SurgeryIndication")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SurgeryPart")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SurgeryPlace")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SurgeryResult")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SurgeryYear")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SympToms")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MedicalRecordHistories");
+                });
+
+            modelBuilder.Entity("Medical.Entities.MedicalRecords", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Address")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("AllergyInformation")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("BloodType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CertificateNo")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("CityId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("CountryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
@@ -3379,14 +4184,19 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
-                    b.Property<double?>("ExaminationFee")
-                        .HasColumnType("float");
-
-                    b.Property<int?>("ExaminationFormDetailId")
+                    b.Property<int?>("DistrictId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<int?>("ExaminationFormId")
                         .HasColumnType("int");
+
+                    b.Property<double?>("Height")
+                        .HasColumnType("float");
 
                     b.Property<int?>("HospitalId")
                         .HasColumnType("int");
@@ -3410,6 +4220,22 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+<<<<<<< HEAD
+=======
+                    b.Property<string>("UserFullName")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("WardId")
+                        .HasColumnType("int");
+
+                    b.Property<double?>("Weight")
+                        .HasColumnType("float");
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     b.HasKey("Id");
 
                     b.ToTable("PaymentHistories");
@@ -3515,6 +4341,12 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Active")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
+=======
+                    b.Property<long>("Amount")
+                        .HasColumnType("bigint");
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
@@ -3524,12 +4356,56 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
+<<<<<<< HEAD
+=======
+
+                    b.Property<int?>("ExaminationFormDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ExaminationFormId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LocalMessage")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MedicalBillId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Message")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderInfo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrderType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PayType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RequestId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("ResponseTime")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("ResultCode")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<int>("PermissionId")
                         .HasColumnType("int");
 
+<<<<<<< HEAD
                     b.Property<int>("PermitObjectId")
                         .HasColumnType("int");
+=======
+                    b.Property<long>("TransId")
+                        .HasColumnType("bigint");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -3597,7 +4473,62 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("PermitObjects");
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Medical.Entities.Relations", b =>
+=======
+            modelBuilder.Entity("Medical.Entities.NewFeeds", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("BackGroundImgUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BannerUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("NewFeeds");
+                });
+
+            modelBuilder.Entity("Medical.Entities.NotificationApplicationUser", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -3778,9 +4709,17 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<string>("Description")
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
+=======
+                    b.Property<string>("ExaminationFormIds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FromUserId")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<int?>("HospitalId")
                         .HasColumnType("int");
@@ -3794,6 +4733,9 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<string>("Subject")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TypeId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -3886,6 +4828,9 @@ namespace Medical.AppDbContext.Migrations
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
@@ -4165,11 +5110,29 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
+<<<<<<< HEAD
+=======
+                    b.Property<string>("ExaminationAreaDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+<<<<<<< HEAD
+=======
+                    b.Property<string>("RoomIndex")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("SpecialistTypeId")
+                        .HasColumnType("int");
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
 
@@ -4330,8 +5293,22 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
+<<<<<<< HEAD
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+=======
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsBHYT")
+                        .HasColumnType("bit");
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<int>("ServiceTypeId")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<int?>("DescriptionTypeId")
                         .HasColumnType("int");
@@ -4446,7 +5423,205 @@ namespace Medical.AppDbContext.Migrations
                     b.Property<string>("FolderIcon")
                         .HasColumnType("nvarchar(max)");
 
+<<<<<<< HEAD
                     b.Property<string>("FolderName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TypeId")
+                        .HasColumnType("int");
+=======
+                    b.Property<int?>("FromTime")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+
+                    b.Property<int?>("ToTime")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserFolders");
+                });
+
+            modelBuilder.Entity("Medical.Entities.UserGroups", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Code")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserGroups");
+                });
+
+<<<<<<< HEAD
+            modelBuilder.Entity("Medical.Entities.UserInGroups", b =>
+=======
+            modelBuilder.Entity("Medical.Entities.SystemAdvertisements", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PromotionDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SystemAdvertisements");
+                });
+
+            modelBuilder.Entity("Medical.Entities.SystemComments", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("UserGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserInGroups");
+                });
+
+            modelBuilder.Entity("Medical.Entities.UserPregnancies", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("Index")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MedicalRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("TypeId")
@@ -4454,6 +5629,294 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserPregnancies");
+                });
+
+<<<<<<< HEAD
+            modelBuilder.Entity("Medical.Entities.UserPregnancyDetails", b =>
+=======
+            modelBuilder.Entity("Medical.Entities.SystemFiles", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+<<<<<<< HEAD
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResultDescription")
+=======
+                    b.Property<string>("FileUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Index")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SystemAdvertisementId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+<<<<<<< HEAD
+                    b.Property<int?>("UserPregnancyId")
+=======
+                    b.Property<int?>("Width")
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+<<<<<<< HEAD
+                    b.ToTable("UserPregnancyDetails");
+                });
+
+            modelBuilder.Entity("Medical.Entities.UserSystemExtensionPosts", b =>
+=======
+                    b.ToTable("SystemFiles");
+                });
+
+            modelBuilder.Entity("Medical.Entities.UserAllergies", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+<<<<<<< HEAD
+                    b.Property<string>("BackGroundImgUrl")
+                        .HasColumnType("nvarchar(max)");
+=======
+                    b.Property<int?>("AllergyTypeId")
+                        .HasColumnType("int");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+<<<<<<< HEAD
+                    b.Property<string>("LogoImgUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PostTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TargetTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+=======
+                    b.Property<DateTime?>("FromDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("ToDate")
+                        .HasColumnType("datetime2");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+<<<<<<< HEAD
+                    b.ToTable("UserSystemExtensionPosts");
+                });
+
+            modelBuilder.Entity("Medical.Entities.UserVaccineProcesses", b =>
+=======
+                    b.ToTable("UserAllergies");
+                });
+
+            modelBuilder.Entity("Medical.Entities.UserFiles", b =>
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ContentType")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+<<<<<<< HEAD
+                    b.Property<int?>("HospitalId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("InjectDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InjectPlaceDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("MedicalRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Note")
+=======
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("FileExtension")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("FileName")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FileRandomName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("FileType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FileUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("FolderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MedicalRecordDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MedicalRecordHistoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MedicalRecordId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserFiles");
+                });
+
+            modelBuilder.Entity("Medical.Entities.UserFolders", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("FolderIcon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FolderName")
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("TypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Updated")
+                        .HasColumnType("datetime2");
+<<<<<<< HEAD
+=======
 
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(50)
@@ -4536,20 +5999,21 @@ namespace Medical.AppDbContext.Migrations
 
                     b.Property<DateTime?>("Updated")
                         .HasColumnType("datetime2");
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 
                     b.Property<string>("UpdatedBy")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("UserGroupId")
+                    b.Property<int?>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("UserId")
+                    b.Property<int?>("VaccineTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserInGroups");
+                    b.ToTable("UserVaccineProcesses");
                 });
 
             modelBuilder.Entity("Medical.Entities.UserPregnancies", b =>
@@ -4920,6 +6384,7 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("VNPayPaymentHistories");
                 });
 
+<<<<<<< HEAD
             modelBuilder.Entity("Medical.Entities.VaccineTypeDetails", b =>
                 {
                     b.Property<int>("Id")
@@ -4967,6 +6432,8 @@ namespace Medical.AppDbContext.Migrations
                     b.ToTable("VaccineTypeDetails");
                 });
 
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             modelBuilder.Entity("Medical.Entities.VaccineTypes", b =>
                 {
                     b.Property<int>("Id")
@@ -4988,6 +6455,12 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+<<<<<<< HEAD
+=======
+                    b.Property<int?>("DateTypeId")
+                        .HasColumnType("int");
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     b.Property<bool>("Deleted")
                         .HasColumnType("bit");
 
@@ -5005,6 +6478,12 @@ namespace Medical.AppDbContext.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
+<<<<<<< HEAD
+=======
+                    b.Property<int?>("NumberOfDateTypeValue")
+                        .HasColumnType("int");
+
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     b.Property<int?>("NumberOfDoses")
                         .HasColumnType("int");
 

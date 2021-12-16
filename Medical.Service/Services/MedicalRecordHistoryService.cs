@@ -1,7 +1,10 @@
 ﻿using AutoMapper;
 using Medical.Entities;
 using Medical.Extensions;
+<<<<<<< HEAD
 using Medical.Interface.DbContext;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using Medical.Interface.Services;
 using Medical.Interface.UnitOfWork;
 using Medical.Utilities;
@@ -17,7 +20,11 @@ namespace Medical.Service
 {
     public class MedicalRecordHistoryService : DomainService<MedicalRecordHistories, SearchMedicalRecordHistory>, IMedicalRecordHistoryService
     {
+<<<<<<< HEAD
         public MedicalRecordHistoryService(IMedicalUnitOfWork unitOfWork, IMedicalDbContext medicalDbContext, IMapper mapper) : base(unitOfWork, medicalDbContext, mapper)
+=======
+        public MedicalRecordHistoryService(IMedicalUnitOfWork unitOfWork, IMapper mapper) : base(unitOfWork, mapper)
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         {
         }
 
@@ -68,6 +75,7 @@ namespace Medical.Service
         /// <returns></returns>
         public override async Task<bool> CreateAsync(MedicalRecordHistories item)
         {
+<<<<<<< HEAD
             if (item == null) throw new AppException("Không tìm thấy thông tin item");
             using (var contextTransactionTask = this.medicalDbContext.Database.BeginTransactionAsync())
             {
@@ -99,6 +107,28 @@ namespace Medical.Service
                     return false;
                 }
             }
+=======
+            bool result = false;
+            if (item == null) throw new AppException("Không tìm thấy thông tin item");
+            this.unitOfWork.Repository<MedicalRecordHistories>().Create(item);
+            await this.unitOfWork.SaveAsync();
+            if (item.UserFiles != null && item.UserFiles.Any())
+            {
+                foreach (var userFile in item.UserFiles)
+                {
+                    userFile.Created = DateTime.Now;
+                    userFile.CreatedBy = item.CreatedBy;
+                    userFile.MedicalRecordId = item.MedicalRecordId;
+                    userFile.UserId = item.UserId;
+                    userFile.MedicalRecordHistoryId = item.Id;
+                    this.unitOfWork.Repository<UserFiles>().Create(userFile);
+                }
+                await this.unitOfWork.SaveAsync();
+            }
+            result = true;
+
+            return result;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
 
         /// <summary>
@@ -108,10 +138,15 @@ namespace Medical.Service
         /// <returns></returns>
         public override async Task<bool> UpdateAsync(MedicalRecordHistories item)
         {
+<<<<<<< HEAD
+=======
+            bool result = false;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             if (item == null) throw new AppException("Không tìm thấy thông tin item");
             var existItem = await this.unitOfWork.Repository<MedicalRecordHistories>().GetQueryable()
                 .Where(e => e.Id == item.Id).FirstOrDefaultAsync();
             if (existItem == null) throw new AppException("Không tìm thấy thông tin tiền sử");
+<<<<<<< HEAD
             using (var contextTransactionTask = this.medicalDbContext.Database.BeginTransactionAsync())
             {
                 try
@@ -157,6 +192,40 @@ namespace Medical.Service
                     return false;
                 }
             }
+=======
+            existItem = mapper.Map<MedicalRecordHistories>(item);
+            this.unitOfWork.Repository<MedicalRecordHistories>().Update(existItem);
+            if (item.UserFiles != null && item.UserFiles.Any())
+            {
+                foreach (var userFile in item.UserFiles)
+                {
+                    var existUserFile = await this.unitOfWork.Repository<UserFiles>().GetQueryable()
+                        .Where(e => e.Id == userFile.Id).FirstOrDefaultAsync();
+                    if (existUserFile != null)
+                    {
+                        existUserFile = mapper.Map<UserFiles>(userFile);
+                        existUserFile.MedicalRecordId = item.MedicalRecordId;
+                        existUserFile.UserId = item.UserId;
+                        existUserFile.MedicalRecordHistoryId = item.Id;
+                        existUserFile.Updated = DateTime.Now;
+                        existUserFile.UpdatedBy = item.UpdatedBy;
+                        this.unitOfWork.Repository<UserFiles>().Update(existUserFile);
+                    }
+                    else
+                    {
+                        userFile.Created = DateTime.Now;
+                        userFile.CreatedBy = item.CreatedBy;
+                        userFile.MedicalRecordId = item.MedicalRecordId;
+                        userFile.UserId = item.UserId;
+                        userFile.MedicalRecordHistoryId = item.Id;
+                        this.unitOfWork.Repository<UserFiles>().Create(userFile);
+                    }
+                }
+            }
+            await this.unitOfWork.SaveAsync();
+            result = true;
+            return result;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
 
     }

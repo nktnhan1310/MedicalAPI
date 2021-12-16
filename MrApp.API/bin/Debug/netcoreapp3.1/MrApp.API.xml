@@ -188,6 +188,7 @@
             <param name="searchContent"></param>
             <returns></returns>
         </member>
+<<<<<<< HEAD
         <member name="M:MrApp.API.Controllers.CatalogueController.GetAdditionServiceDetailCatalogue(System.Nullable{System.Int32},System.Collections.Generic.List{System.Int32},System.String)">
             <summary>
             Lấy danh sách chi tiết dịch vụ phát sinh
@@ -197,6 +198,8 @@
             <param name="searchContent"></param>
             <returns></returns>
         </member>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         <member name="M:MrApp.API.Controllers.CatalogueController.GetVaccineTypeCatalogue(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String)">
             <summary>
             Lấy thông tin danh sách loại vaccine
@@ -783,6 +786,7 @@
             <param name="searchUserFile"></param>
             <returns></returns>
         </member>
+<<<<<<< HEAD
         <member name="M:MrApp.API.Controllers.UserFolderController.UpdateUserFile(Medical.Models.UserFileRequestUpdateModel)">
             <summary>
             Cập nhật thông tin user file
@@ -790,6 +794,8 @@
             <param name="userFileRequestUpdateModel"></param>
             <returns></returns>
         </member>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         <member name="M:MrApp.API.Controllers.UserFolderController.GetUserFileExtension(Medical.Entities.SearchUserFile)">
             <summary>
             Lấy thông tin file theo ngày/tháng

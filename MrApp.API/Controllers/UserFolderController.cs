@@ -17,7 +17,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+<<<<<<< HEAD
 using System.Linq.Expressions;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using System.Net;
 using System.Threading.Tasks;
 
@@ -88,7 +91,11 @@ namespace MrApp.API.Controllers
         public async Task<AppDomainResult> GetFolderInfoById([FromQuery] int folderId)
         {
             UserFolderModel userFolderModel = null;
+<<<<<<< HEAD
             var folderInfos = await this.userFolderService.GetAsync(e => (!e.UserId.HasValue
+=======
+            var folderInfos = await this.userFolderService.GetAsync(e => (!e.UserId.HasValue 
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             || e.UserId == LoginContext.Instance.CurrentUser.UserId) && e.Id == folderId);
             if (folderInfos != null && folderInfos.Any())
             {
@@ -208,7 +215,10 @@ namespace MrApp.API.Controllers
         /// <param name="userFolderModel"></param>
         /// <returns></returns>
         [HttpPut("update-user-folder")]
+<<<<<<< HEAD
         [MedicalAppAuthorize(new string[] { CoreContants.Update })]
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         public async Task<AppDomainResult> UpdateUserFolder([FromBody] UserFolderModel userFolderModel)
         {
             bool success = false;
@@ -217,7 +227,11 @@ namespace MrApp.API.Controllers
             {
                 if (userFolderModel.Id <= 0)
                     throw new AppException("Không tìm thấy folder");
+<<<<<<< HEAD
                 var folderInfos = await this.userFolderService.GetAsync(e => e.Id == userFolderModel.Id
+=======
+                var folderInfos = await this.userFolderService.GetAsync(e => e.Id == userFolderModel.Id 
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 && (e.UserId == LoginContext.Instance.CurrentUser.UserId));
                 if (folderInfos == null || !folderInfos.Any())
                     throw new AppException("Không tìm thấy thông tin folder");
@@ -334,6 +348,7 @@ namespace MrApp.API.Controllers
         }
 
         /// <summary>
+<<<<<<< HEAD
         /// Cập nhật thông tin user file
         /// </summary>
         /// <param name="userFileRequestUpdateModel"></param>
@@ -354,6 +369,8 @@ namespace MrApp.API.Controllers
         }
 
         /// <summary>
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         /// Lấy thông tin file theo ngày/tháng
         /// </summary>
         /// <param name="searchUserFile"></param>
@@ -391,7 +408,11 @@ namespace MrApp.API.Controllers
             List<string> folderUploadPaths = new List<string>();
             if (folderId.HasValue)
             {
+<<<<<<< HEAD
                 var folderInfos = await this.userFolderService.GetAsync(e => e.Id == folderId
+=======
+                var folderInfos = await this.userFolderService.GetAsync(e => e.Id == folderId 
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                 && (!e.UserId.HasValue || e.UserId == LoginContext.Instance.CurrentUser.UserId));
                 if (folderInfos == null || !folderInfos.Any())
                     throw new AppException("Không tìm thấy thông tin folder");
@@ -498,7 +519,11 @@ namespace MrApp.API.Controllers
                     if (!existFolderInfos.Select(e => e.Id).ToList().Contains(folderId)) continue;
                     success &= await this.userFolderService.DeleteAsync(folderId);
                     // Xóa tất cả file trong folder
+<<<<<<< HEAD
                     var userFileInFolders = await this.userFileService.GetAsync(e => !e.Deleted && e.Active
+=======
+                    var userFileInFolders = await this.userFileService.GetAsync(e => !e.Deleted && e.Active 
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                     && e.FolderId == folderId && e.UserId == LoginContext.Instance.CurrentUser.UserId);
                     if (userFileInFolders != null && userFileInFolders.Any())
                     {

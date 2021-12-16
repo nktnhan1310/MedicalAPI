@@ -1,9 +1,14 @@
 ﻿using Medical.Core.App.Controllers;
 using Medical.Entities;
+<<<<<<< HEAD
 using Medical.Extensions;
 using Medical.Interface;
 using Medical.Models;
 using Medical.Utilities;
+=======
+using Medical.Interface;
+using Medical.Models;
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -14,7 +19,10 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+<<<<<<< HEAD
 using System.Net;
+=======
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
 using System.Threading.Tasks;
 
 namespace MedicalAPI.Controllers.Catalogue
@@ -25,6 +33,7 @@ namespace MedicalAPI.Controllers.Catalogue
     [Authorize]
     public class AllergyTypeController : CatalogueController<AllergyTypes, AllergyTypeModel, BaseSearch>
     {
+<<<<<<< HEAD
         private IAllergyDescriptionTypeService allergyDescriptionTypeService;
         public AllergyTypeController(IServiceProvider serviceProvider, ILogger<BaseController<AllergyTypes, AllergyTypeModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
         {
@@ -55,6 +64,11 @@ namespace MedicalAPI.Controllers.Catalogue
                 Success = true,
                 ResultCode = (int)HttpStatusCode.OK
             };
+=======
+        public AllergyTypeController(IServiceProvider serviceProvider, ILogger<BaseController<AllergyTypes, AllergyTypeModel, BaseSearch>> logger, IWebHostEnvironment env) : base(serviceProvider, logger, env)
+        {
+            this.catalogueService = serviceProvider.GetRequiredService<IAllergyTypeService>();
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         }
     }
 }

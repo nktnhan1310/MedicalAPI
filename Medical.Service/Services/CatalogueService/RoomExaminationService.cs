@@ -44,6 +44,10 @@ namespace Medical.Service
                 new SqlParameter("@SpecialistTypeId", baseSearch.SpecialistTypeId),
                 new SqlParameter("@SearchContent", baseSearch.SearchContent),
                 new SqlParameter("@OrderBy", baseSearch.OrderBy),
+<<<<<<< HEAD
+=======
+                new SqlParameter("@TotalPage", SqlDbType.Int, 0),
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
             };
             return parameters;
         }
@@ -109,7 +113,11 @@ namespace Medical.Service
         /// <param name="createdBy"></param>
         /// <param name="hospitalId"></param>
         /// <returns></returns>
+<<<<<<< HEAD
         public override async Task<AppDomainImportResult> ImportTemplateFile(Stream stream, int? hospitalId)
+=======
+        public override async Task<AppDomainImportResult> ImportTemplateFile(Stream stream, string createdBy, int? hospitalId)
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
         {
             AppDomainImportResult appDomainImportResult = new AppDomainImportResult();
             var dataTable = SetDataTable();
@@ -203,7 +211,11 @@ namespace Medical.Service
                                 Deleted = false,
                                 Active = true,
                                 Created = DateTime.Now,
+<<<<<<< HEAD
                                 CreatedBy = LoginContext.Instance.CurrentUser.UserName,
+=======
+                                CreatedBy = createdBy,
+>>>>>>> f087f7d996cf4bb89ac4ae0233c6e75869ec2608
                                 Code = roomCode,
                                 HospitalId = hospitalInfo.Id,
                                 SpecialistTypeId = specialistTypeId,
